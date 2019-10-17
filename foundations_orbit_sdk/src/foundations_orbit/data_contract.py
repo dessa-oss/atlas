@@ -13,7 +13,8 @@ class DataContract(object):
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
         from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
-        
+        from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
+
         self.options = self._default_options()
         self._contract_name = contract_name
 
@@ -28,6 +29,7 @@ class DataContract(object):
         self.schema_test = SchemaChecker(self._column_names, self._column_types)
         self.special_value_test = SpecialValuesChecker(self.options, self._bin_stats, self._column_names, self._dataframe)
         self.distribution_test = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names)
+        self.min_max_test = MinMaxChecker()
 
     @staticmethod
     def _default_options():
@@ -50,6 +52,7 @@ class DataContract(object):
             special_values=[numpy.nan],
             check_distribution=True,
             check_special_values=True,
+            check_min_max=True,
             distribution=default_distribution
         )
 
@@ -97,6 +100,9 @@ class DataContract(object):
 
         if self.options.check_special_values:
             validation_report['special_values_check_results'] = self.special_value_test.validate(dataframe_to_validate)
+
+        if self.options.check_min_max:
+            validation_report['min_max_test_results'] = self.min_max_test.validate(dataframe_to_validate)
 
         validation_report['metadata'] = {
             'reference_metadata': {

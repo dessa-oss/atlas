@@ -186,6 +186,9 @@ class TestDataContract(Spec):
 
     def test_data_contract_has_options_with_default_max_bins_50(self):
         self._test_data_contract_has_default_option('max_bins', 50)
+    
+    def test_data_contract_has_options_with_default_check_min_max_True(self):
+        self._test_data_contract_has_default_option('check_min_max', True)
 
     def test_data_contract_has_options_with_default_check_row_count_True(self):
         self._test_data_contract_has_default_option('check_row_count', True)
@@ -357,6 +360,7 @@ class TestDataContract(Spec):
         inference_period='2019-09-17'
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         contract.special_value_test.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
+        contract.min_max_test.configure(attributes=[self.column_name, self.column_name_2], lower_bound=0, upper_bound=1)
         report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
 
         expected_output = {
@@ -418,6 +422,45 @@ class TestDataContract(Spec):
                     'healthy': 1,
                     'warning': 0
                 }
+            },
+            'min': {
+                'details_by_attribute': [{
+                    'attribute_name': f'{self.column_name}',
+                    'lower_bound': 0,
+                    'min_value': 1,
+                    'validation_outcome': 'healthy',
+                },
+                {
+                    'attribute_name': f'{self.column_name_2}',
+                    'lower_bound': 0,
+                    'min_value': 2,
+                    'validation_outcome': 'healthy',
+                }],
+                'summary': {
+                    'critical': 0,
+                    'healthy': 2,
+                    'warning': 0
+                }
+            },
+            'max': {
+                'details_by_attribute': [{
+                    'attribute_name': f'{self.column_name}',
+                    'upper_bound': 1,
+                    'max_value': 1,
+                    'validation_outcome': 'healthy',
+                },
+                {
+                    'attribute_name': f'{self.column_name_2}',
+                    'upper_bound': 1,
+                    'max_value': 2,
+                    'percentage_out_of_bounds': 1,
+                    'validation_outcome': 'critical',
+                }],
+                'summary': {
+                    'critical': 1,
+                    'healthy': 1,
+                    'warning': 0
+                }
             }
         }
 
@@ -457,6 +500,9 @@ class TestDataContract(Spec):
     def test_data_contract_has_distribution_checker(self):
         self._test_data_contract_has_test_as_attribute('distribution_test')
     
+    def test_data_contract_has_min_mex_checker(self):
+        self._test_data_contract_has_test_as_attribute('min_max_test')
+    
     def test_data_contract_has_schema_checker_configured(self):
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         self._test_data_contract_has_test_which_is_an_instance_of_expected_class('schema_test', SchemaChecker)
@@ -468,6 +514,52 @@ class TestDataContract(Spec):
     def test_data_contract_has_distribution_test_configured(self):
         from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
         self._test_data_contract_has_test_which_is_an_instance_of_expected_class('distribution_test', DistributionChecker)
+    
+    def test_data_contract_has_min_max_test_configured(self):
+        from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
+        self._test_data_contract_has_test_which_is_an_instance_of_expected_class('min_max_test', MinMaxChecker)
+    
+    def test_data_contract_validate_min_max_test_if_option_set(self):
+        mock_min_max_checker_class = self.patch('foundations_orbit.contract_validators.min_max_checker.MinMaxChecker.validate')
+
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        contract.validate(self.two_column_dataframe)
+        mock_min_max_checker_class.assert_called_once()
+    
+    def test_data_contract_min_max_check_produces_correct_output_for_two_column_df(self):
+        inference_period='2019-09-17'
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        contract.min_max_test.configure(attributes=[self.column_name], lower_bound=0, upper_bound=100)
+        report = contract.validate(self.one_column_dataframe_four_rows, inference_period=inference_period)
+
+        self.assertIn('min_max_test_results', report)
+
+        min_max_test_results = report['min_max_test_results']
+
+        import numpy as np
+
+        expected_results = {
+            self.column_name: {
+                'min_test': {
+                    'lower_bound': 0,
+                    'passed': True,
+                    'min_value': 4
+                },
+                'max_test': {
+                    'upper_bound': 100,
+                    'passed': True,
+                    'max_value': 7
+                }
+            }
+        }
+
+        self.assertEqual(expected_results, min_max_test_results)
+
+    def test_data_contract_does_not_run_min_max_test_when_options_configured(self):
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        contract.options.check_min_max = False
+
+        self.assertNotIn('min_max_test_results', contract.validate(self.two_column_dataframe))
 
     @skip('does not work when dataframe has no rows')
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_no_rows_different_second_column(self):

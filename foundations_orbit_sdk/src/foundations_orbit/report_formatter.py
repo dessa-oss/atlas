@@ -15,6 +15,8 @@ class ReportFormatter(object):
         self._options = options
 
     def formatted_report(self):
+        formatted_min_max_report = self._formatted_min_max_report()
+
         return {
             'date': self._inference_period,
             'monitor_package': self._monitor_package,
@@ -22,7 +24,9 @@ class ReportFormatter(object):
             'row_cnt_diff': self._formatted_row_count_difference_report(),
             'schema': self._formatted_schema_report(),
             'data_quality': self._formatted_data_quality_report() or {},
-            'population_shift': self._formatted_population_shift_report() or {}
+            'population_shift': self._formatted_population_shift_report() or {},
+            'min': formatted_min_max_report['min_report'] or {},
+            'max': formatted_min_max_report['max_report'] or {},
         }
 
     def serialized_output(self):
@@ -282,6 +286,61 @@ class ReportFormatter(object):
             'summary': population_shift_summary,
             'details_by_attribute': population_shift_attribute_details
         }
+
+    def _formatted_min_max_report(self):
+        if not self._options.check_min_max:
+            return { 'min_report': {}, 'max_report': {} }
+
+        min_max_check_results = self._validation_report['min_max_test_results']
+
+        min_summary = {
+            'healthy': 0,
+            'critical': 0,
+            'warning': 0
+        }
+        max_summary = {
+            'healthy': 0,
+            'critical': 0,
+            'warning': 0
+        }
+        min_attribute_details = []
+        max_attribute_details = []
+
+        for column, col_results in min_max_check_results.items():
+            for test_type, test_results in col_results.items():
+                details = {
+                    'attribute_name': column,
+                    'validation_outcome': 'healthy' if test_results['passed'] else 'critical'
+                }
+
+                if test_type == 'min_test':
+                    details['lower_bound'] = test_results['lower_bound']
+                    details['min_value'] = test_results['min_value']
+                    self._handle_min_max_test_health(test_results, details, min_summary)
+                    min_attribute_details.append(details)
+                elif test_type == 'max_test':
+                    details['upper_bound'] = test_results['upper_bound']
+                    details['max_value'] = test_results['max_value']
+                    self._handle_min_max_test_health(test_results, details, max_summary)
+                    max_attribute_details.append(details)
+        return {
+            'min_report': {
+                'summary': min_summary,
+                'details_by_attribute': min_attribute_details
+            },
+            'max_report': {
+                'summary': max_summary,
+                'details_by_attribute': max_attribute_details
+            }
+        }
+    
+    @staticmethod
+    def _handle_min_max_test_health(test_results, details, summary_dict):
+        if test_results['passed']:
+            summary_dict['healthy'] += 1
+        else:
+            summary_dict['critical'] += 1
+            details['percentage_out_of_bounds'] = test_results['percentage_out_of_bounds']
 
     def _columns_in_dataframes(self):
         columns_in_reference = self._columns_for_dataframe('reference')

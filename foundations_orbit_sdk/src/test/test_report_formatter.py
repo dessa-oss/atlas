@@ -48,11 +48,20 @@ class TestReportFormatter(Spec):
     def special_values_check(self):
         return {column: self._gen_sv_check_result() for column in self.column_list}
 
+    @let
+    def min_max_test(self):
+        return { column: self._gen_min_max_check_result() for column in self.column_list }
+
+    @let
+    def min_max_failed_test(self):
+        return { column: self._gen_min_max_check_failed_result() for column in self.column_list }
+
     @set_up
     def set_up(self):
         self.data_contract_options = Mock()
         self.data_contract_options.check_distribution = True
         self.data_contract_options.check_special_values = True
+        self.data_contract_options.check_min_max = True
 
     @let
     def validation_report(self):
@@ -72,7 +81,30 @@ class TestReportFormatter(Spec):
                 }
             },
             'dist_check_results': self.distribution_checks,
-            'special_values_check_results': self.special_values_check
+            'special_values_check_results': self.special_values_check,
+            'min_max_test_results': self.min_max_test,
+        }
+
+    @let
+    def validation_report_with_min_max_failed_test(self):
+        return {
+            'schema_check_results': {
+                'passed': False,
+                'error_message': ''
+            },
+            'metadata': {
+                'reference_metadata': {
+                    'column_names': self.column_list,
+                    'type_mapping': self.type_mapping
+                },
+                'current_metadata': {
+                    'column_names': self.column_list,
+                    'type_mapping': self.type_mapping
+                }
+            },
+            'dist_check_results': self.distribution_checks,
+            'special_values_check_results': self.special_values_check,
+            'min_max_test_results': self.min_max_failed_test,
         }
 
     @let
@@ -93,7 +125,8 @@ class TestReportFormatter(Spec):
                 }
             },
             'dist_check_results': self.distribution_checks_with_psi,
-            'special_values_check_results': self.special_values_check
+            'special_values_check_results': self.special_values_check,
+            'min_max_test_results': self.min_max_test,
         }
 
 
@@ -136,6 +169,70 @@ class TestReportFormatter(Spec):
         return {
             'binned_passed': True,
             'binned_l_infinity': 0.2
+        }
+    
+    def _gen_min_max_check_result(self):
+        return {
+            'min_test': {
+                'lower_bound': 0,
+                'passed': True,
+                'min_value': 1,
+            },
+            'max_test': {
+                'upper_bound': 3,
+                'passed': True,
+                'max_value': 2,
+            },
+        }
+
+    def _gen_expected_min_check_result(self, column_name):
+        return {
+            'attribute_name': f'{column_name}',
+            'lower_bound': 0,
+            'min_value': 1,
+            'validation_outcome': 'healthy',
+        }
+
+    def _gen_expected_max_check_result(self, column_name):
+        return {
+            'attribute_name': f'{column_name}',
+            'upper_bound': 3,
+            'max_value': 2,
+            'validation_outcome': 'healthy',
+        }
+
+    def _gen_min_max_check_failed_result(self):
+        return {
+            'min_test': {
+                'lower_bound': 3,
+                'passed': False,
+                'min_value': 1,
+                'percentage_out_of_bounds': 0.5,
+            },
+            'max_test': {
+                'upper_bound': 5,
+                'passed': False,
+                'max_value': 10,
+                'percentage_out_of_bounds': 0.3,
+            },
+        }
+
+    def _gen_expected_min_check_failed_result(self, column_name):
+        return {
+            'attribute_name': f'{column_name}',
+            'lower_bound': 3,
+            'min_value': 1,
+            'validation_outcome': 'critical',
+            'percentage_out_of_bounds': 0.5,
+        }
+
+    def _gen_expected_max_check_failed_result(self, column_name):
+        return {
+            'attribute_name': f'{column_name}',
+            'upper_bound': 5,
+            'max_value': 10,
+            'validation_outcome': 'critical',
+            'percentage_out_of_bounds': 0.3,
         }
 
     def test_report_formatter_returns_formatted_report_with_expected_date(self):
@@ -796,6 +893,64 @@ class TestReportFormatter(Spec):
         self.data_contract_options.check_distribution = False
         formatted_report = self._generate_formatted_report()
         self.assertEqual({}, formatted_report['population_shift'])
+    
+    def test_return_no_min_max_results_if_options_false(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+
+        self.data_contract_options.check_min_max = False
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual({}, formatted_report['min'])
+        self.assertEqual({}, formatted_report['max'])
+
+    def test_return_min_max_healthy_results(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+
+        expected_min_report = {
+            'summary': {
+                'critical': 0,
+                'healthy': self.number_of_columns,
+                'warning': 0
+            }
+        }
+        expected_min_report['details_by_attribute'] = [self._gen_expected_min_check_result(column) for column in self.column_list]
+
+        expected_max_report = {
+            'summary': {
+                'critical': 0,
+                'healthy': self.number_of_columns,
+                'warning': 0
+            }
+        }
+        expected_max_report['details_by_attribute'] = [self._gen_expected_max_check_result(column) for column in self.column_list]
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_min_report, formatted_report['min'])
+        self.assertEqual(expected_max_report, formatted_report['max'])
+
+    def test_return_min_max_critical_results(self):
+        self.validation_report_with_min_max_failed_test['schema_check_results'] = {'passed': True}
+
+        expected_min_report = {
+            'summary': {
+                'critical': self.number_of_columns,
+                'healthy': 0,
+                'warning': 0
+            }
+        }
+        expected_min_report['details_by_attribute'] = [self._gen_expected_min_check_failed_result(column) for column in self.column_list]
+
+        expected_max_report = {
+            'summary': {
+                'critical': self.number_of_columns,
+                'healthy': 0,
+                'warning': 0
+            }
+        }
+        expected_max_report['details_by_attribute'] = [self._gen_expected_max_check_failed_result(column) for column in self.column_list]
+
+        formatted_report = self._generate_formatted_report(failed_min_max=True)
+        self.assertEqual(expected_min_report, formatted_report['min'])
+        self.assertEqual(expected_max_report, formatted_report['max'])
 
     def _sort_check_for_details_by_activity(self, expected_detail_for_attribute):
         expected_detail_for_attribute.sort(key=lambda detail: (detail['validation_outcome'], detail['attribute_name']))
@@ -807,11 +962,17 @@ class TestReportFormatter(Spec):
         in_current_not_in_reference = set(columns_in_current_dataframe) - set(columns_in_reference_dataframe)
         return columns_in_reference_dataframe + list(in_current_not_in_reference)
 
-    def _generate_formatted_report(self, psi=False):
+    def _generate_formatted_report(self, psi=False, failed_min_max=False):
+        validation_report = self.validation_report
+        if psi:
+            validation_report = self.validation_report_with_psi
+        if failed_min_max:
+            validation_report = self.validation_report_with_min_max_failed_test
+
         formatter = ReportFormatter(inference_period=self.inference_period,
                                     monitor_package=self.monitor_package,
                                     contract_name=self.contract_name,
-                                    validation_report=self.validation_report if not psi else self.validation_report_with_psi,
+                                    validation_report=validation_report,
                                     options=self.data_contract_options)
 
         return formatter.formatted_report()

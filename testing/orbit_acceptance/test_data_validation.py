@@ -372,7 +372,6 @@ class TestDataValidation(Spec):
         import subprocess
         from foundations_orbit_rest_api.v1.models.validation_report import ValidationReport
         from foundations_orbit_rest_api.v1.models.validation_report_listing import ValidationReportListing
-
         subprocess.run(['python', 'create_data_contract.py'], cwd='orbit_acceptance/fixtures/data_validation')
 
         inference_period='2019-09-01'
@@ -387,7 +386,7 @@ class TestDataValidation(Spec):
             'date': inference_period,
             'monitor_package': self.monitor_name,
             'data_contract': contract_name,
-            'row_cnt_diff': 0,
+            'row_cnt_diff': 0.0,
             'schema': {
                 'summary': {
                     'healthy': 2, 'critical': 0, 'warning': 0
@@ -447,6 +446,22 @@ class TestDataValidation(Spec):
                 ],
                 'summary': {
                     'critical': 1, 'healthy': 1, 'warning': 0
+                }
+            },
+            'max': {
+                'details_by_attribute': [],
+                'summary': {
+                    'critical': 0,
+                    'healthy': 0,
+                    'warning': 0
+                }
+            },
+            'min': {
+                'details_by_attribute': [],
+                'summary': {
+                    'critical': 0,
+                    'healthy': 0,
+                    'warning': 0
                 }
             }
         }

@@ -41,6 +41,9 @@ class TestDataContractOptions(Spec):
     
     def test_data_contract_options_has_distribution_check(self):
         self._test_data_contract_options_has_attribute('distribution')
+    
+    def test_data_contract_options_has_min_max_check(self):
+        self._test_data_contract_options_has_attribute('check_min_max')
 
     def test_data_contract_options_are_equal_if_special_values_consists_of_a_numpy_nan_and_was_loaded_from_pickle(self):
         import numpy
