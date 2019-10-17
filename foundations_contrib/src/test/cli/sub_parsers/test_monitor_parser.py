@@ -88,7 +88,6 @@ class TestMonitorParser(Spec):
         self._call_monitor_command('delete')
         mock_exit.assert_called_once_with(error_message)
 
-
     def test_monitor_calls_resume_monitor_when_resume_command_is_triggered(self):
         mock_method = self.patch('foundations_contrib.cli.sub_parsers.monitor_parser.MonitorParser._resume_monitor')
         self._call_monitor_command('resume')
@@ -114,6 +113,14 @@ class TestMonitorParser(Spec):
         mock_resume = self.patch('foundations_contrib.cli.orbit_monitor_package_server.resume')
         self._call_monitor_command('resume')
         mock_resume.assert_called_once_with(self.project_name, self.monitor_name, self.env)
+
+    def test_invalid_option_for_monitor_command(self):
+        import argparse
+        try:
+            CommandLineInterface('monitor invalid'.split()).execute()
+            self.fail('Failed to fail for invalid monitor operations')
+        except:
+            pass
 
     def _call_monitor_command(self, command):
         cmd = f'monitor {command} {self.project_name} {self.monitor_name} --env={self.env}'
