@@ -27,7 +27,7 @@ class TestMonitorParser(Spec):
 
     @let
     def env(self):
-        return self.faker.word()
+        return 'scheduler'
 
     @let
     def monitor_package_id(self):
@@ -78,13 +78,7 @@ class TestMonitorParser(Spec):
 
     def test_monitor_delete_with_specified_monitor_name_and_project_name_calls_delete(self):
         mock_monitor_delete = self.patch('foundations_contrib.cli.orbit_monitor_package_server.delete')
-        CommandLineInterface([
-            'monitor',
-            'delete',
-            self.project_name,
-            self.monitor_name
-        ]).execute()
-
+        self._call_monitor_command('delete')
         mock_monitor_delete.assert_called_with(self.project_name, self.monitor_name, 'scheduler')
 
     def test_monitor_delete_exits_non_zero_status_when_cron_job_scheduler_fails_to_delete(self):
