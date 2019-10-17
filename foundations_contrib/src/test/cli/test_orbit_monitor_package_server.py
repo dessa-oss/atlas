@@ -36,7 +36,12 @@ class TestOrbitMonitorPackageServer(Spec):
         mock_cron_job_scheduler_class.return_value = mock_cron_job_scheduler
         return mock_cron_job_scheduler
     
-    def test_pause_called_cron_job_scheduler_resume_job(self):
+    def test_pause_called_cron_job_scheduler_pause_job(self):
         from foundations_contrib.cli.orbit_monitor_package_server import pause
         pause(self.project_name, self.monitor_name, self.env)
         self.cron_job_scheduler.pause_job.assert_called_once_with(self.monitor_package_id)
+
+    def test_pause_called_cron_job_scheduler_resume_job(self):
+        from foundations_contrib.cli.orbit_monitor_package_server import resume
+        resume(self.project_name, self.monitor_name, self.env)
+        self.cron_job_scheduler.resume_job.assert_called_once_with(self.monitor_package_id)

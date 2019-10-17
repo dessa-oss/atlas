@@ -20,6 +20,13 @@ def pause(project_name, monitor_name, env):
     monitor_id = f'{project_name}-{monitor_name}'
     CronJobScheduler(config_manager.config()['scheduler_url']).pause_job(monitor_id)
 
+def resume(project_name, monitor_name, env):
+    from foundations_contrib.global_state import config_manager
+    from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler 
+    
+    monitor_id = f'{project_name}-{monitor_name}'
+    CronJobScheduler(config_manager.config()['scheduler_url']).resume_job(monitor_id)
+
 def _update_config(env):
     from foundations_contrib.cli.job_submission.config import load
 

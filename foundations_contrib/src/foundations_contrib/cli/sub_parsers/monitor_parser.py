@@ -77,15 +77,14 @@ class MonitorParser(object):
         start(job_directory, command, project_name, name, env)
 
     def _resume_monitor(self):
-        from foundations_contrib.global_state import config_manager
-        from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler, CronJobSchedulerError
+        from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobSchedulerError
+        from foundations_contrib.cli.orbit_monitor_package_server import resume
         
         monitor_name = self._cli.arguments().monitor_name
         project_name = self._cli.arguments().project_name
-        monitor_id = f'{project_name}-{monitor_name}'
 
         try:
-            CronJobScheduler(config_manager.config()['scheduler_url']).resume_job(monitor_id)
+            resume(project_name, monitor_name, None)
         except CronJobSchedulerError as ce:
             import sys
             sys.exit(str(ce))
