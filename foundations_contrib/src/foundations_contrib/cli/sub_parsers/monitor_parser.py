@@ -85,9 +85,10 @@ class MonitorParser(object):
         
         monitor_name = self._cli.arguments().monitor_name
         project_name = self._cli.arguments().project_name
+        env = self._cli.arguments().env if self._cli.arguments().env is not None else 'scheduler'
 
         try:
-            resume(project_name, monitor_name, None)
+            resume(project_name, monitor_name, env)
         except CronJobSchedulerError as ce:
             import sys
             sys.exit(str(ce))

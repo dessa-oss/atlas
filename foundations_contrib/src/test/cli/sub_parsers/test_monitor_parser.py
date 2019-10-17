@@ -107,6 +107,11 @@ class TestMonitorParser(Spec):
         self._call_monitor_command('pause')
         mock_pause.assert_called_once_with(self.project_name, self.monitor_name, self.env)
 
+    def test_monitor_calls_resume_sends_project_name_model_name_and_env_to_monitor_package_server(self):
+        mock_resume = self.patch('foundations_contrib.cli.orbit_monitor_package_server.resume')
+        self._call_monitor_command('resume')
+        mock_resume.assert_called_once_with(self.project_name, self.monitor_name, self.env)
+
     def _call_monitor_command(self, command):
         cmd = f'monitor {command} {self.project_name} {self.monitor_name} --env={self.env}'
         CommandLineInterface(cmd.split()).execute()
