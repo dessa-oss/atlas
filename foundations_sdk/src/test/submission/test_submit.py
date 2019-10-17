@@ -27,8 +27,8 @@ class TestSubmit(Spec):
         self.assertEqual(self.random_parameter, self._arguments.scheduler_config)
 
     def test_submit_passes_job_dir(self):
-        submit(job_dir=self.random_parameter)
-        self.assertEqual(self.random_parameter, self._arguments.job_dir)
+        submit(job_directory=self.random_parameter)
+        self.assertEqual(self.random_parameter, self._arguments.job_directory)
 
     def test_submit_passes_project_name(self):
         submit(project_name=self.random_parameter)
