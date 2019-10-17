@@ -54,3 +54,14 @@ class TestOrbitMonitorPackageServer(Spec):
         from foundations_contrib.cli.orbit_monitor_package_server import pause
         pause(self.project_name, self.monitor_name, self.env)
         self.load.assert_called_once_with(self.env)
+    
+    def test_resume_uses_update_config_with_values_from_env(self):
+        from foundations_contrib.cli.orbit_monitor_package_server import resume
+        resume(self.project_name, self.monitor_name, self.env)
+        self.load.assert_called_once_with(self.env)
+
+    @skip('not implemented')
+    def test_delete_called_cron_job_scheduler_pause_job(self):
+        from foundations_contrib.cli.orbit_monitor_package_server import delete
+        delete(self.project_name, self.monitor_name, self.env)
+        self.cron_job_scheduler.delete_job.assert_called_once_with(self.monitor_package_id)

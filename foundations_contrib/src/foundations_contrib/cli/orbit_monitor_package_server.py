@@ -14,19 +14,22 @@ def start(job_directory, command, project_name, name, env):
         
 
 def pause(project_name, monitor_name, env):
-    from foundations_contrib.global_state import config_manager
-    from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler 
-    
-    _update_config(env)
-    monitor_id = f'{project_name}-{monitor_name}'
-    CronJobScheduler(config_manager.config()['scheduler_url']).pause_job(monitor_id)
+    cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.pause_job(monitor_id)
+    _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
 
 def resume(project_name, monitor_name, env):
+    cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.resume_job(monitor_id)
+    _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
+
+def _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback):
     from foundations_contrib.global_state import config_manager
     from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler 
-    
+
+    _update_config(env)
     monitor_id = f'{project_name}-{monitor_name}'
-    CronJobScheduler(config_manager.config()['scheduler_url']).resume_job(monitor_id)
+
+    cron_job_scheduler = CronJobScheduler(config_manager.config()['scheduler_url'])
+    cron_scheduler_callback(cron_job_scheduler, monitor_id)
 
 def _update_config(env):
     from foundations_contrib.cli.job_submission.config import load
