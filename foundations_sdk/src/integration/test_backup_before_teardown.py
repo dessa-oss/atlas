@@ -7,7 +7,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from mock import Mock
 from foundations_spec import *
-from foundations import BackupBeforeTeardown
 
 @skip
 class TestBackupBeforeTearDown(Spec):
@@ -47,6 +46,7 @@ class TestBackupBeforeTearDown(Spec):
         return GCPBucket('foundations-testing-bucket')
 
     def test_backs_up_all_files_from_archive_to_gcp_bucket(self):
+        from foundations import BackupBeforeTeardown
 
         backup_util = BackupBeforeTeardown()
         backup_util.upload_to_gcp(self.result_path, self.gcp_bucket_name)
