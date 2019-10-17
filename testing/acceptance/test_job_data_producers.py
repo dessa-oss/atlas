@@ -12,6 +12,11 @@ from acceptance.mixins.run_local_job import RunLocalJob
 
 class TestJobDataProducers(Spec, RunLocalJob):
 
+    @let
+    def user_name(self):
+        from getpass import getuser
+        return getuser()
+
     @set_up
     def set_up(self):
         from acceptance.cleanup import cleanup
@@ -29,7 +34,7 @@ class TestJobDataProducers(Spec, RunLocalJob):
 
         job_data = [data for data in all_job_data if data['job_id'] == self.job_id][0]
         self.assertEqual('job_data_production', job_data['project_name'])
-        self.assertEqual('trial', job_data['user'])
+        self.assertEqual(self.user_name, job_data['user'])
         self.assertEqual('completed', job_data['status'])
         self.assertTrue(isinstance(job_data['start_time'], float))
         self.assertTrue(isinstance(job_data['completed_time'], float))
@@ -71,7 +76,7 @@ class TestJobDataProducers(Spec, RunLocalJob):
         self.assertEqual('job_data_production', project_name)
 
         user_name = self._redis.get(f'jobs:{self.job_id}:user').decode()
-        self.assertEqual('trial', user_name)
+        self.assertEqual(self.user_name, user_name)
 
         completed_time = self._redis.get(
             f'jobs:{self.job_id}:completed_time').decode()
