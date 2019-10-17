@@ -64,7 +64,7 @@ class DeployModelMixin(object):
 
         if self.deployment is None:
             foundations.set_job_resources(num_gpus=0)
-            self.deployment = foundations.submit(project_name=self.project_name, entrypoint='project_code/driver.py', job_dir=f'integration/fixtures/{job_directory}', params=None)
+            self.deployment = foundations.submit(project_name=self.project_name, entrypoint='project_code/driver.py', job_directory=f'integration/fixtures/{job_directory}', params=None)
         return self.deployment
 
     def _deploy_model_package(self, project_name, model_name, job_id):
