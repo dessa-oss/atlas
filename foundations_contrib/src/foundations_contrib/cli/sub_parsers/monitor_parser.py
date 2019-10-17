@@ -16,8 +16,16 @@ class MonitorParser(object):
         monitor_sub_parser = monitor_parser.add_subparsers()
 
         pause_parser = monitor_sub_parser.add_parser('pause')
+        pause_parser.add_argument('monitor_name', type=str)
+        pause_parser.add_argument('project_name', type=str)
         pause_parser.set_defaults(function=self._pause_monitor)
 
     
     def _pause_monitor(self):
-        pass
+        monitor_name = self._cli.arguments().monitor_name
+        project_name = self._cli.arguments().project_name
+        monitor_id = f'{project_name}-{monitor_name}'
+
+        from foundations_contrib.global_state import config_manager
+        from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler
+        pause_request_status = CronJobScheduler(config_manager.config()['scheduler_url']).pause_job(monitor_id)
