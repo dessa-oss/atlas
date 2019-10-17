@@ -44,8 +44,6 @@ class MonitorParser(object):
         resume_parser.set_defaults(function=self._resume_monitor)
 
 
-    
-
     def _start_monitor(self):
         from foundations_contrib.cli.orbit_monitor_package_server import start
 
