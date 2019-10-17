@@ -11,7 +11,7 @@ import requests
 @skip('not implemented')
 class TestSchedulerMonitorPackageViaRESTAPI(Spec):
 
-    sleep_time = 5
+    sleep_time = 1
     existing_words = []
 
     def _gen_unique_word(self):
@@ -50,12 +50,15 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
     def orbit_monitor_base_api_url(self):
         return f'http://localhost:5000/api/v1/projects/{self.project_name}/monitors'
     
-    def test_pause_scheduled_monitor_package_via_api_halts_execution_but_can_resume_later(self):
+    def test_pause_scheduled_monitor_package_via_api(self):
         self._start_and_wait_for_monitor()
 
         pause_response = self._pause_monitor()
         self.assertEqual(204, pause_response.status_code)
-        time.sleep(self.sleep_time)
+
+    def test_pause_scheduled_monitor_package_via_api_halts_execution_but_can_resume_later(self):
+        self._start_and_wait_for_monitor()
+        pause_response = self._pause_monitor()
 
         resume_response = self._resume_monitor()
         self.assertEqual(204, pause_response.status_code)
@@ -72,11 +75,9 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         resume_response = self._resume_monitor(monitor_name=self.invalid_monitor_name)
         self.assertEqual(404, resume_response.status_code)
     
-    
     def _start_and_wait_for_monitor(self):
         start_response = self._start_monitor()
         self.assertEqual(201, start_response.status_code)
-        time.sleep(self.sleep_time)
     
     def _start_monitor(self):
         payload = {

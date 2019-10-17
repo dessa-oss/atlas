@@ -1,0 +1,3 @@
+redis_tracker_client:
+  host: 192.168.128.42
+  port: 6379
