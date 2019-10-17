@@ -18,8 +18,8 @@ class MonitorParser(object):
         monitor_sub_parser = monitor_parser.add_subparsers()
 
         pause_parser = monitor_sub_parser.add_parser('pause')
-        pause_parser.add_argument('monitor_name', type=str)
         pause_parser.add_argument('project_name', type=str)
+        pause_parser.add_argument('monitor_name', type=str)
         pause_parser.set_defaults(function=self._pause_monitor)
 
         start_parser = monitor_sub_parser.add_parser('start')
@@ -35,6 +35,12 @@ class MonitorParser(object):
         delete_parser.add_argument('name', type=str, metavar='name', help='Name of monitor to delete')
         delete_parser.add_argument('--env', type=str, required=False, help='Specifies the scheduler environment')
         delete_parser.set_defaults(function=self._delete_monitor)
+
+        resume_parser = monitor_sub_parser.add_parser('resume')
+        resume_parser.add_argument('project_name', type=str)
+        resume_parser.add_argument('monitor_name', type=str)
+        resume_parser.set_defaults(function=self._resume_monitor)
+
     
     def _pause_monitor(self):
         from foundations_contrib.global_state import config_manager
@@ -70,3 +76,17 @@ class MonitorParser(object):
         env = self._cli.arguments().env if self._cli.arguments().env is not None else 'scheduler'
         
         start(job_directory, command, project_name, name, env)
+
+    def _resume_monitor(self):
+        from foundations_contrib.global_state import config_manager
+        from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler, CronJobSchedulerError
+        
+        monitor_name = self._cli.arguments().monitor_name
+        project_name = self._cli.arguments().project_name
+        monitor_id = f'{project_name}-{monitor_name}'
+
+        try:
+            CronJobScheduler(config_manager.config()['scheduler_url']).resume_job(monitor_id)
+        except CronJobSchedulerError as ce:
+            import sys
+            sys.exit(str(ce))
