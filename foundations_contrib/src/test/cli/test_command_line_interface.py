@@ -506,7 +506,7 @@ class TestCommandLineInterface(Spec):
 
         expected_arguments = Mock()
         expected_arguments.scheduler_config = None
-        expected_arguments.job_dir = None
+        expected_arguments.job_directory = None
         expected_arguments.entrypoint = None
         expected_arguments.project_name = None
         expected_arguments.ram = None
@@ -643,7 +643,7 @@ class TestCommandLineInterface(Spec):
             self.assertEqual(getattr(expected_arguments, attribute_name), getattr(actual_arguments, attribute_name))
 
     def _assert_submit_arguments_equal(self, expected_arguments, actual_arguments):
-        for attribute_name in ['scheduler_config', 'job_dir', 'entrypoint', 'project_name', 'ram', 'num_gpus', 'stream_job_logs', 'command']:
+        for attribute_name in ['scheduler_config', 'job_directory', 'entrypoint', 'project_name', 'ram', 'num_gpus', 'stream_job_logs', 'command']:
             self.assertEqual(getattr(expected_arguments, attribute_name), getattr(actual_arguments, attribute_name))
 
     def _set_run_script_environment(self, environment_to_set):
