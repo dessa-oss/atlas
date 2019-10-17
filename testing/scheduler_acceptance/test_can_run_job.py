@@ -20,7 +20,7 @@ class TestCanRunJob(Spec):
         from foundations_contrib.global_state import redis_connection
         import foundations
 
-        job = foundations.submit(job_dir='scheduler_acceptance/fixtures/boring_job', num_gpus=0)
+        job = foundations.submit(job_directory='scheduler_acceptance/fixtures/boring_job', num_gpus=0)
         job_id = job.job_name()
         job.wait_for_deployment_to_complete()
 

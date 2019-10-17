@@ -45,7 +45,7 @@ class TestUserDefinedSchedulerImage(Spec):
             file.write(yaml.dump(self.config))
 
         foundations.set_job_resources(num_gpus=0)
-        job = foundations.submit(scheduler_config='scheduler', job_dir='scheduler_acceptance/fixtures/user_defined_scheduler_image/', num_gpus=0)
+        job = foundations.submit(scheduler_config='scheduler', job_directory='scheduler_acceptance/fixtures/user_defined_scheduler_image/', num_gpus=0)
         job.wait_for_deployment_to_complete()
         self.job_id = job.job_name()
 

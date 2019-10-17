@@ -57,10 +57,10 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
 
         largest_memory = self._get_memory_capacity_for_largest_node()
 
-        job = foundations.submit(job_dir='scheduler_acceptance/fixtures/job_logs', num_gpus=0, ram=largest_memory * 0.51)
+        job = foundations.submit(job_directory='scheduler_acceptance/fixtures/job_logs', num_gpus=0, ram=largest_memory * 0.51)
         self._wait_for_job_to_run(job)
 
-        queued_job = foundations.submit(job_dir='scheduler_acceptance/fixtures/job_logs', num_gpus=0, ram=largest_memory * 0.51)
+        queued_job = foundations.submit(job_directory='scheduler_acceptance/fixtures/job_logs', num_gpus=0, ram=largest_memory * 0.51)
         queued_job_id = queued_job.job_name()
 
         error_message = 'Error: Job `{}` is queued and has not produced any logs'.format(queued_job_id)
@@ -75,7 +75,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
     def test_get_logs_for_completed_job(self):
         import subprocess
 
-        job = foundations.submit(job_dir='scheduler_acceptance/fixtures/job_logs', num_gpus=0)
+        job = foundations.submit(job_directory='scheduler_acceptance/fixtures/job_logs', num_gpus=0)
         job.wait_for_deployment_to_complete()
         completed_job_id = job.job_name()
         self.assertEqual('completed', job.get_job_status())
@@ -92,7 +92,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         import subprocess
         from time import sleep
 
-        job = foundations.submit(job_dir='scheduler_acceptance/fixtures/job_logs', entrypoint='main_with_wait.py', num_gpus=0)
+        job = foundations.submit(job_directory='scheduler_acceptance/fixtures/job_logs', entrypoint='main_with_wait.py', num_gpus=0)
         self._wait_for_job_to_run(job)
         running_job_id = job.job_name()
         sleep(60)

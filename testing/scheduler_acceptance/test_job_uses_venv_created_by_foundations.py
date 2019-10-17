@@ -29,7 +29,7 @@ class TestJobUsesVenvCreatedByFoundations(Spec):
     def test_job_uses_virtualenv_created_by_foundations_when_running(self):
         from fnmatch import fnmatch
 
-        job = foundations.submit(job_dir='acceptance/fixtures/virtual_environment')
+        job = foundations.submit(job_directory='acceptance/fixtures/virtual_environment')
         job.wait_for_deployment_to_complete()
         job_name = job.job_name()
 
