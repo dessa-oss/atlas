@@ -1,3 +1,5 @@
+#!/bin/bash
+
 repo=${1:-docker.shehanigans.net}
 tag=${2:-latest}
 
