@@ -53,20 +53,20 @@ class TestMonitorParser(Spec):
 
     def test_monitor_calls_pause_monitor_when_pause_command_is_triggered(self):
         mock_method = self.patch('foundations_contrib.cli.sub_parsers.monitor_parser.MonitorParser._pause_monitor')
-        self._call_pause_monitor_command()
+        self._call_pause_monitor_command('pause')
         mock_method.assert_called_once()
 
     def test_monitor_calls_cron_job_scheduler_for_pausing_with_parameters_passed_by_cli(self):
-        self._call_pause_monitor_command()
+        self._call_pause_monitor_command('pause')
         self.cron_job_scheduler.pause_job.assert_called_once_with(self.monitor_package_id)
     
     def test_monitor_returns_exit_non_zero_when_cron_job_scheduler_fails(self):
         error_message_thrown = 'Pausing failed'
         mock_system_exit = self.patch('sys.exit')
         self.cron_job_scheduler.pause_job.side_effect = CronJobSchedulerError(error_message_thrown)
-        self._call_pause_monitor_command()
+        self._call_pause_monitor_command('pause')
         mock_system_exit.assert_called_once_with(error_message_thrown)
 
-    def _call_pause_monitor_command(self):
-        cmd = f'monitor pause {self.monitor_name} {self.project_name}'
+    def _call_pause_monitor_command(self, command):
+        cmd = f'monitor {command} {self.monitor_name} {self.project_name}'
         CommandLineInterface(cmd.split()).execute()
