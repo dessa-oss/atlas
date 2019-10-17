@@ -87,6 +87,14 @@ class TestMonitorParser(Spec):
 
         mock_monitor_delete.assert_called_with(self.project_name, self.monitor_name, 'scheduler')
 
+    def test_monitor_delete_exits_non_zero_status_when_cron_job_scheduler_fails_to_delete(self):
+        error_message = 'Deleting failed'
+        mock_exit = self.patch('sys.exit')
+        self.cron_job_scheduler.delete_job.side_effect = CronJobSchedulerError(error_message)
+        self._call_monitor_command('delete')
+        mock_exit.assert_called_once_with(error_message)
+
+
     def test_monitor_calls_resume_monitor_when_resume_command_is_triggered(self):
         mock_method = self.patch('foundations_contrib.cli.sub_parsers.monitor_parser.MonitorParser._resume_monitor')
         self._call_monitor_command('resume')
