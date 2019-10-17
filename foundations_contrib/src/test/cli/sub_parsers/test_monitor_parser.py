@@ -33,6 +33,10 @@ class TestMonitorParser(Spec):
     def monitor_package_id(self):
         return f'{self.project_name}-{self.monitor_name}'
 
+    @let
+    def invalid_operation(self):
+        return self.faker.word()
+
     @let_now
     def cron_job_scheduler(self):
         mock_cron_job_scheduler = Mock()
@@ -115,12 +119,11 @@ class TestMonitorParser(Spec):
         mock_resume.assert_called_once_with(self.project_name, self.monitor_name, self.env)
 
     def test_invalid_option_for_monitor_command(self):
-        import argparse
         try:
-            CommandLineInterface('monitor invalid'.split()).execute()
+            CommandLineInterface(f'monitor {self.invalid_operation}'.split()).execute()
             self.fail('Failed to fail for invalid monitor operations')
-        except:
-            pass
+        except SystemExit as e:
+            self.assertTrue(e != 0)
 
     def _call_monitor_command(self, command):
         cmd = f'monitor {command} {self.project_name} {self.monitor_name} --env={self.env}'
