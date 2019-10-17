@@ -101,7 +101,7 @@ class TestJobSubmissionSubmit(Spec):
     @set_up
     def set_up(self):
         self.mock_arguments.scheduler_config = None
-        self.mock_arguments.job_dir = None
+        self.mock_arguments.job_directory = None
         self.mock_arguments.project_name = None
         self.mock_arguments.entrypoint = None
         self.mock_arguments.params = None
@@ -126,7 +126,7 @@ class TestJobSubmissionSubmit(Spec):
 
     def test_runs_in_job_directory_when_specified(self):
         self._set_up_deploy_config()
-        self.mock_arguments.job_dir = self.job_directory
+        self.mock_arguments.job_directory = self.job_directory
         submit(self.mock_arguments)
         self.mock_os_chdir.assert_has_calls([call(self.job_directory), call(self.current_directory)])
 
