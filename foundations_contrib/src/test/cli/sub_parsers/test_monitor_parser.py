@@ -15,6 +15,7 @@ class TestMonitorParser(Spec):
     def set_up(self):
         mock_config_manager = self.patch('foundations_contrib.foundations_contrib.global_state.config_manager')
         mock_config_manager.config.return_value = {'scheduler_url': 'https://localhost:5000'}
+        self.patch('foundations_contrib.cli.job_submission.config.load')
 
     @let
     def monitor_name(self):
