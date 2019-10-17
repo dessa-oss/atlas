@@ -69,8 +69,7 @@ class JobDeployment(object):
 
     def deploy(self):
         import requests
-        from foundations_local_docker_scheduler_plugin.deploy_monitor import job_bundle, submit_job_bundle
-
+        from foundations_local_docker_scheduler_plugin.bundle_deployment import job_bundle, submit_job_bundle
 
         try:
             self._job_bundler = job_bundle(self._job_id)
