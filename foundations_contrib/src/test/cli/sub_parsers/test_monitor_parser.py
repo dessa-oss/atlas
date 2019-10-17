@@ -25,6 +25,10 @@ class TestMonitorParser(Spec):
         return self.faker.word()
 
     @let
+    def env(self):
+        return self.faker.word()
+
+    @let
     def monitor_package_id(self):
         return f'{self.project_name}-{self.monitor_name}'
 
@@ -98,6 +102,11 @@ class TestMonitorParser(Spec):
         self._call_monitor_command('resume')
         mock_system_exit.assert_called_once_with(error_message_thrown)
 
+    def test_monitor_calls_pause_sends_project_name_model_name_and_env_to_monitor_package_server(self):
+        mock_pause = self.patch('foundations_contrib.cli.orbit_monitor_package_server.pause')
+        self._call_monitor_command('pause')
+        mock_pause.assert_called_once_with(self.project_name, self.monitor_name, self.env)
+
     def _call_monitor_command(self, command):
-        cmd = f'monitor {command} {self.project_name} {self.monitor_name}'
+        cmd = f'monitor {command} {self.project_name} {self.monitor_name} --env={self.env}'
         CommandLineInterface(cmd.split()).execute()
