@@ -12,16 +12,16 @@ from foundations_spec import Spec, set_up, tear_down
 from foundations_contrib.utils import run_command, cd
 from .mixins.container_test_mixin import ContainerTestMixin
 
-
 class TestTensorboardRestAPI(Spec, ContainerTestMixin):
 
     CONTAINER_NAME = 'tensorboard-rest-api'
+    IMAGE_NAME = 'tensorboard-rest-api'
 
     @set_up
     def set_up(self):
         with cd('docker/tensorboard_rest_api'):
             run_command(f'./build_image.sh {self.repo} {self.tag}')
-        super().set_up_container(self.CONTAINER_NAME)
+        super().set_up_container(self.IMAGE_NAME, name=self.CONTAINER_NAME, ports={5000: 5000})
 
     @tear_down
     def tear_down(self):
@@ -41,7 +41,7 @@ class TestTensorboardRestAPI(Spec, ContainerTestMixin):
         test_link_path = f'/logs/{job_id}/{sync_dir_name}/test.txt'
 
         create_test_file = (
-            f'docker exec -it {self.CONTAINER_NAME} -- '
+            f'docker exec -it {self.CONTAINER_NAME} '
             f'sh -c "mkdir -p {sync_dir} && echo \"{test_file_content}\" > {test_file_path}"')
 
         run_command(create_test_file)
@@ -57,7 +57,7 @@ class TestTensorboardRestAPI(Spec, ContainerTestMixin):
         try:
             _make_request(
                 'POST',
-                f'http://{self.kubernetes_master_ip}:32767/create_sym_links',
+                f'http://localhost:5000/create_sym_links',
                 json=payload_from_frontend)
         except requests.HTTPError as e:
             msg = f'HTTP Error -> {e.response.text}'
