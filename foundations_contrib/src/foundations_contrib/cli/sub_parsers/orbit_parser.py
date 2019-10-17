@@ -42,6 +42,16 @@ class OrbitParser(object):
         serving_destroy_parser.add_argument('--env', required=False, type=str, help='Specifies the execution environment where jobs are ran')
         serving_destroy_parser.set_defaults(function=self._kubernetes_orbit_model_serving_destroy)
 
+
+        monitor_parser = orbit_subparsers.add_parser('monitor', help='')
+        monitor_subparsers = monitor_parser.add_subparsers()
+        
+        start_parser = monitor_subparsers.add_parser('start')
+        start_parser.add_argument('--monitor', type=str, default='unnamed')
+        start_parser.add_argument('--project-name', type=str, default='default')
+        start_parser.add_argument('--job-directory', type=str, default='.')
+        start_parser.set_defaults(function=self._orbit_monitor_start)
+
     def _broadcast_orbit_event(self, event, project_name, model_name, project_directory=None):
         from foundations_contrib.global_state import message_router
         message_router.push_message(event, {
@@ -54,6 +64,30 @@ class OrbitParser(object):
         import sys
         print(message)
         sys.exit(1)
+
+    def _orbit_monitor_start(self):
+        from foundations_contrib.change_directory import ChangeDirectory
+        from foundations_local_docker_scheduler_plugin.deploy_monitor import job_bundle, submit_job_bundle
+        from foundations_contrib.global_state import config_manager
+        from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler
+        import yaml
+
+        config_manager['scheduler_url'] = 'http://localhost:5000'
+
+        arguments = self._cli.arguments()
+        with ChangeDirectory(arguments.job_directory):
+            bundle = job_bundle(arguments.monitor)
+            with open('job.config.yaml', 'r') as file:
+                job_config = yaml.load(file.read())
+        response = submit_job_bundle(bundle)
+        
+        CronJobScheduler(config_manager['scheduler_url']).schedule_job(
+            arguments.monitor, 
+            job_config.get('worker', {}), 
+            job_config['schedule'],
+            arguments.job_directory,
+            job_config.get('metadata')
+        )
 
     def _kubernetes_orbit_model_serving_deploy(self):
         from foundations_contrib.cli.orbit_model_package_server import deploy

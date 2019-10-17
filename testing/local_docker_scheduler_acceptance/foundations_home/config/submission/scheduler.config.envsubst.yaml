@@ -1,3 +1,5 @@
+results_config:
+  redis_end_point: redis://${LOCAL_DOCKER_SCHEDULER_HOST}:6379
 cache_config:
   end_point: /cache_end_point
 container_config_root: ${FOUNDATIONS_HOME}/config/local_docker_scheduler/worker_config

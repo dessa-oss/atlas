@@ -35,8 +35,15 @@ class CronJobScheduler(object):
     def resume_job(self, job_id):
         self._change_job_status(job_id, 'active')
 
+    @_expect_code(201)
     def schedule_job(self, job_id, spec, schedule, job_bundle_path, metadata=None, gpu_spec=None):
-        pass
+        return self._raw_api.post(self._jobs_uri(), json={
+            'job_id': job_id,
+            'spec': spec,
+            'gpu_spec': gpu_spec,
+            'metadata': metadata,
+            'schedule': schedule,
+        })
 
     def get_jobs(self):
         return self._get_jobs().json()

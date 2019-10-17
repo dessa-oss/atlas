@@ -43,7 +43,7 @@ class CommandLineInterface(object):
     def _initialize_clear_queue(self):
         clear_queue_parser = self.add_sub_parser('clear-queue', help='Clears all scheduled jobs from the queue')
         clear_queue_parser.add_argument('scheduler_config', metavar='scheduler-config', help='Environment to clear the queue')
-        clear_queue_parser.set_defaults(function=self._clear_queue)
+        clear_queue_parser.set_defaults(function=self._clear_queue)        
 
     def _initialize_delete_parser(self):
         delete_parser = self.add_sub_parser('delete', help='Delete items from execution environment')
