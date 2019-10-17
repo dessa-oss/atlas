@@ -61,7 +61,7 @@ class TestScheduleMonitorPackageViaCli(Spec):
         return subprocess.run(command, shell=True)
 
     def _call_monitor_with_command(self, operation):
-        command = f'python -m foundations monitor {operation} {self.monitor_name} {self.project_name} --env={self.env}'
+        command = f'python -m foundations monitor {operation} {self.project_name} {self.monitor_name} --env={self.env}'
         return subprocess.run(command, shell=True)
 
     def test_schedule_monitor_package_via_cli_runs_package_code_on_a_schedule(self):
@@ -88,16 +88,8 @@ class TestScheduleMonitorPackageViaCli(Spec):
         import time
 
         result = self._start_monitor()
-
-        pause_result = subprocess.run(
-            [
-                'python', '-m',
-                'foundations', 'orbit', 'monitor', 'pause',
-                f'--monitor={self.monitor_name}',
-                f'--project_name={self.project_name}'
-            ]
-        )
-
+        pause_result = self._call_monitor_with_command('pause')
+        
         self.assertEqual(0, pause_result.returncode)
 
         time.sleep(7)
