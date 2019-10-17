@@ -19,7 +19,7 @@ class MonitorParser(object):
 
         pause_parser = monitor_sub_parser.add_parser('pause')
         pause_parser.add_argument('project_name', type=str)
-        pause_parser.add_argument('monitor_name', type=str)
+        pause_parser.add_argument('name', type=str)
         pause_parser.add_argument('--env', type=str, required=False, help='Specifies the scheduler environment')
         pause_parser.set_defaults(function=self._pause_monitor)
 
@@ -39,19 +39,12 @@ class MonitorParser(object):
 
         resume_parser = monitor_sub_parser.add_parser('resume')
         resume_parser.add_argument('project_name', type=str)
-        resume_parser.add_argument('monitor_name', type=str)
+        resume_parser.add_argument('name', type=str)
         resume_parser.add_argument('--env', type=str, required=False, help='Specifies the scheduler environment')
         resume_parser.set_defaults(function=self._resume_monitor)
 
 
-    def _delete_monitor(self):
-        from foundations_contrib.cli.orbit_monitor_package_server import delete
-
-        env = self._cli.arguments().env if self._cli.arguments().env is not None else 'scheduler'
-        project_name = self._cli.arguments().project_name
-        monitor_name = self._cli.arguments().name
-
-        delete(project_name, monitor_name, env)
+    
 
     def _start_monitor(self):
         from foundations_contrib.cli.orbit_monitor_package_server import start
@@ -65,30 +58,28 @@ class MonitorParser(object):
         
         start(job_directory, command, project_name, name, env)
 
-    def _pause_monitor(self):
+    
+    def _modify_monitor(self, monitor_modifier_func):
         from foundations_local_docker_scheduler_plugin.cron_job_scheduler import  CronJobSchedulerError
-        from foundations_contrib.cli.orbit_monitor_package_server import pause
         
-        monitor_name = self._cli.arguments().monitor_name
+        monitor_name = self._cli.arguments().name
         project_name = self._cli.arguments().project_name
         env = self._cli.arguments().env if self._cli.arguments().env is not None else 'scheduler'
 
         try:
-            pause(project_name, monitor_name, env)
+            monitor_modifier_func(project_name, monitor_name, env)
         except CronJobSchedulerError as ce:
             import sys
             sys.exit(str(ce))
+    
+    def _delete_monitor(self):
+        from foundations_contrib.cli.orbit_monitor_package_server import delete
+        self._modify_monitor(delete)
+
+    def _pause_monitor(self):
+        from foundations_contrib.cli.orbit_monitor_package_server import pause
+        self._modify_monitor(pause)
 
     def _resume_monitor(self):
-        from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobSchedulerError
         from foundations_contrib.cli.orbit_monitor_package_server import resume
-        
-        monitor_name = self._cli.arguments().monitor_name
-        project_name = self._cli.arguments().project_name
-        env = self._cli.arguments().env if self._cli.arguments().env is not None else 'scheduler'
-
-        try:
-            resume(project_name, monitor_name, env)
-        except CronJobSchedulerError as ce:
-            import sys
-            sys.exit(str(ce))
+        self._modify_monitor(resume)
