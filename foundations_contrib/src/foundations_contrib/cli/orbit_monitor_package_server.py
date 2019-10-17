@@ -6,7 +6,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 def delete(project_name, monitor_name, env):
-    pass
+    cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.delete_job(monitor_id)
+    _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
 
 
 def start(job_directory, command, project_name, name, env):    
