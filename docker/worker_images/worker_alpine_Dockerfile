@@ -2,7 +2,7 @@ FROM python:3.6-alpine
 
 MAINTAINER Eric Kin Ho Lee
 
-RUN apk --update add --no-cache g++
+RUN apk --update add --no-cache g++ make
 
 COPY ./foundations_alpine_requirements.txt /tmp/foundations_alpine_requirements.txt
 COPY ./run.sh /prejob/run.sh
