@@ -18,16 +18,20 @@ class TestQuarantine(unittest.TestCase):
         def test_will_throw_assertion_error_if_not_quarantined(self):
             raise AssertionError('test_was_run')
 
+    def setUp(self):
+        self._test_case = self.MockSpec()
+
     def test_run_quarantined_test_method_does_not_actually_run_the_method(self):
-        test_case = self.MockSpec()
-        test_case.test_will_throw_assertion_error_if_not_quarantined()
+        self._test_case.test_will_throw_assertion_error_if_not_quarantined()
 
     def test_run_quarantined_test_method_raises_warning(self):
-        test_case = self.MockSpec()
-
         with self.assertWarns(QuarantineWarning) as warning:
-            test_case.test_will_throw_assertion_error_if_not_quarantined()
+            self._test_case.test_will_throw_assertion_error_if_not_quarantined()
         
         self.assertIn('------ test is quarantined - please investigate asap', warning.warning.args)
 
-    
+    def test_quarantine_does_not_change_method_name(self):
+        method_name = self._test_case.test_will_throw_assertion_error_if_not_quarantined.__name__
+        expected_method_name = 'test_will_throw_assertion_error_if_not_quarantined'
+
+        self.assertEqual(expected_method_name, method_name)

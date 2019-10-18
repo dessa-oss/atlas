@@ -6,12 +6,13 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 def quarantine(callback):
-    def _do_nothing(self):
+    def _raise_warning(self):
         import warnings
         warning = QuarantineWarning('------ test is quarantined - please investigate asap')
         warnings.warn(warning)
 
-    return _do_nothing
+    _raise_warning.__name__ = callback.__name__
+    return _raise_warning
 
 class QuarantineWarning(Warning):
     pass
