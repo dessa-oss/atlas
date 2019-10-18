@@ -75,7 +75,7 @@ class CronJobScheduler(object):
         return f'{self._scheduler_uri}/scheduled_jobs'
 
     def _job_uri(self, job_id):
-        return f'{self._jobs_uri()}/{job_id}/'
+        return f'{self._jobs_uri()}/{job_id}'
 
 class CronJobSchedulerError(Exception):
     pass

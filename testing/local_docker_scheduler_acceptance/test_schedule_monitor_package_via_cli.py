@@ -54,6 +54,14 @@ class TestScheduleMonitorPackageViaCli(Spec):
         scheduler_address = os.environ['LOCAL_DOCKER_SCHEDULER_HOST']
         return requests.delete(f'http://{scheduler_address}:5000/scheduled_jobs/{job_name}')
 
+    @staticmethod
+    def _get_scheduled_job(job_name):
+        import os
+        import requests
+
+        scheduler_address = os.environ['LOCAL_DOCKER_SCHEDULER_HOST']
+        return requests.get(f'http://{scheduler_address}:5000/scheduled_jobs/{job_name}')
+
     def _start_monitor(self):
         import os
 
@@ -128,5 +136,23 @@ class TestScheduleMonitorPackageViaCli(Spec):
             time.sleep(1)
 
         time.sleep(7)
+
         metric_sets_after_resume = ProductionMetricSet.all(self.project_name).evaluate()
         self.assertIn(len(metric_sets_after_resume[0].series[0]['data']), [3, 4, 5])
+
+    def test_delete_scheduled_monitor_package_removes_cron_job(self):
+        import time
+
+        self._start_monitor()
+        time.sleep(2)
+
+        get_job_response = self._get_scheduled_job(self.monitor_package_id)
+        self.assertIn(self.monitor_package_id, get_job_response.json())
+
+        delete_result = self._call_monitor_with_command('delete')
+        self.assertEqual(0, delete_result.returncode)
+        time.sleep(2)
+
+        get_job_response = self._get_scheduled_job(self.monitor_package_id)
+        self.assertEqual(404, get_job_response.status_code)
+        self.assertEqual(f'Scheduled job {self.monitor_package_id} not found', get_job_response.text)
