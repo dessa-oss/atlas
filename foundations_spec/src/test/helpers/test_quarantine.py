@@ -21,13 +21,17 @@ class TestQuarantine(unittest.TestCase):
         self._test_case = self.MockSpec()
 
     def test_run_quarantined_test_method_does_not_actually_run_the_method(self):
-        self._test_case.test_will_throw_assertion_error_if_not_quarantined()
+        with self.assertWarns(QuarantineWarning):
+            self._test_case.test_will_throw_assertion_error_if_not_quarantined()
 
     def test_run_quarantined_test_method_raises_warning(self):
         with self.assertWarns(QuarantineWarning) as warning:
             self._test_case.test_will_throw_assertion_error_if_not_quarantined()
         
-        self.assertIn('------ test is quarantined - please investigate asap', warning.warning.args)
+        message = 'TEST "TestQuarantine.MockSpec.test_will_throw_assertion_error_if_not_quarantined" IS QUARANTINED - PLEASE INVESTIGATE ASAP'
+        hashes = '#' * len(message)
+
+        self.assertIn(f'\n{hashes}\n\n{message}\n\n{hashes}\n', warning.warning.args)
 
     def test_quarantine_does_not_change_method_name(self):
         method_name = self._test_case.test_will_throw_assertion_error_if_not_quarantined.__name__
@@ -36,4 +40,14 @@ class TestQuarantine(unittest.TestCase):
         self.assertEqual(expected_method_name, method_name)
 
     def test_quarantine_sets_unittest_skip_true(self):
-        self.assertTrue(self._test_case.test_will_throw_assertion_error_if_not_quarantined.__unittest_skip__)
+        with self.assertWarns(QuarantineWarning):
+            self.assertTrue(self._test_case.test_will_throw_assertion_error_if_not_quarantined.__unittest_skip__)
+
+    def test_quarantine_throws_warning_immediately_if_test_item_is_a_class(self):
+        with self.assertWarns(QuarantineWarning) as warning:
+            quarantine(self.MockSpec)
+        
+        message = 'TEST SUITE "TestQuarantine.MockSpec" IS QUARANTINED - PLEASE INVESTIGATE ASAP'
+        hashes = '#' * len(message)
+
+        self.assertIn(f'\n{hashes}\n\n{message}\n\n{hashes}\n', warning.warning.args)

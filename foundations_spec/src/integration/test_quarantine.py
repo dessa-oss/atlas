@@ -19,6 +19,11 @@ class TestQuarantine(unittest.TestCase):
         self._assert_successful(test_run)
         self.assertIn('QuarantineWarning', test_run.stderr.decode())
 
+    def test_run_test_with_quarantined_class_does_not_actually_run_setupclass_teardownclass_or_any_tests(self):
+        test_run = self._run_fixture_test_suite('test_quarantine_class')
+        self._assert_successful(test_run)
+        self.assertIn('QuarantineWarning', test_run.stderr.decode())
+
     def _run_fixture_test_suite(self, fixture_name):
         import subprocess
 
