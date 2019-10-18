@@ -9,4 +9,8 @@ from foundations_core_rest_api_components.utils.api_resource import api_resource
 
 @api_resource('/api/v1/projects/<string:project_name>/monitors')
 class MonitorController:
-    pass
+    
+    def index(self):
+        project_name = self.params.pop('project_name')
+        
+        return {}

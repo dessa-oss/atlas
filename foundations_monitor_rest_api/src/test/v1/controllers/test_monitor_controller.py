@@ -25,7 +25,7 @@ class TestMonitorController(Spec):
 
     @set_up
     def set_up(self):
-        self.cron_job_scheduler_class = let_mock('foundations_local_docker_scheduler_plugin.cron_job_scheduler.CronJobScheduler')
+        self.cron_job_scheduler_class = self.patch('foundations_local_docker_scheduler_plugin.cron_job_scheduler.CronJobScheduler')
         self.cron_job_scheduler = Mock()
         self.cron_job_scheduler_class.return_when = self.cron_job_scheduler
 
@@ -33,14 +33,29 @@ class TestMonitorController(Spec):
     # request for monitors for a project that doesn't exist then produces 404
     # request for monitors should return list with expected projects based on configured monitors for a project
     
-    def test_request_for_monitors_with_project_that_has_no_monitors_produces_empty_list(self):
-
-        # self.cron_job_scheduler.
-
-        expected_results = []
+    def test_request_for_monitors_with_project_returns_monitors(self):
+        expected_results = {
+            self.monitor_id: {
+                'next_run_time': 1571433194,
+                'schedule': {
+                    'day': '*',
+                    'day_of_week': '*',
+                    'hour': '*',
+                    'minute': '*',
+                    'month': '*',
+                    'second': '*/2',
+                    'week': '*',
+                    'year': '*'
+                },
+                'status': 'active'
+            }
+        }
+        
+        self.cron_job_scheduler.get_job_with_params.return_when(expected_results, {'job_id_prefix': self.project_name})
 
         monitor_controller = MonitorController()
-        results = monitor_controller.index()
+        monitor_controller.params = {'project_name': self.project_name}
 
-        self.assertEqual(expected_results, results[0])
+        results = monitor_controller.index()
+        self.assertEqual(expected_results[self.monitor_id], results[self.monitor_id])
 
