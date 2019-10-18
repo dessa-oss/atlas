@@ -8,8 +8,8 @@ Written by Susan Davis <s.davis@dessa.com>, 10 2019
 from foundations_spec import *
 from foundations_monitor_rest_api.v1.controller.monitor_controller import MonitorController
 
+@quarantine
 class TestMonitorController(Spec):
-    
 
     @let
     def project_name(self):
