@@ -36,7 +36,7 @@ class CronJobScheduler(object):
         self._change_job_status(job_id, 'active')
 
     @_expect_code(201)
-    def schedule_job(self, job_id, spec, schedule, job_bundle_path, metadata=None, gpu_spec=None):
+    def schedule_job(self, job_id, spec, schedule, metadata=None, gpu_spec=None):
         return self._raw_api.post(self._jobs_uri(), json={
             'job_id': job_id,
             'spec': spec,
@@ -75,7 +75,7 @@ class CronJobScheduler(object):
         return f'{self._scheduler_uri}/scheduled_jobs'
 
     def _job_uri(self, job_id):
-        return f'{self._jobs_uri()}/{job_id}'
+        return f'{self._jobs_uri()}/{job_id}/'
 
 class CronJobSchedulerError(Exception):
     pass
