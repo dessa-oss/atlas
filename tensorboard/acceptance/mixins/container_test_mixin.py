@@ -18,31 +18,40 @@ class ContainerTestMixin(DockerTestMixin):
     repo = 'docker.shehanigans.net'
 
     def set_up_container(self, image_name, timeout=60, **kwargs):
+        self.containers = getattr(self, 'containers', {})
+
+        container_name = kwargs.get('name', image_name)
+
         image_name = f'{self.repo}/{image_name}:{self.tag}'
-        self.container = self.docker_client.containers.run(
+        container = self.docker_client.containers.run(
             image_name,
             detach=True,
             remove=True,
             **kwargs)
     
+        self.containers[container_name] = container
+
         _time = 0
-        while self.container.status != 'running' and _time < timeout:
+        while container.status != 'running' and _time < timeout:
             time.sleep(0.5)
             _time += 0.5
-            self.container.reload()
-        self.container.reload()
+            container.reload()
+        container.reload()
 
     @let
     def tag(self):
         return self.faker.word()
 
     def tear_down(self):
-        self.container.stop()
+        for container in self.containers.values():
+            container.stop()
 
-    def wait_for_container_logs(self, retries=1, log_pattern=''):
+    def wait_for_container_logs(self, container_name, retries=1, log_pattern=''):
+        container = self.containers[container_name]
+
         for _ in range(retries):
-            self.container.reload()
-            container_logs = self.container.logs().decode()
+            container.reload()
+            container_logs = container.logs().decode()
             if container_logs and log_pattern in container_logs:
                 return container_logs
             time.sleep(3)

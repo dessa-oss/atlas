@@ -14,34 +14,55 @@ from .mixins.container_test_mixin import ContainerTestMixin
 
 class TestTensorboardRestAPI(Spec, ContainerTestMixin):
 
-    CONTAINER_NAME = 'tensorboard-rest-api'
-    IMAGE_NAME = 'tensorboard-rest-api'
+    API_CONTAINER_NAME = 'tensorboard-rest-api'
+    API_IMAGE_NAME = 'tensorboard-rest-api'
+
+    SERVER_CONTAINER_NAME = 'tensorboard-server'
+    SERVER_IMAGE_NAME = 'tensorboard-server'
 
     @set_up
     def set_up(self):
+        self._create_temp_directories('archive', 'logs')
+
+        volumes_binds = {
+            self._temp_directories['archive']: {
+                'bind': '/archive',
+                'mode': 'rw'
+            },
+            self._temp_directories['logs']: {
+                'bind': '/logs',
+                'mode': 'rw'
+            }
+        }
+
         with cd('docker/tensorboard_rest_api'):
             run_command(f'./build_image.sh {self.repo} {self.tag}')
-        super().set_up_container(self.IMAGE_NAME, name=self.CONTAINER_NAME, ports={5000: 5000})
+        super().set_up_container(self.API_IMAGE_NAME, name=self.API_CONTAINER_NAME, ports={5000: 5000}, volumes=volumes_binds)
+
+        with cd('docker/tensorboard_server'):
+            run_command(f'./build_image.sh {self.repo} {self.tag}')
+        super().set_up_container(self.SERVER_IMAGE_NAME, name=self.SERVER_CONTAINER_NAME, ports={6006: 5959}, volumes=volumes_binds)
 
     @tear_down
     def tear_down(self):
         super().tear_down()
+        self._cleanup_temp_directories()
 
     def test_starts_tensorboard_rest_api(self):
-        self.container.reload()
-        container_logs = self.wait_for_container_logs(retries=5)
+        self.containers[self.API_CONTAINER_NAME].reload()
+        container_logs = self.wait_for_container_logs(self.API_CONTAINER_NAME, retries=5)
         self.assertIn('* Running on http://0.0.0.0:5000/', container_logs)
 
     def test_tensorboard_rest_api_creates_symbolic_links_in_logdir_to_archive(self):
         test_file_content = 'hello'
         job_id = 123
-        sync_dir_name = 'abc'
+        sync_dir_name = '__tensorboard__'
         sync_dir = f'/archive/archive/{job_id}/synced_directories/{sync_dir_name}'
         test_file_path = f'{sync_dir}/test.txt'
-        test_link_path = f'/logs/{job_id}/{sync_dir_name}/test.txt'
+        test_link_path = f'/logs/{job_id}/test.txt'
 
         create_test_file = (
-            f'docker exec -it {self.CONTAINER_NAME} '
+            f'docker exec -it {self.API_CONTAINER_NAME} '
             f'sh -c "mkdir -p {sync_dir} && echo \"{test_file_content}\" > {test_file_path}"')
 
         run_command(create_test_file)
@@ -50,7 +71,7 @@ class TestTensorboardRestAPI(Spec, ContainerTestMixin):
             'tensorboard_locations': [
                 {
                     'job_id': f'{job_id}',
-                    'synced_directory': f'{sync_dir_name}'
+                    'synced_directory': f'archive/{job_id}/synced_directories/__tensorboard__'
                 }
             ]
         }
@@ -63,8 +84,8 @@ class TestTensorboardRestAPI(Spec, ContainerTestMixin):
             msg = f'HTTP Error -> {e.response.text}'
             raise AssertionError(msg)
 
-        cat_linked_file = (f'docker exec {self.CONTAINER_NAME} '
-                           f'-c tensorboard-server -- cat {test_link_path}')
+        cat_linked_file = (f'docker exec {self.SERVER_CONTAINER_NAME} '
+                           f'cat {test_link_path}')
         linked_file_content = run_command(cat_linked_file).stdout.decode().strip()
 
         self.assertEqual(test_file_content, linked_file_content)

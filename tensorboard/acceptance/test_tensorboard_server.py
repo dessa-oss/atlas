@@ -25,7 +25,7 @@ class TestTensorboardServer(Spec, ContainerTestMixin):
 
     def test_starts_tensorboard_server(self):
         container_logs = self.wait_for_container_logs(
-            retries=5, log_pattern='TensorBoard')
+            'tensorboard-server', retries=5, log_pattern='TensorBoard')
         expected_message = re.compile(
             r'TensorBoard [0-9.]+ at http:\/\/[0-9a-f]{12}:6006\/ \(Press CTRL\+C to quit\)')
         try:
