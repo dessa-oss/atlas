@@ -71,6 +71,8 @@ def start(job_directory, command, project_name, name, env):
         gpu_spec=monitor_gpu_spec
     )
 
+    bundle.cleanup()
+
 def pause(project_name, monitor_name, env):
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.pause_job(monitor_id)
     _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
