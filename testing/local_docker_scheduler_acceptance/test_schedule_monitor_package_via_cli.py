@@ -76,23 +76,14 @@ class TestScheduleMonitorPackageViaCli(Spec):
         import time
         
         result = self._start_monitor()
-
         self.assertEqual(0, result.returncode)
 
-        metric_sets = []
-        data_length = 0
-        for _ in range(60):
-            metric_sets = ProductionMetricSet.all(self.project_name).evaluate()
-            if metric_sets:
-                data_length = len(metric_sets[0].series[0]['data'])
-                if data_length >= 3:
-                    break
-            time.sleep(1)
+        metric_sets = self._wait_for_expected_number_of_runs(2, timeout=30)
 
         response = self._delete_scheduled_job(self.monitor_package_id)
         self.assertEqual(204, response.status_code)
 
-        self.assertGreaterEqual(data_length, 3)
+        self.assertGreaterEqual(len(metric_sets[0].series[0]['data']), 3)
 
         for metric_set in metric_sets:
             self.assertEqual('current_time', metric_set.yAxis['title']['text'])
@@ -104,37 +95,16 @@ class TestScheduleMonitorPackageViaCli(Spec):
         time.sleep(3)
 
         pause_result = self._call_monitor_with_command('pause')
-        
         self.assertEqual(0, pause_result.returncode)
-
         time.sleep(7)
 
-        metric_sets_before_resume = []
-        data_length = 0
-        for _ in range(60):
-            metric_sets_before_resume = ProductionMetricSet.all(self.project_name).evaluate()
-            if metric_sets_before_resume:
-                data_length = len(metric_sets_before_resume[0].series[0]['data'])
-                if data_length > 0:
-                    break
-            time.sleep(1)
-
+        metric_sets_before_resume = self._wait_for_expected_number_of_runs(0, timeout=30)
         self.assertEqual(1, len(metric_sets_before_resume[0].series[0]['data']))
 
         resume_result = self._call_monitor_with_command('resume')
-
         self.assertEqual(0, resume_result.returncode)
 
-        metric_sets_after_resume = []
-        data_length = 0
-        for _ in range(60):
-            metric_sets_after_resume = ProductionMetricSet.all(self.project_name).evaluate()
-            if metric_sets_after_resume:
-                data_length = len(metric_sets_after_resume[0].series[0]['data'])
-                if data_length >= 3:
-                    break
-            time.sleep(1)
-
+        metric_sets_after_resume = self._wait_for_expected_number_of_runs(2, timeout=30)
         time.sleep(7)
 
         metric_sets_after_resume = ProductionMetricSet.all(self.project_name).evaluate()
@@ -156,3 +126,19 @@ class TestScheduleMonitorPackageViaCli(Spec):
         get_job_response = self._get_scheduled_job(self.monitor_package_id)
         self.assertEqual(404, get_job_response.status_code)
         self.assertEqual(f'Scheduled job {self.monitor_package_id} not found', get_job_response.text)
+
+    def _wait_for_expected_number_of_runs(self, number_of_runs_lower_bound, timeout=60):
+        import time
+
+        metric_sets = []
+        data_length = 0
+
+        for _ in range(timeout):
+            metric_sets = ProductionMetricSet.all(self.project_name).evaluate()
+            if metric_sets:
+                data_length = len(metric_sets[0].series[0]['data'])
+                if data_length > number_of_runs_lower_bound:
+                    break
+            time.sleep(1)
+
+        return metric_sets
