@@ -58,8 +58,6 @@ class TestArtifactDownloader(Spec):
 
             'p.bin',
             'q.bin',
-            'r.config.yaml',
-            's.config.yaml',
 
             'template/t',
             'template/u',
@@ -118,13 +116,19 @@ class TestArtifactDownloader(Spec):
         self.artifact_downloader.download_files('different/', self.download_directory)
         self.mock_archiver.fetch_persisted_file.assert_called_once_with('different/file', self.download_directory + '/different/file')
 
-    @quarantine
     def test_download_does_not_include_foundations_files(self):
         for foundations_file in self.mock_foundations_files:
             self._mock_file_list(['path/to/some/file', foundations_file])
             
             self.artifact_downloader.download_files('', self.download_directory)
             self.mock_archiver.fetch_persisted_file.assert_called_with('path/to/some/file', self.download_directory + '/path/to/some/file') 
+
+    def test_download_includes_config_yamls(self):
+        for foundations_file in self.mock_foundations_files:
+            self._mock_file_list(['a.config.yaml', foundations_file])
+            
+            self.artifact_downloader.download_files('', self.download_directory)
+            self.mock_archiver.fetch_persisted_file.assert_called_with('a.config.yaml', self.download_directory + '/a.config.yaml') 
 
     def _mock_file_list(self, file_list):
         self.mock_archiver.fetch_miscellaneous = ConditionalReturn()
