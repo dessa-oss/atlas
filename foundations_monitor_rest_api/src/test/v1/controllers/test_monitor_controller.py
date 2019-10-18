@@ -6,9 +6,9 @@ Written by Susan Davis <s.davis@dessa.com>, 10 2019
 """
 
 from foundations_spec import *
-from foundations_monitor_rest_api.v1.controller.monitor_controller import MonitorController
+from foundations_monitor_rest_api.v1.controllers.monitor_controller import MonitorController
 
-@quarantine
+@skip('Work in progress')
 class TestMonitorController(Spec):
 
     @let
@@ -35,7 +35,7 @@ class TestMonitorController(Spec):
     
     def test_request_for_monitors_with_project_that_has_no_monitors_produces_empty_list(self):
 
-        self.cron_job_scheduler.
+        # self.cron_job_scheduler.
 
         expected_results = []
 

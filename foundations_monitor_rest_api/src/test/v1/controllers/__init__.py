@@ -5,8 +5,4 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 10 2019
 """
 
-import os
-os.environ['TZ'] = 'EST'
-
-from test.test_global_state import TestGlobalState
-from test.v1 import *
+from test.v1.controllers.test_monitor_controller import TestMonitorController 

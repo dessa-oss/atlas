@@ -4,3 +4,9 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 10 2019
 """
+
+from foundations_core_rest_api_components.utils.api_resource import api_resource
+
+@api_resource('/api/v1/projects/<string:project_name>/monitors')
+class MonitorController:
+    pass
