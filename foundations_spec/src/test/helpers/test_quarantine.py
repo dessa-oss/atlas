@@ -7,13 +7,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 
-from foundations_spec.helpers.spec import Spec
-from foundations_spec.helpers.quarantine import quarantine, QuarantineWarning
+from foundations_spec import *
 
 class TestQuarantine(unittest.TestCase):
 
     class MockSpec(Spec):
-        
+
         @quarantine
         def test_will_throw_assertion_error_if_not_quarantined(self):
             raise AssertionError('test_was_run')
@@ -35,3 +34,6 @@ class TestQuarantine(unittest.TestCase):
         expected_method_name = 'test_will_throw_assertion_error_if_not_quarantined'
 
         self.assertEqual(expected_method_name, method_name)
+
+    def test_quarantine_sets_unittest_skip_true(self):
+        self.assertTrue(self._test_case.test_will_throw_assertion_error_if_not_quarantined.__unittest_skip__)
