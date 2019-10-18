@@ -93,6 +93,8 @@ class TestScheduleMonitorPackageViaCli(Spec):
         import time
 
         result = self._start_monitor()
+        time.sleep(3)
+
         pause_result = self._call_monitor_with_command('pause')
         
         self.assertEqual(0, pause_result.returncode)
@@ -109,7 +111,7 @@ class TestScheduleMonitorPackageViaCli(Spec):
                     break
             time.sleep(1)
 
-        self.assertIn(len(metric_sets_before_resume[0].series[0]['data']), [0, 1])
+        self.assertEqual(1, len(metric_sets_before_resume[0].series[0]['data']))
 
         resume_result = self._call_monitor_with_command('resume')
 
