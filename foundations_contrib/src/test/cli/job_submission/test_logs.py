@@ -40,11 +40,6 @@ class TestJobSubmissionLogs(Spec):
         stream_job_logs(self.deployment)
         self.mock_logger.info.assert_has_calls([call('Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.'), call('Job running, streaming logs.')])
 
-    @quarantine
-    def test_logs_that_job_is_running(self):
-        stream_job_logs(self.deployment)
-        self.mock_logger.info.assert_has_calls([call('Job is running; streaming logs')])
-
     def test_prints_log_stream(self):
         stream_job_logs(self.deployment)
         calls = [call(item) for item in self.log_stream]
