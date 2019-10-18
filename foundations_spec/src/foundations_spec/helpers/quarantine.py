@@ -6,37 +6,30 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 def quarantine(callback):
-    if isinstance(callback, type):
-        _warn(callback.__qualname__, is_class=True)
+    import atexit
 
-    class _raise_warning(object):
+    atexit.register(_warning, callback.__qualname__, is_class=isinstance(callback, type))
 
-        def __init__(self):
-            self.__name__ = callback.__name__
-            self._qualname = callback.__qualname__
+    def _do_nothing(*args, **kwargs):
+        pass
 
-        def __call__(self, *args):
-            _warn(self._qualname)
+    _do_nothing.__unittest_skip__ = True
+    _do_nothing.__name__ = callback.__name__
+    return _do_nothing
 
-        @property
-        def __unittest_skip__(self):
-            _warn(self._qualname)
-            return True
- 
-    return _raise_warning()
-
-def _warn(test_name, is_class=False):
+def _warning(name, is_class):
     import warnings
 
     if is_class:
-        item_kind = 'TEST SUITE'
+        item_type = 'TEST SUITE'
     else:
-        item_kind = 'TEST'
+        item_type = 'TEST'
 
-    message = f'{item_kind} "{test_name}" IS QUARANTINED - PLEASE INVESTIGATE ASAP'
+    message = f'{item_type} "{name}" IS QUARANTINED - PLEASE INVESTIGATE ASAP'
     hashes = '#' * len(message)
-    warning = QuarantineWarning(f'\n{hashes}\n\n{message}\n\n{hashes}\n')
-    warnings.warn(warning)
+
+    full_message = f'\n{hashes}\n\n{message}\n\n{hashes}\n'
+    warnings.warn(QuarantineWarning(full_message))
 
 class QuarantineWarning(Warning):
     pass
