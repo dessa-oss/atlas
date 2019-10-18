@@ -51,6 +51,9 @@ class CronJobScheduler(object):
     def get_job(self, job_id):
         return self._get_job(job_id).json()
 
+    def get_job_with_params(self, params):
+        return self._get_jobs(params).json()
+
     @_expect_code(204)
     def update_job_schedule(self, job_id, schedule):
         return self._raw_api.patch(self._job_uri(job_id), json={'schedule': schedule})
@@ -68,7 +71,9 @@ class CronJobScheduler(object):
         return self._raw_api.get(self._job_uri(job_id))
 
     @_expect_code(200)
-    def _get_jobs(self):
+    def _get_jobs(self, params = None):
+        if params:
+            return self._raw_api.get(self._jobs_uri(), json=params)
         return self._raw_api.get(self._jobs_uri())
 
     def _jobs_uri(self):
