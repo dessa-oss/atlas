@@ -30,9 +30,14 @@ def _config():
     import subprocess
 
     scheduler_host = os.environ.get('LOCAL_DOCKER_SCHEDULER_HOST')
+    redis_host = os.environ.get('REDIS_HOST')
 
     if not scheduler_host:
         print('LOCAL_DOCKER_SCHEDULER_HOST not set')
+        exit(1)
+
+    if not redis_host:
+        print('REDIS_HOST not set')
         exit(1)
 
     for template_file_name in _flattened_config_walk():

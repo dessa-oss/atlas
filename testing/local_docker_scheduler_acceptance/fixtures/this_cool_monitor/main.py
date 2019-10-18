@@ -1,5 +1,7 @@
 import time
-import foundations_orbit
+import foundations
+import datetime
 
 now = time.time()
-foundations_orbit.track_production_metrics('current_time', {f'my_key_{now}': now})
+now_datetime = datetime.datetime.fromtimestamp(now)
+foundations.track_production_metrics('current_time', {f'{now_datetime}': now})
