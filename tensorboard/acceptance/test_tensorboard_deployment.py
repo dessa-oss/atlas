@@ -16,7 +16,7 @@ from .tensorboard_test_base import TensorboardTestBase
 
 
 
-@skip('Not implemented yet')
+@quarantine
 class TestTensorboardDeployment(TensorboardTestBase):
 
     @let

@@ -105,7 +105,7 @@ class TestSetJobResources(Spec):
         job_resources = current_foundations_context().job_resources()
         self.assertEqual(JobResources(self.num_gpus, None), job_resources)
 
-    @skip('Pending merge from trunk')
+    @quarantine
     def test_set_job_resources_num_gpus_defaults_to_one(self):
         set_job_resources(ram=self.ram)
         job_resources = current_foundations_context().job_resources()

@@ -140,7 +140,7 @@ class TestProvenance(Spec):
         self.assertNotEqual({}, provenance.module_versions)
         self.assertNotEqual(None, provenance.pip_freeze)
 
-    @skip('Pending merge from trunk')
+    @quarantine
     def test_load_provenance_from_archive_with_empty_archive(self):
         provenance = Provenance()
         mock_archive = self.MockArchive()
@@ -195,7 +195,7 @@ class TestProvenance(Spec):
         self.assertEqual(provenance_two.user_name, 'Alan Turing')
         self.assertEqual(provenance_two.annotations, {'model': 'mlp', 'layer': 'all of them'})
 
-    @skip('Pending merge from trunk')
+    @quarantine
     def test_save_to_archive_with_no_job_source(self):
         provenance = Provenance()
         mock_archive = self.MockArchive()
@@ -282,7 +282,7 @@ class TestProvenance(Spec):
         provenance = Provenance()
         self.assertEqual(provenance.project_name, "default")
 
-    @skip('Pending merge from trunk')
+    @quarantine
     def test_provenance_default_user_name(self):
         provenance = Provenance()
         self.assertEqual(provenance.user_name, "trial")

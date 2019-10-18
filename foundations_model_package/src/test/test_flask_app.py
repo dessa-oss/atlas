@@ -36,7 +36,7 @@ class TestFlaskApp(Spec):
         app = self._flask_app
         self.assertEqual(self.mock_flask_instance, app)
 
-    @skip('Removed temporarily to debug launching of simulator')
+    @quarantine
     def test_flask_app_disables_app_logger(self):
         app = self._flask_app
         self.assertEqual(True, app.logger.disabled)

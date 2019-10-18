@@ -9,7 +9,7 @@ from foundations_spec import *
 
 from foundations_monitor_rest_api.global_state import app_manager
 
-@skip('not yet implemented')
+@quarantine
 class TestMonitorEndpoint(Spec):
     
     @let_now

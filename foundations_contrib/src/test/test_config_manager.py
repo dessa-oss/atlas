@@ -400,7 +400,7 @@ class TestConfigManager(Spec):
                        '_implementation'] = {metric + '_type': 'some_' + metric}
         config_manager.reflect_constructor(metric, metric, lambda: 'socks')
 
-    @skip('Pending merge from trunk')
+    @quarantine
     @patch('logging.Logger.info')
     def test_reflect_constructor_info(self, mock):
         self.call_reflect_constructor('deployment')

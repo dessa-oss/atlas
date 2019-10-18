@@ -119,7 +119,7 @@ class TestJobBundler(Spec):
        job_bundler = JobBundler('fake_name', {}, None, None)
        self.assertEqual(job_bundler.job_archive(), self.temp_directory + '/fake_name.tgz')
 
-    @skip('Pending merge from trunk')
+    @quarantine
     def test_cleanup_removes_correct_files(self):
         job_bundler = JobBundler('fake_name', {}, None, None)
         job_bundler.cleanup()
@@ -154,7 +154,7 @@ class TestJobBundler(Spec):
         job_bundler._save_job()
         return_object.write.assert_called_with('something')
 
-    @skip('Pending merge from trunk')
+    @quarantine
     def test_save_config_opens_file(self):
         mock_job = self._create_mock_job()
         job_bundler = JobBundler('fake_name', {}, mock_job, None)
@@ -176,7 +176,7 @@ class TestJobBundler(Spec):
         job_bundler._bundle_job()
         self.mock_tarfile_open.assert_called_with(self.temp_directory + '/fake_name.tgz', 'w:gz')
 
-    @skip('Pending merge from trunk')
+    @quarantine
     def test_bundle_job_adds_archive_and_binary_to_tarball(self):
         mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
         job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)

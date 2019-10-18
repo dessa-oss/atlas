@@ -11,7 +11,7 @@ from foundations_spec import *
 
 from unittest import skip
 
-@skip('Not migrated fully yet')
+@quarantine
 class TestTensorboardEndpoint(Spec):
     url = '/api/v2beta/upload_to_tensorboard'
 

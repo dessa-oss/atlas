@@ -8,8 +8,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from unittest import skip
 
+from foundations_spec import *
 
-@skip('Waiting to remove this, since I do not believe we support the ResultReader anymore')
+
+@quarantine
 class TestDuplicateJobSource(unittest.TestCase):
 
     def setUp(self):

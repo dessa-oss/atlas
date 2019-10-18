@@ -79,7 +79,7 @@ class TestLogManager(Spec):
         self.log_manager.get_logger('foundations.config_manager')
         self.assertEqual(2, len(self.root_logger.handlers))
 
-    @skip('Pending merge from trunk')
+    @quarantine
     def test_console_log_handler_return_format(self):
         self.log_manager.get_logger('foundations.config_manager')
         formatter = self.console_log_handler.formatter
@@ -91,7 +91,7 @@ class TestLogManager(Spec):
         self.log_manager.get_logger('foundations.config_manager')
         self.assertEqual(stdout, self.console_log_handler.stream)
 
-    @skip('Pending merge from trunk')
+    @quarantine
     def test_file_log_handler_return_format(self):
         self.log_manager.get_logger('foundations.config_manager')
         formatter = self.file_log_handler.formatter

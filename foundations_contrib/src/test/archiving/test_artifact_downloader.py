@@ -118,7 +118,7 @@ class TestArtifactDownloader(Spec):
         self.artifact_downloader.download_files('different/', self.download_directory)
         self.mock_archiver.fetch_persisted_file.assert_called_once_with('different/file', self.download_directory + '/different/file')
 
-    @skip('Pending merge from trunk')
+    @quarantine
     def test_download_does_not_include_foundations_files(self):
         for foundations_file in self.mock_foundations_files:
             self._mock_file_list(['path/to/some/file', foundations_file])

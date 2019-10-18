@@ -8,6 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from unittest import skip
 from mock import patch, Mock
+from foundations_spec import *
 from foundations_core_rest_api_components.v1.models.project import Project
 
 
@@ -52,22 +53,22 @@ class TestProject(unittest.TestCase):
         lazy_result = Project.find_by(name='my first project')
         self.assertTrue(isinstance(lazy_result, LazyResult))
 
-    @skip('Pending merge from trunk')
+    @quarantine
     def test_find_by_name_project_is_response_containing_project(self):
         lazy_result = Project.find_by(name='my first project')
         self.assertTrue(isinstance(lazy_result.evaluate(), Project))
 
-    @skip('Pending merge from trunk')
+    @quarantine
     def test_find_by_name_project_has_name(self):
         lazy_result = Project.find_by(name='my first project')
         self.assertEqual('my first project', lazy_result.evaluate().name)
 
-    @skip('Pending merge from trunk')
+    @quarantine
     def test_find_by_name_project_has_name_different_name(self):
         lazy_result = Project.find_by(name='my favourite project')
         self.assertEqual('my favourite project', lazy_result.evaluate().name)
 
-    @skip('Pending merge from trunk')
+    @quarantine
     @patch('foundations_contrib.models.project_listing.ProjectListing')
     def test_all_returns_all_projects(self, mock_projects):
 
@@ -81,7 +82,7 @@ class TestProject(unittest.TestCase):
         )
         self.assertEqual(expected_project, project)
 
-    @skip('Pending merge from trunk')
+    @quarantine
     @patch('foundations_contrib.models.project_listing.ProjectListing')
     def test_all_returns_all_projects_multiple_projects(self, mock_projects):
 

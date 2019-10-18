@@ -173,7 +173,7 @@ class TestJobSourceBundle(Spec):
         job_source_bundle.bundle()
         mock_tar.add.assert_called_with('.')
     
-    @skip('Pending merge from trunk')
+    @quarantine
     @patch.object(JobSourceBundle, '_protected_file_error_messages')
     def test_bundle_iterates_through_files_and_logs(self, mock_error_message):
         mock_tar = self.MockTarWithFiles()

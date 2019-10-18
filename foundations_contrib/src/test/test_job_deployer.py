@@ -40,7 +40,7 @@ class TestJobDeployer(Spec):
     def fake_job_params(self):
         return Mock()
 
-    @skip('Pending merge from trunk')
+    @quarantine
     def test_job_deployer_logs_job_deploying_message(self):
         deploy_job(self.fake_pipeline_context_wrapper, self.fake_job_name, self.fake_job_params)
         self.mock_logger.info.assert_called_with('Deploying job...')

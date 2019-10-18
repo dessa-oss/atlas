@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 import requests
 
-@skip('not implemented')
+@quarantine
 class TestSchedulerMonitorPackageViaRESTAPI(Spec):
 
     sleep_time = 1

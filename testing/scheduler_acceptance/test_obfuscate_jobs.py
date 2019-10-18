@@ -14,7 +14,7 @@ from foundations_contrib.global_state import config_manager
 from foundations_ssh.sftp_bucket import SFTPBucket
 from foundations import log_metric
 
-@skip('deprecated - to remove')
+@quarantine
 class TestObfuscateJobs(Spec):
 
     @let

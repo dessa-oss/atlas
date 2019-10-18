@@ -561,7 +561,7 @@ class TestDataContract(Spec):
 
         self.assertNotIn('min_max_test_results', contract.validate(self.two_column_dataframe))
 
-    @skip('does not work when dataframe has no rows')
+    @quarantine
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_no_rows_different_second_column(self):
         inference_period='2019-09-17'
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
