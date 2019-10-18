@@ -119,13 +119,12 @@ class TestJobBundler(Spec):
        job_bundler = JobBundler('fake_name', {}, None, None)
        self.assertEqual(job_bundler.job_archive(), self.temp_directory + '/fake_name.tgz')
 
-    @quarantine
     def test_cleanup_removes_correct_files(self):
         job_bundler = JobBundler('fake_name', {}, None, None)
         job_bundler.cleanup()
         remove_archive = call(self.temp_directory + '/fake_name.tgz')
         remove_bin = call('fake_name.bin')
-        remove_config = call('fake_name.config.yaml')
+        remove_config = call(self.temp_directory + '/fake_name.config.yaml')
         self.mock_os_remove.assert_has_calls([remove_archive, remove_bin, remove_config])
 
     def test_unbundle_opens_correct_file(self):
