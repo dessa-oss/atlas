@@ -80,7 +80,8 @@ class TestProductionMetricSet(Spec):
 
     @let
     def metric_column(self):
-        return self.faker.date()
+        time = self.faker.date_time()
+        return str(time)
 
     @let
     def metric_value(self):
@@ -92,7 +93,8 @@ class TestProductionMetricSet(Spec):
 
     @let
     def metric_column_2(self):
-        return self.faker.date()
+        time = self.faker.date_time()
+        return str(time)
 
     @let
     def metric_value_2(self):
@@ -118,7 +120,7 @@ class TestProductionMetricSet(Spec):
 
     def _convert_date_string_to_timestamp(self, date_string):
         from datetime import datetime
-        return datetime.strptime(date_string, "%Y-%m-%d").timestamp() * 1000
+        return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S").timestamp() * 1000
 
     def test_has_title(self):
         monitor = ProductionMetricSet(title=self.title)
