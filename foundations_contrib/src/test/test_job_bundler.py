@@ -153,12 +153,11 @@ class TestJobBundler(Spec):
         job_bundler._save_job()
         return_object.write.assert_called_with('something')
 
-    @quarantine
     def test_save_config_opens_file(self):
         mock_job = self._create_mock_job()
         job_bundler = JobBundler('fake_name', {}, mock_job, None)
         job_bundler._save_config()
-        self.mock_builtins_open.assert_called_with('fake_name.config.yaml', 'w+')
+        self.mock_builtins_open.assert_called_with(self.temp_directory + '/fake_name.config.yaml', 'w+')
 
     def test_save_config_dumps_to_file(self):
         mock_job = self._create_mock_job()
