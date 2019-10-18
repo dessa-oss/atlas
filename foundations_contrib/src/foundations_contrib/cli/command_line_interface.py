@@ -148,9 +148,6 @@ class CommandLineInterface(object):
     def arguments(self):
         return self._arguments
 
-    def arguments(self):
-        return self._arguments
-
     def _no_command(self):
         import foundations
 
