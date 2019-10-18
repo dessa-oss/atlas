@@ -5,18 +5,15 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-_WARNING_REGISTERED = False
 _WARNINGS = []
 
 def quarantine(callback):
     import atexit
 
-    global _WARNING_REGISTERED
     global _WARNINGS
 
-    if not _WARNING_REGISTERED:
+    if not _WARNINGS:
         atexit.register(_warning, _WARNINGS)
-        _WARNING_REGISTERED = True
 
     _WARNINGS.append(callback.__qualname__)
 
