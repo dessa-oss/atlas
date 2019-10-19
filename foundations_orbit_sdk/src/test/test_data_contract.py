@@ -466,6 +466,10 @@ class TestDataContract(Spec):
 
         key = f'projects:{self.project_name}:monitors:{self.model_name}:validation:{self.contract_name}'
         serialized_report = self._redis.hget(key, inference_period)
+        validation_counter = self._redis.get(f'{key}:counter')
+
+        self.assertEqual(1, int(validation_counter.decode()))
+
         import pickle
         deserialized_report = pickle.loads(serialized_report)
 
@@ -561,7 +565,7 @@ class TestDataContract(Spec):
 
         self.assertNotIn('min_max_test_results', contract.validate(self.two_column_dataframe))
 
-    @quarantine
+    @skip# @quarantine
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_no_rows_different_second_column(self):
         inference_period='2019-09-17'
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
