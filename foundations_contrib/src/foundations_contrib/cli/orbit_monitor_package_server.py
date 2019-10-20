@@ -168,8 +168,7 @@ def _get_monitor_job_spec(project_name, monitor_name, username, job_config, conf
                     "MONITOR_NAME": monitor_name,
                     "JOB_ID": f'{project_name}-{monitor_name}',
                     "PYTHONPATH": "/job/",
-                    "FOUNDATIONS_HOME": "/root/.foundations/",
-                    "REDIS_URL": "redis://redis:6379"
+                    "FOUNDATIONS_HOME": "/root/.foundations/"
                 },
             "network": "foundations-orbit"
 
