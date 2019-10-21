@@ -1,0 +1,56 @@
+.validation-results-table {
+  height: calc(100% - 96px);
+  background-color: white;
+  border: solid 1px #dcdcdc;
+  border-radius: 5px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-top: none;
+  overflow-y: scroll;
+}
+
+.validation-results-table-row {
+  border-bottom: 1px solid #dcdcdc;
+  padding: 10px 20px;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #D9EBFF;
+    border-left: 3px solid #024B9C;
+    padding-left: 17px;
+  }
+
+  .val-time-table-cell, .val-monitor-table-cell, .val-contract-table-cell, .val-critical-table-cell {
+    display: inline-block;
+    width: 30%;
+    position: relative;
+  }
+  .val-critical-table-cell {
+    width: 10%;
+    text-align: right;
+  }
+}
+
+.validation-results-table-row-header {
+  background-color: white;
+  border: solid 1px #dcdcdc;
+  padding: 10px 20px;
+  margin-top: 15px;
+  border-radius: 5px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+
+  .val-time-table-cell, .val-monitor-table-cell, .val-contract-table-cell, .val-critical-table-cell {
+    font-weight: 900;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    display: inline-block;
+    width: 30%;
+    position: relative;
+  }
+  .val-critical-table-cell {
+    width: 10%;
+    text-align: right;
+  }
+}

@@ -84,7 +84,7 @@ const Timeline = props => {
         </div>
       ) : (
         <div className="container-timeline-empty">
-          <p>It{"'"}s a fresh start.</p>
+          <p>It&#39;s a fresh start.</p>
           <p>There are currently no events to look at.</p>
         </div>
       )}

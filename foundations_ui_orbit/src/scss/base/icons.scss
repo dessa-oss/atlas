@@ -85,3 +85,12 @@ See assets/svgs/README.md for further information on SVG conversion process
   display: inline-block;
   position: relative;
 }
+
+.i--icon-refresh {
+  background-image: url('../assets/svgs/icon-refresh.svg');
+  @include icon-helper;
+  width: 25px;
+  height: 25px;
+  border: none;
+  cursor: pointer;
+}

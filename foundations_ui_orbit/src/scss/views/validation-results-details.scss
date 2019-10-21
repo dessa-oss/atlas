@@ -1,0 +1,40 @@
+.validation-results-details {
+  background-color: white;
+  border: solid 1px #dcdcdc;
+  height: 100%;
+  border-radius: 5px;
+
+  .validation-results-overview {
+    background-color: red;
+    height: 40%;
+    width: 100%;
+    display: inline-flex;
+
+    .overview-summary, .overview-graph, .overview-graph-stats {
+      width: 30%;
+      height: 100%;
+      background-color: #fff;
+      display: inline-block;
+      border: 1px solid black;
+    }
+
+    .overview-summary {
+      ul {
+        display: inline-block;
+        li {
+          width: 100%;
+          height: 30px;
+          .summary-key, .summary-value {
+            width: 200px;
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+
+  .validation-results-tests {
+    background-color: blue;
+    height: 60%;
+  }
+}
