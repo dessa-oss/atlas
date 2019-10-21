@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 def delete(project_name, monitor_name, env):
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.delete_job(monitor_id)
     _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
@@ -33,7 +34,6 @@ def start(job_directory, command, project_name, name, env):
         monitor_package = f'{project_name}-{name}'
 
         bundle = job_bundle(monitor_package)
-
     job_resource_args = {}
 
     if 'log_level' in job_config:
@@ -66,20 +66,40 @@ def start(job_directory, command, project_name, name, env):
     CronJobScheduler(scheduler_url).schedule_job(
         monitor_package,
         monitor_job_spec,
-        job_config['schedule'],
+        job_config.get('schedule', {}),
         metadata=monitor_metadata,
         gpu_spec=monitor_gpu_spec
     )
 
     bundle.cleanup()
 
+
 def pause(project_name, monitor_name, env):
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.pause_job(monitor_id)
-    _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
+    return _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
+
 
 def resume(project_name, monitor_name, env):
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.resume_job(monitor_id)
-    _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
+    return _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
+
+
+def get_by_project(project_name, env=None):
+    from foundations_contrib.global_state import config_manager
+    from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler
+
+    if env is None:
+        env = 'scheduler'
+
+    _update_config(env)
+    job_scheduler_request_param = {
+        'job_id_prefix': project_name
+    }
+
+    cron_job_scheduler = CronJobScheduler(config_manager.config()['scheduler_url'])
+    print('SUBMITTED PARAMETER:', job_scheduler_request_param)
+    return cron_job_scheduler.get_job_with_params(job_scheduler_request_param)
+
 
 def _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback):
     from foundations_contrib.global_state import config_manager
@@ -91,9 +111,11 @@ def _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback):
     cron_job_scheduler = CronJobScheduler(config_manager.config()['scheduler_url'])
     cron_scheduler_callback(cron_job_scheduler, monitor_id)
 
+
 def _update_config(env):
     from foundations_contrib.cli.job_submission.config import load
     load(env)
+
 
 def _get_username():
     import os
@@ -124,12 +146,14 @@ def _get_volume_mounts_for_spec(config, project_name, monitor_name):
 
     return working_dir_root_path, job_mount_path, job_results_root_path, container_config_root_path
 
+
 def _get_monitor_gpu_spec(foundations_context):
     resources = foundations_context.job_resources()
     gpu_spec = {
         "num_gpus": resources.num_gpus
     }
     return gpu_spec
+
 
 def _get_monitor_job_spec(project_name, monitor_name, username, job_config, config, foundations_context):
     from pathlib import Path
@@ -168,8 +192,7 @@ def _get_monitor_job_spec(project_name, monitor_name, username, job_config, conf
                     "MONITOR_NAME": monitor_name,
                     "JOB_ID": f'{project_name}-{monitor_name}',
                     "PYTHONPATH": "/job/",
-                    "FOUNDATIONS_HOME": "/root/.foundations/",
-                    "REDIS_URL": "redis://redis:6379"
+                    "FOUNDATIONS_HOME": "/root/.foundations/"
                 },
             "network": "foundations-orbit"
 

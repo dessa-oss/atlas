@@ -10,6 +10,7 @@ from foundations_spec import *
 import foundations
 from scheduler_acceptance.mixins.node_aware_mixin import NodeAwareMixin
 
+@quarantine
 class TestSetJobResources(Spec, NodeAwareMixin):
 
     @set_up_class

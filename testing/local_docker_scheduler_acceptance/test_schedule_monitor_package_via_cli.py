@@ -55,12 +55,33 @@ class TestScheduleMonitorPackageViaCli(Spec):
         return requests.delete(f'http://{scheduler_address}:5000/scheduled_jobs/{job_name}')
 
     @staticmethod
+    def _update_scheduled_job(job_name):
+        import os
+        import requests
+
+        new_schedule = {
+            'second': '*/2'
+        }
+
+        scheduler_address = os.environ['LOCAL_DOCKER_SCHEDULER_HOST']
+        return requests.patch(f'http://{scheduler_address}:5000/scheduled_jobs/{job_name}', json={'schedule': new_schedule})
+
+    @staticmethod
     def _get_scheduled_job(job_name):
         import os
         import requests
 
         scheduler_address = os.environ['LOCAL_DOCKER_SCHEDULER_HOST']
         return requests.get(f'http://{scheduler_address}:5000/scheduled_jobs/{job_name}')
+
+
+    @staticmethod
+    def _put_to_scheduled_job(job_name, status):
+        import os
+        import requests
+
+        scheduler_address = os.environ['LOCAL_DOCKER_SCHEDULER_HOST']
+        return requests.put(f'http://{scheduler_address}:5000/scheduled_jobs/{job_name}', json={'status': status})
 
     def _start_monitor(self):
         import os
@@ -78,12 +99,17 @@ class TestScheduleMonitorPackageViaCli(Spec):
         result = self._start_monitor()
         self.assertEqual(0, result.returncode)
 
-        metric_sets = self._wait_for_expected_number_of_runs(2, timeout=30)
+        metric_sets = ProductionMetricSet.all(self.project_name).evaluate()
+        self.assertEqual([], metric_sets)
 
-        response = self._delete_scheduled_job(self.monitor_package_id)
-        self.assertEqual(204, response.status_code)
+        update_response = self._update_scheduled_job(self.monitor_package_id)
+        resume_response = self._put_to_scheduled_job(self.monitor_package_id, 'active')
+        self.assertEqual(204, update_response.status_code)
+        self.assertEqual(204, resume_response.status_code)
 
-        self.assertGreaterEqual(len(metric_sets[0].series[0]['data']), 3)
+        metric_sets = self._wait_for_expected_number_of_runs(1, timeout=30)
+
+        self.assertIn(len(metric_sets[0].series[0]['data']), [2, 3])
 
         for metric_set in metric_sets:
             self.assertEqual('current_time', metric_set.yAxis['title']['text'])
@@ -92,6 +118,10 @@ class TestScheduleMonitorPackageViaCli(Spec):
         import time
 
         result = self._start_monitor()
+        update_response = self._update_scheduled_job(self.monitor_package_id)
+        resume_result = self._call_monitor_with_command('resume')
+        self.assertEqual(0, resume_result.returncode)
+        self.assertEqual(204, update_response.status_code)
         time.sleep(3)
 
         pause_result = self._call_monitor_with_command('pause')

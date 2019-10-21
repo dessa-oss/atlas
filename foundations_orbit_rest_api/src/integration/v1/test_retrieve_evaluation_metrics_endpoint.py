@@ -44,33 +44,33 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
         os.environ['MONITOR_NAME'] = 'this_job'
 
         track_production_metrics('MSE', {
-            '2019-02-01': int(1),
-            '2019-03-01': int(2),
-            '2019-04-01': int(3),
-            '2019-05-01': int(4)
+            '2019-02-01 12:13:14': int(1),
+            '2019-03-01 13:14:15': int(2),
+            '2019-04-01 14:15:16': int(3),
+            '2019-05-01 15:16:17': int(4)
         })
 
         track_production_metrics('Customer Response (%)', {
-            '2029-02-02': float(17.56),
-            '2029-03-02': float(17.57),
-            '2029-04-02': float(17.53),
-            '2029-05-02': float(17.43)
+            '2029-02-02 16:17:18': float(17.56),
+            '2029-03-02 18:19:20': float(17.57),
+            '2029-04-02 19:20:21': float(17.53),
+            '2029-05-02 20:21:22': float(17.43)
         })
 
         os.environ['MONITOR_NAME'] = 'that_job'
 
         track_production_metrics('MSE', {
-            '2019-02-01': int(5),
-            '2019-03-01': int(6),
-            '2019-04-01': int(7),
-            '2019-05-01': int(8)
+            '2019-02-01 12:13:14': int(5),
+            '2019-03-01 13:14:15': int(6),
+            '2019-04-01 14:15:16': int(7),
+            '2019-05-01 15:16:17': int(8)
         })
 
         track_production_metrics('Customer Response (%)', {
-            '2029-02-02': float(27.56),
-            '2029-03-02': float(27.57),
-            '2029-04-02': float(27.53),
-            '2029-05-02': float(27.43)
+            '2029-02-02 16:17:18': float(27.56),
+            '2029-03-02 18:19:20': float(27.57),
+            '2029-04-02 19:20:21': float(27.53),
+            '2029-05-02 20:21:22': float(27.43)
         })
 
         expected_data = [
@@ -82,11 +82,11 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 },
                 'series': [
                     {
-                        'data': [[_convert_date_string_to_timestamp('2029-02-02'), 27.56], [_convert_date_string_to_timestamp('2029-03-02'), 27.57], [_convert_date_string_to_timestamp('2029-04-02'), 27.53], [_convert_date_string_to_timestamp('2029-05-02'), 27.43]],
+                        'data': [[_convert_date_string_to_timestamp('2029-02-02 16:17:18'), 27.56], [_convert_date_string_to_timestamp('2029-03-02 18:19:20'), 27.57], [_convert_date_string_to_timestamp('2029-04-02 19:20:21'), 27.53], [_convert_date_string_to_timestamp('2029-05-02 20:21:22'), 27.43]],
                         'name': 'that_job'
                     },
                     {
-                        'data': [[_convert_date_string_to_timestamp('2029-02-02'), 17.56], [_convert_date_string_to_timestamp('2029-03-02'), 17.57], [_convert_date_string_to_timestamp('2029-04-02'), 17.53], [_convert_date_string_to_timestamp('2029-05-02'), 17.43]],
+                        'data': [[_convert_date_string_to_timestamp('2029-02-02 16:17:18'), 17.56], [_convert_date_string_to_timestamp('2029-03-02 18:19:20'), 17.57], [_convert_date_string_to_timestamp('2029-04-02 19:20:21'), 17.53], [_convert_date_string_to_timestamp('2029-05-02 20:21:22'), 17.43]],
                         'name': 'this_job'
                     }
                 ]
@@ -99,11 +99,11 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 },
                 'series': [
                     {
-                        'data': [[_convert_date_string_to_timestamp('2019-02-01'), 5], [_convert_date_string_to_timestamp('2019-03-01'), 6], [_convert_date_string_to_timestamp('2019-04-01'), 7], [_convert_date_string_to_timestamp('2019-05-01'), 8]],
+                        'data': [[_convert_date_string_to_timestamp('2019-02-01 12:13:14'), 5], [_convert_date_string_to_timestamp('2019-03-01 13:14:15'), 6], [_convert_date_string_to_timestamp('2019-04-01 14:15:16'), 7], [_convert_date_string_to_timestamp('2019-05-01 15:16:17'), 8]],
                         'name': 'that_job'
                     },
                     {
-                        'data': [[_convert_date_string_to_timestamp('2019-02-01'), 1], [_convert_date_string_to_timestamp('2019-03-01'), 2], [_convert_date_string_to_timestamp('2019-04-01'), 3], [_convert_date_string_to_timestamp('2019-05-01'), 4]],
+                        'data': [[_convert_date_string_to_timestamp('2019-02-01 12:13:14'), 1], [_convert_date_string_to_timestamp('2019-03-01 13:14:15'), 2], [_convert_date_string_to_timestamp('2019-04-01 14:15:16'), 3], [_convert_date_string_to_timestamp('2019-05-01 15:16:17'), 4]],
                         'name': 'this_job'
                     }
                 ]
@@ -125,33 +125,33 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
         os.environ['MONITOR_NAME'] = 'this_job'
 
         track_production_metrics('MSE', {
-            '2019-02-01': numpy.int8(1),
-            '2019-03-01': numpy.int16(2),
-            '2019-04-01': numpy.int32(3),
-            '2019-05-01': numpy.int64(4)
+            '2019-02-01 12:13:14': numpy.int8(1),
+            '2019-03-01 13:14:15': numpy.int16(2),
+            '2019-04-01 14:15:16': numpy.int32(3),
+            '2019-05-01 15:16:17': numpy.int64(4)
         })
 
         track_production_metrics('Customer Response (%)', {
-            '2029-02-02': numpy.float16(17.56),
-            '2029-03-02': numpy.float16(17.57),
-            '2029-04-02': numpy.float32(17.53),
-            '2029-05-02': numpy.float64(17.43)
+            '2029-02-02 16:17:18': numpy.float16(17.56),
+            '2029-03-02 18:19:20': numpy.float16(17.57),
+            '2029-04-02 19:20:21': numpy.float32(17.53),
+            '2029-05-02 20:21:22': numpy.float64(17.43)
         })
 
         os.environ['MONITOR_NAME'] = 'that_job'
 
         track_production_metrics('MSE', {
-            '2019-02-01': numpy.int8(5),
-            '2019-03-01': numpy.int16(6),
-            '2019-04-01': numpy.int32(7),
-            '2019-05-01': numpy.int64(8)
+            '2019-02-01 12:13:14': numpy.int8(5),
+            '2019-03-01 13:14:15': numpy.int16(6),
+            '2019-04-01 14:15:16': numpy.int32(7),
+            '2019-05-01 15:16:17': numpy.int64(8)
         })
 
         track_production_metrics('Customer Response (%)', {
-            '2029-02-02': numpy.float16(27.56),
-            '2029-03-02': numpy.float16(27.57),
-            '2029-04-02': numpy.float32(27.53),
-            '2029-05-02': numpy.float64(27.43)
+            '2029-02-02 16:17:18': numpy.float16(27.56),
+            '2029-03-02 18:19:20': numpy.float16(27.57),
+            '2029-04-02 19:20:21': numpy.float32(27.53),
+            '2029-05-02 20:21:22': numpy.float64(27.43)
         })
 
         expected_data = [
@@ -164,19 +164,19 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 'series': [
                     {
                         'data': [
-                            [_convert_date_string_to_timestamp('2029-02-02'),_cast_to_float_like_and_then_back(27.56,numpy.float16)],
-                            [_convert_date_string_to_timestamp('2029-03-02'), _cast_to_float_like_and_then_back(27.57, numpy.float16)],
-                            [_convert_date_string_to_timestamp('2029-04-02'), _cast_to_float_like_and_then_back(27.53, numpy.float32)],
-                            [_convert_date_string_to_timestamp('2029-05-02'), _cast_to_float_like_and_then_back(27.43, numpy.float64)]
+                            [_convert_date_string_to_timestamp('2029-02-02 16:17:18'),_cast_to_float_like_and_then_back(27.56,numpy.float16)],
+                            [_convert_date_string_to_timestamp('2029-03-02 18:19:20'), _cast_to_float_like_and_then_back(27.57, numpy.float16)],
+                            [_convert_date_string_to_timestamp('2029-04-02 19:20:21'), _cast_to_float_like_and_then_back(27.53, numpy.float32)],
+                            [_convert_date_string_to_timestamp('2029-05-02 20:21:22'), _cast_to_float_like_and_then_back(27.43, numpy.float64)]
                         ],
                         'name': 'that_job'
                     },
                     {
                         'data': [
-                            [_convert_date_string_to_timestamp('2029-02-02'), _cast_to_float_like_and_then_back(17.56, numpy.float16)],
-                            [_convert_date_string_to_timestamp('2029-03-02'), _cast_to_float_like_and_then_back(17.57, numpy.float16)],
-                            [_convert_date_string_to_timestamp('2029-04-02'), _cast_to_float_like_and_then_back(17.53, numpy.float32)],
-                            [_convert_date_string_to_timestamp('2029-05-02'), _cast_to_float_like_and_then_back(17.43, numpy.float64)]
+                            [_convert_date_string_to_timestamp('2029-02-02 16:17:18'), _cast_to_float_like_and_then_back(17.56, numpy.float16)],
+                            [_convert_date_string_to_timestamp('2029-03-02 18:19:20'), _cast_to_float_like_and_then_back(17.57, numpy.float16)],
+                            [_convert_date_string_to_timestamp('2029-04-02 19:20:21'), _cast_to_float_like_and_then_back(17.53, numpy.float32)],
+                            [_convert_date_string_to_timestamp('2029-05-02 20:21:22'), _cast_to_float_like_and_then_back(17.43, numpy.float64)]
                         ],
                         'name': 'this_job'
                     }
@@ -190,11 +190,11 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 },
                 'series': [
                     {
-                        'data': [[_convert_date_string_to_timestamp('2019-02-01'), 5], [_convert_date_string_to_timestamp('2019-03-01'), 6], [_convert_date_string_to_timestamp('2019-04-01'), 7], [_convert_date_string_to_timestamp('2019-05-01'), 8]],
+                        'data': [[_convert_date_string_to_timestamp('2019-02-01 12:13:14'), 5], [_convert_date_string_to_timestamp('2019-03-01 13:14:15'), 6], [_convert_date_string_to_timestamp('2019-04-01 14:15:16'), 7], [_convert_date_string_to_timestamp('2019-05-01 15:16:17'), 8]],
                         'name': 'that_job'
                     },
                     {
-                        'data': [[_convert_date_string_to_timestamp('2019-02-01'), 1], [_convert_date_string_to_timestamp('2019-03-01'), 2], [_convert_date_string_to_timestamp('2019-04-01'), 3], [_convert_date_string_to_timestamp('2019-05-01'), 4]],
+                        'data': [[_convert_date_string_to_timestamp('2019-02-01 12:13:14'), 1], [_convert_date_string_to_timestamp('2019-03-01 13:14:15'), 2], [_convert_date_string_to_timestamp('2019-04-01 14:15:16'), 3], [_convert_date_string_to_timestamp('2019-05-01 15:16:17'), 4]],
                         'name': 'this_job'
                     }
                 ]
@@ -215,4 +215,4 @@ def _cast_to_float_like_and_then_back(value, float_like_class):
 
 def _convert_date_string_to_timestamp(date_string):
     from datetime import datetime
-    return datetime.strptime(date_string, "%Y-%m-%d").timestamp() * 1000
+    return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S").timestamp() * 1000

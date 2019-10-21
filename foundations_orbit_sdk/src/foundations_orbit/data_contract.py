@@ -71,7 +71,9 @@ class DataContract(object):
     def _save_to_redis(self, project_name, monitor_name, contract_name, inference_period, serialized_output):
         from foundations_contrib.global_state import redis_connection
         key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}'
+        counter_key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}:counter'
         redis_connection.hset(key, inference_period, serialized_output)
+        redis_connection.incr(counter_key)
 
     def validate(self, dataframe_to_validate, inference_period=None):
         import datetime

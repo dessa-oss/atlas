@@ -76,32 +76,6 @@ class TestDeploymentWrapper(Spec):
         deployment_wrapper.wait_for_deployment_to_complete(2)
         mock_time_sleep.assert_called_once_with(2)
 
-    @quarantine
-    @patch('foundations_internal.remote_exception.check_result')
-    def test_fetch_job_results_calls_check_results_with_correct_arguments(self, check_result_mock):
-        deployment = Mock()
-        deployment.fetch_job_results.return_value = 'result'
-        deployment.job_name.return_value = 'whatever'
-        deployment.is_job_complete.return_value = True
-
-        deployment_wrapper = DeploymentWrapper(deployment)
-        deployment_wrapper.fetch_job_results()
-
-        check_result_mock.assert_called_once_with('whatever', 'result')
-    
-    @quarantine
-    @patch('foundations_internal.remote_exception.check_result')
-    def test_fetch_job_results_returns_check_result_return_value(self, check_result_mock):
-        deployment = Mock()
-        deployment.fetch_job_results.return_value = 'result'
-        deployment.job_name.return_value = 'whatever'
-        deployment.is_job_complete.return_value = True
-
-        check_result_mock.return_value = 'Result is checked'
-
-        deployment_wrapper = DeploymentWrapper(deployment)
-        self.assertEqual(deployment_wrapper.fetch_job_results(), 'Result is checked')
-
     def test_get_job_logs_returns_deployment_object_get_job_logs_return_value(self):
         deployment = Mock()
         deployment.get_job_logs.return_value = 'some fancy logs'

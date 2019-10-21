@@ -16,6 +16,7 @@ from foundations_spec import *
 from typing import List
 from orbit_acceptance.mixins.contrib_path_mixin import ContribPathMixin
 
+@quarantine
 class TestOrbitDeployModelViaCli(Spec, ContribPathMixin):
 
     port = 31998

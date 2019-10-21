@@ -15,6 +15,7 @@ class TestCanRunJob(Spec):
         from scheduler_acceptance.cleanup import cleanup
         cleanup()
 
+    @quarantine
     def test_can_run_job(self):
         from scheduler_acceptance.fixtures.stages import add_two_numbers
         from foundations_contrib.global_state import redis_connection

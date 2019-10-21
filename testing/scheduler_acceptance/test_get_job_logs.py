@@ -10,6 +10,7 @@ from scheduler_acceptance.mixins.node_aware_mixin import NodeAwareMixin
 import foundations
 from foundations_contrib.global_state import config_manager
 
+@quarantine
 class TestGetJobLogs(Spec, NodeAwareMixin):
 
     @let

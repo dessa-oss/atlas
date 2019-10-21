@@ -5,4 +5,5 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 10 2019
 """
 
-from foundations_monitor_rest_api.v1.controllers import *
+from test.v1.controllers.test_monitors_controller import TestMonitorsController
+from test.v1.controllers.test_monitor_controller import TestMonitorController

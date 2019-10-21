@@ -26,6 +26,7 @@ class TestJobUsesVenvCreatedByFoundations(Spec):
     def tear_down(self):
         config_manager.pop_config()
 
+    @quarantine
     def test_job_uses_virtualenv_created_by_foundations_when_running(self):
         from fnmatch import fnmatch
 

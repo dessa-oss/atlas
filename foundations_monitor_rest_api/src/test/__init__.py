@@ -5,4 +5,8 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 10 2019
 """
 
-from foundations_monitor_rest_api.v1.controllers import *
+import os
+os.environ['TZ'] = 'EST'
+
+from test.test_global_state import TestGlobalState
+from test.v1 import *
