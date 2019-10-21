@@ -16,7 +16,6 @@
   cursor: pointer;
 
   &:hover {
-    background-color: #D9EBFF;
     border-left: 3px solid #024B9C;
     padding-left: 17px;
   }
@@ -30,6 +29,12 @@
     width: 10%;
     text-align: right;
   }
+}
+
+.selected-row {
+  background-color: #D9EBFF;
+  border-left: 3px solid #024B9C;
+  padding-left: 17px;
 }
 
 .validation-results-table-row-header {

@@ -406,7 +406,11 @@ class SystemHealth extends Component {
                   <div className="val-contract-table-cell">Contract Name</div>
                   <div className="val-critical-table-cell" />
                 </div>
-                <ValidationResultsTable location={location} onClickRow={this.selectRow} />
+                <ValidationResultsTable
+                  location={location}
+                  onClickRow={this.selectRow}
+                  selectedRow={selectedValidationResult}
+                />
               </div>
               <div className="right-side">
                 <ValidationResultsDetails selectedValidationResult={selectedValidationResult} />

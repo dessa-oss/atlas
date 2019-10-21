@@ -13,6 +13,7 @@ class ValidationResultsTableRow extends Component {
     };
 
     this.onClick = this.onClick.bind(this);
+    this.isSelectedRow = this.isSelectedRow.bind(this);
   }
 
   onClick() {
@@ -32,6 +33,23 @@ class ValidationResultsTableRow extends Component {
     });
   }
 
+  isSelectedRow() {
+    const {
+      time,
+      monitorName,
+      contractName,
+      numCritical
+    } = this.state;
+    const { selectedRow } = this.props;
+
+    return (
+      time === selectedRow.time
+      && monitorName === selectedRow.monitorName
+      && contractName === selectedRow.contractName
+      && numCritical === selectedRow.numCritical
+    );
+  }
+
   render() {
     const {
       time,
@@ -40,8 +58,10 @@ class ValidationResultsTableRow extends Component {
       numCritical
     } = this.state;
 
+    const selectedClass = this.isSelectedRow() ? "selected-row" : "";
+
     return (
-      <div className="validation-results-table-row" onClick={this.onClick}>
+      <div className={`validation-results-table-row ${selectedClass}`} onClick={this.onClick}>
         <div className="val-time-table-cell">{time}</div>
         <div className="val-monitor-table-cell">{monitorName}</div>
         <div className="val-contract-table-cell">{contractName}</div>
@@ -56,7 +76,8 @@ ValidationResultsTableRow.propTypes = {
   monitorName: PropTypes.string,
   contractName: PropTypes.string,
   numCritical: PropTypes.string,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  selectedRow: PropTypes.object
 };
 
 ValidationResultsTableRow.defaultProps = {
@@ -64,7 +85,8 @@ ValidationResultsTableRow.defaultProps = {
   monitorName: "Invalid monitor name",
   contractName: "Invalid contract name",
   numCritical: "0",
-  onClick: () => {}
+  onClick: () => {},
+  selectedRow: {}
 };
 
 

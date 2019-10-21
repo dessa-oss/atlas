@@ -29,10 +29,19 @@ class ValidationResultsTable extends Component {
 
   render() {
     const { rows } = this.state;
+    const { selectedRow } = this.props;
+
+    let rowsWithProps = [];
+    if (rows) {
+      rowsWithProps = rows.map(row => React.cloneElement(
+        row,
+        { selectedRow: selectedRow }
+      ));
+    }
 
     return (
       <div className="validation-results-table">
-        {rows}
+        {rowsWithProps}
       </div>
     );
   }
@@ -40,12 +49,14 @@ class ValidationResultsTable extends Component {
 
 ValidationResultsTable.propTypes = {
   location: PropTypes.object,
-  onClickRow: PropTypes.func
+  onClickRow: PropTypes.func,
+  selectedRow: PropTypes.object
 };
 
 ValidationResultsTable.defaultProps = {
   location: { state: {} },
-  onClickRow: () => {}
+  onClickRow: () => {},
+  selectedRow: {}
 };
 
 export default ValidationResultsTable;
