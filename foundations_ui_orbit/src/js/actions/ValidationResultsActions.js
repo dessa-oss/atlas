@@ -1,6 +1,7 @@
 import React from "react";
 import { get, post } from "./BaseActions";
 import ValidationResultsTableRow from "../components/PackagePage/SystemHealth/ValidationResultsTableRow";
+import ValidationResultsTestsListRow from "../components/PackagePage/SystemHealth/ValidationResultsTestListRow";
 
 const ValidationResultsActions = {
   getValidationResultList: projectName => {
@@ -15,7 +16,7 @@ const ValidationResultsActions = {
       });
   },
 
-  getRows: (results, onClickRow) => {
+  getResultRows: (results, onClickRow) => {
     return results.map(result => {
       const key = result.inference_period + result.model_package + result.data_contract;
       return (
@@ -46,6 +47,35 @@ const ValidationResultsActions = {
       .catch(error => {
         return {};
       });
+  },
+
+  createTestRowIfExists: (key, label, allTestResults, allRows, onSelectRow) => {
+    if (key in allTestResults) {
+      const testResult = allTestResults[key];
+      allRows.push(
+        <ValidationResultsTestsListRow
+          key={key}
+          objKey={key}
+          label={label}
+          validationTestResult={testResult}
+          onSelectRow={onSelectRow}
+        />
+      );
+    }
+  },
+
+  getTestRows: (validationResult, onSelectRow) => {
+    const allRows = [];
+    ValidationResultsActions.createTestRowIfExists("schema", "Schema Check", validationResult, allRows, onSelectRow);
+    ValidationResultsActions.createTestRowIfExists(
+      "population_shift", "Population Shift", validationResult, allRows, onSelectRow
+    );
+    ValidationResultsActions.createTestRowIfExists(
+      "data_quality", "Special Values", validationResult, allRows, onSelectRow
+    );
+    ValidationResultsActions.createTestRowIfExists("min", "Min", validationResult, allRows, onSelectRow);
+    ValidationResultsActions.createTestRowIfExists("max", "Max", validationResult, allRows, onSelectRow);
+    return allRows;
   }
 };
 

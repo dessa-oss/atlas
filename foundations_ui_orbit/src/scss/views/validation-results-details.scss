@@ -8,7 +8,6 @@
     height: 40%;
     width: 100%;
     display: inline-flex;
-    border-bottom: solid 1px #dcdcdc;
 
     .overview-summary, .overview-graph, .overview-graph-stats {
       width: 30%;
@@ -58,5 +57,51 @@
     margin-top: 5px;
     color: #828282;
     display: inline-block;
+  }
+
+  .validation-results-tests {
+    .validation-results-tests-list {
+      display: inline-block;
+      width: 25%;
+      height: 100%;
+      overflow-y: scroll;
+
+      .validation-results-tests-list-row {
+        border: solid 1px #E3E3E3;
+        padding: 25px;
+        cursor: pointer;
+
+        .validation-results-tests-list-row-header, .validation-results-tests-list-row-summary {
+          display: inline-block;
+        }
+
+        .validation-results-tests-list-row-header {
+          width: 60%;
+          font-size: 15px;
+          line-height: 100%;
+        }
+
+        .validation-results-tests-list-row-summary {
+          width: 40%;
+          
+          .validation-results-tests-list-row-summary-labels, .validation-results-tests-list-row-summary-values {
+            display: inline-block;
+            color: #A6A4A4;
+          }
+
+          .validation-results-tests-list-row-summary-labels {
+            margin-left: 12px;
+          }
+        }
+      }
+    }
+
+    .validation-results-tests-pane {
+      display: inline-block;
+      background-color: blue;
+      width: calc(75% - 100px);
+      margin-left: 10px;
+      height: 100%;
+    }
   }
 }

@@ -23,7 +23,7 @@ class ValidationResultsTable extends Component {
     const { onClickRow } = this.props;
 
     const result = await ValidationResultsActions.getValidationResultList(projectName);
-    const rows = ValidationResultsActions.getRows(result, onClickRow);
+    const rows = ValidationResultsActions.getResultRows(result, onClickRow);
     this.setState({ rows: rows });
   }
 

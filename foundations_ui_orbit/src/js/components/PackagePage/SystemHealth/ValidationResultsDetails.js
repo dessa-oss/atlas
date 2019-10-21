@@ -46,7 +46,7 @@ class ValidationResultsDetails extends Component {
     let mainRender = (
       <div className="validation-results-details">
         <ValidationResultsOverview validationResult={validationResult} />
-        <ValidationResultsTests />
+        <ValidationResultsTests validationResult={validationResult} />
       </div>
     );
     if (!validationResult || CommonActions.isEmptyObject(validationResult)) {
