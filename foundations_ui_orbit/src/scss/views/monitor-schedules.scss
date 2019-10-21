@@ -1,0 +1,86 @@
+.monitor-schedules-container {
+  margin-left: 80px;
+  width: 95%;
+  height: 90%;
+  
+
+  .section-title {
+    font-size: 22px;
+    color: #024B9C;
+    font-weight: 900;
+  }
+  
+  .schedule-details {
+    width: 100%;
+    display: inline-flex;
+
+    .monitor-listing, .monitor-summary {
+      height: 800px;
+      border: 1px solid #DFDFDF;
+      border-radius: 5px;
+      display: inline-block;
+      background-color: #fff;
+    }
+
+    .monitor-listing {
+      margin-right: 40px;
+      width: 30%;
+      max-width: 450px;
+      overflow-y: scroll;
+  
+      ul {
+        width: 100%;
+        margin: 0 auto;
+        padding: 0;
+        li {
+          padding-top: 10px;
+          padding-bottom: 10px;
+          border-bottom: 1px solid #DFDFDF;
+          width: 100%;
+          text-align: center;
+          &:nth-child(1) {
+            padding-top: 20px;
+            padding-bottom: 20px;
+            div {
+              font-weight: 900;
+            }
+          }
+          div {
+            width: 33%;
+            display: inline-block;
+          }
+        }
+      }
+  
+    }
+  
+    .monitor-summary {
+      width: 100%;
+
+      .monitor-info {
+        border: 1px solid blue;
+        height: 40%;
+        .monitor-overview, .monitor-details, .monitor-calendar {
+          width: 33%;
+          height: 100%;
+          border: 1px solid red;
+          display: inline-block;
+        }
+      }
+
+      .monitor-jobs-heading {
+        height: 4%;
+        border: 1px solid orange;
+      }
+
+      .monitor-jobs {
+        border: 1px solid purple;
+        height: 55%;
+        ul {
+          padding: 0;
+        }
+      }
+    }
+  }
+
+}
