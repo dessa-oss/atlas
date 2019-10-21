@@ -25,7 +25,7 @@ class MonitorController:
             pause(project_name, monitor_name, env)
             return self._response(HTTPStatus.NO_CONTENT)
         else:
-            print('failed to trigger appropriate condition')
+            return self._response(HTTPStatus.BAD_REQUEST)
 
     def _response(self, error, cookie=None):
         from foundations_core_rest_api_components.response import Response
