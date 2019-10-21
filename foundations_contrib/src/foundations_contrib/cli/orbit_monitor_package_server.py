@@ -86,6 +86,9 @@ def resume(project_name, monitor_name, env):
 
 
 def get_by_project(project_name, env=None):
+    from foundations_contrib.global_state import config_manager
+    from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler
+
     if env is None:
         env = 'scheduler'
 
@@ -94,9 +97,8 @@ def get_by_project(project_name, env=None):
         'job_id_prefix': project_name
     }
 
-    from foundations_contrib.global_state import config_manager
-    from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler
     cron_job_scheduler = CronJobScheduler(config_manager.config()['scheduler_url'])
+    print('SUBMITTED PARAMETER:', job_scheduler_request_param)
     return cron_job_scheduler.get_job_with_params(job_scheduler_request_param)
 
 

@@ -7,10 +7,12 @@ Written by Susan Davis <s.davis@dessa.com>, 10 2019
 
 from foundations_core_rest_api_components.utils.api_resource import api_resource
 
+
 @api_resource('/api/v1/projects/<string:project_name>/monitors')
 class MonitorController:
     
     def index(self):
+        from foundations_contrib.cli.orbit_monitor_package_server import get_by_project
         project_name = self.params.pop('project_name')
-        
-        return {}
+        env = 'scheduler'
+        return get_by_project(project_name, env)

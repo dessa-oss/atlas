@@ -8,7 +8,7 @@ Written by Susan Davis <s.davis@dessa.com>, 10 2019
 from foundations_spec import *
 from foundations_monitor_rest_api.v1.controllers.monitor_controller import MonitorController
 
-@skip('Work in progress')
+
 class TestMonitorController(Spec):
 
     @let
@@ -33,7 +33,7 @@ class TestMonitorController(Spec):
     # request for monitors for a project that doesn't exist then produces 404
     # request for monitors should return list with expected projects based on configured monitors for a project
     
-    def test_request_for_monitors_with_project_returns_monitors(self):
+    def test_request_for_monitors_by_project_returns_monitors_by_calling_function_of_the_monitor_package_server(self):
         expected_results = {
             self.monitor_id: {
                 'next_run_time': 1571433194,
@@ -50,8 +50,9 @@ class TestMonitorController(Spec):
                 'status': 'active'
             }
         }
-        
-        self.cron_job_scheduler.get_job_with_params.return_when(expected_results, {'job_id_prefix': self.project_name})
+
+        mock_get_project = self.patch('foundations_contrib.cli.orbit_monitor_package_server.get_by_project', ConditionalReturn())
+        mock_get_project.return_when(expected_results, self.project_name, 'scheduler')
 
         monitor_controller = MonitorController()
         monitor_controller.params = {'project_name': self.project_name}
