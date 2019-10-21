@@ -69,3 +69,8 @@ class TestOrbitMonitorPackageServer(Spec):
         from foundations_contrib.cli.orbit_monitor_package_server import delete
         delete(self.project_name, self.monitor_name, self.env)
         self.load.assert_called_once_with(self.env)
+
+    def test_get_called_cron_job_scheduler_get_job_with_params_with_project_name_as_parameter(self):
+        from foundations_contrib.cli.orbit_monitor_package_server import get_by_project
+        get_by_project(self.project_name, self.env)
+        self.cron_job_scheduler.get_job_with_params.assert_called_once_with({'job_id_prefix':  self.project_name})

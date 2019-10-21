@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 def delete(project_name, monitor_name, env):
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.delete_job(monitor_id)
     _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
@@ -73,13 +74,31 @@ def start(job_directory, command, project_name, name, env):
 
     bundle.cleanup()
 
+
 def pause(project_name, monitor_name, env):
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.pause_job(monitor_id)
     _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
 
+
 def resume(project_name, monitor_name, env):
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.resume_job(monitor_id)
     _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
+
+
+def get_by_project(project_name, env=None):
+    if env is None:
+        env = 'scheduler'
+
+    _update_config(env)
+    job_scheduler_request_param = {
+        'job_id_prefix': project_name
+    }
+
+    from foundations_contrib.global_state import config_manager
+    from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler
+    cron_job_scheduler = CronJobScheduler(config_manager.config()['scheduler_url'])
+    return cron_job_scheduler.get_job_with_params(job_scheduler_request_param)
+
 
 def _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback):
     from foundations_contrib.global_state import config_manager
@@ -91,9 +110,11 @@ def _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback):
     cron_job_scheduler = CronJobScheduler(config_manager.config()['scheduler_url'])
     cron_scheduler_callback(cron_job_scheduler, monitor_id)
 
+
 def _update_config(env):
     from foundations_contrib.cli.job_submission.config import load
     load(env)
+
 
 def _get_username():
     import os
@@ -124,12 +145,14 @@ def _get_volume_mounts_for_spec(config, project_name, monitor_name):
 
     return working_dir_root_path, job_mount_path, job_results_root_path, container_config_root_path
 
+
 def _get_monitor_gpu_spec(foundations_context):
     resources = foundations_context.job_resources()
     gpu_spec = {
         "num_gpus": resources.num_gpus
     }
     return gpu_spec
+
 
 def _get_monitor_job_spec(project_name, monitor_name, username, job_config, config, foundations_context):
     from pathlib import Path
