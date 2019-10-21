@@ -11,6 +11,7 @@ from scheduler_acceptance.mixins.job_deploy_function_test_scaffold import JobDep
 import foundations
 from contextlib import contextmanager
 
+@quarantine
 class TestSubmitJobViaCLI(Spec, JobDeployFunctionTestScaffold):
 
     @let
