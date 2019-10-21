@@ -1,4 +1,5 @@
 import React from "react";
+import moment from "moment";
 import { get, post } from "./BaseActions";
 import ValidationResultsTableRow from "../components/PackagePage/SystemHealth/ValidationResultsTableRow";
 
@@ -18,11 +19,12 @@ const ValidationResultsActions = {
   getRows: (results, onClickRow) => {
     return results.map(result => {
       const key = result.inference_period + result.model_package + result.data_contract;
+      const date = moment(result.inference_period).format("YYYY-MM-DD").toString();
       return (
         <ValidationResultsTableRow
           key={key}
           onClick={onClickRow}
-          time={result.inference_period}
+          time={date}
           monitorName={result.model_package}
           contractName={result.data_contract}
           numCritical={2}
