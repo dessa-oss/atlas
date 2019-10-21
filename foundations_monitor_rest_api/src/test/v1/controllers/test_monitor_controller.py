@@ -58,3 +58,7 @@ class TestMonitorController(Spec):
         mock_pause = self.patch('foundations_contrib.cli.orbit_monitor_package_server.pause')
         self._set_params_and_put({'status': 'pause'})
         mock_pause.assert_called_once_with(self.project_name, self.monitor_name, 'scheduler')
+
+    def test_put_request_returns_400_status_code_if_no_status_passed(self):
+        response = self._set_params_and_put()
+        self.assertEqual(400, response.status())
