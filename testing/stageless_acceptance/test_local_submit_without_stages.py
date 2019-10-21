@@ -12,6 +12,8 @@ import foundations.projects
 
 from pandas.testing import assert_frame_equal
 
+
+@quarantine
 class TestLocalSubmitWithoutStages(Spec):
 
     # @set_up_class
