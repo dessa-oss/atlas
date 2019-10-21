@@ -20,7 +20,7 @@ class ValidationReport(object):
         attributes = listing_object.attributes        
 
         inference_period = attributes['inference_period']
-        monitor_package = attributes['model_package']
+        monitor_package = attributes['monitor_package']
         data_contract = attributes['data_contract']
 
         redis_key = f'projects:{project_name}:monitors:{monitor_package}:validation:{data_contract}'

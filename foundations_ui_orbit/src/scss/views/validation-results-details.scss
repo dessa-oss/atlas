@@ -5,17 +5,18 @@
   border-radius: 5px;
 
   .validation-results-overview {
-    background-color: red;
     height: 40%;
     width: 100%;
     display: inline-flex;
+    border-bottom: solid 1px #dcdcdc;
 
     .overview-summary, .overview-graph, .overview-graph-stats {
       width: 30%;
       height: 100%;
       background-color: #fff;
       display: inline-block;
-      border: 1px solid black;
+      padding: 30px;
+      padding-top: 40px;
     }
 
     .overview-summary {
@@ -31,10 +32,31 @@
         }
       }
     }
+
+    .overview-labels, .overview-values {
+      display: inline-block;
+      margin-top: 20px;
+      color: #828282;
+      line-height: 20px;
+    }
+
+    .overview-labels {
+      margin-right: 30px;
+    }
   }
 
   .validation-results-tests {
-    background-color: blue;
     height: 60%;
+  }
+
+  .overview-heading {
+    font-size: 25px;
+    color: #5C5C5C;
+  }
+
+  .overview-contract-name {
+    margin-top: 5px;
+    color: #828282;
+    display: inline-block;
   }
 }

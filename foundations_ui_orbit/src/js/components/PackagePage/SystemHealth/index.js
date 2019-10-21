@@ -413,7 +413,7 @@ class SystemHealth extends Component {
                 />
               </div>
               <div className="right-side">
-                <ValidationResultsDetails selectedValidationResult={selectedValidationResult} />
+                <ValidationResultsDetails location={location} selectedValidationResult={selectedValidationResult} />
               </div>
             </div>
           </div>

@@ -94,3 +94,14 @@ See assets/svgs/README.md for further information on SVG conversion process
   border: none;
   cursor: pointer;
 }
+
+.i--icon-open {
+  background-image: url('../assets/svgs/icon-open.svg');
+  @include icon-helper;
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
+}
