@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 import requests
 
-@quarantine
+
 class TestSchedulerMonitorPackageViaRESTAPI(Spec):
 
     sleep_time = 1
@@ -27,11 +27,19 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         return self._gen_unique_word()
 
     @let
+    def monitor_name_2(self):
+        return self._gen_unique_word()
+
+    @let
     def invalid_monitor_name(self):
         return self._gen_unique_word()
 
     @let
     def project_name(self):
+        return self.faker.word()
+
+    @let
+    def project_name_2(self):
         return self.faker.word()
 
     @let
@@ -48,14 +56,16 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
 
     @let
     def orbit_monitor_base_api_url(self):
-        return f'http://localhost:5000/api/v1/projects/{self.project_name}/monitors'
+        return f'http://localhost:37222/api/v1/projects/{self.project_name}/monitors'
     
+    @skip('not implemented')
     def test_pause_scheduled_monitor_package_via_api(self):
         self._start_and_wait_for_monitor()
 
         pause_response = self._pause_monitor()
         self.assertEqual(204, pause_response.status_code)
 
+    @skip('not implemented')
     def test_pause_scheduled_monitor_package_via_api_halts_execution_but_can_resume_later(self):
         self._start_and_wait_for_monitor()
         pause_response = self._pause_monitor()
@@ -63,36 +73,87 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         resume_response = self._resume_monitor()
         self.assertEqual(204, pause_response.status_code)
 
+    @skip('not implemented')
     def test_attempting_to_pause_invalid_monitor_should_produce_404(self):
         self._start_and_wait_for_monitor()
 
         pause_response = self._pause_monitor(monitor_name=self.invalid_monitor_name)
         self.assertEqual(404, pause_response.status_code)
 
+    @skip('not implemented')
     def test_attempting_to_resume_invalid_monitor_should_produce_404(self):
         self._start_and_wait_for_monitor()
 
         resume_response = self._resume_monitor(monitor_name=self.invalid_monitor_name)
         self.assertEqual(404, resume_response.status_code)
-    
-    def _start_and_wait_for_monitor(self):
-        start_response = self._start_monitor()
-        self.assertEqual(201, start_response.status_code)
-    
-    def _start_monitor(self):
-        payload = {
-            'name': self.monitor_name,
-            'commands': self.commands,
-            'job_directory': self.job_directory_binary
+
+    def test_get_scheduled_monitors_returns_scheduled_monitors(self):
+        import time
+
+        self._start_and_wait_for_monitor(self.monitor_name)
+        self._start_and_wait_for_monitor(self.monitor_name_2)
+
+        monitors_response = self._get_all_monitors()
+        monitors = monitors_response.json()
+        self.assertIn(f'{self.project_name}-{self.monitor_name}', monitors)
+        self.assertIn(f'{self.project_name}-{self.monitor_name_2}', monitors)
+
+    def test_get_scheduled_monitor_returns_scheduled_monitor(self):
+        self._start_and_wait_for_monitor(self.monitor_name)
+
+        monitor_response = self._get_monitors(self.monitor_name)
+        self.assertEqual(200, monitor_response.status_code)
+        monitor_content = monitor_response.json()[f'{self.project_name}-{self.monitor_name}']
+
+        expected_schedule = {
+            'day': '*',
+            'day_of_week': '*',
+            'hour': '*',
+            'minute': '*',
+            'month': '*',
+            'second': '*',
+            'week': '*',
+            'year': '*'
         }
 
-        return requests.post(self.orbit_monitor_base_api_url, json=payload)
+        self.assertEqual(200, monitor_response.status_code)
+        self.assertEqual('paused', monitor_content['status'])
+        self.assertEqual(expected_schedule, monitor_content['schedule'])
+        self.assertIsNone(monitor_content['next_run_time'])
+
+    def test_delete_scheduled_monitor_successfully_deletes_monitor(self):
+        self._start_and_wait_for_monitor(self.monitor_name)
+
+        monitor_package = f'{self.project_name}-{self.monitor_name}'
+
+        monitor_response = self._get_all_monitors()
+        self.assertIn(monitor_package, monitor_response.json())
+
+        delete_response = self._delete_monitor(self.monitor_name)
+        self.assertEqual(204, delete_response.status_code)
+
+        monitor_response = self._get_all_monitors()
+        self.assertNotIn(monitor_package, monitor_response.json())
+
+    def test_delete_nonexistent_monitor_returns_404(self):
+        monitor_package = f'{self.project_name}-{self.monitor_name}'
+
+        delete_response = self._delete_monitor(self.monitor_name)
+        self.assertEqual(404, delete_response.status_code)
+
+    def _start_and_wait_for_monitor(self, name):
+        start_response = self._start_monitor(name)
+        self.assertEqual(0, start_response.returncode)
+
+    def _start_monitor(self, name):
+        import subprocess
+        return subprocess.run(['python', '-m', 'foundations', 'monitor', 'start', f'--project_name={self.project_name}', f'--name={name}', '.', 'main.py'], cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/')
 
     def _get_all_monitors(self):
         return requests.get(self.orbit_monitor_base_api_url)
 
     def _get_monitors(self, monitor_name=None):
-        monitor_name = monitor_name if self.monitor_name is None else monitor_name
+        monitor_name = monitor_name if self.monitor_name is None else self.monitor_name
         monitor_url = f'{self.orbit_monitor_base_api_url}/{monitor_name}'
         return requests.get(monitor_url)
 
@@ -111,4 +172,4 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
     def _delete_monitor(self, monitor_name=None):
         monitor_name = monitor_name if self.monitor_name is None else monitor_name
         monitor_url = f'{self.orbit_monitor_base_api_url}/{self.monitor_name}'
-        return requests.delete(monitor_url, json=payload)
+        return requests.delete(monitor_url)

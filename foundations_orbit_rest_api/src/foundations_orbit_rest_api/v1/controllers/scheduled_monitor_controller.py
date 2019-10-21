@@ -31,5 +31,24 @@ class ScheduledMonitorController(object):
 
         return Response('ScheduledMonitor', response, status=200, fallback=fallback)
 
+    def delete(self):
+        from foundations_orbit_rest_api.v1.models.scheduled_monitor import ScheduledMonitor
+        from foundations_core_rest_api_components.lazy_result import LazyResult
+        from foundations_core_rest_api_components.response import Response
+
+        project_name = self.params.pop('project_name')
+        monitor_name = self.params.pop('name')
+
+        response = ScheduledMonitor.delete(project_name=project_name, name=monitor_name)
+
+        failure_response_data = {
+            'project_name': project_name,
+            'monitor_name': monitor_name,
+            'error': 'does not exist'
+        }
+
+        fallback = Response('asdf', LazyResult(lambda: failure_response_data), status=404)
+
+        return Response('ScheduledMonitor', response, status=204, fallback=fallback)
 
 
