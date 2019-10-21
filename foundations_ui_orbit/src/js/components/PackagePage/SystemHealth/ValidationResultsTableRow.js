@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import moment from "moment";
 import PropTypes from "prop-types";
+import CommonActions from "../../../actions/CommonActions";
 
 class ValidationResultsTableRow extends Component {
   constructor(props) {
@@ -42,13 +43,14 @@ class ValidationResultsTableRow extends Component {
       numCritical
     } = this.state;
     const { selectedRow } = this.props;
+    const thisRow = {
+      time: time,
+      monitorName: monitorName,
+      contractName: contractName,
+      numCritical: numCritical
+    };
 
-    return (
-      time === selectedRow.time
-      && monitorName === selectedRow.monitorName
-      && contractName === selectedRow.contractName
-      && numCritical === selectedRow.numCritical
-    );
+    return CommonActions.deepEqual(thisRow, selectedRow);
   }
 
   render() {
