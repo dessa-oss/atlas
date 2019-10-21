@@ -8,10 +8,12 @@ exports[`Shallow Renders Job Table 1`] = `
     className="job-table-container"
   >
     <JobTableButtons
+      buttonTensorboardEnabled={false}
       columns={Array []}
       getJobs={[Function]}
       hiddenColumns={Array []}
       projectName=""
+      reload={[Function]}
       selectAllJobs={[Function]}
       selectNoJobs={[Function]}
       selectedJobs={Array []}

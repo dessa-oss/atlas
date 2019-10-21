@@ -7,7 +7,7 @@ FROM tiangolo/uwsgi-nginx-flask:python3.6
 
 ARG main_file
 
-RUN python -m pip install --upgrade pip==18.1 && \
+RUN python -m pip install --upgrade pip==19.3 && \
         python -m pip install setuptools wheel && \
     curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.10.3/bin/linux/amd64/kubectl && \
         chmod +x kubectl && \

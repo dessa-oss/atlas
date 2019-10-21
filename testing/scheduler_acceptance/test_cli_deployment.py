@@ -10,6 +10,7 @@ from foundations_spec import *
 from scheduler_acceptance.mixins.metrics_fetcher import MetricsFetcher
 from scheduler_acceptance.mixins.node_aware_mixin import NodeAwareMixin
 
+@quarantine
 class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
     
     @let

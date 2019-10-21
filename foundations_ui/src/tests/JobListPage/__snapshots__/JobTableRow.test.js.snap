@@ -25,6 +25,7 @@ exports[`Shallow Renders Job Table Row 1`] = `
     isError={false}
     rowNumber={0}
     startTime=""
+    status="completed"
   />
   <StatusCell
     isError={false}

@@ -73,7 +73,7 @@ class CronJobScheduler(object):
     @_expect_code(200)
     def _get_jobs(self, params = None):
         if params:
-            return self._raw_api.get(self._jobs_uri(), json=params)
+            return self._raw_api.get(self._jobs_uri(), params=params)
         return self._raw_api.get(self._jobs_uri())
 
     def _jobs_uri(self):
