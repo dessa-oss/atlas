@@ -8,6 +8,7 @@ Written by Susan Davis <s.davis@dessa.com>, 10 2019
 from foundations_core_rest_api_components.utils.api_resource import api_resource
 from http import HTTPStatus
 
+
 @api_resource('/api/v1/projects/<string:project_name>/monitors/<string:monitor_name>')
 class MonitorController:
 
@@ -29,5 +30,4 @@ class MonitorController:
 
     def _response(self, error, cookie=None):
         from foundations_core_rest_api_components.response import Response
-
         return Response.constant(error.phrase, status=error.value, cookie=cookie)

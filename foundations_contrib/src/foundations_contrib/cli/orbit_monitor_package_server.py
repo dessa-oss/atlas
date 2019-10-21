@@ -13,7 +13,6 @@ def delete(project_name, monitor_name, env):
 
 def start(job_directory, command, project_name, name, env):    
     import os
-    import sys
     import yaml
     from os import path
     from foundations_contrib.change_directory import ChangeDirectory
@@ -53,7 +52,6 @@ def start(job_directory, command, project_name, name, env):
 
     if response.status_code != 200:
         raise RuntimeError(f'Unable to submit job bundle. {response.text}')
-        sys.exit(1)
 
     foundations_context = current_foundations_context()
     username = _get_username()
@@ -97,7 +95,6 @@ def get_by_project(project_name, env=None):
     }
 
     cron_job_scheduler = CronJobScheduler(config_manager.config()['scheduler_url'])
-    print('SUBMITTED PARAMETER:', job_scheduler_request_param)
     return cron_job_scheduler.get_job_with_params(job_scheduler_request_param)
 
 
@@ -195,7 +192,6 @@ def _get_monitor_job_spec(project_name, monitor_name, username, job_config, conf
                     "FOUNDATIONS_HOME": "/root/.foundations/"
                 },
             "network": "foundations-orbit"
-
     }
 
     worker_container_overrides = config.get('worker_container_overrides')

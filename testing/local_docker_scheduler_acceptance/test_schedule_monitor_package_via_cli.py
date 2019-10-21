@@ -10,6 +10,7 @@ from foundations_spec import *
 import subprocess
 from foundations_orbit_rest_api.v1.models.production_metric_set import ProductionMetricSet
 
+
 class TestScheduleMonitorPackageViaCli(Spec):
     
     @let
@@ -139,6 +140,7 @@ class TestScheduleMonitorPackageViaCli(Spec):
 
         metric_sets_after_resume = ProductionMetricSet.all(self.project_name).evaluate()
         self.assertIn(len(metric_sets_after_resume[0].series[0]['data']), [3, 4, 5])
+
 
     def test_delete_scheduled_monitor_package_removes_cron_job(self):
         import time
