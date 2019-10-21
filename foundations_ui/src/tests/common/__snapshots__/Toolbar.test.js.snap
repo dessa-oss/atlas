@@ -34,7 +34,7 @@ exports[`Shallow Renders Toolbar Home 1`] = `
     </li>
     <li>
       <a
-        href="https://dessa-foundations.readthedocs-hosted.com/en/demo_docs/"
+        href="https://www.atlas.dessa.com/docs"
         rel="noopener noreferrer"
         target="_blank"
       >
