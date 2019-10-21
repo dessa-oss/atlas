@@ -210,4 +210,4 @@ class TestCronJobScheduler(Spec):
     def test_get_subset_of_jobs_by_specifying_parameters(self):
         params = {'job_id_prefix': self.job_id_prefix}
         self.scheduler.get_job_with_params(params)
-        self.mock_get.assert_called_once_with(f'{self.scheduler_uri}/scheduled_jobs', json=params)
+        self.mock_get.assert_called_once_with(f'{self.scheduler_uri}/scheduled_jobs', params=params)
