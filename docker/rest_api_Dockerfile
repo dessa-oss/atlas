@@ -19,7 +19,7 @@ ENV SERVER_NAME=localhost
 COPY ./tmp/pip_wheels /var/foundations/
 WORKDIR /var/foundations
 
-RUN tree /var/foundations
+RUN ls -lR /var/foundations
 
 RUN find . -iname "foundations_scheduler_deployment*.whl" | xargs pip install
 RUN find . -iname "foundations_scheduler_core*.whl" | xargs pip install
