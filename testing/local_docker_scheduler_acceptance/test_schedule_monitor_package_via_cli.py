@@ -85,8 +85,6 @@ class TestScheduleMonitorPackageViaCli(Spec):
         return requests.put(f'http://{scheduler_address}:5000/scheduled_jobs/{job_name}', json={'status': status})
 
     def _start_monitor(self):
-        import os
-
         command = f'python -m foundations monitor start --name={self.monitor_name} --project_name={self.project_name} --env={self.env} {self.monitor_package_dir} main.py '
         return subprocess.run(command.split(), cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/')
 
@@ -95,8 +93,6 @@ class TestScheduleMonitorPackageViaCli(Spec):
         return subprocess.run(command, shell=True)
 
     def test_schedule_monitor_package_via_cli_runs_package_code_on_a_schedule(self):
-        import time
-        
         result = self._start_monitor()
         self.assertEqual(0, result.returncode)
 
@@ -109,7 +105,6 @@ class TestScheduleMonitorPackageViaCli(Spec):
         self.assertEqual(204, resume_response.status_code)
 
         metric_sets = self._wait_for_expected_number_of_runs(1, timeout=30)
-
         self.assertIn(len(metric_sets[0].series[0]['data']), [2, 3])
 
         for metric_set in metric_sets:
@@ -118,29 +113,27 @@ class TestScheduleMonitorPackageViaCli(Spec):
     def test_pause_scheduled_monitor_package_via_cli_halts_execution_but_can_resume_later(self):
         import time
 
-        result = self._start_monitor()
-        update_response = self._update_scheduled_job(self.monitor_package_id)
-        resume_result = self._call_monitor_with_command('resume')
-        self.assertEqual(0, resume_result.returncode)
-        self.assertEqual(204, update_response.status_code)
-        time.sleep(3)
+        self._start_monitor()
+
+        self._update_scheduled_job(self.monitor_package_id)
+        self._put_to_scheduled_job(self.monitor_package_id, 'active')
+
+        metric_sets_before_pause = self._wait_for_expected_number_of_runs(1, timeout=30)
+        before_pause_data_series_length = len(metric_sets_before_pause[0].series[0]['data'])
 
         pause_result = self._call_monitor_with_command('pause')
         self.assertEqual(0, pause_result.returncode)
-        time.sleep(7)
 
-        metric_sets_before_resume = self._wait_for_expected_number_of_runs(0, timeout=30)
-        self.assertEqual(1, len(metric_sets_before_resume[0].series[0]['data']))
+        metric_sets_during_pause = self._wait_for_expected_number_of_runs(3, timeout=30)
+        self.assertEqual(before_pause_data_series_length, len(metric_sets_during_pause[0].series[0]['data']))
 
         resume_result = self._call_monitor_with_command('resume')
         self.assertEqual(0, resume_result.returncode)
-
-        metric_sets_after_resume = self._wait_for_expected_number_of_runs(2, timeout=30)
-        time.sleep(7)
+        time.sleep(6)  # monitor scheduled to run every 2 seconds
 
         metric_sets_after_resume = ProductionMetricSet.all(self.project_name).evaluate()
-        self.assertIn(len(metric_sets_after_resume[0].series[0]['data']), [3, 4, 5])
-
+        data_series_length_after_resume = len(metric_sets_after_resume[0].series[0]['data'])
+        self.assertTrue(data_series_length_after_resume > before_pause_data_series_length)
 
     def test_delete_scheduled_monitor_package_removes_cron_job(self):
         import time
@@ -163,7 +156,6 @@ class TestScheduleMonitorPackageViaCli(Spec):
         import time
 
         metric_sets = []
-        data_length = 0
 
         for _ in range(timeout):
             metric_sets = ProductionMetricSet.all(self.project_name).evaluate()
