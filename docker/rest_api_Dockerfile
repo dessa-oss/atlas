@@ -21,10 +21,10 @@ WORKDIR /var/foundations
 
 RUN ls -lR /var/foundations
 
-RUN find -iname "dessa_foundations-*.whl" | xargs pip install && \
-    find -iname "foundations_internal-*.whl" | xargs pip install && \
+RUN find -iname "foundations_internal-*.whl" | xargs pip install && \
     find -iname "foundations_events-*.whl" | xargs pip install && \
     find -iname "foundations_contrib-*.whl" | xargs pip install && \
+    find -iname "dessa_foundations-*.whl" | xargs pip install && \
     find -iname "foundations_local_docker_scheduler_plugin-*.whl" | xargs pip install && \
     find -iname "foundations_core_rest_api_components-*.whl" | xargs pip install && \
     find -iname "foundations_orbit*.whl" | xargs pip install && \
