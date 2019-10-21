@@ -6,10 +6,10 @@ Written by Susan Davis <s.davis@dessa.com>, 10 2019
 """
 
 from foundations_spec import *
-from foundations_monitor_rest_api.v1.controllers.monitor_controller import MonitorController
+from foundations_monitor_rest_api.v1.controllers.monitors_controller import MonitorsController
 
 
-class TestMonitorController(Spec):
+class TestMonitorsController(Spec):
 
     @let
     def project_name(self):
@@ -54,9 +54,9 @@ class TestMonitorController(Spec):
         mock_get_project = self.patch('foundations_contrib.cli.orbit_monitor_package_server.get_by_project', ConditionalReturn())
         mock_get_project.return_when(expected_results, self.project_name, 'scheduler')
 
-        monitor_controller = MonitorController()
-        monitor_controller.params = {'project_name': self.project_name}
+        monitors_controller = MonitorsController()
+        monitors_controller.params = {'project_name': self.project_name}
 
-        results = monitor_controller.index()
+        results = monitors_controller.index()
         self.assertEqual(expected_results[self.monitor_id], results[self.monitor_id])
 

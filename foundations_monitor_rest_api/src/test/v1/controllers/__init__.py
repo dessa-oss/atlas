@@ -5,4 +5,4 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 10 2019
 """
 
-from test.v1.controllers.test_monitor_controller import TestMonitorController 
+from test.v1.controllers.test_monitors_controller import TestMonitorsController
