@@ -34,7 +34,6 @@ def start(job_directory, command, project_name, name, env):
         monitor_package = f'{project_name}-{name}'
 
         bundle = job_bundle(monitor_package)
-
     job_resource_args = {}
 
     if 'log_level' in job_config:
@@ -67,7 +66,7 @@ def start(job_directory, command, project_name, name, env):
     CronJobScheduler(scheduler_url).schedule_job(
         monitor_package,
         monitor_job_spec,
-        job_config['schedule'],
+        job_config.get('schedule', {}),
         metadata=monitor_metadata,
         gpu_spec=monitor_gpu_spec
     )
