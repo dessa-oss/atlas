@@ -12,7 +12,7 @@ class ValidationResultsOverview extends Component {
         <div className="overview-summary">
           <div className="overview-heading font-bold">Overview</div>
           <div className="overview-contract-container">
-            <div className="overview-contract-name">input_contract_3</div>
+            <div className="overview-contract-name">{validationResult.data_contract}</div>
             <div className="i--icon-open" />
           </div>
           <div className="overview-labels font-bold">
