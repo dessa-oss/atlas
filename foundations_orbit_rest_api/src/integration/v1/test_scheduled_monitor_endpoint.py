@@ -96,7 +96,7 @@ class TestScheduledMonitorEndpoint(Spec):
     @staticmethod
     def set_foundations_home():
         import os
-        os.environ['FOUNDATIONS_HOME'] = os.path.abspath('../../testing/local_docker_scheduler_acceptance/foundations_home')
+        os.environ['FOUNDATIONS_HOME'] = os.environ.get('FOUNDATIONS_HOME', os.path.abspath('../../testing/local_docker_scheduler_acceptance/foundations_home'))
         os.environ['FOUNDATIONS_COMMAND_LINE'] = 'True'
 
     def _get_all_monitors(self):
