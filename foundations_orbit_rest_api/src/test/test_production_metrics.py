@@ -59,6 +59,10 @@ class TestProductionMetrics(Spec):
     def metric_value_2(self):
         return self.faker.random.random()
 
+    @set_up
+    def set_up(self):
+        self.redis_connection.flushall()
+
     def test_all_production_metrics_returns_empty_dictionary_if_job_not_in_redis(self):
         self.assertEqual({}, all_production_metrics(self.project_name, self.monitor_name))
 
