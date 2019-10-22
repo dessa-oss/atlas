@@ -9,7 +9,7 @@ from foundations_spec import *
 
 from foundations_orbit_rest_api.global_state import app_manager
 
-
+@quarantine
 class TestScheduledMonitorEndpoint(Spec):
     
     @let_now
