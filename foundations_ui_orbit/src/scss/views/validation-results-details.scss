@@ -11,7 +11,6 @@
 
     .overview-summary, .overview-graph, .overview-graph-stats {
       width: 30%;
-      height: 100%;
       background-color: #fff;
       display: inline-block;
       padding: 30px;
@@ -44,10 +43,6 @@
     }
   }
 
-  .validation-results-tests {
-    height: 60%;
-  }
-
   .overview-heading {
     font-size: 25px;
     color: #5C5C5C;
@@ -60,19 +55,25 @@
   }
 
   .validation-results-tests {
+    height: 60%;
+    border-top: solid 1px #E3E3E3;
     .validation-results-tests-list {
       display: inline-block;
       width: 25%;
       height: 100%;
       overflow-y: scroll;
+      vertical-align: middle;
+      border-right: solid 1px #E3E3E3;
 
       .validation-results-tests-list-row {
-        border: solid 1px #E3E3E3;
+        border-bottom: solid 1px #E3E3E3;
         padding: 25px;
         cursor: pointer;
+        vertical-align: middle;
 
         .validation-results-tests-list-row-header, .validation-results-tests-list-row-summary {
           display: inline-block;
+          vertical-align: middle;
         }
 
         .validation-results-tests-list-row-header {
@@ -98,10 +99,10 @@
 
     .validation-results-tests-pane {
       display: inline-block;
-      background-color: blue;
       width: calc(75% - 100px);
       margin-left: 10px;
       height: 100%;
+      vertical-align: middle;
     }
   }
 }
