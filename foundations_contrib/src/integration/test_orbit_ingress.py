@@ -14,7 +14,9 @@ from foundations_spec import *
 from foundations_contrib.cli import model_package_server
 import foundations_contrib
 from faker import Faker
+from orbit_acceptance.mixins.contrib_path_mixin import ContribPathMixin
 
+@quarantine
 class TestOrbitIngress(Spec):
     
     namespace = 'foundations-scheduler-test'

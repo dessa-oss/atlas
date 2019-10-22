@@ -48,13 +48,13 @@ class TestArtifactListing(Spec):
         self.assertEqual([(key, artifact_name, artifact_metadata)], artifact_listing_for_job(self.job_id))
 
     def test_artifact_listing_returns_metadata_for_all_existing_artifacts(self):
-        artifact_name_0 = self.faker.word()
-        artifact_name_1 = self.faker.word()
-        artifact_name_2 = self.faker.word()
+        artifact_name_0 = self.faker.word() + "0"
+        artifact_name_1 = self.faker.word() + "1"
+        artifact_name_2 = self.faker.word() + "2"
 
-        artifact_metadata_0 = self._artifact_metadata()
-        artifact_metadata_1 = self._artifact_metadata()
-        artifact_metadata_2 = self._artifact_metadata()
+        artifact_metadata_0 = self._artifact_metadata() + "0"
+        artifact_metadata_1 = self._artifact_metadata() + "1"
+        artifact_metadata_2 = self._artifact_metadata() + "2"
 
         metadata_in_redis = {
             'key_mapping': {
