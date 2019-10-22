@@ -17,7 +17,7 @@ const CommonActions = {
     if (typeof d === "string") {
       d = parseFloat(d);
     }
-    return `${Math.round(d * 100 * 100) / 100}%`;
+    return `${Math.round(d * 100 * 1000) / 1000}%`;
   }
 };
 
