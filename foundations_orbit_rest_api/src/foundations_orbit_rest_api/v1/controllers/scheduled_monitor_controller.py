@@ -8,7 +8,7 @@ Written by Susan Davis <s.davis@dessa.com>, 11 2018
 from foundations_core_rest_api_components.utils.api_resource import api_resource
 
 
-@api_resource('/api/v1/projects/<string:project_name>/monitors/<string:name>')
+@api_resource('/api/v1/projects/<string:project_name>/monitors/<string:monitor_name>')
 class ScheduledMonitorController(object):
 
     def index(self):
@@ -17,7 +17,7 @@ class ScheduledMonitorController(object):
         from foundations_core_rest_api_components.response import Response
 
         project_name = self.params.pop('project_name')
-        monitor_name = self.params.pop('name')
+        monitor_name = self.params.pop('monitor_name')
 
         response = ScheduledMonitor.get(project_name=project_name, name=monitor_name)
 
@@ -37,7 +37,7 @@ class ScheduledMonitorController(object):
         from foundations_core_rest_api_components.response import Response
 
         project_name = self.params.pop('project_name')
-        monitor_name = self.params.pop('name')
+        monitor_name = self.params.pop('monitor_name')
 
         response = ScheduledMonitor.delete(project_name=project_name, name=monitor_name)
 
@@ -51,4 +51,23 @@ class ScheduledMonitorController(object):
 
         return Response('ScheduledMonitor', response, status=204, fallback=fallback)
 
+    def put(self):
+        from foundations_contrib.cli.orbit_monitor_package_server import pause, resume
+        from http import HTTPStatus
+        project_name = self.params.pop('project_name')
+        monitor_name = self.params.pop('monitor_name')
+        env = 'scheduler'
 
+        status = self.params.get('status', None)
+        if status == 'resume' or status == 'active':
+            resume(project_name, monitor_name, env)
+            return self._response(HTTPStatus.NO_CONTENT)
+        elif status == 'pause':
+            pause(project_name, monitor_name, env)
+            return self._response(HTTPStatus.NO_CONTENT)
+        else:
+            return self._response(HTTPStatus.BAD_REQUEST)
+
+    def _response(self, error, cookie=None):
+        from foundations_core_rest_api_components.response import Response
+        return Response.constant(error.phrase, status=error.value, cookie=cookie)

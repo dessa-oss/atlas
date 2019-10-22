@@ -7,10 +7,11 @@ Written by Susan Davis <s.davis@dessa.com>, 10 2019
 
 from foundations_spec import *
 
-from foundations_monitor_rest_api.global_state import app_manager
+from foundations_orbit_rest_api.global_state import app_manager
+
 
 @skip('Work in progress')
-class TestMonitorEndpoint(Spec):
+class TestScheduledMonitorEndpoint(Spec):
     
     @let_now
     def project_name(self):
