@@ -66,13 +66,18 @@ class ValidationResultsTableRow extends Component {
 
     const selectedClass = this.isSelectedRow() ? "selected-row" : "";
     const date = moment(time).format("YYYY-MM-DD").toString();
+    const criticalState = numCritical > 0 ? "critical" : "healthy";
 
     return (
       <div className={`validation-results-table-row ${selectedClass}`} onClick={this.onClick}>
         <div className="val-time-table-cell">{date}</div>
         <div className="val-monitor-table-cell">{monitorName}</div>
         <div className="val-contract-table-cell">{contractName}</div>
-        <div className="val-critical-table-cell">{numCritical}</div>
+        <div className="val-critical-table-cell">
+          <div className={`val-critical-table-cell-${criticalState}`}>
+            {numCritical}
+          </div>
+        </div>
       </div>
     );
   }
