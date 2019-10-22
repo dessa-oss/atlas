@@ -62,7 +62,7 @@
       width: 25%;
       height: 100%;
       overflow-y: scroll;
-      vertical-align: middle;
+      vertical-align: top;
       border-right: solid 1px #E3E3E3;
 
       .validation-results-tests-list-row {
@@ -99,10 +99,21 @@
 
     .validation-results-tests-pane {
       display: inline-block;
-      width: calc(75% - 100px);
-      margin-left: 10px;
+      width: calc(75% - 1px);
       height: 100%;
-      vertical-align: middle;
+
+      .validation-results-tests-pane-empty-state {
+        color: #4F4F4F;
+        font-size: 16px;
+        position: relative;
+        top: 40%;
+        -webkit-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+        margin: auto;
+        width: 30%;
+        text-align: center;
+      }
     }
   }
 }

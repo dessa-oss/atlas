@@ -5,13 +5,23 @@ import ValidationResultsActions from "../../../actions/ValidationResultsActions"
 class ValidationResultsTestsPane extends Component {
   render() {
     const { validationTestResult } = this.props;
-    let test = "empty state";
+    const emptyState = (
+      <div className="validation-results-tests-pane-empty-state">
+        <div className="i--icon-clipboard" />
+        <div className="validation-results-tests-pane-empty-state-text">
+          Click on a test to see its details.
+        </div>
+      </div>
+    );
+
+    let mainContent = emptyState;
     if (validationTestResult) {
-      test = Object.keys(validationTestResult)[0];
+      mainContent = Object.keys(validationTestResult)[0];
     }
+
     return (
       <div className="validation-results-tests-pane">
-        {test}
+        {mainContent}
       </div>
     );
   }

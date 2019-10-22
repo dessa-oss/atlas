@@ -105,3 +105,10 @@ See assets/svgs/README.md for further information on SVG conversion process
   cursor: pointer;
   margin-left: 8px;
 }
+
+.i--icon-clipboard {
+  background-image: url('../assets/svgs/icon-clipboard.svg');
+  @include icon-helper;
+  width: 300px;
+  height: 300px;
+}
