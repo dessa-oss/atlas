@@ -20,8 +20,6 @@ class CommandLineInterface(object):
         self._subparsers = self._argument_parser.add_subparsers()
 
         SetupParser(self).add_sub_parser()
-        OrbitParser(self).add_sub_parser()
-        MonitorParser(self).add_sub_parser()
 
         self._initialize_init_parser()
         self._initialize_submit_parser()
