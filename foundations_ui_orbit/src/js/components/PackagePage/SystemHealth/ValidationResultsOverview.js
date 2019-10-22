@@ -10,24 +10,26 @@ class ValidationResultsOverview extends Component {
     return (
       <div className="validation-results-overview">
         <div className="overview-summary">
-          <div className="overview-heading font-bold">Overview</div>
-          <div className="overview-contract-container">
-            <div className="overview-contract-name">{validationResult.data_contract}</div>
-            <div className="i--icon-open" />
-          </div>
-          <div className="overview-labels font-bold">
-            Monitor Name:<br />
-            Job ID:<br />
-            Time:<br />
-            User:<br />
-            Row count:
-          </div>
-          <div className="overview-values">
-            {validationResult.monitor_package}<br />
-            some-job-id<br />
-            {date}<br />
-            some-user<br />
-            some-row-count
+          <div className="overview-summary-center">
+            <div className="overview-heading font-bold">Overview</div>
+            <div className="overview-contract-container">
+              <div className="overview-contract-name">{validationResult.data_contract}</div>
+              <div className="i--icon-open" />
+            </div>
+            <div className="overview-labels font-bold">
+              Monitor Name:<br />
+              Job ID:<br />
+              Time:<br />
+              User:<br />
+              Row count:
+            </div>
+            <div className="overview-values">
+              {validationResult.monitor_package}<br />
+              some-job-id<br />
+              {date}<br />
+              some-user<br />
+              some-row-count
+            </div>
           </div>
         </div>
         <div className="overview-graph" />
