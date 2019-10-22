@@ -11,7 +11,7 @@ const ValidationResultsActions = {
       .then(results => {
         return results;
       })
-      .catch(error => {
+      .catch(() => {
         return [];
       });
   },
@@ -44,7 +44,7 @@ const ValidationResultsActions = {
       .then(results => {
         return results;
       })
-      .catch(error => {
+      .catch(() => {
         return {};
       });
   },

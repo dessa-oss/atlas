@@ -21,7 +21,8 @@ class ValidationResultsDetails extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!CommonActions.deepEqual(this.props.selectedValidationResult, prevProps.selectedValidationResult)) {
+    const { selectedValidationResult } = this.props;
+    if (!CommonActions.deepEqual(selectedValidationResult, prevProps.selectedValidationResult)) {
       this.reload();
     }
   }

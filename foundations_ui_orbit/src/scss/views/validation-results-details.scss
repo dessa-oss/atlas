@@ -125,6 +125,22 @@
         width: 30%;
         text-align: center;
       }
+
+      .validation-results-test-pane-table-container {
+        .validation-results-test-pane-table {
+          width: 100%;
+          border-collapse: collapse;
+
+          .validation-results-test-pane-table-header {
+            background-color: hsl(0%, 0%, 96%);
+            color: #828282;
+          }
+
+          .validation-results-test-pane-table-row {
+            height: 50px;
+          }
+        }
+      }
     }
   }
 }

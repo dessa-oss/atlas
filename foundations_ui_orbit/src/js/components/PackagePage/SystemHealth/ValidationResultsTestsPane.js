@@ -16,7 +16,21 @@ class ValidationResultsTestsPane extends Component {
 
     let mainContent = emptyState;
     if (validationTestResult) {
-      mainContent = Object.keys(validationTestResult)[0];
+      console.log(validationTestResult);
+      mainContent = (
+        <div className="validation-results-test-pane-table-container">
+          <table className="validation-results-test-pane-table">
+            <tbody>
+              <tr className="validation-results-test-pane-table-header validation-results-test-pane-table-row">
+                <th>Attribute Name</th>
+                <th>Data Type</th>
+                <th>Issue Type</th>
+                <th>Validation Outcome</th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      );
     }
 
     return (

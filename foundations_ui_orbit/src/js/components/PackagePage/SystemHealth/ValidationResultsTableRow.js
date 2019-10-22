@@ -6,12 +6,15 @@ import CommonActions from "../../../actions/CommonActions";
 class ValidationResultsTableRow extends Component {
   constructor(props) {
     super(props);
+    const {
+      time, monitorName, contractName, numCritical
+    } = this.props;
 
     this.state = {
-      time: this.props.time,
-      monitorName: this.props.monitorName,
-      contractName: this.props.contractName,
-      numCritical: this.props.numCritical
+      time: time,
+      monitorName: monitorName,
+      contractName: contractName,
+      numCritical: numCritical
     };
 
     this.onClick = this.onClick.bind(this);
@@ -79,7 +82,7 @@ ValidationResultsTableRow.propTypes = {
   time: PropTypes.string,
   monitorName: PropTypes.string,
   contractName: PropTypes.string,
-  numCritical: PropTypes.string,
+  numCritical: PropTypes.number,
   onClick: PropTypes.func,
   selectedRow: PropTypes.object
 };
@@ -88,7 +91,7 @@ ValidationResultsTableRow.defaultProps = {
   time: "Invalid date",
   monitorName: "Invalid monitor name",
   contractName: "Invalid contract name",
-  numCritical: "0",
+  numCritical: 0,
   onClick: () => {},
   selectedRow: {}
 };
