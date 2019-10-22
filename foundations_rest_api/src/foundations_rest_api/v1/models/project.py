@@ -79,16 +79,14 @@ class Project(PropertyModel):
 
     @staticmethod
     def _find_by_internal(name):
-        from foundations_rest_api.v1.models.completed_job import CompletedJob
         from foundations_rest_api.v1.models.running_job import RunningJob
         from foundations_rest_api.v1.models.queued_job import QueuedJob
-        from foundations_rest_api.v1.models.job import Job
 
         project = Project(name=name)
         project.created_at = None
         project.owner = None
-        project.completed_jobs = CompletedJob.all(project_name=name)
+        project.completed_jobs = None
         project.running_jobs = RunningJob.all()
         project.queued_jobs = QueuedJob.all()
-        project.jobs = Job.all(project_name=name)
+        project.jobs = None
         return project

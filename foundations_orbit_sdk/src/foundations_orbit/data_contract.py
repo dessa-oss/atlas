@@ -19,7 +19,7 @@ class DataContract(object):
         self._contract_name = contract_name
 
         if df is None:
-            self._dataframe = pandas.DataFrame()
+            raise ValueError('Reference DataFrame Not Provided')
         else:
             self._dataframe = df
 

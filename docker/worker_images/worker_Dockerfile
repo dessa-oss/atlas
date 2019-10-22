@@ -1,0 +1,13 @@
+FROM python:3.6
+
+MAINTAINER Eric Kin Ho Lee
+
+COPY ./foundations_alpine_requirements.txt /tmp/foundations_alpine_requirements.txt
+COPY ./run.sh /prejob/run.sh
+
+RUN chmod +x /prejob/run.sh
+
+RUN pip install --requirement /tmp/foundations_alpine_requirements.txt
+RUN rm /tmp/foundations_alpine_requirements.txt
+
+ENTRYPOINT ["/prejob/run.sh"]
