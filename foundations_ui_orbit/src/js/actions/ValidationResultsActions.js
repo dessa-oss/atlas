@@ -97,7 +97,7 @@ const ValidationResultsActions = {
           <th>{test.attribute_name}</th>
           <th>{test.data_type}</th>
           <th>{issueType}</th>
-          <th>{test.validation_outcome}</th>
+          <th className={`validation-outcome-${test.validation_outcome}`}>{test.validation_outcome}</th>
         </tr>
       );
     });
@@ -123,7 +123,7 @@ const ValidationResultsActions = {
           <th>{test.attribute_name}</th>
           <th>{distShift}</th>
           <th>{measureType}</th>
-          <th>{test.validation_outcome}</th>
+          <th className={`validation-outcome-${test.validation_outcome}`}>{test.validation_outcome}</th>
         </tr>
       );
     });
@@ -149,7 +149,7 @@ const ValidationResultsActions = {
         <th>{CommonActions.decimalToPercentage(test.pct_in_reference_data)}</th>
         <th>{CommonActions.decimalToPercentage(test.pct_in_current_data)}</th>
         <th>{CommonActions.decimalToPercentage(test.difference_in_pct)}</th>
-        <th>{test.validation_outcome}</th>
+        <th className={`validation-outcome-${test.validation_outcome}`}>{test.validation_outcome}</th>
       </tr>
     ));
     return header.concat(rows);
@@ -179,7 +179,7 @@ const ValidationResultsActions = {
           <th>{test.lower_bound}</th>
           <th>{test.min_value}</th>
           <th>{outOfBounds}</th>
-          <th>{test.validation_outcome}</th>
+          <th className={`validation-outcome-${test.validation_outcome}`}>{test.validation_outcome}</th>
         </tr>
       );
     });
@@ -210,7 +210,7 @@ const ValidationResultsActions = {
           <th>{test.upper_bound}</th>
           <th>{test.max_value}</th>
           <th>{outOfBounds}</th>
-          <th>{test.validation_outcome}</th>
+          <th className={`validation-outcome-${test.validation_outcome}`}>{test.validation_outcome}</th>
         </tr>
       );
     });

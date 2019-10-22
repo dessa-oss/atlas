@@ -156,6 +156,16 @@
               &:first-child {
                 border-left: none;
               }
+
+              &.validation-outcome-healthy {
+                color: green;
+              }
+              &.validation-outcome-warning {
+                color: orange;
+              }
+              &.validation-outcome-critical {
+                color: red;
+              }
             }
           }
         }
