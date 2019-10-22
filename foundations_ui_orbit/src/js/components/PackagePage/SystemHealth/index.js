@@ -15,10 +15,15 @@ class SystemHealth extends Component {
     };
 
     this.selectRow = this.selectRow.bind(this);
+    this.reload = this.reload.bind(this);
   }
 
   selectRow(selectedResult) {
     this.setState({ selectedValidationResult: selectedResult });
+  }
+
+  reload() {
+    this.setState({ selectedValidationResult: {} });
   }
 
   // const [showSchemaTab, setShowSchemaTab] = React.useState(true);
@@ -398,18 +403,11 @@ class SystemHealth extends Component {
             </div>
             <div className="systemhealth-body">
               <div className="left-side">
-                {/* <div className="i--icon-refresh" onClick={onClickRefreshList} /> */}
-                <div className="i--icon-refresh" />
-                <div className="validation-results-table-row-header">
-                  <div className="val-time-table-cell">Date</div>
-                  <div className="val-monitor-table-cell">Monitor Name</div>
-                  <div className="val-contract-table-cell">Contract Name</div>
-                  <div className="val-critical-table-cell" />
-                </div>
                 <ValidationResultsTable
                   location={location}
                   onClickRow={this.selectRow}
                   selectedRow={selectedValidationResult}
+                  reload={this.reload}
                 />
               </div>
               <div className="right-side">

@@ -20,11 +20,12 @@ class ValidationResultsTable extends Component {
 
   async reload() {
     const { projectName } = this.state;
-    const { onClickRow } = this.props;
+    const { onClickRow, reload } = this.props;
 
     const result = await ValidationResultsActions.getValidationResultList(projectName);
     const rows = ValidationResultsActions.getResultRows(result, onClickRow);
     this.setState({ rows: rows });
+    reload();
   }
 
   render() {
@@ -40,8 +41,17 @@ class ValidationResultsTable extends Component {
     }
 
     return (
-      <div className="validation-results-table">
-        {rowsWithProps}
+      <div className="validation-results-table-container">
+        <div className="i--icon-refresh" onClick={this.reload} />
+        <div className="validation-results-table-row-header">
+          <div className="val-time-table-cell">Date</div>
+          <div className="val-monitor-table-cell">Monitor Name</div>
+          <div className="val-contract-table-cell">Contract Name</div>
+          <div className="val-critical-table-cell" />
+        </div>
+        <div className="validation-results-table">
+          {rowsWithProps}
+        </div>
       </div>
     );
   }
@@ -50,13 +60,15 @@ class ValidationResultsTable extends Component {
 ValidationResultsTable.propTypes = {
   location: PropTypes.object,
   onClickRow: PropTypes.func,
-  selectedRow: PropTypes.object
+  selectedRow: PropTypes.object,
+  reload: PropTypes.func
 };
 
 ValidationResultsTable.defaultProps = {
   location: { state: {} },
   onClickRow: () => {},
-  selectedRow: {}
+  selectedRow: {},
+  reload: () => {}
 };
 
 export default ValidationResultsTable;

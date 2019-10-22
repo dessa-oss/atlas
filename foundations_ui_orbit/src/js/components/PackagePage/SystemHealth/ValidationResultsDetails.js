@@ -38,6 +38,8 @@ class ValidationResultsDetails extends Component {
         selectedValidationResult.contractName
       );
       this.setState({ validationResult: validationResult });
+    } else if (CommonActions.isEmptyObject(selectedValidationResult)) {
+      this.setState({ validationResult: {} });
     }
   }
 
