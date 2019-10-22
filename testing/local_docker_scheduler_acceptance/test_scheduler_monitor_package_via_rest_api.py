@@ -167,8 +167,6 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         self.assertNotIn(monitor_package, monitor_response.json())
 
     def test_delete_nonexistent_monitor_returns_404(self):
-        monitor_package = f'{self.project_name}-{self.monitor_name}'
-
         delete_response = self._delete_monitor(self.monitor_name)
         self.assertEqual(404, delete_response.status_code)
 
