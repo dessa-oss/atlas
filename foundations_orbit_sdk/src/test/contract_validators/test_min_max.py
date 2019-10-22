@@ -27,6 +27,12 @@ class TestMinMax(Spec):
     def dataframe_two_columns(self):
         import pandas
         return pandas.DataFrame(columns=[self.column_name, self.column_name_two], data=[[20, 0], [40, 4], [50, 10], [100, 40], [110, 99]])
+    
+    # @let_now
+    # def dataframe_one_column_with_datetime(self):
+    #     import datetime
+    #     import pandas
+    #     return pandas.Dataframe(columns=[self.column_name], data=[datetime.datetime(2018,2,16), datetime.datetime(2019,2,16)])
 
     def test_min_max_test_returns_empty_dictionary_when_checker_not_configured(self):
         min_max_checker = MinMaxChecker()
