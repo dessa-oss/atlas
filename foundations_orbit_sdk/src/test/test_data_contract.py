@@ -189,7 +189,7 @@ class TestDataContract(Spec):
 
     def test_data_contract_takes_contract_name(self):
         try:
-            DataContract(self.contract_name)
+            DataContract(self.contract_name, df=self.empty_dataframe)
         except TypeError as ex:
             raise AssertionError('data contract class takes contract name as argument') from ex
 
@@ -227,7 +227,7 @@ class TestDataContract(Spec):
     def test_data_contract_can_save_to_file(self):
         import pickle
 
-        contract = DataContract(self.contract_name)
+        contract = DataContract(self.contract_name, df=self.empty_dataframe)
         contract.save(self.monitor_package_directory)
 
         self.mock_file_for_write.write.assert_called_once_with(pickle.dumps(contract))
@@ -235,7 +235,7 @@ class TestDataContract(Spec):
     def test_data_contract_save_preserves_options(self):
         import pickle
 
-        contract = DataContract(self.contract_name)
+        contract = DataContract(self.contract_name, df=self.empty_dataframe)
         contract.options = {'asdf': 'value'}
 
         contract.save(self.monitor_package_directory)
@@ -243,15 +243,15 @@ class TestDataContract(Spec):
         self.mock_file_for_write.write.assert_called_once_with(pickle.dumps(contract))
 
     def test_data_contract_has_equality(self):
-        self.assertEqual(DataContract(self.contract_name), DataContract(self.contract_name))
+        self.assertEqual(DataContract(self.contract_name, df=self.empty_dataframe), DataContract(self.contract_name, df=self.empty_dataframe))
 
     def test_data_contract_with_different_name_is_not_equal(self):
-        self.assertNotEqual(DataContract(self.contract_name), DataContract(self.other_contract_name))
+        self.assertNotEqual(DataContract(self.contract_name, df=self.empty_dataframe), DataContract(self.other_contract_name, df=self.empty_dataframe))
 
     def test_data_contract_with_different_options_are_not_equal(self):
-        contract = DataContract(self.contract_name)
+        contract = DataContract(self.contract_name, df=self.empty_dataframe)
 
-        contract_different_options = DataContract(self.contract_name)
+        contract_different_options = DataContract(self.contract_name, df=self.empty_dataframe)
         contract_different_options.options = {'whoops': 'hey'}
 
         self.assertNotEqual(contract, contract_different_options)
@@ -259,7 +259,7 @@ class TestDataContract(Spec):
     def test_data_contract_load_loads_data_contract_from_file(self):
         import pickle
 
-        contract = DataContract(self.contract_name)
+        contract = DataContract(self.contract_name, df=self.empty_dataframe)
         self.mock_file_for_read.read.return_value = pickle.dumps(contract)
 
         self.assertEqual(contract, DataContract.load(self.monitor_package_directory, self.contract_name))
@@ -267,7 +267,7 @@ class TestDataContract(Spec):
     def test_data_contract_load_actually_loads(self):
         import pickle
 
-        contract = DataContract(self.contract_name)
+        contract = DataContract(self.contract_name, df=self.empty_dataframe)
         contract.options = {'some_option': 'with_value'}
         self.mock_file_for_read.read.return_value = pickle.dumps(contract)
 
@@ -740,13 +740,16 @@ class TestDataContract(Spec):
 
         self.assertEqual(expected_results, dist_check_results)
 
+    def test_data_contract_with_no_reference_dataframe_throws_error(self):
+        with self.assertRaises(ValueError) as exception:
+            contract = DataContract(self.contract_name)
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
-        contract = DataContract(self.contract_name)
+        contract = DataContract(self.contract_name, df=self.empty_dataframe)
         self.assertEqual(default_value, getattr(contract.options, option_name))
 
     def _test_distribution_check_has_default_option(self, option_name, default_value):
-        contract = DataContract(self.contract_name)
+        contract = DataContract(self.contract_name, df=self.empty_dataframe)
         self.assertEqual(default_value, contract.options.distribution[option_name])
 
     def _contract_from_dataframe_for_row_checking(self, dataframe):
