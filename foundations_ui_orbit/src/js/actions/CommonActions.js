@@ -10,7 +10,14 @@ const CommonActions = {
   },
 
   isEmptyObject: obj => {
-    return Object.entries(obj).length === 0;
+    return !(obj && typeof obj === "object" && Object.entries(obj).length > 0);
+  },
+
+  decimalToPercentage: d => {
+    if (typeof d === "string") {
+      d = parseFloat(d);
+    }
+    return `${d * 100}%`;
   }
 };
 

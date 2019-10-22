@@ -2,6 +2,7 @@ import React from "react";
 import { get, post } from "./BaseActions";
 import ValidationResultsTableRow from "../components/PackagePage/SystemHealth/ValidationResultsTableRow";
 import ValidationResultsTestsListRow from "../components/PackagePage/SystemHealth/ValidationResultsTestListRow";
+import CommonActions from "./CommonActions";
 
 const ValidationResultsActions = {
   getValidationResultList: projectName => {
@@ -76,6 +77,165 @@ const ValidationResultsActions = {
     ValidationResultsActions.createTestRowIfExists("min", "Min", validationResult, allRows, onSelectRow);
     ValidationResultsActions.createTestRowIfExists("max", "Max", validationResult, allRows, onSelectRow);
     return allRows;
+  },
+
+  getSchemaRows: validationTestResult => {
+    const header = [
+      <tr key="header" className="validation-results-test-pane-table-header validation-results-test-pane-table-row">
+        <th>Attribute Name</th>
+        <th>Data Type</th>
+        <th>Issue Type</th>
+        <th>Validation Outcome</th>
+      </tr>
+    ];
+
+    const rows = validationTestResult.schema.details_by_attribute.map((test, ind) => {
+      const issueType = test.issue_type ? test.issue_type : "N/A";
+      return (
+        // eslint-disable-next-line react/no-array-index-key
+        <tr key={ind} className="validation-results-test-pane-table-row">
+          <th>{test.attribute_name}</th>
+          <th>{test.data_type}</th>
+          <th>{issueType}</th>
+          <th>{test.validation_outcome}</th>
+        </tr>
+      );
+    });
+    return header.concat(rows);
+  },
+
+  getPopShiftRows: validationTestResult => {
+    const header = [
+      <tr key="header" className="validation-results-test-pane-table-header validation-results-test-pane-table-row">
+        <th>Attribute Name</th>
+        <th>Distribution Shift</th>
+        <th>Measure Type</th>
+        <th>Validation Outcome</th>
+      </tr>
+    ];
+
+    const rows = validationTestResult.population_shift.details_by_attribute.map((test, ind) => {
+      const measureType = "L-infinity" in test ? "L-infinity" : "PSI";
+      const distShift = measureType === "L-infinity" ? test["L-infinity"] : test.PSI;
+      return (
+        // eslint-disable-next-line react/no-array-index-key
+        <tr key={ind} className="validation-results-test-pane-table-row">
+          <th>{test.attribute_name}</th>
+          <th>{distShift}</th>
+          <th>{measureType}</th>
+          <th>{test.validation_outcome}</th>
+        </tr>
+      );
+    });
+    return header.concat(rows);
+  },
+
+  getSpecialValuesRows: validationTestResult => {
+    const header = [
+      <tr key="header" className="validation-results-test-pane-table-header validation-results-test-pane-table-row">
+        <th>Attribute Name</th>
+        <th>Value</th>
+        <th>Expected (%)</th>
+        <th>Actual (%)</th>
+        <th>Difference</th>
+        <th>Validation Outcome</th>
+      </tr>
+    ];
+    const rows = validationTestResult.data_quality.details_by_attribute.map((test, ind) => (
+      // eslint-disable-next-line react/no-array-index-key
+      <tr key={ind} className="validation-results-test-pane-table-row">
+        <th>{test.attribute_name}</th>
+        <th>{test.value}</th>
+        <th>{CommonActions.decimalToPercentage(test.pct_in_reference_data)}</th>
+        <th>{CommonActions.decimalToPercentage(test.pct_in_current_data)}</th>
+        <th>{CommonActions.decimalToPercentage(test.difference_in_pct)}</th>
+        <th>{test.validation_outcome}</th>
+      </tr>
+    ));
+    return header.concat(rows);
+  },
+
+  getMinRows: validationTestResult => {
+    const header = [
+      <tr key="header" className="validation-results-test-pane-table-header validation-results-test-pane-table-row">
+        <th>Attribute Name</th>
+        <th>Expected Lower Bound</th>
+        <th>Actual Minimum Value</th>
+        <th>Percentage out of Bounds</th>
+        <th>Validation Outcome</th>
+      </tr>
+    ];
+
+    const rows = validationTestResult.min.details_by_attribute.map((test, ind) => {
+      const outOfBounds = (
+        "percentage_out_of_bounds" in test
+          ? CommonActions.decimalToPercentage(test.percentage_out_of_bounds)
+          : "N/A"
+      );
+      return (
+        // eslint-disable-next-line react/no-array-index-key
+        <tr key={ind} className="validation-results-test-pane-table-row">
+          <th>{test.attribute_name}</th>
+          <th>{test.lower_bound}</th>
+          <th>{test.min_value}</th>
+          <th>{outOfBounds}</th>
+          <th>{test.validation_outcome}</th>
+        </tr>
+      );
+    });
+    return header.concat(rows);
+  },
+
+  getMaxRows: validationTestResult => {
+    const header = [
+      <tr key="header" className="validation-results-test-pane-table-header validation-results-test-pane-table-row">
+        <th>Attribute Name</th>
+        <th>Expected Upper Bound</th>
+        <th>Actual Maximum Value</th>
+        <th>Percentage out of Bounds</th>
+        <th>Validation Outcome</th>
+      </tr>
+    ];
+
+    const rows = validationTestResult.max.details_by_attribute.map((test, ind) => {
+      const outOfBounds = (
+        "percentage_out_of_bounds" in test
+          ? CommonActions.decimalToPercentage(test.percentage_out_of_bounds)
+          : "N/A"
+      );
+      return (
+        // eslint-disable-next-line react/no-array-index-key
+        <tr key={ind} className="validation-results-test-pane-table-row">
+          <th>{test.attribute_name}</th>
+          <th>{test.upper_bound}</th>
+          <th>{test.max_value}</th>
+          <th>{outOfBounds}</th>
+          <th>{test.validation_outcome}</th>
+        </tr>
+      );
+    });
+    return header.concat(rows);
+  },
+
+  getTestTableRows: validationTestResult => {
+    const testType = Object.keys(validationTestResult)[0];
+
+    if (testType === "schema") {
+      return ValidationResultsActions.getSchemaRows(validationTestResult);
+    }
+    if (testType === "population_shift") {
+      return ValidationResultsActions.getPopShiftRows(validationTestResult);
+    }
+    if (testType === "data_quality") {
+      return ValidationResultsActions.getSpecialValuesRows(validationTestResult);
+    }
+    if (testType === "min") {
+      return ValidationResultsActions.getMinRows(validationTestResult);
+    }
+    if (testType === "max") {
+      return ValidationResultsActions.getMaxRows(validationTestResult);
+    }
+    return [];
   }
 };
 

@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import ValidationResultsActions from "../../../actions/ValidationResultsActions";
+import CommonActions from "../../../actions/CommonActions";
 
 class ValidationResultsTestsPane extends Component {
   render() {
     const { validationTestResult } = this.props;
-    const emptyState = (
+    let mainContent = (
       <div className="validation-results-tests-pane-empty-state">
         <div className="i--icon-clipboard" />
         <div className="validation-results-tests-pane-empty-state-text">
@@ -14,19 +15,13 @@ class ValidationResultsTestsPane extends Component {
       </div>
     );
 
-    let mainContent = emptyState;
-    if (validationTestResult) {
-      console.log(validationTestResult);
+    if (!CommonActions.isEmptyObject(validationTestResult)) {
+      const tableRows = ValidationResultsActions.getTestTableRows(validationTestResult);
       mainContent = (
         <div className="validation-results-test-pane-table-container">
           <table className="validation-results-test-pane-table">
             <tbody>
-              <tr className="validation-results-test-pane-table-header validation-results-test-pane-table-row">
-                <th>Attribute Name</th>
-                <th>Data Type</th>
-                <th>Issue Type</th>
-                <th>Validation Outcome</th>
-              </tr>
+              {tableRows}
             </tbody>
           </table>
         </div>

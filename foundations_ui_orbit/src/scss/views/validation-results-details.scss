@@ -138,6 +138,25 @@
 
           .validation-results-test-pane-table-row {
             height: 50px;
+            border-top: solid 1px hsl(0%, 0%, 93%);
+
+            &:nth-child(-n+2) {
+              border-top: none;
+            }
+
+            &:last-child {
+              border-bottom: solid 1px hsl(0%, 0%, 93%);
+            }
+
+            th {
+              border-left: solid 1px hsl(0%, 0%, 93%);
+              font-weight: 500;
+              font-size: 13px;
+
+              &:first-child {
+                border-left: none;
+              }
+            }
           }
         }
       }

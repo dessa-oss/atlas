@@ -109,6 +109,6 @@ See assets/svgs/README.md for further information on SVG conversion process
 .i--icon-clipboard {
   background-image: url('../assets/svgs/icon-clipboard.svg');
   @include icon-helper;
-  width: 300px;
+  width: 100%;
   height: 300px;
 }
