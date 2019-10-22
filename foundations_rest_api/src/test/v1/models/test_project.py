@@ -64,33 +64,6 @@ class TestProject(unittest.TestCase):
         lazy_result = Project.find_by(name='my favourite project')
         self.assertEqual('my favourite project', lazy_result.evaluate().name)
 
-    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
-    def test_find_by_name_project_has_completed_jobs(self, mock):
-        mock.return_value = 'some completed jobs'
-
-        lazy_result = Project.find_by(name='my favourite project')
-        self.assertEqual('some completed jobs',
-                         lazy_result.evaluate().completed_jobs)
-        mock.assert_called_with(project_name='my favourite project')
-
-    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
-    def test_find_by_name_project_has_completed_jobs_different_result(self, mock):
-        mock.return_value = 'some other completed jobs'
-
-        lazy_result = Project.find_by(name='my favourite project')
-        self.assertEqual('some other completed jobs',
-                         lazy_result.evaluate().completed_jobs)
-        mock.assert_called_with(project_name='my favourite project')
-
-    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
-    def test_find_by_name_project_has_completed_jobs_different_name(self, mock):
-        mock.return_value = 'some other completed jobs'
-
-        lazy_result = Project.find_by(name='my other favourite project')
-        self.assertEqual('some other completed jobs',
-                         lazy_result.evaluate().completed_jobs)
-        mock.assert_called_with(project_name='my other favourite project')
-
     @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
     def test_find_by_name_project_has_running_jobs(self, mock):
         mock.return_value = 'some running jobs'
@@ -123,14 +96,10 @@ class TestProject(unittest.TestCase):
 
     @patch('foundations_rest_api.v1.models.queued_job.QueuedJob.all')
     @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
-    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
-    @patch('foundations_rest_api.v1.models.job.Job.all')
     @patch('foundations_contrib.models.project_listing.ProjectListing')
-    def test_all_returns_all_projects(self, mock_projects, mock_jobs, mock_completed, mock_running, mock_queued):
-        mock_completed.return_value = 'completed'
+    def test_all_returns_all_projects(self, mock_projects, mock_running, mock_queued):
         mock_running.return_value = 'running'
         mock_queued.return_value = 'queued'
-        mock_jobs.return_value = 'listed'
 
         mock_projects.list_projects.return_value = [{'name': 'project1'}]
 
@@ -139,23 +108,19 @@ class TestProject(unittest.TestCase):
             name='project1',
             created_at = None,
             owner = None,
-            completed_jobs='completed',
+            completed_jobs=None,
             running_jobs='running',
             queued_jobs='queued',
-            jobs = 'listed'
+            jobs = None
         )
         self.assertEqual(expected_project, project)
 
     @patch('foundations_rest_api.v1.models.queued_job.QueuedJob.all')
     @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
-    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
-    @patch('foundations_rest_api.v1.models.job.Job.all')
     @patch('foundations_contrib.models.project_listing.ProjectListing')
-    def test_all_returns_all_projects_multiple_projects(self, mock_projects, mock_jobs, mock_completed, mock_running, mock_queued):
-        mock_completed.return_value = 'completed'
+    def test_all_returns_all_projects_multiple_projects(self, mock_projects, mock_running, mock_queued):
         mock_running.return_value = 'running'
         mock_queued.return_value = 'queued'
-        mock_jobs.return_value = 'listed'
 
         mock_projects.list_projects.return_value = [{'name': 'project1'}, {'name': 'project2'}]
 
@@ -164,19 +129,19 @@ class TestProject(unittest.TestCase):
             name='project1',
             created_at = None,
             owner = None,
-            completed_jobs='completed',
+            completed_jobs=None,
             running_jobs='running',
             queued_jobs='queued',
-            jobs = 'listed'
+            jobs = None
         )
         expected_project_two = Project(
             name='project2',
             created_at = None,
             owner = None,
-            completed_jobs='completed',
+            completed_jobs=None,
             running_jobs='running',
             queued_jobs='queued',
-            jobs = 'listed'
+            jobs = None
         )
         self.assertEqual([expected_project, expected_project_two], project)
 
