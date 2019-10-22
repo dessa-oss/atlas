@@ -52,10 +52,9 @@ class TestArtifactListing(Spec):
         artifact_name_1 = self.faker.word() + "1"
         artifact_name_2 = self.faker.word() + "2"
 
-        artifact_metadata_0 = self._artifact_metadata() + "0"
-        artifact_metadata_1 = self._artifact_metadata() + "1"
-        artifact_metadata_2 = self._artifact_metadata() + "2"
-
+        artifact_metadata_0 = self._artifact_metadata()
+        artifact_metadata_1 = self._artifact_metadata()
+        artifact_metadata_2 = self._artifact_metadata()
         metadata_in_redis = {
             'key_mapping': {
                 artifact_name_1: 'filename_1',
