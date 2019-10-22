@@ -10,3 +10,4 @@ from test.v1.controllers.test_models_controller import TestModelsController
 from test.v1.controllers.test_project_controller import TestProjectController
 from test.v1.controllers.test_validation_report_listings_controller import TestValidationReportListingsController
 from test.v1.controllers.test_validation_reports_controller import TestValidationReportsController
+from test.v1.controllers.test_scheduled_monitor_controller import TestScheduledMonitorController

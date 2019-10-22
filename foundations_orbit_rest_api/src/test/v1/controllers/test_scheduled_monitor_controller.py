@@ -8,7 +8,7 @@ Written by Susan Davis <s.davis@dessa.com>, 10 2019
 from foundations_spec import *
 
 
-class TestMonitorController(Spec):
+class TestScheduledMonitorController(Spec):
 
     @set_up
     def set_up(self):
@@ -30,8 +30,8 @@ class TestMonitorController(Spec):
 
     @let
     def monitor_controller(self):
-        from foundations_monitor_rest_api.v1.controllers.monitor_controller import MonitorController
-        return MonitorController()
+        from foundations_orbit_rest_api.v1.controllers.scheduled_monitor_controller import ScheduledMonitorController
+        return ScheduledMonitorController()
 
     def _set_params_and_put(self, content=None):
         self.monitor_controller.params = {'project_name': self.project_name, 'monitor_name': self.monitor_name}
@@ -47,6 +47,11 @@ class TestMonitorController(Spec):
     def test_put_request_with_appropriate_body_content_triggers_the_resume_operation(self):
         mock_resume = self.patch('foundations_contrib.cli.orbit_monitor_package_server.resume')
         self._set_params_and_put({'status': 'resume'})
+        mock_resume.assert_called_once_with(self.project_name, self.monitor_name, 'scheduler')
+
+    def test_put_request_with_status_as_active_triggers_the_resume_operation(self):
+        mock_resume = self.patch('foundations_contrib.cli.orbit_monitor_package_server.resume')
+        self._set_params_and_put({'status': 'active'})
         mock_resume.assert_called_once_with(self.project_name, self.monitor_name, 'scheduler')
 
     def test_put_request_for_pause_returns_status_code_204_if_successful(self):
