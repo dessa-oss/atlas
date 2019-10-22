@@ -43,7 +43,6 @@ class MonitorParser(object):
         resume_parser.add_argument('--env', type=str, required=False, help='Specifies the scheduler environment')
         resume_parser.set_defaults(function=self._resume_monitor)
 
-
     def _start_monitor(self):
         from foundations_contrib.cli.orbit_monitor_package_server import start
 
@@ -56,7 +55,6 @@ class MonitorParser(object):
         
         start(job_directory, command, project_name, name, env)
 
-    
     def _modify_monitor(self, monitor_modifier_func):
         from foundations_local_docker_scheduler_plugin.cron_job_scheduler import  CronJobSchedulerError
         

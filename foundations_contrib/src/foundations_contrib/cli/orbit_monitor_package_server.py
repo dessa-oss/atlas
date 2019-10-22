@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
-def delete(project_name, monitor_name, env):
+def delete(project_name, monitor_name, env='scheduler'):
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.delete_job(monitor_id)
     _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
 
@@ -33,51 +33,52 @@ def start(job_directory, command, project_name, name, env):
         monitor_package = f'{project_name}-{name}'
 
         bundle = job_bundle(monitor_package)
-    job_resource_args = {}
 
-    if 'log_level' in job_config:
-        config['log_level'] = job_config['log_level']
-    if 'worker' in job_config:
-        config['worker_container_overrides'].update(job_config['worker'])
-    if 'num_gpus' in job_config:
-        job_resource_args['num_gpus'] = job_config.get('num_gpus')
+        job_resource_args = {}
 
-    config['worker_container_overrides']['args'] = command
-    if not os.path.exists(command[0]):
-        print(f"Hey, seems like your command '{command[0]}' is not an existing file in your current directory. If you are using Atlas's advanced custom docker image functionality and know what you are doing, you can ignore this message.")
+        if 'log_level' in job_config:
+            config['log_level'] = job_config['log_level']
+        if 'worker' in job_config:
+            config['worker_container_overrides'].update(job_config['worker'])
+        if 'num_gpus' in job_config:
+            job_resource_args['num_gpus'] = job_config.get('num_gpus')
 
-    set_job_resources(**job_resource_args)
+        config['worker_container_overrides']['args'] = command
+        if not os.path.exists(command[0]):
+            print(f"Hey, seems like your command '{command[0]}' is not an existing file in your current directory. If you are using Atlas's advanced custom docker image functionality and know what you are doing, you can ignore this message.")
 
-    response = submit_job_bundle(bundle)
+        set_job_resources(**job_resource_args)
 
-    if response.status_code != 200:
-        raise RuntimeError(f'Unable to submit job bundle. {response.text}')
+        response = submit_job_bundle(bundle)
 
-    foundations_context = current_foundations_context()
-    username = _get_username()
-    monitor_job_spec = _get_monitor_job_spec(project_name, name, username, job_config, config, foundations_context)
-    monitor_gpu_spec = _get_monitor_gpu_spec(foundations_context)
-    monitor_metadata = {'project_name': project_name, 'username': username}
+        if response.status_code != 200:
+            raise RuntimeError(f'Unable to submit job bundle. {response.text}')
 
-    scheduler_url = config.get('scheduler_url', 'http://localhost:5000')
+        foundations_context = current_foundations_context()
+        username = _get_username()
+        monitor_job_spec = _get_monitor_job_spec(project_name, name, username, job_config, config, foundations_context)
+        monitor_gpu_spec = _get_monitor_gpu_spec(foundations_context)
+        monitor_metadata = {'project_name': project_name, 'username': username}
 
-    CronJobScheduler(scheduler_url).schedule_job(
-        monitor_package,
-        monitor_job_spec,
-        job_config.get('schedule', {}),
-        metadata=monitor_metadata,
-        gpu_spec=monitor_gpu_spec
-    )
+        scheduler_url = config.get('scheduler_url', 'http://localhost:5000')
 
-    bundle.cleanup()
+        CronJobScheduler(scheduler_url).schedule_job(
+            monitor_package,
+            monitor_job_spec,
+            job_config.get('schedule', {}),
+            metadata=monitor_metadata,
+            gpu_spec=monitor_gpu_spec
+        )
+
+        bundle.cleanup()
 
 
-def pause(project_name, monitor_name, env):
+def pause(project_name, monitor_name, env='scheduler'):
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.pause_job(monitor_id)
     return _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
 
 
-def resume(project_name, monitor_name, env):
+def resume(project_name, monitor_name, env='scheduler'):
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.resume_job(monitor_id)
     return _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
 
@@ -153,8 +154,6 @@ def _get_monitor_gpu_spec(foundations_context):
 
 
 def _get_monitor_job_spec(project_name, monitor_name, username, job_config, config, foundations_context):
-    from pathlib import Path
-
     working_dir_root_path, job_mount_path, job_results_root_path, container_config_root_path = _get_volume_mounts_for_spec(config, project_name, monitor_name)
 
     _orbit_spec = {
