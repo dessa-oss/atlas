@@ -27,7 +27,7 @@ class TestScheduledMonitorEndpoint(Spec):
 
     client = app_manager.app().test_client()
 
-    def test_pause_monitor_returns_correct_status_code_when_successfull(self):
+    def test_pause_monitor_returns_correct_status_code_when_successful(self):
         self._start_monitor()
 
         pause_status = self._pause_monitor()
@@ -68,16 +68,16 @@ class TestScheduledMonitorEndpoint(Spec):
     def _pause_monitor(self, monitor_name=None):
         payload = {'status': 'pause'}
         monitor_name = monitor_name if self.monitor_name is None else monitor_name
-        monitor_url = f'{self.base_url}/{self.monitor_name}'
+        monitor_url = f'{self.base_url}/{monitor_name}'
         return self.client.put(monitor_url, json=payload)
 
     def _resume_monitor(self, monitor_name=None):
         payload = {'status': 'resume'}
         monitor_name = monitor_name if self.monitor_name is None else monitor_name
-        monitor_url = f'{self.base_url}/{self.monitor_name}'
+        monitor_url = f'{self.base_url}/{monitor_name}'
         return self.client.put(monitor_url, json=payload)
 
     def _delete_monitor(self, monitor_name=None):
         monitor_name = monitor_name if self.monitor_name is None else monitor_name
-        monitor_url = f'{self.base_url}/{self.monitor_name}'
-        return self.client.delete(monitor_url, json=payload)
+        monitor_url = f'{self.base_url}/{monitor_name}'
+        return self.client.delete(monitor_url)

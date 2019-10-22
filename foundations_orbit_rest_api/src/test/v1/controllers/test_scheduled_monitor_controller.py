@@ -46,12 +46,12 @@ class TestScheduledMonitorController(Spec):
 
     def test_put_request_with_appropriate_body_content_triggers_the_resume_operation(self):
         mock_resume = self.patch('foundations_contrib.cli.orbit_monitor_package_server.resume')
-        self._set_params_and_put({'status': 'resume'})
+        self._set_params_and_put({'status': 'resume'}).evaluate()
         mock_resume.assert_called_once_with(self.project_name, self.monitor_name, 'scheduler')
 
     def test_put_request_with_status_as_active_triggers_the_resume_operation(self):
         mock_resume = self.patch('foundations_contrib.cli.orbit_monitor_package_server.resume')
-        self._set_params_and_put({'status': 'active'})
+        self._set_params_and_put({'status': 'active'}).evaluate()
         mock_resume.assert_called_once_with(self.project_name, self.monitor_name, 'scheduler')
 
     def test_put_request_for_pause_returns_status_code_204_if_successful(self):
@@ -61,7 +61,7 @@ class TestScheduledMonitorController(Spec):
 
     def test_put_request_with_appropriate_body_content_triggers_the_pause_operation(self):
         mock_pause = self.patch('foundations_contrib.cli.orbit_monitor_package_server.pause')
-        self._set_params_and_put({'status': 'pause'})
+        self._set_params_and_put({'status': 'pause'}).evaluate()
         mock_pause.assert_called_once_with(self.project_name, self.monitor_name, 'scheduler')
 
     def test_put_request_returns_400_status_code_if_no_status_passed(self):
