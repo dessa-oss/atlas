@@ -65,9 +65,9 @@ class MinMaxChecker(object):
 
     @staticmethod
     def _min_test_percentage(dataframe_to_validate, column_name, lower_bound):
-        return len(dataframe_to_validate[dataframe_to_validate[column_name] < lower_bound]) / len(dataframe_to_validate)
+        return round(len(dataframe_to_validate[dataframe_to_validate[column_name] < lower_bound]) / len(dataframe_to_validate), 3)
 
     @staticmethod
     def _max_test_percentage(dataframe_to_validate, column_name, upper_bound):
-        return len(dataframe_to_validate[dataframe_to_validate[column_name] > upper_bound]) / len(dataframe_to_validate)
+        return round(len(dataframe_to_validate[dataframe_to_validate[column_name] > upper_bound]) / len(dataframe_to_validate), 3)
     
