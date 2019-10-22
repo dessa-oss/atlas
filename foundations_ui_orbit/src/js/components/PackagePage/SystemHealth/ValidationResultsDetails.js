@@ -53,7 +53,16 @@ class ValidationResultsDetails extends Component {
       </div>
     );
     if (!validationResult || CommonActions.isEmptyObject(validationResult)) {
-      mainRender = <div className="validation-results-details">add empty state</div>;
+      mainRender = (
+        <div className="validation-results-details">
+          <div className="validation-results-details-empty-state">
+            <div className="i--icon-clipboard" />
+            <div className="validation-results-details-empty-state-text">
+              Click on a validation result to see its details.
+            </div>
+          </div>
+        </div>
+      );
     }
 
     return mainRender;
