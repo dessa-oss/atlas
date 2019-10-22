@@ -43,8 +43,6 @@ class TestAPIResource(Spec):
     def random_data(self):
         return {self.faker.sentence(): self.faker.sentence() for _ in range(self.faker.random.randint(3, 10))}
 
-    authorization_mock = let_patch_mock('foundations_rest_api.v1.models.session.Session.is_authorized')
-
     def test_returns_class(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.Mock)
         self.assertEqual(klass, APIResourceMocks.Mock)
@@ -219,34 +217,6 @@ class TestAPIResource(Spec):
             response = client.get('/path/to/resource/with/query_list/params?hello=world&hello=lou')
             self.assertEqual(self._json_response(response), {'hello': ['world', 'lou']})
 
-    def test_get_returns_unauthorized_when_not_authenticated(self):
-        mock_klass = self._mock_resource('index', self._empty_callback)
-        klass = api_resource(self.uri_path)(mock_klass)
-
-        self.authorization_mock.return_value = False
-        with self._test_client() as client:
-            client.set_cookie('localhost', 'auth_token', self.random_cookie_value)
-            response = client.get(self.uri_path)
-            self.assertEqual(self._json_response(response), 'Unauthorized')
-    
-    def test_get_returns_unauthorized_status_when_not_authenticated(self):
-        mock_klass = self._mock_resource('index', self._empty_callback)
-        klass = api_resource(self.uri_path)(mock_klass)
-
-        self.authorization_mock.return_value = False
-        with self._test_client() as client:
-            client.set_cookie('localhost', 'auth_token', self.random_cookie_value)
-            response = client.get(self.uri_path)
-            self.assertEqual(response.status_code, 401)
-
-    def test_get_calls_session_is_authorized_with_correct_parameters(self):
-        mock_klass = self._mock_resource('index', self._empty_callback)
-        klass = api_resource(self.uri_path)(mock_klass)
-
-        with self._test_client() as client:
-            client.set_cookie('localhost', 'auth_token', self.random_cookie_value)
-            response = client.get(self.uri_path)
-            self.authorization_mock.assert_called_with({'auth_token': self.random_cookie_value})
 
     def _empty_callback(self, mock_instance):
         return ''

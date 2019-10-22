@@ -6,4 +6,3 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from test.v1.models.test_project import TestProject
-from test.v1.models.test_session import TestSession

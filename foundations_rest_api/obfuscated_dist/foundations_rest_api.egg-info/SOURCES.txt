@@ -34,7 +34,6 @@ obfuscated_dist/foundations_rest_api/v1/controllers/jobs_controller.py
 obfuscated_dist/foundations_rest_api/v1/controllers/projects_controller.py
 obfuscated_dist/foundations_rest_api/v1/controllers/queued_jobs_controller.py
 obfuscated_dist/foundations_rest_api/v1/controllers/running_jobs_controller.py
-obfuscated_dist/foundations_rest_api/v1/controllers/session_controller.py
 obfuscated_dist/foundations_rest_api/v1/models/__init__.py
 obfuscated_dist/foundations_rest_api/v1/models/completed_job.py
 obfuscated_dist/foundations_rest_api/v1/models/job.py
@@ -42,7 +41,6 @@ obfuscated_dist/foundations_rest_api/v1/models/project.py
 obfuscated_dist/foundations_rest_api/v1/models/property_model.py
 obfuscated_dist/foundations_rest_api/v1/models/queued_job.py
 obfuscated_dist/foundations_rest_api/v1/models/running_job.py
-obfuscated_dist/foundations_rest_api/v1/models/session.py
 obfuscated_dist/foundations_rest_api/v2beta/__init__.py
 obfuscated_dist/foundations_rest_api/v2beta/controllers/__init__.py
 obfuscated_dist/foundations_rest_api/v2beta/controllers/job_controller.py
@@ -107,7 +105,6 @@ src/foundations_rest_api/v1/controllers/jobs_controller.py
 src/foundations_rest_api/v1/controllers/projects_controller.py
 src/foundations_rest_api/v1/controllers/queued_jobs_controller.py
 src/foundations_rest_api/v1/controllers/running_jobs_controller.py
-src/foundations_rest_api/v1/controllers/session_controller.py
 src/foundations_rest_api/v1/models/__init__.py
 src/foundations_rest_api/v1/models/completed_job.py
 src/foundations_rest_api/v1/models/job.py
@@ -115,7 +112,6 @@ src/foundations_rest_api/v1/models/project.py
 src/foundations_rest_api/v1/models/property_model.py
 src/foundations_rest_api/v1/models/queued_job.py
 src/foundations_rest_api/v1/models/running_job.py
-src/foundations_rest_api/v1/models/session.py
 src/foundations_rest_api/v2beta/__init__.py
 src/foundations_rest_api/v2beta/controllers/__init__.py
 src/foundations_rest_api/v2beta/controllers/job_controller.py
@@ -162,7 +158,6 @@ src/test/v1/controllers/test_jobs_controller.py
 src/test/v1/controllers/test_projects_controller.py
 src/test/v1/controllers/test_queued_jobs_controller.py
 src/test/v1/controllers/test_running_jobs_controller.py
-src/test/v1/controllers/test_session_controller.py
 src/test/v1/models/__init__.py
 src/test/v1/models/jobs_tests_helper_mixin.py
 src/test/v1/models/test_completed_job.py

@@ -6,7 +6,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from flask import request, make_response, Response
-from foundations_core_rest_api_components.v1.models.session import Session
 class APIResourceBuilder(object):
 
     def __init__(self, app_manager, klass, base_path):
@@ -60,8 +59,6 @@ class APIResourceBuilder(object):
             instance.params = self._api_params(kwargs)
 
             response = instance.index()
-            if not Session.is_authorized(request.cookies):
-                return 'Unauthorized', 401
             return response.as_json(), response.status()
             
         return _get
