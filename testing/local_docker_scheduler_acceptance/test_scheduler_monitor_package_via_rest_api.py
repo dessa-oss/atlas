@@ -57,6 +57,25 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
     @let
     def orbit_monitor_base_api_url(self):
         return f'http://localhost:37222/api/v1/projects/{self.project_name}/monitors'
+
+    @let
+    def valid_schedule_1(self):
+        return {'schedule': {
+            'second': '*/5'}
+        }
+
+    @let
+    def invalid_schedule_1(self):
+        return {'schedule': {
+            'days': '*',
+            'seconds': '*/5'}
+        }
+
+    @let
+    def invalid_schedule_2(self):
+        return {'schedule': {
+            'second': 'not-a-second'}
+        }
     
     @skip('not implemented')
     def test_pause_scheduled_monitor_package_via_api(self):
@@ -98,6 +117,15 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         self.assertIn(f'{self.project_name}-{self.monitor_name}', monitors)
         self.assertIn(f'{self.project_name}-{self.monitor_name_2}', monitors)
 
+        monitor_package1 = f'{self.project_name}-{self.monitor_name}'
+        monitor_package2 = f'{self.project_name}-{self.monitor_name_2}'
+
+        delete_response1 = self._delete_monitor(self.monitor_name)
+        self.assertEqual(204, delete_response1.status_code)
+
+        delete_response2 = self._delete_monitor(self.monitor_name_2)
+        self.assertEqual(204, delete_response2.status_code)
+
     def test_get_scheduled_monitor_returns_scheduled_monitor(self):
         self._start_and_wait_for_monitor(self.monitor_name)
 
@@ -121,6 +149,9 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         self.assertEqual(expected_schedule, monitor_content['schedule'])
         self.assertIsNone(monitor_content['next_run_time'])
 
+        delete_response = self._delete_monitor(self.monitor_name)
+        self.assertEqual(204, delete_response.status_code)
+
     def test_delete_scheduled_monitor_successfully_deletes_monitor(self):
         self._start_and_wait_for_monitor(self.monitor_name)
 
@@ -140,6 +171,45 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
 
         delete_response = self._delete_monitor(self.monitor_name)
         self.assertEqual(404, delete_response.status_code)
+
+    def test_update_schedule_on_nonexistent_monitor_returns_404(self):
+        valid_schedule = self.valid_schedule_1
+        update_response = self._update_monitor(self.monitor_name, valid_schedule)
+
+        self.assertEqual(404, update_response.status_code)
+
+    def test_update_schedule_on_monitor_with_invalid_schedule_returns_400(self):
+        self._start_and_wait_for_monitor(self.monitor_name)
+
+        monitor_response = self._get_all_monitors()
+        monitor_package = f'{self.project_name}-{self.monitor_name}'
+        self.assertIn(monitor_package, monitor_response.json())
+
+        invalid_schedule_1 = self.invalid_schedule_1
+        update_response = self._update_monitor(self.monitor_name, invalid_schedule_1)
+        self.assertEqual(404, update_response.status_code)
+
+        invalid_schedule_2 = self.invalid_schedule_2
+        update_response = self._update_monitor(self.monitor_name, invalid_schedule_2)
+        self.assertEqual(404, update_response.status_code)
+
+        delete_response = self._delete_monitor(self.monitor_name)
+        self.assertEqual(204, delete_response.status_code)
+
+    def test_update_schedule_on_monitor_with_correct_schedule_returns_204(self):
+        import time
+        self._start_and_wait_for_monitor(self.monitor_name)
+
+        monitor_response = self._get_all_monitors()
+        monitor_package = f'{self.project_name}-{self.monitor_name}'
+        self.assertIn(monitor_package, monitor_response.json())
+
+        valid_schedule = self.valid_schedule_1
+        update_response = self._update_monitor(self.monitor_name, valid_schedule)
+        self.assertEqual(204, update_response.status_code)
+        time.sleep(5)
+        delete_response = self._delete_monitor(self.monitor_name)
+        self.assertEqual(204, delete_response.status_code)
 
     def _start_and_wait_for_monitor(self, name):
         start_response = self._start_monitor(name)
@@ -165,11 +235,16 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
 
     def _resume_monitor(self, monitor_name=None):
         payload = {'status': 'resume'}
-        monitor_name = monitor_name if self.monitor_name is None else monitor_name
-        monitor_url = f'{self.orbit_monitor_base_api_url}/{self.monitor_name}'
+        monitor_name = self.monitor_name if monitor_name is None else monitor_name
+        monitor_url = f'{self.orbit_monitor_base_api_url}/{monitor_name}'
         return requests.put(monitor_url, json=payload)
 
     def _delete_monitor(self, monitor_name=None):
-        monitor_name = monitor_name if self.monitor_name is None else monitor_name
-        monitor_url = f'{self.orbit_monitor_base_api_url}/{self.monitor_name}'
+        monitor_name = self.monitor_name if monitor_name is None else monitor_name
+        monitor_url = f'{self.orbit_monitor_base_api_url}/{monitor_name}'
         return requests.delete(monitor_url)
+
+    def _update_monitor(self, monitor_name=None, schedule=None):
+        monitor_name = self.monitor_name if monitor_name is None else monitor_name
+        monitor_url = f'{self.orbit_monitor_base_api_url}/{monitor_name}'
+        return requests.patch(monitor_url, json=schedule)
