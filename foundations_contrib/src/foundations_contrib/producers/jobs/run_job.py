@@ -24,7 +24,8 @@ class RunJob(object):
         provenance = self._pipeline_context.provenance
         message = {
             'job_id': self._pipeline_context.file_name,
-            'project_name': provenance.project_name
+            'project_name': provenance.project_name,
+            'monitor_name': provenance.monitor_name or 'None'
         }
 
         self._message_router.push_message('run_job', message)
