@@ -26,16 +26,17 @@
     width: 30%;
     position: relative;
   }
+
   .val-critical-table-cell {
     width: 10%;
     text-align: right;
   }
-}
 
-.selected-row {
-  background-color: #D9EBFF;
-  border-left: 3px solid #024B9C;
-  padding-left: 17px;
+  &.selected-row {
+    background-color: #D9EBFF;
+    border-left: 3px solid #024B9C;
+    padding-left: 17px;
+  }
 }
 
 .validation-results-table-row-header {

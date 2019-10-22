@@ -30,7 +30,11 @@ class ValidationResultsTests extends Component {
 
     return (
       <div className="validation-results-tests">
-        <ValidationResultsTestsList validationResult={validationResult} onSelectRow={this.selectRow} />
+        <ValidationResultsTestsList
+          validationResult={validationResult}
+          onSelectRow={this.selectRow}
+          selectedRow={selectedRow}
+        />
         <ValidationResultsTestsPane validationTestResult={selectedTest} />
       </div>
     );

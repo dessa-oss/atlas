@@ -94,6 +94,17 @@
             margin-left: 12px;
           }
         }
+
+        &:hover {
+          border-left: 3px solid #024B9C;
+          padding-left: 22px;
+        }
+
+        &.selected-row {
+          background-color: #D9EBFF;
+          border-left: 3px solid #024B9C;
+          padding-left: 22px;
+        }
       }
     }
 

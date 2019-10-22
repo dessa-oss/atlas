@@ -4,12 +4,17 @@ import ValidationResultsActions from "../../../actions/ValidationResultsActions"
 
 class ValidationResultsTestsList extends Component {
   render() {
-    const { validationResult, onSelectRow } = this.props;
+    const { validationResult, onSelectRow, selectedRow } = this.props;
     const rows = ValidationResultsActions.getTestRows(validationResult, onSelectRow);
+
+    const rowsWithProps = rows.map(row => React.cloneElement(
+      row,
+      { selectedRow: selectedRow }
+    ));
 
     return (
       <div className="validation-results-tests-list">
-        {rows}
+        {rowsWithProps}
       </div>
     );
   }
@@ -17,12 +22,14 @@ class ValidationResultsTestsList extends Component {
 
 ValidationResultsTestsList.propTypes = {
   validationResult: PropTypes.object,
-  onSelectRow: PropTypes.func
+  onSelectRow: PropTypes.func,
+  selectedRow: PropTypes.string
 };
 
 ValidationResultsTestsList.defaultProps = {
   validationResult: {},
-  onSelectRow: () => {}
+  onSelectRow: () => {},
+  selectedRow: ""
 };
 
 export default ValidationResultsTestsList;
