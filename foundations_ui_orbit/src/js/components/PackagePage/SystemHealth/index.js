@@ -393,9 +393,9 @@ class SystemHealth extends Component {
       <Layout tab="Health" title="Data Health">
         <div className="new-systemhealth-container-deployment">
           <div className="main-display-data-health">
-            <label className="new-systemhealth-section font-bold">
+            <div className="new-systemhealth-section font-bold">
               Data Validation Results
-            </label>
+            </div>
             <div className="systemhealth-body">
               <div className="left-side">
                 {/* <div className="i--icon-refresh" onClick={onClickRefreshList} /> */}
