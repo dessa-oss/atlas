@@ -21,9 +21,15 @@ class ValidationResultsTestsListRow extends Component {
     const isSelectedRow = selectedRow === objKey;
     const selectedRowClass = isSelectedRow ? "selected-row" : "";
 
+    const labelError = (
+      parseInt(validationTestResult.summary.critical, 10) !== 0
+        ? <span className="i--icon-error" />
+        : null
+    );
+
     return (
       <div className={`validation-results-tests-list-row ${selectedRowClass}`} onClick={this.onClick}>
-        <div className="validation-results-tests-list-row-header">{label}</div>
+        <div className="validation-results-tests-list-row-header">{labelError}{label}</div>
         <div className="validation-results-tests-list-row-summary">
           <div className="validation-results-tests-list-row-summary-values">
             {validationTestResult.summary.critical}<br />

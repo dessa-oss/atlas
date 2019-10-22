@@ -112,3 +112,13 @@ See assets/svgs/README.md for further information on SVG conversion process
   width: 100%;
   height: 300px;
 }
+
+.i--icon-error {
+  background-image: url('../assets/svgs/icon-error.svg');
+  @include icon-helper;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: top;
+}
