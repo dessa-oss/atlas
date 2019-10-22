@@ -75,12 +75,13 @@ def start(job_directory, command, project_name, name, env):
 
 def pause(project_name, monitor_name, env='scheduler'):
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.pause_job(monitor_id)
-    return _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
-
+    _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
+    return True
 
 def resume(project_name, monitor_name, env='scheduler'):
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.resume_job(monitor_id)
-    return _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
+    _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
+    return True
 
 
 def get_by_project(project_name, env=None):
@@ -107,7 +108,7 @@ def _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback):
     monitor_id = f'{project_name}-{monitor_name}'
 
     cron_job_scheduler = CronJobScheduler(config_manager.config()['scheduler_url'])
-    cron_scheduler_callback(cron_job_scheduler, monitor_id)
+    return cron_scheduler_callback(cron_job_scheduler, monitor_id)
 
 
 def _update_config(env):

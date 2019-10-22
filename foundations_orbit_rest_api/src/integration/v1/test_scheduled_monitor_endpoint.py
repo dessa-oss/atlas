@@ -41,11 +41,9 @@ class TestScheduledMonitorEndpoint(Spec):
     def tear_down(self):
         try:
             self._delete_monitor_via_orbit_monitor_package()
-            # print(f'monitor: {self.project_name}-{self.monitor_name}')
         except Exception as e:
             print(f'In Tear Down: Failed to stop monitor with id: {self.project_name}-{self.monitor_name} with reason: {e}')
 
-    @skip('work in progress implemented')
     def test_pause_monitor_returns_correct_status_code_when_successful(self):
         self._start_monitor()
 
@@ -69,7 +67,6 @@ class TestScheduledMonitorEndpoint(Spec):
 
         monitors = self._get_all_monitors()
         self.assertTrue(self.monitor_id not in monitors.keys())
-
 
     @skip('not implemented')
     def test_pause_monitor_halts_monitor_execution(self):
