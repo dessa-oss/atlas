@@ -59,22 +59,32 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         return f'http://localhost:37222/api/v1/projects/{self.project_name}/monitors'
 
     @let
+    def atlas_base_api_url(self):
+        return f'http://localhost:37223/api/v2beta/projects'
+
+    @let
     def valid_schedule_1(self):
-        return {'schedule': {
-            'second': '*/5'}
+        return {
+            'schedule': {
+                'second': '*/5'
+            }
         }
 
     @let
     def invalid_schedule_1(self):
-        return {'schedule': {
-            'days': '*',
-            'seconds': '*/5'}
+        return {
+            'schedule': {
+                'days': '*',
+                'seconds': '*/5'
+            }
         }
 
     @let
     def invalid_schedule_2(self):
-        return {'schedule': {
-            'second': 'not-a-second'}
+        return {
+            'schedule': {
+                'second': 'not-a-second'
+            }
         }
     
     @skip('not implemented')
@@ -209,6 +219,44 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         delete_response = self._delete_monitor(self.monitor_name)
         self.assertEqual(204, delete_response.status_code)
 
+    @skip('not implemented')
+    def test_get_monitor_jobs_for_nonexistent_monitor_returns_404(self):
+        get_jobs_response = self._get_monitor_jobs(self.monitor_name)
+        self.assertEqual(404, get_jobs_response.status_code)
+
+    @skip('not implemented')
+    def test_get_monitor_jobs_returns_all_jobs_for_monitor(self):
+        import time
+        from foundations_orbit_rest_api.v1.models.production_metric_set import ProductionMetricSet
+
+        self._start_and_update_and_resume_monitor(self.monitor_name)
+        time.sleep(7)
+
+        metric_sets = ProductionMetricSet.all(self.project_name).evaluate()
+        number_of_runs = len(metric_sets[0].series[0]['data'])
+        self.assertIn(number_of_runs, [2, 3])
+
+        jobs_list = self._get_monitor_jobs(self.monitor_name)
+        self.assertEqual(number_of_runs, len(jobs_list))
+
+    def _get_monitor_jobs(self, monitor_name):
+        import requests
+        jobs_url = f'{self.atlas_base_api_url}/{monitor_name}'
+        return requests.get(jobs_url)
+
+    def _start_and_update_and_resume_monitor(self, name):
+        schedule = {
+            'second': '*/2'
+        }
+
+        self._start_and_wait_for_monitor(name)
+
+        update_response = self._update_monitor(monitor_name=name, schedule=schedule)
+        self.assertEqual(204, update_response.status_code)
+
+        resume_response = self._resume_monitor(monitor_name=name)
+        self.assertEqual(204, resume_response.status_code)
+
     def _start_and_wait_for_monitor(self, name):
         start_response = self._start_monitor(name)
         self.assertEqual(0, start_response.returncode)
@@ -232,7 +280,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         return requests.put(monitor_url, json=payload)
 
     def _resume_monitor(self, monitor_name=None):
-        payload = {'status': 'resume'}
+        payload = {'status': 'active'}
         monitor_name = self.monitor_name if monitor_name is None else monitor_name
         monitor_url = f'{self.orbit_monitor_base_api_url}/{monitor_name}'
         return requests.put(monitor_url, json=payload)
