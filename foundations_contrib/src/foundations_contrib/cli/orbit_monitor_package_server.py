@@ -55,6 +55,7 @@ def start(job_directory, command, project_name, name, env):
             raise RuntimeError(f'Unable to submit job bundle. {response.text}')
 
         foundations_context = current_foundations_context()
+        foundations_context.pipeline_context().provenance.monitor_name = name
         username = _get_username()
         monitor_job_spec = _get_monitor_job_spec(project_name, name, username, job_config, config, foundations_context)
         monitor_gpu_spec = _get_monitor_gpu_spec(foundations_context)

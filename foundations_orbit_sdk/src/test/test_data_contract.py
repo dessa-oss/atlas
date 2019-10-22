@@ -125,6 +125,15 @@ class TestDataContract(Spec):
         return pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[1, 2.0]])
 
     @let_now
+    def two_column_dataframe_with_datetime(self):
+        import pandas
+        import datetime
+        return pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[
+            [datetime.datetime(2020,5,3), datetime.datetime(2021,6,3)],
+            [datetime.datetime(2019,7,5), datetime.datetime(2019,6,4)]
+        ])
+
+    @let_now
     def two_column_dataframe_different_types(self):
         import pandas
         return pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[1, 2]])
@@ -475,6 +484,86 @@ class TestDataContract(Spec):
 
         self.assertEqual(expected_output, deserialized_report)
 
+    def test_data_contract_validate_writes_correct_info_to_redis_using_datetime(self):
+        import numpy
+        import datetime
+
+        self.maxDiff = None
+
+        inference_period='2019-09-17'
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe_with_datetime)
+        contract.special_value_test.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
+
+        upper_bound = datetime.datetime(2023,5,6)
+
+        contract.min_max_test.configure(attributes=[self.column_name], lower_bound=datetime.datetime(2016,2,6), upper_bound=upper_bound)
+        contract.min_max_test.configure(attributes=[self.column_name_2], lower_bound=datetime.datetime(2020,2,6), upper_bound=upper_bound)
+
+        contract.options.check_distribution = False
+        contract.options.check_special_values = False
+        report = contract.validate(self.two_column_dataframe_with_datetime, inference_period=inference_period)
+
+        expected_output = {
+            'data_contract': f'{self.contract_name}',
+            'date': f'{inference_period}',
+            'data_quality': {},
+            'monitor_package': f'{self.model_name}',
+            'min': {
+                'details_by_attribute': [{
+                    'attribute_name': f'{self.column_name}',
+                    'lower_bound': datetime.datetime(2016,2,6),
+                    'min_value': self.two_column_dataframe_with_datetime[self.column_name].min(),
+                    'validation_outcome': 'healthy',
+                },
+                {
+                    'attribute_name': f'{self.column_name_2}',
+                    'lower_bound': datetime.datetime(2020,2,6),
+                    'min_value': self.two_column_dataframe_with_datetime[self.column_name_2].min(),
+                    'validation_outcome': 'critical',
+                    'percentage_out_of_bounds': 0.5,
+                }],
+                'summary': {
+                    'critical': 1,
+                    'healthy': 1,
+                    'warning': 0
+                }
+            },
+            'max': {
+                'details_by_attribute': [{
+                    'attribute_name': f'{self.column_name}',
+                    'upper_bound': upper_bound,
+                    'max_value': self.two_column_dataframe_with_datetime[self.column_name].max(),
+                    'validation_outcome': 'healthy',
+                },
+                {
+                    'attribute_name': f'{self.column_name_2}',
+                    'upper_bound': upper_bound,
+                    'max_value': self.two_column_dataframe_with_datetime[self.column_name_2].max(),
+                    'validation_outcome': 'healthy',
+                }],
+                'summary': {
+                    'critical': 0,
+                    'healthy': 2,
+                    'warning': 0
+                }
+            },
+            'population_shift': {},
+            'row_cnt_diff': 0.0
+        }
+
+        key = f'projects:{self.project_name}:monitors:{self.model_name}:validation:{self.contract_name}'
+        serialized_report = self._redis.hget(key, inference_period)
+        validation_counter = self._redis.get(f'{key}:counter')
+
+        self.assertEqual(1, int(validation_counter.decode()))
+
+        import pickle
+        deserialized_report = pickle.loads(serialized_report)
+
+        deserialized_report.pop('schema', None)
+
+        self.assertEqual(expected_output, deserialized_report)
+
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_different_types(self):
         inference_period='2019-09-17'
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
@@ -553,6 +642,55 @@ class TestDataContract(Spec):
                     'upper_bound': 100,
                     'passed': True,
                     'max_value': 7
+                }
+            }
+        }
+
+        self.assertEqual(expected_results, min_max_test_results)
+    
+    def test_data_contract_min_max_check_produces_correct_output_for_two_column_df_with_datetime(self):
+        import datetime
+
+        inference_period='2019-09-17'
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+
+        upper_bound = datetime.datetime(2023,5,6)
+
+        contract.min_max_test.configure(attributes=[self.column_name], lower_bound=datetime.datetime(2016,2,6), upper_bound=upper_bound)
+        contract.min_max_test.configure(attributes=[self.column_name_2], lower_bound=datetime.datetime(2020,2,6), upper_bound=upper_bound)
+        contract.options.check_distribution = False
+        contract.options.check_special_values = False
+
+        report = contract.validate(self.two_column_dataframe_with_datetime, inference_period=inference_period)
+
+        self.assertIn('min_max_test_results', report)
+
+        min_max_test_results = report['min_max_test_results']
+
+        expected_results = {
+            self.column_name: {
+                'min_test': {
+                    'lower_bound': datetime.datetime(2016,2,6),
+                    'passed': True,
+                    'min_value': self.two_column_dataframe_with_datetime[self.column_name].min()
+                },
+                'max_test': {
+                    'upper_bound': upper_bound,
+                    'passed': True,
+                    'max_value': self.two_column_dataframe_with_datetime[self.column_name].max()
+                }
+            },
+            self.column_name_2: {
+                'min_test': {
+                    'lower_bound': datetime.datetime(2020,2,6),
+                    'passed': False,
+                    'min_value': self.two_column_dataframe_with_datetime[self.column_name_2].min(),
+                    'percentage_out_of_bounds': 0.5
+                },
+                'max_test': {
+                    'upper_bound': upper_bound,
+                    'passed': True,
+                    'max_value': self.two_column_dataframe_with_datetime[self.column_name_2].max()
                 }
             }
         }

@@ -69,12 +69,14 @@ def _add_consumers_for_run_job(redis):
     from foundations_contrib.consumers.jobs.running.remove_global_queued_job import RemoveGlobalQueuedJob
     from foundations_contrib.consumers.jobs.running.start_time import StartTime
     from foundations_contrib.consumers.jobs.running.job_notifier import JobNotifier
+    from foundations_contrib.consumers.jobs.running.monitor_name import MonitorName
 
     _add_listener(JobState(redis), 'run_job')
     _add_listener(RemoveQueuedJob(redis), 'run_job')
     _add_listener(RemoveGlobalQueuedJob(redis), 'run_job')
     _add_listener(StartTime(redis), 'run_job')
     _add_listener(JobNotifier(_job_notifier), 'run_job')
+    _add_listener(MonitorName(redis), 'run_job')
 
 
 def _add_consumers_for_complete_job(redis):

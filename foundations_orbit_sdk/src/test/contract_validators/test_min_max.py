@@ -28,11 +28,12 @@ class TestMinMax(Spec):
         import pandas
         return pandas.DataFrame(columns=[self.column_name, self.column_name_two], data=[[20, 0], [40, 4], [50, 10], [100, 40], [110, 99]])
     
-    # @let_now
-    # def dataframe_one_column_with_datetime(self):
-    #     import datetime
-    #     import pandas
-    #     return pandas.Dataframe(columns=[self.column_name], data=[datetime.datetime(2018,2,16), datetime.datetime(2019,2,16)])
+    @let_now
+    def dataframe_one_column_with_datetime(self):
+        import datetime
+        import pandas
+
+        return pandas.DataFrame(columns=[self.column_name], data=[datetime.datetime(2020,2,16), datetime.datetime(2018,2,16), datetime.datetime(2019,2,16)])
 
     def test_min_max_test_returns_empty_dictionary_when_checker_not_configured(self):
         min_max_checker = MinMaxChecker()
@@ -358,6 +359,37 @@ class TestMinMax(Spec):
                     'max_value': max_val_one,
                 },
             },
+        }
+
+        self.assertEqual(expected_result, result)
+    
+    def test_min_max_test_with_one_column_datetime(self):
+        import datetime
+        max_val_one = self.dataframe_one_column_with_datetime[self.column_name].max()
+        min_val_one = self.dataframe_one_column_with_datetime[self.column_name].min() 
+
+        upper_bound = max_val_one + datetime.timedelta(days=1)
+        lower_bound = min_val_one + datetime.timedelta(days=1)
+
+        min_max_checker = MinMaxChecker()
+        min_max_checker.configure(attributes=[self.column_name], lower_bound=lower_bound, upper_bound=upper_bound)
+        
+        result = min_max_checker.validate(self.dataframe_one_column_with_datetime)
+
+        expected_result = {
+            self.column_name: {
+                'min_test': {
+                    'lower_bound': lower_bound,
+                    'passed': False,
+                    'min_value': min_val_one,
+                    'percentage_out_of_bounds': 0.333
+                },
+                'max_test': {
+                    'upper_bound': upper_bound,
+                    'passed': True,
+                    'max_value': max_val_one,
+                }
+            }
         }
 
         self.assertEqual(expected_result, result)

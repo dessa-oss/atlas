@@ -362,7 +362,7 @@ class TestJobDataRedis(Spec):
 
     @let
     def fake_timestamp(self):
-        self.faker.time()
+        return self.faker.time()
     
     @let
     def fake_job_1(self):
