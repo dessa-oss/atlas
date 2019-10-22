@@ -41,6 +41,8 @@ def stream_job_logs(deployment):
                     logger.error("Job '{}' has failed.".format(deployment.job_name()))
                 elif job_status == 'completed':
                     logger.info("Job '{}' has completed.".format(deployment.job_name()))
+                elif job_status == 'running':
+                    logger.info("Job '{}' is running, see GUI for full logs and status.".format(deployment.job_name()))
                 else:
                     logger.warning("Job status of job '{}' is unknown.".format(deployment.job_name()))
             except AttributeError:

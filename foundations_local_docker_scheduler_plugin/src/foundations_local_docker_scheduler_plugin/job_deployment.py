@@ -198,8 +198,9 @@ class JobDeployment(object):
                         yield line
 
                 except APIError as e:
-                    APIError(f"Could not find container for job {self._job_id}. Job may have completed. ")
-                    status = "completed"
+                    from foundations_contrib.global_state import log_manager
+                    logger = log_manager.get_logger(__name__)
+                    logger.warn(f"Could not find local container for job {self._job_id}. The job may have already completed or was submitted to a remote machine. Please see the GUI for full job logs and status.")
 
             else:
                 # try and see if it completed in between requests
