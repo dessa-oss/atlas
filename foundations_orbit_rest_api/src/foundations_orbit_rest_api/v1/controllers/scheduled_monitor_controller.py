@@ -56,7 +56,7 @@ class ScheduledMonitorController(object):
         from foundations_core_rest_api_components.response import Response
 
         project_name = self.params.pop('project_name')
-        monitor_name = self.params.pop('name')
+        monitor_name = self.params.pop('monitor_name')
         schedule = self.params.pop('schedule')
 
         fallback = ScheduledMonitorController._get_failure_response(project_name, monitor_name)
