@@ -19,6 +19,12 @@ class ScheduledMonitor(object):
         return LazyResult(lambda: ScheduledMonitor._delete_internal(project_name, name))
 
     @staticmethod
+    def patch(project_name=None, name=None, schedule=None):
+        from foundations_core_rest_api_components.lazy_result import LazyResult
+        return LazyResult(lambda: ScheduledMonitor._patch_internal(project_name, name, schedule))
+
+
+    @staticmethod
     def _scheduler():
         import os
         from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler
@@ -45,3 +51,16 @@ class ScheduledMonitor(object):
             return {}
         except CronJobSchedulerError as ex:
             return None
+
+    @staticmethod
+    def _patch_internal(project_name, name, schedule):
+        from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobSchedulerError
+
+        monitor_package = f'{project_name}-{name}'
+
+        try:
+            response = ScheduledMonitor._scheduler().update_job_schedule(monitor_package, schedule)
+            return {}
+        except CronJobSchedulerError as ex:
+            return None
+
