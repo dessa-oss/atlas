@@ -188,7 +188,7 @@ def _get_monitor_job_spec(project_name, monitor_name, username, job_config, conf
                     "FOUNDATIONS_USER": username,
                     "PROJECT_NAME": project_name,
                     "MONITOR_NAME": monitor_name,
-                    "JOB_ID": f'{project_name}-{monitor_name}',
+                    "FOUNDATIONS_JOB_ID": f'{project_name}-{monitor_name}',
                     "PYTHONPATH": "/job/",
                     "FOUNDATIONS_HOME": "/root/.foundations/"
                 },

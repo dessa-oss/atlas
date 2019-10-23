@@ -35,7 +35,10 @@ class JobDataRedis(object):
 
         job_ids = JobDataRedis._fetch_project_job_ids(
             project_name, redis_connection)
+        return JobDataRedis.all_jobs_by_list_of_job_ids(job_ids, redis_connection, include_input_params)
 
+    @staticmethod
+    def all_jobs_by_list_of_job_ids(job_ids, redis_connection, include_input_params):
         pipe = JobDataRedis._create_redis_pipeline(redis_connection)
         futures = JobDataRedis._get_data_for_each_job(
             job_ids, pipe, include_input_params)

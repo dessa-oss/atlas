@@ -25,4 +25,5 @@ class MonitorName(object):
         """
         job_id = message['job_id']
         monitor_name = message['monitor_name']
-        self._redis.set(f'jobs:{job_id}:monitor', monitor_name)
+        project_name = message['project_name']
+        self._redis.sadd(f'projects:{project_name}:monitors:{monitor_name}:jobs', job_id)

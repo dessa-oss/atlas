@@ -29,7 +29,7 @@ class Provenance(object):
         self.python_version = None
         self.job_run_data = {}
         self.project_name = 'default'
-        self.monitor_name = None
+        self.monitor_name = os.getenv('MONITOR_NAME', None)
         self.user_name = os.getenv("FOUNDATIONS_USER", None)
         if self.user_name is None:
             try:
