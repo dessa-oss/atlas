@@ -59,8 +59,8 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         return f'http://localhost:37222/api/v1/projects/{self.project_name}/monitors'
 
     @let
-    def atlas_base_api_url(self):
-        return f'http://localhost:37223/api/v2beta/projects'
+    def atlas_job_listing_base_api_url(self):
+        return f'http://localhost:37223/api/v2beta/projects/{self.project_name}/job_listing'
 
     @let
     def valid_schedule_1(self):
@@ -108,31 +108,25 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         scheduler_address = os.environ['LOCAL_DOCKER_SCHEDULER_HOST']
         return requests.delete(f'http://{scheduler_address}:5000/scheduled_jobs/{job_name}')
     
-    @skip('not implemented')
     def test_pause_scheduled_monitor_package_via_api(self):
-        self._start_and_wait_for_monitor()
+        self._start_and_wait_for_monitor(self.monitor_name)
 
         pause_response = self._pause_monitor()
         self.assertEqual(204, pause_response.status_code)
 
-    @skip('not implemented')
     def test_pause_scheduled_monitor_package_via_api_halts_execution_but_can_resume_later(self):
-        self._start_and_wait_for_monitor()
+        self._start_and_wait_for_monitor(self.monitor_name)
         pause_response = self._pause_monitor()
 
         resume_response = self._resume_monitor()
         self.assertEqual(204, pause_response.status_code)
 
-    @skip('not implemented')
     def test_attempting_to_pause_invalid_monitor_should_produce_404(self):
-        self._start_and_wait_for_monitor()
-
         pause_response = self._pause_monitor(monitor_name=self.invalid_monitor_name)
         self.assertEqual(404, pause_response.status_code)
 
-    @skip('not implemented')
     def test_attempting_to_resume_invalid_monitor_should_produce_404(self):
-        self._start_and_wait_for_monitor()
+        self._start_and_wait_for_monitor(self.monitor_name)
 
         resume_response = self._resume_monitor(monitor_name=self.invalid_monitor_name)
         self.assertEqual(404, resume_response.status_code)
@@ -265,6 +259,9 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         self.assertEqual(self.project_name, jobs_list[1]['project_name'])
         self.assertIn(self.monitor_name, jobs_list[1]['job_id'])
 
+    def test_delete_monitor_job_deletes_job(self):
+        pass
+
     def _get_monitor_jobs(self, monitor_name=None):
         monitor_name = self.monitor_name if monitor_name is None else monitor_name
         monitor_jobs_url = f'{self.orbit_monitor_base_api_url}/{monitor_name}/jobs'
@@ -316,3 +313,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         monitor_name = self.monitor_name if monitor_name is None else monitor_name
         monitor_url = f'{self.orbit_monitor_base_api_url}/{monitor_name}'
         return requests.patch(monitor_url, json=schedule)
+
+    def _delete_job(self, job_id=None):
+        job_url = f'{self.atlas_job_listing_base_api_url}/{job_id}'
+        return requests.delete(job_url)
