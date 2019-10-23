@@ -57,18 +57,12 @@ class ScheduledMonitorController(object):
         return Response('ScheduledMonitor', response, status=204, fallback=fallback)
 
     def put(self):
-        from foundations_contrib.cli.orbit_monitor_package_server import pause, resume
-        from foundations_core_rest_api_components.lazy_result import LazyResult
         from foundations_core_rest_api_components.response import Response
         from foundations_orbit_rest_api.v1.models.scheduled_monitor import ScheduledMonitor
-        from http import HTTPStatus
-        from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobSchedulerError
 
         project_name = self.params.pop('project_name')
         monitor_name = self.params.pop('monitor_name')
         status = self.params.pop('status')
-
-        env = 'scheduler'
 
         fallback = ScheduledMonitorController._get_failure_response(project_name, monitor_name)
 
