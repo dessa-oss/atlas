@@ -68,11 +68,9 @@ pipeline{
                         stage('Build Worker Images and Push to Testing Env') {
                             steps {
                                 container("python3-1") {
-                                    ws("${WORKSPACE}"){
-                                        sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-                                        sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-                                        sh './build_worker_images.sh '
-                                    }
+                                    sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
+                                    sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
+                                    sh './build_worker_images.sh '
                                 }
                             }
                         }
