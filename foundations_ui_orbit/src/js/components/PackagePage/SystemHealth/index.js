@@ -1,616 +1,73 @@
-import React from "react";
+import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import Layout from "../Layout";
-import { get, post } from "../../../actions/BaseActions";
 import PropTypes from "prop-types";
-import moment from "moment";
 import ModalTutorial from "../../common/ModalTutorial";
+import ValidationResultsTable from "./ValidationResultsTable";
+import ValidationResultsDetails from "./ValidationResultsDetails";
 
-const SystemHealth = props => {
-  const [showSchemaTab, setShowSchemaTab] = React.useState(true);
-  const [showPopulationTab, setShowPopulationTab] = React.useState(false);
-  const [showDataQualityTab, setShowDataQualityTab] = React.useState(false);
-  const [data, setData] = React.useState();
-  const [options, setOptions] = React.useState([]);
-  const [selectedInferencePeriod, setSelectedInferencePeriod] = React.useState("");
-  const [selectedModelPackage, setSelectedModelPackage] = React.useState("");
-  const [selectedDataContract, setSelectedDataContract] = React.useState("");
-  const [rowCountDifference, setRowCountDifference] = React.useState("No Report Selected");
-  const [tutorialVisible, setTutorialVisible] = React.useState(false);
+class SystemHealth extends Component {
+  constructor(props) {
+    super(props);
 
-  const onToggleTutorial = () => {
-    let value = !tutorialVisible;
-    setTutorialVisible(value);
-  };
-
-  const switchToSchemaTab = () => {
-    setShowSchemaTab(true);
-    setShowPopulationTab(false);
-    setShowDataQualityTab(false);
-  };
-
-  const switchToPopulationShiftTab = () => {
-    setShowSchemaTab(false);
-    setShowPopulationTab(true);
-    setShowDataQualityTab(false);
-  };
-
-  const switchToDataQualityTab = () => {
-    setShowSchemaTab(false);
-    setShowPopulationTab(false);
-    setShowDataQualityTab(true);
-  };
-
-  const formatPercentage = val => {
-    if (!Number.isNaN(val)) {
-      let percentage = val * 100;
-      if (Number.isInteger(percentage)) {
-        return percentage;
-      }
-      return percentage.toFixed(1);
-    }
-    return 0;
-  };
-
-  const reload = () => {
-    const { location } = props;
-
-    get(`projects/${location.state.project.name}/validation_report_list`).then(result => {
-      if (result) {
-        let entries = [];
-        result.forEach(resultItem => {
-          const value = moment(resultItem.inference_period)
-            .format("YYYY-MM-DD")
-            .toString();
-          const found = entries.find(entry => entry.inference_period === value);
-
-          if (!found) {
-            const entry = {
-              inference_period: value,
-              model_packages: []
-            };
-            entries.push(entry);
-          }
-        });
-
-        result.forEach(resultItem => {
-          entries.forEach(entryItem => {
-            if (moment(resultItem.inference_period).isSame(entryItem.inference_period, "day")) {
-              const found = entryItem.model_packages.find(item => item.model_package === resultItem.model_package);
-
-              if (!found) {
-                let newModelPackage = {
-                  model_package: resultItem.model_package,
-                  data_contracts: []
-                };
-                entryItem.model_packages.push(newModelPackage);
-              }
-            }
-          });
-        });
-
-        result.forEach(resultItem => {
-          entries.forEach(entry => {
-            if (moment(resultItem.inference_period).isSame(entry.inference_period, "day")) {
-              entry.model_packages.forEach(modelPackage => {
-                if (modelPackage.model_package === resultItem.model_package) {
-                  let dataContracts = modelPackage.data_contracts;
-                  const found = dataContracts.find(dataContract => dataContract === resultItem.data_contract);
-
-                  if (!found) {
-                    modelPackage.data_contracts.push(resultItem.data_contract);
-                  }
-                }
-              });
-            }
-          });
-        });
-
-        const sortedEntries = entries.sort((a, b) => {
-          const dateA = new Date(a.inference_period);
-          const dateB = new Date(b.inference_period);
-
-          return dateB - dateA;
-        });
-
-        setOptions(sortedEntries);
-      }
-    });
-  };
-
-  React.useEffect(() => {
-    reload();
-  }, []);
-
-  const getValidationColor = validationValue => {
-    if (validationValue === "critical") {
-      return "critical";
-    } if (validationValue === "healthy") {
-      return "healthy";
-    } if (validationValue === "warning") {
-      return "warning";
-    }
-    return "none";
-  };
-
-  /* eslint-disable react/jsx-curly-brace-presence */
-  const renderSchemaTab = () => {
-    if (showSchemaTab) {
-      if (data === undefined) {
-        return (
-          <div className="i--image-nothing-here health-state-zero">
-            <div className="text-no-reports-loaded">
-              You haven{"'"}t loaded any reports
-            </div>
-          </div>
-        );
-      }
-      return (
-        <div className="system-health-table table-2">
-          <table>
-            <tr>
-              <th>Attribute Name</th>
-              <th>Data Type</th>
-              <th>Issue Type</th>
-              <th>Validation Outcome</th>
-            </tr>
-            {data.schema.details_by_attribute
-              && data.schema.details_by_attribute.length > 0
-              && data.schema.details_by_attribute.map(row => {
-                if (row === "") return;
-                return (
-                  <tr key={row.attribute_name}>
-                    <td>{row.attribute_name}</td>
-                    <td>{row.data_type}</td>
-                    <td>{row.issue_type || ""}</td>
-                    <td className={getValidationColor(row.validation_outcome)}>
-                      {row.validation_outcome}
-                      <div className="circle" />{" "}
-                    </td>
-                  </tr>
-                );
-              })}
-          </table>
-        </div>
-      );
-    }
-  };
-
-  const renderPopulatioShiftTab = () => {
-    if (showPopulationTab) {
-      if (data === undefined) {
-        return (
-          <div className="i--image-nothing-here health-state-zero">
-            <div className="text-no-reports-loaded">
-              You haven{"'"}t loaded any reports
-            </div>
-          </div>
-        );
-      }
-
-      return (
-        <div className="system-health-table table-2">
-          <table>
-            <tr>
-              <th>Attribute Name</th>
-              <th>Distribution Shift</th>
-              <th>Validation Outcome</th>
-            </tr>
-            {data.population_shift.details_by_attribute
-              && data.population_shift.details_by_attribute.length > 0
-              && data.population_shift.details_by_attribute.map(row => {
-                if (row === "") return;
-                const isLInfinity = "L-infinity" in row;
-                const shiftMetric = isLInfinity ? row["L-infinity"] : row.PSI;
-                return (
-                  <tr key={row.attribute_name}>
-                    <td>{row.attribute_name}</td>
-                    <td>{shiftMetric}</td>
-                    <td className={getValidationColor(row.validation_outcome)}>
-                      {row.validation_outcome}
-                      <div className="circle" />{" "}
-                    </td>
-                  </tr>
-                );
-              })}
-          </table>
-        </div>
-      );
-    }
-  };
-
-  const renderDataQualityTab = () => {
-    if (showDataQualityTab) {
-      if (data === undefined) {
-        return (
-          <div className="i--image-nothing-here health-state-zero">
-            <div className="text-no-reports-loaded">
-              You haven{"'"}t loaded any reports
-            </div>
-          </div>
-        );
-      }
-      return (
-        <div className="system-health-table table-2">
-          <table>
-            <tr>
-              <th>Attribute Name</th>
-              <th>Value</th>
-              <th>Expected (%)</th>
-              <th>Actual (%)</th>
-              <th>Difference</th>
-              <th>Validation Outcome</th>
-            </tr>
-            {data.data_quality.details_by_attribute
-              && data.data_quality.details_by_attribute.length > 0
-              && data.data_quality.details_by_attribute.map(row => {
-                if (row === "") return;
-                return (
-                  <tr key={row.attribute_name}>
-                    <td>{row.attribute_name}</td>
-                    <td>{row.value}</td>
-                    <td>{formatPercentage(row.pct_in_reference_data)}</td>
-                    <td>{formatPercentage(row.pct_in_current_data)}</td>
-                    <td>{formatPercentage(row.difference_in_pct)}</td>
-                    <td className={getValidationColor(row.validation_outcome)}>
-                      {row.validation_outcome}
-                      <div className="circle" />
-                    </td>
-                  </tr>
-                );
-              })}
-          </table>
-        </div>
-      );
-    }
-  };
-  /* eslint-enable react/jsx-curly-brace-presence */
-
-  const onClickInferencePeriod = value => {
-    if (value === selectedInferencePeriod) {
-      setSelectedInferencePeriod("");
-      setSelectedModelPackage("");
-      setRowCountDifference("");
-    } else {
-      setSelectedInferencePeriod(value);
-    }
-  };
-
-  const onClickModelPackage = value => {
-    if (value === selectedModelPackage) {
-      setSelectedModelPackage("");
-    } else {
-      setSelectedModelPackage(value);
-    }
-  };
-
-  const onClickDataContract = value => {
-    setSelectedDataContract(value);
-
-    const { location } = props;
-
-    const body = {
-      inference_period: selectedInferencePeriod,
-      model_package: selectedModelPackage,
-      data_contract: value
+    this.state = {
+      selectedValidationResult: {},
+      tutorialVisible: false
     };
 
-    post(`projects/${location.state.project.name}/validation_results`, body).then(result => {
-      if (result) {
-        setData(result);
-      }
-    });
-  };
+    this.selectRow = this.selectRow.bind(this);
+    this.reload = this.reload.bind(this);
+    this.onToggleTutorial = this.onToggleTutorial.bind(this);
+  }
 
-  const renderDataContracts = item => {
-    return item.data_contracts.map(contract => {
-      return (
-        <div
-          className={contract === selectedDataContract
-            ? "container-health-data-contract selected"
-            : "container-health-data-contract"}
-          key={contract}
-        >
-          <div
-            className={contract === selectedDataContract ? "label-data-contract selected" : "label-data-contract"}
-            onClick={() => onClickDataContract(contract)}
-          >
-            {contract}
+  selectRow(selectedResult) {
+    this.setState({ selectedValidationResult: selectedResult });
+  }
+
+  reload() {
+    this.setState({ selectedValidationResult: {} });
+  }
+
+  onToggleTutorial() {
+    const { tutorialVisible } = this.state;
+    this.setState({ tutorialVisible: !tutorialVisible });
+  }
+
+  render() {
+    const { selectedValidationResult, tutorialVisible } = this.state;
+
+    const location = this.props.location;
+
+    return (
+      <Layout tab="Health" title="Data Health" openTutorial={this.onToggleTutorial}>
+        <div className="new-systemhealth-container-deployment">
+          <div className="main-display-data-health">
+            <div className="new-systemhealth-section font-bold">
+              Data Validation Results
+            </div>
+            <div className="systemhealth-body">
+              <div className="left-side">
+                <ValidationResultsTable
+                  location={location}
+                  onClickRow={this.selectRow}
+                  selectedRow={selectedValidationResult}
+                  reload={this.reload}
+                />
+              </div>
+              <div className="right-side">
+                <ValidationResultsDetails location={location} selectedValidationResult={selectedValidationResult} />
+              </div>
+            </div>
           </div>
+          <ModalTutorial
+            tutorialVisible={tutorialVisible}
+            onToggleTutorial={this.onToggleTutorial}
+          />
         </div>
-      );
-    });
-  };
-
-  const renderModelPackages = option => {
-    return option.model_packages.map(item => {
-      return (
-        <div
-          className="container-health-model-package"
-          key={item.model_package}
-        >
-          <div
-            className="label-model-package"
-            onClick={() => onClickModelPackage(item.model_package)}
-          >
-            {item.model_package === selectedModelPackage
-              ? `- ${item.model_package}`
-              : `+ ${item.model_package}`}
-          </div>
-          {item.model_package === selectedModelPackage && renderDataContracts(item)}
-        </div>
-      );
-    });
-  };
-
-  const renderOptions = () => {
-    return options.map(option => {
-      return (
-        <div
-          className="container-health-options"
-          key={option.inference_period}
-        >
-          <div
-            className="label-option"
-            onClick={() => onClickInferencePeriod(option.inference_period)}
-          >
-            {option.inference_period === selectedInferencePeriod
-              ? `- ${option.inference_period}`
-              : `+ ${option.inference_period}`}
-          </div>
-          {option.inference_period === selectedInferencePeriod && renderModelPackages(option)}
-        </div>
-      );
-    });
-  };
-
-  const onClickRefreshList = () => {
-    reload();
-  };
-
-  // data != undefined ?
-  const mainWindow = (
-    <Layout tab="Health" title="Data Health" openTutorial={onToggleTutorial}>
-      <div className="new-systemhealth-container-deployment">
-        <label className="new-systemhealth-section font-bold">
-          DATA HEALTH SUMMARY
-        </label>
-        <div className="main-display-data-health">
-          <div className="left-side">
-            <p className="">
-              Foundations validates model input data in production automatically
-              to catch data abnormalities in real-time. Please select a data
-              validation report to review.
-            </p>
-            <div>
-              <p className="label-select-reports">Select report:</p>
-              <div className="label-refresh-list" onClick={onClickRefreshList}>REFRESH LIST</div>
-            </div>
-            <div className="container-health-reports">
-              {renderOptions()}
-            </div>
-            <div className="summary-container">
-              <p>Inference period:</p>
-              <p>{data !== undefined ? data.inference_period : "No Report Selected"}
-              </p>
-              <p>Model Package:</p>
-              <p>{data !== undefined ? data.model_package : "No Report Selected"}</p>
-              <p>Data Contract:</p>
-              <p>{data !== undefined ? data.data_contract : "No Report Selected"}</p>
-              <div>
-                <p>Row count percentage difference:</p>
-                <p>
-                  {data !== undefined ? data.row_cnt_diff : "No Report Selected"}
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="right-side">
-            <div
-              className={
-                showSchemaTab
-                  ? "header-population-shift active"
-                  : "header-population-shift"
-              }
-              onClick={switchToSchemaTab}
-            >
-              <div className="header-title subheader font-bold">
-                SCHEMA CHECK
-              </div>
-              <div className="header-summary">
-                <div
-                  className={
-                    data === undefined
-                      || !data.schema.summary.warning
-                      || data.schema.summary.warning === 0
-                      ? "warning none"
-                      : "warning"
-                  }
-                >
-                  {data === undefined
-                    ? "N/A"
-                    : data.schema.summary.warning || 0}
-                  <p>Warning</p>
-                </div>
-                <div
-                  className={
-                    data === undefined
-                      || data.schema.summary.healthy === 0
-                      ? "healthy none"
-                      : "healthy"
-                  }
-                >
-                  {data === undefined
-                    ? "N/A"
-                    : data.schema.summary.healthy || 0}
-                  <p>Healthy</p>
-                </div>
-                <div
-                  className={
-                    data === undefined
-                      || data.schema.summary.critical === 0
-                      ? "critical none"
-                      : "critical"
-                  }
-                >
-                  {data === undefined
-                    ? "N/A"
-                    : data.schema.summary.critical || 0}
-                  <p>Critical</p>
-                </div>
-              </div>
-            </div>
-            <div
-              className={
-                showPopulationTab
-                  ? "header-population-shift active"
-                  : "header-population-shift"
-              }
-              onClick={switchToPopulationShiftTab}
-            >
-              <div className="header-title subheader font-bold">
-                POPULATION SHIFT
-              </div>
-              <div className="header-summary">
-                <div
-                  className={
-                    data === undefined
-                      || !data.population_shift.summary.warning
-                      || data.population_shift.summary.warning === 0
-                      ? "warning none"
-                      : "warning"
-                  }
-                >
-                  {data === undefined
-                    ? "N/A"
-                    : data.population_shift.summary.warning || 0}
-                  <p>Warning</p>
-                </div>
-                <div
-                  className={
-                    data === undefined
-                      || data.population_shift.summary.healthy === 0
-                      ? "healthy none"
-                      : "healthy"
-                  }
-                >
-                  {data === undefined
-                    ? "N/A"
-                    : data.population_shift.summary.healthy || 0}
-                  <p>Healthy</p>
-                </div>
-                <div
-                  className={
-                    data === undefined
-                      || data.population_shift.summary.critical === 0
-                      ? "critical none"
-                      : "critical"
-                  }
-                >
-                  {data === undefined
-                    ? "N/A"
-                    : data.population_shift.summary.critical || 0}
-                  <p>Critical</p>
-                </div>
-              </div>
-            </div>
-            <div
-              className={
-                showDataQualityTab
-                  ? "header-data-quality active"
-                  : "header-data-quality"
-              }
-              onClick={switchToDataQualityTab}
-            >
-              <div className="header-title subheader font-bold">
-                DATA ABNORMALITY
-              </div>
-              <div className="header-summary">
-                <div
-                  className={
-                    data === undefined
-                      || !data.data_quality.summary.warning
-                      || data.data_quality.summary.warning === 0
-                      ? "warning none"
-                      : "warning"
-                  }
-                >
-                  {data === undefined
-                    ? "N/A"
-                    : data.data_quality.summary.warning || 0}
-                  <p>Warning</p>
-                </div>
-                <div
-                  className={
-                    data === undefined || data.data_quality.summary.healthy === 0
-                      ? "healthy none"
-                      : "healthy"
-                  }
-                >
-                  {data === undefined
-                    ? "N/A"
-                    : data.data_quality.summary.healthy || 0}
-                  <p>Healthy</p>
-                </div>
-                <div
-                  className={
-                    data === undefined
-                      || data.data_quality.summary.critical === 0
-                      ? "critical none"
-                      : "critical"
-                  }
-                >
-                  {data === undefined
-                    ? "N/A"
-                    : data.data_quality.summary.critical || 0}
-                  <p>Critical</p>
-                </div>
-              </div>
-            </div>
-            <div className="data-display">
-              <div
-                id="schema-table"
-                className={
-                  showSchemaTab
-                    ? "system-health-table-container"
-                    : "system-health-table-container hidden"
-                }
-              >
-                {renderSchemaTab()}
-              </div>
-              <div
-                id="population-shift-table"
-                className={
-                  showPopulationTab
-                    ? "system-health-table-container"
-                    : "system-health-table-container hidden"
-                }
-              >
-                {renderPopulatioShiftTab()}
-              </div>
-              <div
-                id="data-quality-table"
-                className={
-                  showDataQualityTab
-                    ? "system-health-table-container"
-                    : "system-health-table-container hidden"
-                }
-              >
-                {renderDataQualityTab()}
-              </div>
-            </div>
-          </div>
-        </div>
-        <ModalTutorial
-          tutorialVisible={tutorialVisible}
-          onToggleTutorial={onToggleTutorial}
-        />
-      </div>
-    </Layout>
-  );
-
-  return <div>{mainWindow}</div>;
-};
+      </Layout>
+    );
+  }
+}
 
 SystemHealth.propTypes = {
   location: PropTypes.object

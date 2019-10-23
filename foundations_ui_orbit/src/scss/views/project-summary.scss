@@ -5,6 +5,8 @@
   border-radius: 8px;
   margin-top: 15px;
   padding-left: 30px;
+  cursor: pointer;
+  border-bottom: solid 5px transparent;
 
   &:hover {
     border-bottom: solid 5px $color-dark-blue;

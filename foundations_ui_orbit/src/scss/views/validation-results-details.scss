@@ -1,0 +1,180 @@
+.validation-results-details {
+  background-color: white;
+  border: solid 1px #dcdcdc;
+  height: 100%;
+  border-radius: 5px;
+
+  .validation-results-details-empty-state {
+    color: #4F4F4F;
+    font-size: 16px;
+    position: relative;
+    top: 40%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    margin: auto;
+    width: 30%;
+    text-align: center;
+  }
+
+  .validation-results-overview {
+    height: 40%;
+    width: 100%;
+    display: inline-flex;
+
+    .overview-summary, .overview-graph, .overview-graph-stats {
+      width: 30%;
+      background-color: #fff;
+      display: inline-block;
+      padding: 30px;
+      padding-top: 40px;
+    }
+
+    .overview-summary {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .overview-labels, .overview-values {
+      display: inline-block;
+      margin-top: 20px;
+      color: #828282;
+      line-height: 20px;
+    }
+
+    .overview-labels {
+      margin-right: 30px;
+    }
+  }
+
+  .overview-heading {
+    font-size: 25px;
+    color: #5C5C5C;
+  }
+
+  .overview-contract-name {
+    margin-top: 5px;
+    color: #828282;
+    display: inline-block;
+  }
+
+  .validation-results-tests {
+    height: 60%;
+    border-top: solid 1px #E3E3E3;
+    .validation-results-tests-list {
+      display: inline-block;
+      width: 25%;
+      height: 100%;
+      overflow-y: scroll;
+      vertical-align: top;
+      border-right: solid 1px #E3E3E3;
+
+      .validation-results-tests-list-row {
+        border-bottom: solid 1px #E3E3E3;
+        padding: 25px;
+        cursor: pointer;
+        vertical-align: middle;
+
+        .validation-results-tests-list-row-header, .validation-results-tests-list-row-summary {
+          display: inline-block;
+          vertical-align: middle;
+        }
+
+        .validation-results-tests-list-row-header {
+          width: 60%;
+          font-size: 15px;
+          line-height: 100%;
+        }
+
+        .validation-results-tests-list-row-summary {
+          width: 40%;
+          
+          .validation-results-tests-list-row-summary-labels, .validation-results-tests-list-row-summary-values {
+            display: inline-block;
+            color: #A6A4A4;
+          }
+
+          .validation-results-tests-list-row-summary-labels {
+            margin-left: 12px;
+          }
+        }
+
+        &:hover {
+          border-left: 3px solid #024B9C;
+          padding-left: 22px;
+        }
+
+        &.selected-row {
+          background-color: #D9EBFF;
+          border-left: 3px solid #024B9C;
+          padding-left: 22px;
+        }
+      }
+    }
+
+    .validation-results-tests-pane {
+      display: inline-block;
+      width: calc(75% - 1px);
+      height: 100%;
+
+      .validation-results-tests-pane-empty-state {
+        color: #4F4F4F;
+        font-size: 16px;
+        position: relative;
+        top: 40%;
+        -webkit-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+        margin: auto;
+        width: 30%;
+        text-align: center;
+      }
+
+      .validation-results-test-pane-table-container {
+        .validation-results-test-pane-table {
+          width: 100%;
+          border-collapse: collapse;
+
+          .validation-results-test-pane-table-header {
+            background-color: hsl(0%, 0%, 96%);
+            color: #828282;
+          }
+
+          .validation-results-test-pane-table-row {
+            height: 50px;
+            border-top: solid 1px hsl(0%, 0%, 93%);
+
+            &:nth-child(-n+2) {
+              border-top: none;
+            }
+
+            &:last-child {
+              border-bottom: solid 1px hsl(0%, 0%, 93%);
+            }
+
+            th {
+              border-left: solid 1px hsl(0%, 0%, 93%);
+              font-weight: 500;
+              font-size: 13px;
+
+              &:first-child {
+                border-left: none;
+              }
+
+              &.validation-outcome-healthy {
+                color: green;
+              }
+              &.validation-outcome-warning {
+                color: orange;
+              }
+              &.validation-outcome-critical {
+                color: red;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
