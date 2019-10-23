@@ -16,7 +16,6 @@
 
     .monitor-listing, .monitor-summary {
       height: 800px;
-      border: 1px solid #DFDFDF;
       border-radius: 5px;
       display: inline-block;
       background-color: #fff;
@@ -26,18 +25,32 @@
       margin-right: 40px;
       width: 30%;
       max-width: 450px;
+      min-width: 400px;
       overflow-y: scroll;
   
-      ul {
+      .monitor-items {
         width: 100%;
         margin: 0 auto;
         padding: 0;
-        li {
+        .selected-row {
+          background-color: #D9EBFF;
+          border-left: 3px solid #024B9C;
+          padding-left: 11px;
+        }
+        .monitor-table-row {
           padding-top: 10px;
           padding-bottom: 10px;
           border-bottom: 1px solid #DFDFDF;
           width: 100%;
           text-align: center;
+          width: calc(100% - 14px);
+          padding-left: 14px;
+          &:not(:first-child) {
+            &:hover {
+              border-left: 3px solid #024B9C;
+              padding-left: 11px;
+            }
+          }
           &:nth-child(1) {
             padding-top: 20px;
             padding-bottom: 20px;
@@ -56,26 +69,119 @@
   
     .monitor-summary {
       width: 100%;
+      border: 1px solid #D8D8D8;
+
+      .monitor-details-empty-state {
+        margin: 0 auto;
+        padding: 0;
+        position: relative;
+        top: 20%;
+        .monitor-details-empty-state-text {
+          margin-top: 20px;
+          text-align: center;
+        }
+      }
 
       .monitor-info {
-        border: 1px solid blue;
-        height: 40%;
+        height: 38%;
+        display: flex;
+        border-bottom: 1px solid #D8D8D8;
         .monitor-overview, .monitor-details, .monitor-calendar {
           width: 33%;
           height: 100%;
-          border: 1px solid red;
           display: inline-block;
+        }
+
+        .monitor-overview {
+          border-right: 1px solid #D8D8D8;
+          .monitor-overview-menu {
+            padding-left: 30px;
+          }
+          h3 {
+            font-size: 24px;
+            color: #5C5C5C;
+            padding-left: 40px;
+          }
+          ul{
+            li {
+              width: 300px;
+              padding-top: 4px;
+              padding-bottom: 4px;
+              font-size: 14px;
+              div {
+                display: inline-block;
+                &:nth-child(1) {
+                  width: 120px;
+                }
+              }
+
+              .monitor-overview-value {
+                color: #828282;
+                font-weight: 100;
+              }
+
+              .monitor-overview-key {
+                font-weight: 900;
+                color: #828282;
+              }
+            }
+          }
+        }
+        
+        .monitor-details {
+          h3 {
+            margin-top: 30px;
+            padding-left: 40px;
+            font-size: 18px;
+            color: #5C5C5C;
+          }
+
+          ul {
+            li {
+              width: 400px;
+              padding-top: 8px;
+              padding-bottom: 8px;
+              font-size: 14px;
+              .schedule-picker {
+                height: 40px;
+                border-radius: 3px;
+                background-color: #fff;
+                color: #024B9C;
+                width: 110px;
+                option {
+                  background-color: red!important;
+                }
+              }
+              div {
+                display: inline-block;
+                &:nth-child(1) {
+                  width: 120px;
+                  font-weight: 900;
+                  color: #828282;
+                }
+              }
+            }
+          }
         }
       }
 
       .monitor-jobs-heading {
-        height: 4%;
-        border: 1px solid orange;
+        height: 3%;
+        padding-left: 40px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #D8D8D8;
+        h3 {
+          color: #5C5C5C;
+          font-size: 18px;
+          font-weight: 500;
+        }
       }
 
       .monitor-jobs {
-        border: 1px solid purple;
         height: 55%;
+        h3 {
+          padding-left: 40px;
+        }
         ul {
           padding: 0;
         }
