@@ -78,15 +78,17 @@ class DataContract(object):
     def validate(self, dataframe_to_validate, inference_period=None):
         import datetime
         import os
+        from uuid import uuid4
+        from getpass import getuser
 
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         from foundations_orbit.report_formatter import ReportFormatter
 
-        project_name = os.environ.get('PROJECT_NAME', '')
-        monitor_name = os.environ.get('MONITOR_NAME', '')
-        user = os.environ.get('FOUNDATIONS_USER', 'test')
-        job_id = os.environ.get('FOUNDATIONS_JOB_ID', 'test')
+        project_name = os.environ.get('PROJECT_NAME', 'default')
+        monitor_name = os.environ.get('MONITOR_NAME', os.path.basename(__file__))
+        user = os.environ.get('FOUNDATIONS_USER', getuser())
+        job_id = os.environ.get('FOUNDATIONS_JOB_ID', str(uuid4()))
         
         if inference_period is None:
             inference_period = str(datetime.datetime.now())
