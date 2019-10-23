@@ -386,7 +386,11 @@ class TestDataValidation(Spec):
             'date': inference_period,
             'monitor_package': self.monitor_name,
             'data_contract': contract_name,
-            'row_cnt_diff': 0.0,
+            'row_count': {
+                'expected_row_count': 100,
+                'actual_row_count': len(self.dataframe_with_shifted_distribution),
+                'row_count_diff': 0.0
+            },
             'schema': {
                 'summary': {
                     'healthy': 2, 'critical': 0, 'warning': 0
@@ -465,6 +469,11 @@ class TestDataValidation(Spec):
                 }
             }
         }
+
+        self.assertIn('user', api_validation_report)
+        del api_validation_report['user']
+        self.assertIn('job_id', api_validation_report)
+        del api_validation_report['job_id']
 
         self.assertEqual(expected_validation_report, api_validation_report)
 
