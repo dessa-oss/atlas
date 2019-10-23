@@ -486,6 +486,11 @@ class TestDataContract(Spec):
         import pickle
         deserialized_report = pickle.loads(serialized_report)
 
+        self.assertIn('user', deserialized_report)
+        del deserialized_report['user']
+        self.assertIn('job_id', deserialized_report)
+        del deserialized_report['job_id']
+
         self.assertEqual(expected_output, deserialized_report)
 
     def test_data_contract_validate_writes_correct_info_to_redis_using_datetime(self):
@@ -569,6 +574,11 @@ class TestDataContract(Spec):
         deserialized_report = pickle.loads(serialized_report)
 
         deserialized_report.pop('schema', None)
+
+        self.assertIn('user', deserialized_report)
+        del deserialized_report['user']
+        self.assertIn('job_id', deserialized_report)
+        del deserialized_report['job_id']
 
         self.assertEqual(expected_output, deserialized_report)
 

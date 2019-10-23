@@ -7,10 +7,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class ReportFormatter(object):
 
-    def __init__(self, inference_period, monitor_package, contract_name, validation_report, options):
+    def __init__(self, inference_period, monitor_package, contract_name, job_id, user, validation_report, options):
         self._inference_period = inference_period
         self._monitor_package = monitor_package
         self._contract_name = contract_name
+        self._job_id = job_id
+        self._user = user
         self._validation_report = validation_report
         self._options = options
 
@@ -20,6 +22,8 @@ class ReportFormatter(object):
         return {
             'date': self._inference_period,
             'monitor_package': self._monitor_package,
+            'user': self._user,
+            'job_id': self._job_id,
             'data_contract': self._contract_name,
             'row_count': self._formatted_row_count_difference_report(),
             'schema': self._formatted_schema_report(),

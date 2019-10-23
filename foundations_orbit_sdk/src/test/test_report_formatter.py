@@ -18,6 +18,14 @@ class TestReportFormatter(Spec):
         return self.faker.sentence()
 
     @let
+    def job_id(self):
+        return self.faker.word()
+
+    @let
+    def user(self):
+        return self.faker.word()
+
+    @let
     def contract_name(self):
         return self.faker.sentence()
 
@@ -244,6 +252,16 @@ class TestReportFormatter(Spec):
         self.validation_report['schema_check_results'] = {'passed': True}
         formatted_report = self._generate_formatted_report()
         self.assertEqual(self.monitor_package, formatted_report['monitor_package'])
+
+    def test_report_formatter_returns_formatted_report_with_expected_job_id(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(self.job_id, formatted_report['job_id'])
+
+    def test_report_formatter_returns_formatted_report_with_expected_user(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(self.user, formatted_report['user'])
 
     def test_report_formatter_returns_formatted_report_with_expected_data_contract(self):
         self.validation_report['schema_check_results'] = {'passed': True}
@@ -976,6 +994,8 @@ class TestReportFormatter(Spec):
 
         formatter = ReportFormatter(inference_period=self.inference_period,
                                     monitor_package=self.monitor_package,
+                                    job_id=self.job_id,
+                                    user=self.user,
                                     contract_name=self.contract_name,
                                     validation_report=validation_report,
                                     options=self.data_contract_options)

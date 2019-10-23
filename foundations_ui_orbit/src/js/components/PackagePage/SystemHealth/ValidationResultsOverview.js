@@ -28,9 +28,9 @@ class ValidationResultsOverview extends Component {
             </div>
             <div className="overview-values">
               {validationResult.monitor_package}<br />
-              some-job-id<br />
+              {validationResult.job_id}<br />
               {date}<br />
-              some-user<br />
+              {validationResult.user}<br />
               {rowCount}
             </div>
           </div>

@@ -83,8 +83,10 @@ class DataContract(object):
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         from foundations_orbit.report_formatter import ReportFormatter
 
-        project_name = os.environ['PROJECT_NAME']
-        monitor_name = os.environ['MONITOR_NAME']
+        project_name = os.environ.get('PROJECT_NAME', '')
+        monitor_name = os.environ.get('MONITOR_NAME', '')
+        user = os.environ.get('FOUNDATIONS_USER', 'test')
+        job_id = os.environ.get('FOUNDATIONS_JOB_ID', 'test')
         
         if inference_period is None:
             inference_period = str(datetime.datetime.now())
@@ -120,6 +122,8 @@ class DataContract(object):
         report_formatter = ReportFormatter(inference_period=inference_period,
                                     monitor_package=monitor_name,
                                     contract_name=self._contract_name,
+                                    job_id=job_id,
+                                    user=user,
                                     validation_report=validation_report,
                                     options=self.options)
         serialized_output = report_formatter.serialized_output()
