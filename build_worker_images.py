@@ -1,7 +1,5 @@
 import docker
 import os
-import foundations
-
 
 build_version = os.environ['build_version']
 to_be_released = os.environ.get('RELEASED', False)
