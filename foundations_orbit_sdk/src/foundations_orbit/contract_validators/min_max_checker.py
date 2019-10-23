@@ -28,12 +28,22 @@ class MinMaxChecker(object):
             del self._attribute_and_bounds[attribute]
 
     def validate(self, dataframe_to_validate):
+        import datetime
+
         if not self._attribute_and_bounds or len(dataframe_to_validate) == 0:
             return {}
 
         data_to_return = {}
-
+        allowed_data_types = {'u', 'i', 'f', 'c', 'M'}
         for attribute, bounds in self._attribute_and_bounds.items():
+
+            attribute_data_type = dataframe_to_validate[attribute].dtype.kind
+
+            if attribute_data_type not in allowed_data_types:
+                continue
+            elif attribute_data_type == 'M' and (issubclass(type(bounds['lower_bound']), datetime.datetime) != True or issubclass(type(bounds['upper_bound']), datetime.datetime) != True):
+                continue
+
             min_value = dataframe_to_validate[attribute].min()
             max_value = dataframe_to_validate[attribute].max()
 

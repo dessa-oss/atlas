@@ -24,9 +24,11 @@ class DataContract(object):
             self._dataframe = df
 
         self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
+        self.schema_test = SchemaChecker(self._column_names, self._column_types)
+        self._remove_object_columns_and_types(self._column_names, self._column_types)
+
         self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
 
-        self.schema_test = SchemaChecker(self._column_names, self._column_types)
         self.special_value_test = SpecialValuesChecker(self.options, self._bin_stats, self._column_names, self._dataframe)
         self.distribution_test = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names)
         self.min_max_test = MinMaxChecker()
@@ -160,3 +162,14 @@ class DataContract(object):
         number_of_rows = len(dataframe)
 
         return column_names, column_types, number_of_rows
+
+    @staticmethod
+    def _remove_object_columns_and_types(column_names, column_types):
+        column_names_to_delete = []
+        for column_name, column_type in column_types.items():
+            if column_type == 'object':
+                column_names.remove(column_name)
+                column_names_to_delete.append(column_name)
+
+        for column_name in column_names_to_delete:
+            column_types.pop(column_name)
