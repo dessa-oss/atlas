@@ -56,7 +56,7 @@ class MonitorParser(object):
         start(job_directory, command, project_name, name, env)
 
     def _modify_monitor(self, monitor_modifier_func):
-        from foundations_local_docker_scheduler_plugin.cron_job_scheduler import  CronJobSchedulerError
+        from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobSchedulerError
         
         monitor_name = self._cli.arguments().name
         project_name = self._cli.arguments().project_name
@@ -64,9 +64,11 @@ class MonitorParser(object):
 
         try:
             monitor_modifier_func(project_name, monitor_name, env)
+            print(f'Successfully {str(monitor_modifier_func)}d monitor {monitor_name} from project {project_name}')
         except CronJobSchedulerError as ce:
             import sys
-            sys.exit(str(ce))
+            print(f'Unable to {str(monitor_modifier_func.__name__)} monitor {monitor_name} from project {project_name}')
+            sys.exit(f'Command failed with error: {str(ce)}')
     
     def _delete_monitor(self):
         from foundations_contrib.cli.orbit_monitor_package_server import delete

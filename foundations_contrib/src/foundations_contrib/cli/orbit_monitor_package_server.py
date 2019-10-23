@@ -79,21 +79,16 @@ def pause(project_name, monitor_name, env='scheduler'):
 
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.pause_job(monitor_id)
 
-    try:
-        _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
-        return True
-    except CronJobSchedulerError as ex:
-        return None
+    _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
+    return True
 
 def resume(project_name, monitor_name, env='scheduler'):
     from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobSchedulerError
 
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.resume_job(monitor_id)
-    try:
-        _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
-        return True
-    except CronJobSchedulerError as ex:
-        return None
+
+    _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
+    return True
 
 def get_by_project(project_name, env=None):
     from foundations_contrib.global_state import config_manager
