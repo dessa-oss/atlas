@@ -95,7 +95,7 @@ class DataContract(object):
         validation_report['schema_check_results'] = self.schema_test.validate(dataframe_to_validate)
 
         if self.options.check_row_count:
-            validation_report['row_cnt_diff'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
+            validation_report['row_count'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
 
         if self.options.check_distribution:
             validation_report['dist_check_results'] = self.distribution_test.validate(dataframe_to_validate)

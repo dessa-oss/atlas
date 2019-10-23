@@ -253,13 +253,18 @@ class TestReportFormatter(Spec):
     def test_report_formatter_returns_formatted_report_with_expected_row_cnt_diff_if_does_not_exist(self):
         self.validation_report['schema_check_results'] = {'passed': True}
         formatted_report = self._generate_formatted_report()
-        self.assertEqual(0, formatted_report['row_cnt_diff'])
+        expected_default = {
+            'expected_row_count': None,
+            'actual_row_count': None,
+            'row_count_diff': None
+        }
+        self.assertEqual(expected_default, formatted_report['row_count'])
 
     def test_report_formatter_returns_formatted_report_with_expected_row_cnt_diff_if_exist(self):
         self.validation_report['schema_check_results'] = {'passed': True}
-        self.validation_report['row_cnt_diff'] = self.row_count_diff
+        self.validation_report['row_count'] = self.row_count_diff
         formatted_report = self._generate_formatted_report()
-        self.assertEqual(self.row_count_diff, formatted_report['row_cnt_diff'])
+        self.assertEqual(self.row_count_diff, formatted_report['row_count'])
 
     def test_report_formatter_returns_healthy_schema_summary_if_schema_check_passed(self):
         self.validation_report['schema_check_results'] = {'passed': True}

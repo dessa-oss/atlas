@@ -21,7 +21,7 @@ class ReportFormatter(object):
             'date': self._inference_period,
             'monitor_package': self._monitor_package,
             'data_contract': self._contract_name,
-            'row_cnt_diff': self._formatted_row_count_difference_report(),
+            'row_count': self._formatted_row_count_difference_report(),
             'schema': self._formatted_schema_report(),
             'data_quality': self._formatted_data_quality_report() or {},
             'population_shift': self._formatted_population_shift_report() or {},
@@ -34,7 +34,12 @@ class ReportFormatter(object):
         return pickle.dumps(self.formatted_report())
 
     def _formatted_row_count_difference_report(self):
-        return self._validation_report.get('row_cnt_diff', 0)
+        default = {
+            'expected_row_count': None,
+            'actual_row_count': None,
+            'row_count_diff': None
+        }
+        return self._validation_report.get('row_count', default)
 
     def _formatted_schema_report(self):
         if self._validation_report['schema_check_results']['passed']:

@@ -40,19 +40,39 @@ class TestRowCountChecker(Spec):
 
     def test_row_count_difference_is_zero_if_both_row_counts_are_equal(self):
         checker = RowCountChecker(1)
-        self.assertEqual(0.0, checker.validate(self.dataframe_one_row))
+        expected_result = {
+            'expected_row_count': 1,
+            'actual_row_count': 1,
+            'row_count_diff': 0.0
+        }
+        self.assertEqual(expected_result, checker.validate(self.dataframe_one_row))
 
     def test_row_count_difference_is_100_percent_if_current_row_count_is_twice_the_reference(self):
         checker = RowCountChecker(1)
-        self.assertEqual(1.0, checker.validate(self.dataframe_two_rows))
+        expected_result = {
+            'expected_row_count': 1,
+            'actual_row_count': 2,
+            'row_count_diff': 1.0
+        }
+        self.assertEqual(expected_result, checker.validate(self.dataframe_two_rows))
 
     def test_row_count_difference_is_300_percent_if_current_row_count_is_four_times_the_reference(self):
         checker = RowCountChecker(1)
-        self.assertEqual(3.0, checker.validate(self.dataframe_four_rows))
+        expected_result = {
+            'expected_row_count': 1,
+            'actual_row_count': 4,
+            'row_count_diff': 3.0
+        }
+        self.assertEqual(expected_result, checker.validate(self.dataframe_four_rows))
 
     def test_row_count_difference_is_50_percent_if_current_row_count_is_half_the_reference(self):
         checker = RowCountChecker(2)
-        self.assertEqual(0.5, checker.validate(self.dataframe_one_row))
+        expected_result = {
+            'expected_row_count': 2,
+            'actual_row_count': 1,
+            'row_count_diff': -0.5
+        }
+        self.assertEqual(expected_result, checker.validate(self.dataframe_one_row))
 
     def test_string_cast_for_row_count_checker_returns_expected_information(self):
         import json
@@ -74,7 +94,12 @@ class TestRowCountChecker(Spec):
     def test_row_count_checker_is_zero_if_configured_with_correct_row_number(self):
         checker = RowCountChecker(1)
         checker.configure(row_count = 2)
-        self.assertEqual(0.0, checker.validate(self.dataframe_two_rows))
+        expected_result = {
+            'expected_row_count': 2,
+            'actual_row_count': 2,
+            'row_count_diff': 0.0
+        }
+        self.assertEqual(expected_result, checker.validate(self.dataframe_two_rows))
     
     def _generate_distinct(self, reference_values, generating_callback):
         candidate_value = generating_callback()

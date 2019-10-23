@@ -6,6 +6,9 @@ class ValidationResultsOverview extends Component {
   render() {
     const { validationResult } = this.props;
     const date = moment(validationResult.date).format("YYYY-MM-DD h:mm A");
+    const sign = validationResult.row_count.row_count_diff >= 0 ? "+" : "-";
+    const rowDiff = Math.round(Math.abs(validationResult.row_count.row_count_diff) * 1000) / 1000;
+    const rowCount = `${validationResult.row_count.expected_row_count} -> ${validationResult.row_count.actual_row_count} (${sign}${rowDiff}%)`; // eslint-disable-line max-len
 
     return (
       <div className="validation-results-overview">
@@ -28,7 +31,7 @@ class ValidationResultsOverview extends Component {
               some-job-id<br />
               {date}<br />
               some-user<br />
-              some-row-count
+              {rowCount}
             </div>
           </div>
         </div>
