@@ -89,6 +89,9 @@ pipeline{
                             steps {
                                 container("python3-1") {
                                     ws("${WORKSPACE}") {
+                                        sh 'pwd'
+                                        sh 'ls -l'
+                                        sh 'ls -l ./dist'
                                         sh 'python -m pip install ./dist/*.whl'
                                         sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
                                         sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
