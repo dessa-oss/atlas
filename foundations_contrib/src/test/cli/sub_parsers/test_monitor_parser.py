@@ -60,6 +60,11 @@ class TestMonitorParser(Spec):
         help_msg = 'Provides operations for managing monitors in Orbit'
         mock_argument_parser.assert_any_call('monitor', help=help_msg)
 
+    def test_monitor_calls_start_method_when_create_command_is_triggered(self):
+        mock_method = self.patch('foundations_contrib.cli.orbit_monitor_package_server.start')
+        self._call_monitor_command('create')
+        mock_method.assert_called_once()
+
     def test_monitor_calls_pause_monitor_when_pause_command_is_triggered(self):
         mock_method = self.patch('foundations_contrib.cli.sub_parsers.monitor_parser.MonitorParser._pause_monitor')
         self._call_monitor_command('pause')

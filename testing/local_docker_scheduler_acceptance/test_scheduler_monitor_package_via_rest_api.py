@@ -295,7 +295,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
 
     def _start_monitor(self, name):
         import subprocess
-        return subprocess.run(['python', '-m', 'foundations', 'monitor', 'start', f'--project_name={self.project_name}', f'--name={name}', '.', 'main.py'], cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/')
+        return subprocess.run(['python', '-m', 'foundations', 'monitor', 'create', f'--project_name={self.project_name}', f'--name={name}', '.', 'main.py'], cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/')
 
     def _get_all_monitors(self):
         return requests.get(self.orbit_monitor_base_api_url)
