@@ -45,10 +45,11 @@ class ValidationResultsDetails extends Component {
 
   render() {
     const { validationResult } = this.state;
+    const { location } = this.props;
 
     let mainRender = (
       <div className="validation-results-details">
-        <ValidationResultsOverview validationResult={validationResult} />
+        <ValidationResultsOverview location={location} validationResult={validationResult} />
         <ValidationResultsTests validationResult={validationResult} />
       </div>
     );
