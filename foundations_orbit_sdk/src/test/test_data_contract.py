@@ -382,6 +382,7 @@ class TestDataContract(Spec):
         report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
 
         expected_output = {
+            'attribute_names': list(self.two_column_dataframe.columns),
             'data_contract': f'{self.contract_name}',
             'data_quality': {
                 'details_by_attribute': [{
@@ -522,6 +523,7 @@ class TestDataContract(Spec):
         report = contract.validate(self.two_column_dataframe_with_datetime, inference_period=inference_period)
 
         expected_output = {
+            'attribute_names': list(self.two_column_dataframe_with_datetime.columns),
             'data_contract': f'{self.contract_name}',
             'date': f'{inference_period}',
             'data_quality': {},

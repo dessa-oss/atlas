@@ -383,6 +383,7 @@ class TestDataValidation(Spec):
         api_validation_report = ValidationReport.get(project_name=self.project_name, listing_object=report_listing).evaluate()
 
         expected_validation_report = {
+            'attribute_names': ['feat_1', 'feat_2'],
             'date': inference_period,
             'monitor_package': self.monitor_name,
             'data_contract': contract_name,
