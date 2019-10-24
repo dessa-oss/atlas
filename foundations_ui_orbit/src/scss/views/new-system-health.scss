@@ -246,7 +246,7 @@
   .new-systemhealth-section {
     color: $color-dark-blue;
     display: inline-block;
-    font-size: 16px;
+    font-size: 30px;
     margin: 0px;
     margin-top: 30px;
   }
@@ -276,6 +276,7 @@
     display: inline-block;
     position: relative;
     height: calc(100% - 50px);
+    width: 100%;
 
     .model-performance-filter-container {
       label {
@@ -433,6 +434,7 @@
 
   .left-side {
     width: calc(25% - 30px);
+    height: 100%;
     margin-right: 30px;
     display: inline-block;
     vertical-align: top;
@@ -480,7 +482,6 @@
     }
 
     .label-refresh-list {
-      float: right;
       @extend .f--roboto;
       color: #004a9c;
       text-decoration: underline;
@@ -661,4 +662,9 @@
       }
     }
   }
+}
+
+.systemhealth-body {
+  margin-top: 10px;
+  height: calc(100% - 102px);
 }

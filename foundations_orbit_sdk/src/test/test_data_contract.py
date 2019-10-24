@@ -319,7 +319,7 @@ class TestDataContract(Spec):
 
     def test_data_contract_validate_checks_row_count_by_default(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
-        self.assertIn('row_cnt_diff', contract.validate(self.two_column_dataframe))
+        self.assertIn('row_count', contract.validate(self.two_column_dataframe))
 
     def test_data_contract_validate_number_of_rows_if_option_set(self):
         mock_row_count_check_results = self.row_count_results
@@ -333,7 +333,7 @@ class TestDataContract(Spec):
         contract = self._contract_from_dataframe_for_row_checking(self.one_column_dataframe)
         validation_report = contract.validate(self.one_column_dataframe)
 
-        self.assertEqual(mock_row_count_check_results, validation_report['row_cnt_diff'])
+        self.assertEqual(mock_row_count_check_results, validation_report['row_count'])
 
     def test_data_contract_validation_report_has_metadata_for_reference_and_current_dataframe(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
@@ -418,7 +418,11 @@ class TestDataContract(Spec):
                     'warning': 0
                 }
             },
-            'row_cnt_diff': 0.0,
+            'row_count': {
+                'expected_row_count': len(self.two_column_dataframe),
+                'actual_row_count': len(self.two_column_dataframe_different_types),
+                'row_count_diff': (len(self.two_column_dataframe_different_types) - len(self.two_column_dataframe)) / len(self.two_column_dataframe)
+            },
             'schema': {
                 'details_by_attribute': [{
                     'attribute_name': f'{self.column_name_2}',
@@ -481,6 +485,11 @@ class TestDataContract(Spec):
 
         import pickle
         deserialized_report = pickle.loads(serialized_report)
+
+        self.assertIn('user', deserialized_report)
+        del deserialized_report['user']
+        self.assertIn('job_id', deserialized_report)
+        del deserialized_report['job_id']
 
         self.assertEqual(expected_output, deserialized_report)
 
@@ -548,7 +557,11 @@ class TestDataContract(Spec):
                 }
             },
             'population_shift': {},
-            'row_cnt_diff': 0.0
+            'row_count': {
+                'expected_row_count': len(self.two_column_dataframe_with_datetime),
+                'actual_row_count': len(self.two_column_dataframe_with_datetime),
+                'row_count_diff': 0.0
+            }
         }
 
         key = f'projects:{self.project_name}:monitors:{self.model_name}:validation:{self.contract_name}'
@@ -561,6 +574,11 @@ class TestDataContract(Spec):
         deserialized_report = pickle.loads(serialized_report)
 
         deserialized_report.pop('schema', None)
+
+        self.assertIn('user', deserialized_report)
+        del deserialized_report['user']
+        self.assertIn('job_id', deserialized_report)
+        del deserialized_report['job_id']
 
         self.assertEqual(expected_output, deserialized_report)
 

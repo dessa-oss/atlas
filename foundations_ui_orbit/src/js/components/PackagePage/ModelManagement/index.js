@@ -29,7 +29,7 @@ class ModelManagement extends React.Component {
 
   reload() {
     const { location } = this.props;
-    get(
+    getFromApiary(
       `projects/${location.state.project.name}/model_listing`
     ).then(result => {
       if (result) {

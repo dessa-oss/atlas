@@ -22,6 +22,14 @@ const SideBar = props => {
     );
   };
 
+  const onClickSchedules = () => {
+    const { history, location } = props;
+
+    history.push(`/projects/${location.state.project.name}/schedules`, {
+      project: location.state.project
+    });
+  };
+
   const onClickDashboard = () => {
     const { history, location } = props;
 
@@ -132,6 +140,16 @@ const SideBar = props => {
         }
       >
         <div className="label">Model Management</div>
+      </div>
+      <div
+        onClick={onClickSchedules}
+        className={
+          tab === "Schedules"
+            ? "sidebar-item active icon-schedule-blue"
+            : "sidebar-item icon-schedule"
+        }
+      >
+        <div className="label">Monitor<br />Schedules</div>
       </div>
       <div
         onClick={onClickSettings}

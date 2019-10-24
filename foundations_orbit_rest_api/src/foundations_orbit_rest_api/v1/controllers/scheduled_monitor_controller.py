@@ -24,13 +24,7 @@ class ScheduledMonitorController(object):
 
         response = ScheduledMonitor.get(project_name=project_name, name=monitor_name)
 
-        failure_response_data = {
-            'project_name': project_name,
-            'monitor_name': monitor_name,
-            'error': 'does not exist'
-        }
-
-        fallback = Response('asdf', LazyResult(lambda: failure_response_data), status=404)
+        fallback = ScheduledMonitorController._get_failure_response(project_name, monitor_name)
 
         return Response('ScheduledMonitor', response, status=200, fallback=fallback)
 
@@ -44,13 +38,7 @@ class ScheduledMonitorController(object):
 
         response = ScheduledMonitor.delete(project_name=project_name, name=monitor_name)
 
-        failure_response_data = {
-            'project_name': project_name,
-            'monitor_name': monitor_name,
-            'error': 'does not exist'
-        }
-
-        fallback = Response('asdf', LazyResult(lambda: failure_response_data), status=404)
+        fallback = ScheduledMonitorController._get_failure_response(project_name, monitor_name)
 
         return Response('ScheduledMonitor', response, status=204, fallback=fallback)
 
@@ -68,6 +56,20 @@ class ScheduledMonitorController(object):
 
         return Response('ScheduledMonitor', response, status=204, fallback=fallback)
 
+    def put(self):
+        from foundations_core_rest_api_components.response import Response
+        from foundations_orbit_rest_api.v1.models.scheduled_monitor import ScheduledMonitor
+
+        project_name = self.params.pop('project_name')
+        monitor_name = self.params.pop('monitor_name')
+        status = self.params.pop('status')
+
+        fallback = ScheduledMonitorController._get_failure_response(project_name, monitor_name)
+
+        response = ScheduledMonitor.put(project_name=project_name, name=monitor_name, status=status)
+
+        return Response('ScheduledMonitor', response, status=204, fallback=fallback)
+
     @staticmethod
     def _get_failure_response(project_name, monitor_name):
         from foundations_core_rest_api_components.response import Response
@@ -80,25 +82,6 @@ class ScheduledMonitorController(object):
         }
 
         return Response('asdf', LazyResult(lambda: failure_response_data), status=404)
-
-    def put(self):
-        from foundations_contrib.cli.orbit_monitor_package_server import pause, resume
-        from foundations_core_rest_api_components.lazy_result import LazyResult
-        from http import HTTPStatus
-
-        self.project_name = self.params.pop('project_name')
-        self.monitor_name = self.params.pop('monitor_name')
-        env = 'scheduler'
-
-        status = self.params.get('status', None)
-        if status == 'resume' or status == 'active':
-            response = LazyResult(lambda: resume(self.project_name, self.monitor_name, env))
-            return self._response(response, status=204, failure_response_msg='failed to resume monitor')
-        elif status == 'pause':
-            response = LazyResult(lambda: pause(self.project_name, self.monitor_name, env))
-            return self._response(response, status=204, failure_response_msg='failed to pause monitor')
-        else:
-            return self._only_status_code_response(HTTPStatus.BAD_REQUEST)
 
     def _response(self, response, status=200, failure_response_msg=None, cookie=None):
         from foundations_core_rest_api_components.response import Response

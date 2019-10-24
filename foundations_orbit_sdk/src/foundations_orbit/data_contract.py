@@ -78,13 +78,17 @@ class DataContract(object):
     def validate(self, dataframe_to_validate, inference_period=None):
         import datetime
         import os
+        from uuid import uuid4
+        from getpass import getuser
 
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         from foundations_orbit.report_formatter import ReportFormatter
 
-        project_name = os.environ['PROJECT_NAME']
-        monitor_name = os.environ['MONITOR_NAME']
+        project_name = os.environ.get('PROJECT_NAME', 'default')
+        monitor_name = os.environ.get('MONITOR_NAME', os.path.basename(__file__))
+        user = os.environ.get('FOUNDATIONS_USER', getuser())
+        job_id = os.environ.get('FOUNDATIONS_JOB_ID', str(uuid4()))
         
         if inference_period is None:
             inference_period = str(datetime.datetime.now())
@@ -95,7 +99,7 @@ class DataContract(object):
         validation_report['schema_check_results'] = self.schema_test.validate(dataframe_to_validate)
 
         if self.options.check_row_count:
-            validation_report['row_cnt_diff'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
+            validation_report['row_count'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
 
         if self.options.check_distribution:
             validation_report['dist_check_results'] = self.distribution_test.validate(dataframe_to_validate)
@@ -120,6 +124,8 @@ class DataContract(object):
         report_formatter = ReportFormatter(inference_period=inference_period,
                                     monitor_package=monitor_name,
                                     contract_name=self._contract_name,
+                                    job_id=job_id,
+                                    user=user,
                                     validation_report=validation_report,
                                     options=self.options)
         serialized_output = report_formatter.serialized_output()

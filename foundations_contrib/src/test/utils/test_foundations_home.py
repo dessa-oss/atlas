@@ -15,6 +15,9 @@ class TestFoundationsHome(Spec):
         return self.faker.uri_path()
     
     def test_foundations_home_returns_default_home(self):
+        override_environment = {}
+        self.patch('os.environ', override_environment)
+
         self.assertEqual('~/.foundations', foundations_home())
 
     def test_foundations_home_returns_environment_home_when_specified(self):

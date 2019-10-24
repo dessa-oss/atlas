@@ -74,7 +74,7 @@ class TestMonitorParser(Spec):
         mock_system_exit = self.patch('sys.exit')
         self.cron_job_scheduler.pause_job.side_effect = CronJobSchedulerError(error_message_thrown)
         self._call_monitor_command('pause')
-        mock_system_exit.assert_called_once_with(error_message_thrown)
+        mock_system_exit.assert_called_once_with(f'Command failed with error: {error_message_thrown}')
 
     def _call_pause_monitor_command(self, command):
         cmd = f'monitor {command} {self.monitor_name} {self.project_name}'
@@ -86,11 +86,11 @@ class TestMonitorParser(Spec):
         mock_monitor_delete.assert_called_with(self.project_name, self.monitor_name, 'scheduler')
 
     def test_monitor_delete_exits_non_zero_status_when_cron_job_scheduler_fails_to_delete(self):
-        error_message = 'Deleting failed'
+        error_message = f'Deleting failed'
         mock_exit = self.patch('sys.exit')
         self.cron_job_scheduler.delete_job.side_effect = CronJobSchedulerError(error_message)
         self._call_monitor_command('delete')
-        mock_exit.assert_called_once_with(error_message)
+        mock_exit.assert_called_once_with(f'Command failed with error: {error_message}')
 
     def test_monitor_calls_resume_monitor_when_resume_command_is_triggered(self):
         mock_method = self.patch('foundations_contrib.cli.sub_parsers.monitor_parser.MonitorParser._resume_monitor')
@@ -106,7 +106,7 @@ class TestMonitorParser(Spec):
         mock_system_exit = self.patch('sys.exit')
         self.cron_job_scheduler.resume_job.side_effect = CronJobSchedulerError(error_message_thrown)
         self._call_monitor_command('resume')
-        mock_system_exit.assert_called_once_with(error_message_thrown)
+        mock_system_exit.assert_called_once_with(f'Command failed with error: {error_message_thrown}')
 
     def test_monitor_calls_pause_sends_project_name_model_name_and_env_to_monitor_package_server(self):
         mock_pause = self.patch('foundations_contrib.cli.orbit_monitor_package_server.pause')

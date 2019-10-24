@@ -23,6 +23,10 @@ class ScheduledMonitor(object):
         from foundations_core_rest_api_components.lazy_result import LazyResult
         return LazyResult(lambda: ScheduledMonitor._patch_internal(project_name, name, schedule))
 
+    @staticmethod
+    def put(project_name=None, name=None, status=None):
+        from foundations_core_rest_api_components.lazy_result import LazyResult
+        return LazyResult(lambda: ScheduledMonitor._put_internal(project_name, name, status))
 
     @staticmethod
     def _scheduler():
@@ -63,4 +67,22 @@ class ScheduledMonitor(object):
             return {}
         except CronJobSchedulerError as ex:
             return None
+
+    @staticmethod
+    def _put_internal(project_name, name, status):
+        from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobSchedulerError
+
+        monitor_package = f'{project_name}-{name}'
+
+        try:
+            if status == 'pause':
+                response = ScheduledMonitor._scheduler().pause_job(monitor_package)
+            elif status in ['resume', 'active']:
+                response = ScheduledMonitor._scheduler().resume_job(monitor_package)
+            else:
+                return None
+            return {}
+        except CronJobSchedulerError as ex:
+            return None
+
 

@@ -85,3 +85,73 @@ See assets/svgs/README.md for further information on SVG conversion process
   display: inline-block;
   position: relative;
 }
+
+.i--icon-refresh {
+  background-image: url('../assets/svgs/icon-refresh.svg');
+  @include icon-helper;
+  width: 25px;
+  height: 25px;
+  border: none;
+  cursor: pointer;
+}
+
+.i--icon-open {
+  background-image: url('../assets/svgs/icon-open.svg');
+  @include icon-helper;
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.i--icon-start {
+  background-image: url('../assets/svgs/icon-start.svg');
+  @include icon-helper;
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.i--icon-pause {
+  background-image: url('../assets/svgs/icon-pause.svg');
+  @include icon-helper;
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.i--icon-delete {
+  background-image: url('../assets/svgs/icon-delete.svg');
+  @include icon-helper;
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.i--icon-clipboard {
+  background-image: url('../assets/svgs/icon-clipboard.svg');
+  @include icon-helper;
+  width: 100%;
+  height: 300px;
+}
+
+.i--icon-error {
+  background-image: url('../assets/svgs/icon-error.svg');
+  @include icon-helper;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: top;
+}

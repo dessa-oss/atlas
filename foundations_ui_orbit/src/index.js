@@ -7,6 +7,7 @@ import App from "./js/components/App";
 import SystemHealth from "./js/components/PackagePage/SystemHealth";
 import NewDeployment from "./js/components/PackagePage/NewDeployment";
 import ModelEvaluation from "./js/components/PackagePage/ModelEvaluation";
+import MonitorSchedules from "./js/components/PackagePage/MonitorSchedules";
 import Timeline from "./js/components/PackagePage/Timeline";
 import ModelManagement from "./js/components/PackagePage/ModelManagement";
 import Settings from "./js/components/PackagePage/Settings/Settings";
@@ -25,6 +26,7 @@ ReactDOM.render(
         <Route path="/projects/:name/management" component={ModelManagement} />
         <Route path="/projects/:name/settings" component={Settings} />
         <Route path="/projects/:name/evaluation" component={ModelEvaluation} />
+        <Route path="/projects/:name/schedules" component={MonitorSchedules} />
         <Route path="/projects" component={ProjectPage} />
         <Route path="/" component={App} />
         <Route component={App} />

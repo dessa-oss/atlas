@@ -51,6 +51,7 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
         self.expanduser.return_value = ''
 
     def test_ensure_expandpath_called_properly(self):
+        self.patch('os.environ', {})
         result_config = self.translator.translate(self._configuration)
         self.expanduser.assert_called_with('~/.foundations')
 

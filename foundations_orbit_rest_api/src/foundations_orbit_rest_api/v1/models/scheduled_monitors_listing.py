@@ -23,8 +23,8 @@ class ScheduledMonitorsListing(object):
         scheduler = CronJobScheduler(scheduler_url)
 
         params = {'project': project_name}
-        scheduled_jobs = scheduler.get_job_with_params(params)
+        project_monitors = scheduler.get_job_with_params(params)
 
-        if scheduled_jobs is None:
+        if project_monitors is None:
             return None
-        return scheduled_jobs
+        return project_monitors
