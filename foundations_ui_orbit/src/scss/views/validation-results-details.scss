@@ -1,8 +1,5 @@
 .validation-results-details {
-  background-color: white;
-  border: solid 1px #dcdcdc;
   height: 100%;
-  border-radius: 5px;
 
   .validation-results-details-empty-state {
     color: #4F4F4F;
@@ -21,6 +18,9 @@
     height: 40%;
     width: 100%;
     display: inline-flex;
+    background-color: white;
+    border: solid 1px #dcdcdc;
+    border-radius: 5px;
 
     .overview-summary, .overview-graph, .overview-graph-stats {
       width: 33%;
@@ -117,7 +117,11 @@
 
   .validation-results-tests {
     height: 60%;
-    border-top: solid 1px #E3E3E3;
+    border: solid 1px #dcdcdc;
+    background-color: white;
+    margin-top: 15px;
+    border-radius: 5px;
+
     .validation-results-tests-list {
       display: inline-block;
       width: 25%;
@@ -125,6 +129,7 @@
       overflow-y: scroll;
       vertical-align: top;
       border-right: solid 1px #E3E3E3;
+      box-shadow: 10px 0 7px -10px #E3E3E3;
 
       .validation-results-tests-list-row {
         border-bottom: solid 1px #E3E3E3;
@@ -192,16 +197,11 @@
           width: 100%;
           border-collapse: collapse;
 
-          .validation-results-test-pane-table-header {
-            background-color: hsl(0%, 0%, 96%);
-            color: #828282;
-          }
-
           .validation-results-test-pane-table-row {
             height: 50px;
             border-top: solid 1px hsl(0%, 0%, 93%);
 
-            &:nth-child(-n+2) {
+            &:first-child {
               border-top: none;
             }
 
@@ -210,7 +210,6 @@
             }
 
             th {
-              border-left: solid 1px hsl(0%, 0%, 93%);
               font-weight: 500;
               font-size: 13px;
 
@@ -226,6 +225,12 @@
               }
               &.validation-outcome-critical {
                 color: red;
+              }
+            }
+
+            &.validation-results-test-pane-table-header {
+              th {
+                font-weight: 600;
               }
             }
           }
