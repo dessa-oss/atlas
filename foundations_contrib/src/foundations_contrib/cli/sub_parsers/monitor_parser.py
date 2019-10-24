@@ -64,7 +64,7 @@ class MonitorParser(object):
 
         try:
             monitor_modifier_func(project_name, monitor_name, env)
-            print(f'Successfully {str(monitor_modifier_func)}d monitor {monitor_name} from project {project_name}')
+            print(f'Successfully {str(monitor_modifier_func.__name__)}d monitor {monitor_name} from project {project_name}')
         except CronJobSchedulerError as ce:
             import sys
             print(f'Unable to {str(monitor_modifier_func.__name__)} monitor {monitor_name} from project {project_name}')

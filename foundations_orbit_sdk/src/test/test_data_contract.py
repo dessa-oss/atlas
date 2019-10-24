@@ -73,6 +73,9 @@ class TestDataContract(Spec):
     def bin_return_value(self):
         return {'percentage': .5, 'upper_edge': None}
 
+    @let
+    def inference_period(self):
+        return '2019-07-06'
 
     @let
     def bin_stats(self):
@@ -157,6 +160,12 @@ class TestDataContract(Spec):
     def four_column_dataframe_no_rows_different_order(self):
         import pandas
         return pandas.DataFrame(columns=[self.column_name_4, self.column_name_2, self.column_name_3, self.column_name])
+
+    @let_now
+    def multiple_types_dataframe(self):
+        import pandas
+        import datetime
+        return pandas.DataFrame(columns=[self.column_name, self.column_name_2, self.column_name_3, self.column_name_4], data=[[self.faker.word(), True, self.faker.date_time(), self.faker.pyint()], [self.faker.word(), False, self.faker.date_time(), self.faker.word()]])
 
     def _generate_distinct(self, reference_values, generating_callback):
         candidate_value = generating_callback()
@@ -366,7 +375,7 @@ class TestDataContract(Spec):
 
     def test_data_contract_validate_writes_correct_info_to_redis(self):
         import numpy
-        inference_period='2019-09-17'
+        inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         contract.special_value_test.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
         contract.min_max_test.configure(attributes=[self.column_name, self.column_name_2], lower_bound=0, upper_bound=1)
@@ -499,7 +508,7 @@ class TestDataContract(Spec):
 
         self.maxDiff = None
 
-        inference_period='2019-09-17'
+        inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe_with_datetime)
         contract.special_value_test.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
 
@@ -583,7 +592,7 @@ class TestDataContract(Spec):
         self.assertEqual(expected_output, deserialized_report)
 
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_different_types(self):
-        inference_period='2019-09-17'
+        inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
         dist_check_results = report['dist_check_results']
@@ -638,7 +647,7 @@ class TestDataContract(Spec):
         mock_min_max_checker_class.assert_called_once()
     
     def test_data_contract_min_max_check_produces_correct_output_for_two_column_df(self):
-        inference_period='2019-09-17'
+        inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         contract.min_max_test.configure(attributes=[self.column_name], lower_bound=0, upper_bound=100)
         report = contract.validate(self.one_column_dataframe_four_rows, inference_period=inference_period)
@@ -669,7 +678,7 @@ class TestDataContract(Spec):
     def test_data_contract_min_max_check_produces_correct_output_for_two_column_df_with_datetime(self):
         import datetime
 
-        inference_period='2019-09-17'
+        inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
 
         upper_bound = datetime.datetime(2023,5,6)
@@ -723,7 +732,7 @@ class TestDataContract(Spec):
 
     @skip# @quarantine
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_no_rows_different_second_column(self):
-        inference_period='2019-09-17'
+        inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, inference_period=inference_period)
         dist_check_results = report['dist_check_results']
@@ -761,6 +770,30 @@ class TestDataContract(Spec):
     def test_data_contract_with_no_reference_dataframe_throws_error(self):
         with self.assertRaises(ValueError) as exception:
             contract = DataContract(self.contract_name)
+
+    @skip('to be completed later')
+    def test_data_contract_validate_returns_expected_errors_when_invalid_types_used_for_tests(self):
+        contract = DataContract(self.contract_name, df=self.one_column_dataframe_four_rows)
+        contract.min_max_test.configure(attributes=list(self.multiple_types_dataframe.columns), lower_bound=0, upper_bound=100)
+        report = contract.validate(self.multiple_types_dataframe, inference_period=self.inference_period)
+
+        expected_error_for_invalid_type = {
+            'Error': 'ValueError',
+            'Message': 'Invalid data type'
+        }
+
+        self.assertEquals(report['special_values_check_results'][self.column_name_4], expected_error_for_invalid_type)
+        self.assertEquals(report['schema_check_results'][self.column_name_4], expected_error_for_invalid_type)
+        self.assertEquals(report['min_max_test_results'][self.column_name_1], expected_error_for_invalid_type)
+        self.assertEquals(report['min_max_test_results'][self.column_name_2], expected_error_for_invalid_type)
+        self.assertEquals(report['min_max_test_results'][self.column_name_4], expected_error_for_invalid_type)
+        self.assertEquals(report['dist_check_results'][self.column_name_4], expected_error_for_invalid_type)
+
+    def _find_if_key_in_dictionary(self, dictionary_to_search, key):
+        if key in dictionary_to_search: return True
+        for _, value in dictionary_to_search.items():
+            if isinstance(value,dict):
+                return self._find_if_key_in_dictionary(value, key)
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name, df=self.empty_dataframe)

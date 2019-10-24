@@ -7,18 +7,36 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class MinMaxChecker(object):
 
-    def __init__(self):
+    def __init__(self, reference_column_types):
         self._attribute_and_bounds = {}
+        self._reference_column_types = reference_column_types
+        self._allowed_types = ['int', 'float', 'datetime']
+        self._attributes_not_allowed = []
+
+        valid_type_checker = lambda column_type: any([allowed_type in column_type for allowed_type in self._allowed_types])
+        for col_name, col_type in reference_column_types.items():
+            if not valid_type_checker(col_type):
+                self._attributes_not_allowed.append(col_name)
 
     def configure(self, attributes, lower_bound=None, upper_bound=None):
+        error_dictionary = {}
         if lower_bound is None and upper_bound is None:
             raise ValueError('expected either lower and/or upper bound')
         for attribute in attributes:
-            self._attribute_and_bounds[attribute] = {
-                'lower_bound': lower_bound,
-                'upper_bound': upper_bound
-            }
-    
+            if attribute in self._attributes_not_allowed:
+                error_dictionary[attribute] = self._reference_column_types[attribute]
+            else:
+                self._attribute_and_bounds[attribute] = {
+                    'lower_bound': lower_bound,
+                    'upper_bound': upper_bound
+                }
+        if error_dictionary != {}:
+            self._attribute_and_bounds = {}
+            raise ValueError(f'The following columns have invalid types: {error_dictionary}')
+
+    def __str__(self):
+        return str(self._attribute_and_bounds)
+
     def exclude(self, attributes=None):
         if attributes == 'all':
             self._attribute_and_bounds = {}
@@ -28,12 +46,22 @@ class MinMaxChecker(object):
             del self._attribute_and_bounds[attribute]
 
     def validate(self, dataframe_to_validate):
+        import datetime
+
         if not self._attribute_and_bounds or len(dataframe_to_validate) == 0:
             return {}
 
         data_to_return = {}
-
+        allowed_data_types = {'u', 'i', 'f', 'c', 'M'}
         for attribute, bounds in self._attribute_and_bounds.items():
+
+            attribute_data_type = dataframe_to_validate[attribute].dtype.kind
+
+            if attribute_data_type not in allowed_data_types:
+                continue
+            elif attribute_data_type == 'M' and (issubclass(type(bounds['lower_bound']), datetime.datetime) != True or issubclass(type(bounds['upper_bound']), datetime.datetime) != True):
+                continue
+
             min_value = dataframe_to_validate[attribute].min()
             max_value = dataframe_to_validate[attribute].max()
 
