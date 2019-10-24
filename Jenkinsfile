@@ -46,16 +46,16 @@ pipeline{
                 }
             }
         }
-        stage('Run Unit Tests') {
-            agent {
-                label 'ci-pipeline-jenkins-slave'
-            }
-            steps {
-                container("python3") {
-                    sh "./run_unit_tests.sh"
-                }
-            }
-        }
+        // stage('Run Unit Tests') {
+        //     agent {
+        //         label 'ci-pipeline-jenkins-slave'
+        //     }
+        //     steps {
+        //         container("python3") {
+        //             sh "./run_unit_tests.sh"
+        //         }
+        //     }
+        // }
         stage('Build Images and Push to Testing Env') {
             failFast true
             parallel{
@@ -88,6 +88,9 @@ pipeline{
                             steps {
                                 container("python3-1") {
                                     dir("${WORKSPACE}") {
+                                        sh 'pwd'
+                                        sh 'ls -l'
+                                        sh 'ls ./dist'
                                         sh 'python -m pip install ./dist/*.whl'
                                         sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
                                         sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
