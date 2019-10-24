@@ -6,10 +6,10 @@ pipeline{
     agent none
     stages {
         stage('Preparation') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
-                agent {
-                    label 'ci-pipeline-jenkins-slave'
-                }
                 script {
                     customMetricsMap["jenkins_data"] = customMetrics
                     checkout scm
@@ -17,40 +17,40 @@ pipeline{
             }
         }
         stage('Get Foundations Scheduler') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
-                agent {
-                    label 'ci-pipeline-jenkins-slave'
-                }
                 container("python3") {
                     sh 'python -m pip install -U foundations-scheduler'
                 }
             }
         }
         stage('Foundations Install Test Requirements') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
-                agent {
-                    label 'ci-pipeline-jenkins-slave'
-                }
                 container("python3") {
                     sh "./ci_install_requirements.sh"
                 }
             }
         }
         stage('Build Foundations Wheels') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
-                agent {
-                    label 'ci-pipeline-jenkins-slave'
-                }
                 container("python3") {
                     sh "./build_dist.sh"
                 }
             }
         }
         stage('Run Unit Tests') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
-                agent {
-                    label 'ci-pipeline-jenkins-slave'
-                }
                 container("python3") {
                     sh "./run_unit_tests.sh"
                 }
