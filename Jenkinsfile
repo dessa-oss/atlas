@@ -89,7 +89,7 @@ pipeline{
                                 container("python3-1") {
                                     dir("${WORKSPACE}") {
                                         sh 'pwd'
-                                        sh "echo ${WORKSPACE}"
+                                        sh "ls -l dist"
                                         sh 'python -m pip install ./dist/*.whl'
                                         sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
                                         sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
@@ -129,7 +129,7 @@ pipeline{
                                 container("python3-1") {
                                     dir("${WORKSPACE}/testing") {
                                         sh 'pwd'
-                                        sh "echo ${WORKSPACE}"
+                                        sh "ls -l ../dist"
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                 }
@@ -147,7 +147,7 @@ pipeline{
                                 container("python3-2") {
                                     dir("${WORKSPACE}/testing") {
                                         sh 'pwd'
-                                        sh "echo ${WORKSPACE}"
+                                        sh "ls -l ../dist"
                                         sh 'python -m pip install -U foundations-scheduler'
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
@@ -166,7 +166,7 @@ pipeline{
                                 container("python3-3") {
                                     dir("${WORKSPACE}/testing") {
                                         sh 'pwd'
-                                        sh "echo ${WORKSPACE}"
+                                        sh "ls -l ../dist"
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                 }
@@ -184,7 +184,7 @@ pipeline{
                                 container("python3-4") {
                                     dir("${WORKSPACE}/testing") {
                                         sh 'pwd'
-                                        sh "echo ${WORKSPACE}"
+                                        sh "ls -l ../dist"
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                 }
