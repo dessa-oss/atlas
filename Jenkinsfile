@@ -88,7 +88,7 @@ pipeline{
                         stage('Build Worker Images and Push to Testing Env') {
                             steps {
                                 container("python3-1") {
-                                    ws("${WORKSPACE}") {
+                                    ws("/home/jenkins/agent/workspace/${GIT_BRANCH}") {
                                         sh 'pwd'
                                         sh 'ls -l'
                                         sh 'ls -l ./dist'
@@ -186,6 +186,25 @@ pipeline{
                         }
                     }
                 }
+                stage('Install Foundations (aws ec2)') {
+                    agent {
+                        label 'ec2-instance'
+                    }
+                    stages{
+                        stage('Install Foundations (aws ec2)'){
+                            steps {
+                                ws("${WORKSPACE}") {
+                                    script {
+                                        customMetricsMap["jenkins_data"] = customMetrics
+                                        checkout scm
+                                    }
+                                    sh "./ci_install_requirements.sh"
+                                    sh "./build_dist.sh"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         stage('Python3 All Foundations Acceptance Tests'){
@@ -270,6 +289,20 @@ pipeline{
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v orbit_acceptance'
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('Parallel Foundations Local Scheduler Acceptance Tests') {
+                    agent {
+                        label 'ec2-instance'
+                    }
+                    stages {
+                        stage('Parallel Foundations Local Scheduler Acceptance Tests') {
+                            steps {
+                                ws("${WORKSPACE}/testing") {
+                                    sh 'python -Wi -m unittest -f -v local_docker_scheduler_acceptance'
                                 }
                             }
                         }
