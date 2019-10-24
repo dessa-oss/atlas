@@ -12,6 +12,7 @@ class ValidationReportListing(PropertyModel):
     inference_period = PropertyModel.define_property()
     monitor_package = PropertyModel.define_property()
     data_contract = PropertyModel.define_property()
+    num_critical_tests = PropertyModel.define_property()
 
     @staticmethod
     def all(project_name):
@@ -32,8 +33,9 @@ class ValidationReportListing(PropertyModel):
     def _listing_stream(project_name):
         keys = ValidationReportListing._all_keys(project_name)
 
-        for monitor_package, data_contract, inference_period in ValidationReportListing._parsed_information(keys):
-            yield ValidationReportListing(monitor_package=monitor_package, data_contract=data_contract, inference_period=inference_period)
+        for monitor_package, data_contract, inference_period, num_critical_tests in ValidationReportListing._parsed_information(keys):
+            yield ValidationReportListing(monitor_package=monitor_package, data_contract=data_contract,
+                                          inference_period=inference_period, num_critical_tests=num_critical_tests)
 
     @staticmethod
     def _all_keys(project_name):
@@ -45,8 +47,14 @@ class ValidationReportListing(PropertyModel):
         from foundations_contrib.global_state import redis_connection
 
         for key in keys:
-            if not key.endswith(b'counter'):
+            if not (key.endswith(b'counter') or key.endswith(b'summary')):
                 dates = redis_connection.hkeys(key)
-                for date in dates:
-                    key_information = key.decode().split(':')
-                    yield key_information[3], key_information[5], date.decode()
+                summaries = redis_connection.hvals(f'{key.decode()}:summary')
+                if len(dates) == len(summaries):
+                    for idx, date in enumerate(dates):
+                        key_information = key.decode().split(':')
+                        yield key_information[3], key_information[5], date.decode(), int(summaries[idx].decode())
+                else:
+                    for idx, date in enumerate(dates):
+                        key_information = key.decode().split(':')
+                        yield key_information[3], key_information[5], date.decode(), None

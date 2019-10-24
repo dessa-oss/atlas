@@ -70,11 +70,13 @@ class DataContract(object):
         with open(data_contract_file_name, 'rb') as contract_file:
             return DataContract._deserialized_contract(contract_file.read())
 
-    def _save_to_redis(self, project_name, monitor_name, contract_name, inference_period, serialized_output):
+    def _save_to_redis(self, project_name, monitor_name, contract_name, inference_period, serialized_output, summary):
         from foundations_contrib.global_state import redis_connection
         key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}'
         counter_key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}:counter'
+        summary_key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}:summary'
         redis_connection.hset(key, inference_period, serialized_output)
+        redis_connection.hset(summary_key, inference_period, summary)
         redis_connection.incr(counter_key)
 
     def validate(self, dataframe_to_validate, inference_period=None):
@@ -85,6 +87,7 @@ class DataContract(object):
 
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
+        from foundations_orbit.data_contract_summary import DataContractSummary
         from foundations_orbit.report_formatter import ReportFormatter
 
         project_name = os.environ.get('PROJECT_NAME', 'default')
@@ -132,7 +135,9 @@ class DataContract(object):
                                     options=self.options)
         serialized_output = report_formatter.serialized_output()
 
-        self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output)
+        data_contract_summary = DataContractSummary(report_formatter.formatted_report())
+
+        self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, data_contract_summary.num_critical_tests)
 
         return validation_report
 
