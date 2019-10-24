@@ -162,9 +162,17 @@ class DataContract(object):
 
     @staticmethod
     def _dataframe_statistics(dataframe):
+        import numpy
         column_names = list(dataframe.columns)
         column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
         number_of_rows = len(dataframe)
+
+        for col_name, col_type in column_types.items():
+            if col_type == "object":
+                object_type_column = dataframe[col_name]
+                string_column_mask = [type(value) == str or numpy.isnan(value) for value in object_type_column]
+                if all(string_column_mask):
+                    column_types[col_name] = "str"
 
         return column_names, column_types, number_of_rows
 
