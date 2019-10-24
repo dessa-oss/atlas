@@ -37,7 +37,6 @@ class ValidationResultsOverview extends Component {
   componentDidMount() {
     const { validationResult } = this.props;
 
-    validationResult.attribute_names = ["churn_rate", "age"]; // Remove this on update
     if (validationResult.attribute_names.length > 0) {
       this.setState({ selectedAttribute: validationResult.attribute_names[0] }, this.reload);
     } else {
@@ -127,8 +126,7 @@ class ValidationResultsOverview extends Component {
       }
     };
 
-    // const columns = validationResult.attribute_names;
-    const columns = ["churn_rate", "age"];
+    const columns = validationResult.attribute_names;
     const selectOptions = columns.map(col => ({ value: col, label: col }));
 
     const expectedMissing = CommonActions.decimalToPercentage(selectedOverview.expected_data.percentage_missing);
