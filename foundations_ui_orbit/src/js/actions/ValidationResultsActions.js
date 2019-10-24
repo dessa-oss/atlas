@@ -27,7 +27,7 @@ const ValidationResultsActions = {
           time={result.inference_period}
           monitorName={result.monitor_package}
           contractName={result.data_contract}
-          numCritical={2}
+          numCritical={result.num_critical_tests}
         />
       );
     });
