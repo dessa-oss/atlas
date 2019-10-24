@@ -31,7 +31,7 @@ class DataContract(object):
 
         self.special_value_test = SpecialValuesChecker(self.options, self._bin_stats, self._column_names, self._dataframe)
         self.distribution_test = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names)
-        self.min_max_test = MinMaxChecker()
+        self.min_max_test = MinMaxChecker(self._column_types)
 
     @staticmethod
     def _default_options():
