@@ -91,6 +91,7 @@ pipeline{
                                     ws("/home/jenkins/agent/workspace/${GIT_BRANCH}") {
                                         sh 'pwd'
                                         sh 'ls -l'
+                                        sh 'cd .. && pwd && ls -l'
                                         sh 'ls -l ./dist'
                                         sh 'python -m pip install ./dist/*.whl'
                                         sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
