@@ -22,6 +22,7 @@
     "identity-obj-proxy": "3.0.0",
     "jquery": "^3.3.1",
     "js-file-download": "^0.4.7",
+    "keycloak-js": "4.0.0-beta.2",
     "mini-css-extract-plugin": "0.4.3",
     "moment": "^2.24.0",
     "node-sass": "4.12",
@@ -43,6 +44,7 @@
     "react-dom": "^16.6.0",
     "react-flatpickr": "^3.6.4",
     "react-hot-loader": "^4.12.10",
+    "react-keycloak": "^7.0.1-191016",
     "react-markdown": "^4.1.0",
     "react-plotly.js": "^2.3.0",
     "react-router-dom": "^4.3.1",
@@ -69,8 +71,7 @@
     "build": "node scripts/build.js",
     "prune": "node scripts/yarn-prune.js",
     "test": "node scripts/test.js",
-    "testLint": "node node_modules/.bin/eslint .",
-    "prune": "node scripts/yarn-prune.js"
+    "testLint": "node node_modules/.bin/eslint ."
   },
   "eslintConfig": {
     "extends": "react-app"
