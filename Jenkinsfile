@@ -3,11 +3,12 @@ def customMetrics = [:]
 def customMetricsMap = [:]
 
 pipeline{
-    agent {
-        label 'ci-pipeline-jenkins-slave'
-    }
+    agent none
     stages {
         stage('Preparation') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 script {
                     customMetricsMap["jenkins_data"] = customMetrics
@@ -16,6 +17,9 @@ pipeline{
             }
         }
         stage('Get Foundations Scheduler') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 container("python3") {
                     sh 'python -m pip install -U foundations-scheduler'
@@ -23,6 +27,9 @@ pipeline{
             }
         }
         stage('Foundations Install Test Requirements') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 container("python3") {
                     sh "./ci_install_requirements.sh"
@@ -30,6 +37,9 @@ pipeline{
             }
         }
         stage('Build Foundations Wheels') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 container("python3") {
                     sh "./build_dist.sh"
@@ -37,8 +47,12 @@ pipeline{
             }
         }
         stage('Run Unit Tests') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 container("python3") {
+                    sh "./build_dist.sh"
                     sh "./run_unit_tests.sh"
                 }
             }
@@ -47,6 +61,9 @@ pipeline{
             failFast true
             parallel{
                 stage('Build Model Package Image and Push to Testing Env') {
+                    agent {
+                        label 'ci-pipeline-jenkins-slave'
+                    }
                     stages {
                         stage('Build Model Package Image and Push to Testing Env') {
                             steps {
@@ -64,6 +81,9 @@ pipeline{
                     }
                 }
                 stage('Build Worker Images and Push to Testing Env') {
+                    agent {
+                        label 'ci-pipeline-jenkins-slave'
+                    }
                     stages {
                         stage('Build Worker Images and Push to Testing Env') {
                             steps {
@@ -71,7 +91,7 @@ pipeline{
                                     sh 'python -m pip install ./dist/*.whl'
                                     sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
                                     sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-                                    sh './build_worker_images.sh '
+                                    sh './build_worker_images.sh'
                                 }
                             }
                         }
@@ -83,6 +103,9 @@ pipeline{
             failFast true
             parallel{
                 stage('Run Integration Tests') {
+                    agent {
+                        label 'ci-pipeline-jenkins-slave'
+                    }
                     stages {
                         stage('Run Integration Tests') {
                             steps {
@@ -94,6 +117,9 @@ pipeline{
                     }
                 }
                 stage('Install Foundations (container 1)') {
+                    agent {
+                        label 'ci-pipeline-jenkins-slave'
+                    }
                     stages{
                         stage('Install Foundations (container 1)'){
                             steps {
@@ -107,6 +133,9 @@ pipeline{
                     }
                 }
                 stage('Install Foundations (container 2)') {
+                    agent {
+                        label 'ci-pipeline-jenkins-slave'
+                    }
                     stages{
                         stage('Install Foundations (container 2)'){
                             steps {
@@ -121,6 +150,9 @@ pipeline{
                     }
                 }
                 stage('Install Foundations (container 3)') {
+                    agent {
+                        label 'ci-pipeline-jenkins-slave'
+                    }
                     stages{
                         stage('Install Foundations (container 3)'){
                             steps {
@@ -134,6 +166,9 @@ pipeline{
                     }
                 }
                 stage('Install Foundations (container 4)') {
+                    agent {
+                        label 'ci-pipeline-jenkins-slave'
+                    }
                     stages{
                         stage('Install Foundations (container 4)'){
                             steps {
@@ -152,6 +187,9 @@ pipeline{
             failFast true
             parallel{
                 stage('Parallel Foundations Acceptance Tests') {
+                    agent {
+                        label 'ci-pipeline-jenkins-slave'
+                    }
                     stages {
                         stage('Python3 Foundations Acceptance Tests'){
                             steps{
@@ -166,6 +204,9 @@ pipeline{
                     }
                 }
                 stage('Parallel Foundations Acceptance Tests for Stageless Deploys') {
+                    agent {
+                        label 'ci-pipeline-jenkins-slave'
+                    }
                     stages{
                         stage('Parallel Foundations Acceptance Tests for Stageless Deploys'){
                             steps {
@@ -180,6 +221,9 @@ pipeline{
                     }
                 }
                 stage('Parallel Foundations Scheduler Acceptance Tests for Remote Deploys') {
+                    agent {
+                        label 'ci-pipeline-jenkins-slave'
+                    }
                     stages{
                         stage('Python3 Foundations Scheduler Acceptance Tests for Remote Deploys') {
                             steps {
@@ -194,6 +238,9 @@ pipeline{
                     }
                 }
                 stage('Parallel Foundations REST API Acceptance Tests') {
+                    agent {
+                        label 'ci-pipeline-jenkins-slave'
+                    }
                     stages{
                         stage('Python3 Foundations REST API Acceptance Tests') {
                             steps {
@@ -207,6 +254,9 @@ pipeline{
                     }
                 }
                 stage('Parallel Foundations Orbit Acceptance Tests') {
+                    agent {
+                        label 'ci-pipeline-jenkins-slave'
+                    }
                     stages{
                         stage('Python3 Foundations Orbit Acceptance Tests') {
                             steps {
@@ -223,6 +273,9 @@ pipeline{
             }
         }
         stage('Install dependencies for Foundations UI (Atlas)') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
@@ -232,6 +285,9 @@ pipeline{
             }
         }
         stage('Run Front End Unit Tests (Atlas)') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
@@ -241,6 +297,9 @@ pipeline{
             }
         }
         stage('Check for linting (Atlas)') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
@@ -250,6 +309,9 @@ pipeline{
             }
         }
         stage('Install dependencies for Foundations UI (Orbit)') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui_orbit/") {
@@ -259,6 +321,9 @@ pipeline{
             }
         }
         stage('Check for linting (Orbit)') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui_orbit/") {
@@ -268,6 +333,9 @@ pipeline{
             }
         }
         stage('Upload Wheels to Releases') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 container("python3"){
                     sh "./upload_modules_to_artifactory.sh $NEXUS_PYPI"
@@ -275,6 +343,9 @@ pipeline{
             }
         }
         stage('Build GUI and Rest API Images'){
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 container("python3"){
                     sh "./build_gui.sh"
@@ -282,6 +353,9 @@ pipeline{
             }
         }
         stage('Push GUI and Rest API Images'){
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 container("python3"){
                     sh "./push_gui_images.sh"
@@ -289,6 +363,9 @@ pipeline{
             }
         }
         stage('Push Model Package Images') {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 container("python3"){
                     ws("${WORKSPACE}/foundations_model_package/src"){
@@ -298,6 +375,9 @@ pipeline{
             }
         }
         stage("Calculate Recovery Metrics") {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             steps {
                 script {
                     def last_build = currentBuild.getPreviousBuild()
@@ -319,12 +399,18 @@ pipeline{
     }
     post {
         always {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             script {
                 customMetricsMap["jenkins_data"] = customMetrics
             }
             influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
         }
         failure {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             script {
                 def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
                 def attachments = [
@@ -335,7 +421,6 @@ pipeline{
                         color: '#FF0000'
                     ]
                 ]
-
                 slackSend(channel: '#f9s-builds', attachments: attachments)
             }
         }
