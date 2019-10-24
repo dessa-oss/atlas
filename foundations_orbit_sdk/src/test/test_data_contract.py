@@ -789,14 +789,6 @@ class TestDataContract(Spec):
         self.assertEquals(report['min_max_test_results'][self.column_name_4], expected_error_for_invalid_type)
         self.assertEquals(report['dist_check_results'][self.column_name_4], expected_error_for_invalid_type)
 
-
-    def test_data_contract_data_contract_errors_when_invalid_types_used_for_tests(self):
-        contract = DataContract(self.contract_name, df=self.multiple_types_dataframe)
-        contract.min_max_test.configure(attributes=list(self.multiple_types_dataframe.columns), lower_bound=0, upper_bound=100)
-
-        report = contract.validate(self.multiple_types_dataframe, inference_period=self.inference_period)
-        self.assertIsNone(self._find_if_key_in_dictionary(report, self.column_name_4))
-
     def _find_if_key_in_dictionary(self, dictionary_to_search, key):
         if key in dictionary_to_search: return True
         for _, value in dictionary_to_search.items():

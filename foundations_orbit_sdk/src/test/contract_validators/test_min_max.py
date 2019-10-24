@@ -35,26 +35,38 @@ class TestMinMax(Spec):
 
         return pandas.DataFrame(columns=[self.column_name], data=[datetime.datetime(2020,2,16), datetime.datetime(2018,2,16), datetime.datetime(2019,2,16)])
 
+    @let
+    def dataframe_one_column_reference_column_types(self):
+        return {self.column_name: str(self.dataframe_one_column.iloc[:,0].dtype)}
+
+    @let
+    def dataframe_two_column_reference_column_types(self):
+        return {self.column_name: str(self.dataframe_two_columns.iloc[:,0].dtype), self.column_name_two: str(self.dataframe_two_columns.iloc[:,1].dtype)}
+
+    @let
+    def dataframe_one_column_with_datetime_reference_column_types(self):
+        return {self.column_name: str(self.dataframe_one_column_with_datetime.iloc[:,0].dtype)}
+
     def test_min_max_test_returns_empty_dictionary_when_checker_not_configured(self):
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_one_column_reference_column_types)
         result = min_max_checker.validate(self.dataframe_one_column)
         self.assertEqual({}, result)
     
     def test_min_max_test_raises_value_error_if_bounds_not_passed_and_attributes_empty(self):
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker({})
 
         with self.assertRaises(ValueError) as error_context:
             min_max_checker.configure(attributes=[])
 
     def test_min_max_test_raises_value_error_if_bounds_not_passed(self):
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker({})
 
         with self.assertRaises(ValueError) as error_context:
             min_max_checker.configure(attributes=['abc'])
     
     def test_min_max_test_passes_when_lower_bound_provided(self):
         lower_bound = self.faker.random.randint(0, self.dataframe_one_column[self.column_name].min() - 1)
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_one_column_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name], lower_bound=lower_bound)
         result = min_max_checker.validate(self.dataframe_one_column)
 
@@ -72,7 +84,7 @@ class TestMinMax(Spec):
 
     def test_min_max_test_fails_when_lower_bound_provided_greater_than_min_value(self):
         lower_bound = 30
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_one_column_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name], lower_bound=lower_bound)
         result = min_max_checker.validate(self.dataframe_one_column)
 
@@ -92,7 +104,7 @@ class TestMinMax(Spec):
     def test_min_max_test_passes_when_upper_bound_provided(self):
         max_val_of_dataframe = self.dataframe_one_column[self.column_name].max()
         upper_bound = self.faker.random.randint(max_val_of_dataframe + 1, max_val_of_dataframe + 100)
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_one_column_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name], upper_bound=upper_bound)
         result = min_max_checker.validate(self.dataframe_one_column)
 
@@ -112,7 +124,7 @@ class TestMinMax(Spec):
     def test_min_max_test_returns_empty_dict_with_empty_dataframe(self):
         import pandas
 
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_one_column_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name], upper_bound=self.faker.random.randint(0,10))
         result = min_max_checker.validate(pandas.DataFrame())
 
@@ -123,7 +135,7 @@ class TestMinMax(Spec):
     def test_min_max_test_fails_when_upper_bound_provided_lesser_than_max_value(self):
         max_val_of_dataframe = self.dataframe_one_column[self.column_name].max()
         upper_bound = max_val_of_dataframe - 1
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_one_column_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name], upper_bound=upper_bound)
         result = min_max_checker.validate(self.dataframe_one_column)
 
@@ -147,7 +159,7 @@ class TestMinMax(Spec):
         lower_bound = self.faker.random.randint(0, min_val_of_dataframe - 1)
         upper_bound = self.faker.random.randint(max_val_of_dataframe + 1, max_val_of_dataframe + 100)
 
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_one_column_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name], lower_bound=lower_bound, upper_bound=upper_bound)
         result = min_max_checker.validate(self.dataframe_one_column)
 
@@ -175,7 +187,7 @@ class TestMinMax(Spec):
         min_val_of_dataframes = min(min_val_one, min_val_two)
         lower_bound = min_val_of_dataframes - 1
 
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_two_column_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name, self.column_name_two], lower_bound=lower_bound)
         result = min_max_checker.validate(self.dataframe_two_columns)
 
@@ -205,7 +217,7 @@ class TestMinMax(Spec):
         max_val_of_dataframes = max(max_val_one, max_val_two)
         upper_bound = max_val_of_dataframes + 1
 
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_two_column_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name, self.column_name_two], upper_bound=upper_bound)
         result = min_max_checker.validate(self.dataframe_two_columns)
 
@@ -235,7 +247,7 @@ class TestMinMax(Spec):
         upper_bound = max_val_one + 1
         lower_bound = min_val_two - 1
 
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_two_column_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name], upper_bound=upper_bound)
         min_max_checker.configure(attributes=[self.column_name_two], lower_bound=lower_bound)
         
@@ -265,7 +277,7 @@ class TestMinMax(Spec):
 
         upper_bound = max_val_one + 1
 
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_two_column_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name], lower_bound=100)
         min_max_checker.configure(attributes=[self.column_name], upper_bound=upper_bound)
         
@@ -294,7 +306,7 @@ class TestMinMax(Spec):
         upper_bound_two = max_val_two + 1
         lower_bound_two = min_val_two - 1
 
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_two_column_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name], lower_bound=lower_bound_one, upper_bound=upper_bound_one)
         min_max_checker.configure(attributes=[self.column_name_two], lower_bound=lower_bound_two, upper_bound=upper_bound_two)
         
@@ -330,7 +342,7 @@ class TestMinMax(Spec):
         self.assertEqual(expected_result, result)
     
     def test_min_max_test_excluding_all_columns(self):
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_two_column_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name, self.column_name_two], lower_bound=0)
         min_max_checker.exclude(attributes='all')
         
@@ -345,7 +357,7 @@ class TestMinMax(Spec):
 
         upper_bound = max_val_one + 1
 
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_two_column_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name, self.column_name_two], upper_bound=upper_bound)
         min_max_checker.exclude([self.column_name_two])
 
@@ -371,7 +383,7 @@ class TestMinMax(Spec):
         upper_bound = max_val_one + datetime.timedelta(days=1)
         lower_bound = min_val_one + datetime.timedelta(days=1)
 
-        min_max_checker = MinMaxChecker()
+        min_max_checker = MinMaxChecker(self.dataframe_one_column_with_datetime_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name], lower_bound=lower_bound, upper_bound=upper_bound)
         
         result = min_max_checker.validate(self.dataframe_one_column_with_datetime)
@@ -393,3 +405,61 @@ class TestMinMax(Spec):
         }
 
         self.assertEqual(expected_result, result)
+
+    def test_min_max_checker_has_to_string(self):
+        min_max_checker = MinMaxChecker(self.dataframe_two_column_reference_column_types)
+        min_max_checker.configure(attributes=[self.column_name], lower_bound=0, upper_bound=50)
+        min_max_checker.configure(attributes=[self.column_name_two], lower_bound=20, upper_bound=70)
+
+
+        expected_output = {
+            self.column_name: {
+                'lower_bound': 0,
+                'upper_bound': 50
+            },
+            self.column_name_two: {
+                'lower_bound': 20,
+                'upper_bound': 70
+            },
+        }
+        self.assertEqual(str(expected_output), str(min_max_checker))
+
+    def test_min_max_checker_configure_fails_when_reference_dataframe_with_bool_types_used(self):
+
+        reference_column_types = {self.column_name: 'int64', self.column_name_two: 'bool'}
+        min_max_checker = MinMaxChecker(reference_column_types)
+
+        expected_error_dictionary = {
+            self.column_name_two: 'bool'
+        }
+        with self.assertRaises(ValueError) as e:
+            min_max_checker.configure(attributes=[self.column_name, self.column_name_two], lower_bound=0)
+
+        self.assertEqual(f'The following columns have invalid types: {expected_error_dictionary}', e.exception.args[0])
+
+    def test_min_max_checker_when_configure_fails_then_no_columns_are_configured(self):
+
+        reference_column_types = self.dataframe_one_column_with_datetime_reference_column_types
+        reference_column_types[self.column_name_two] = 'object'
+        min_max_checker = MinMaxChecker(reference_column_types)
+
+        try:
+            min_max_checker.configure(attributes=[self.column_name, self.column_name_two], lower_bound=50, upper_bound=100)
+        except:
+            self.assertEqual('{}', str(min_max_checker))
+
+
+    def test_min_max_checker_configure_fails_when_reference_dataframe_with_multiple_unsumpported_types_used(self):
+
+        reference_column_types = {self.column_name: 'str', self.column_name_two: 'bool'}
+        min_max_checker = MinMaxChecker(reference_column_types)
+
+        expected_error_dictionary = {
+            self.column_name: 'str',
+            self.column_name_two: 'bool'
+        }
+
+        with self.assertRaises(ValueError) as e:
+            min_max_checker.configure(attributes=[self.column_name, self.column_name_two], lower_bound=0)
+
+        self.assertEqual(f'The following columns have invalid types: {expected_error_dictionary}', e.exception.args[0])
