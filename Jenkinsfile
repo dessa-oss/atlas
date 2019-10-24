@@ -88,10 +88,12 @@ pipeline{
                         stage('Build Worker Images and Push to Testing Env') {
                             steps {
                                 container("python3-1") {
-                                    sh 'python -m pip install ./dist/*.whl'
-                                    sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-                                    sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-                                    sh './build_worker_images.sh'
+                                    ws("${WORKSPACE}") {
+                                        sh 'python -m pip install ./dist/*.whl'
+                                        sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
+                                        sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
+                                        sh './build_worker_images.sh'
+                                    }
                                 }
                             }
                         }
