@@ -24,9 +24,11 @@ class DataContract(object):
             self._dataframe = df
 
         self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
+        self.schema_test = SchemaChecker(self._column_names, self._column_types)
+        self._remove_object_columns_and_types(self._column_names, self._column_types)
+
         self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
 
-        self.schema_test = SchemaChecker(self._column_names, self._column_types)
         self.special_value_test = SpecialValuesChecker(self.options, self._bin_stats, self._column_names, self._dataframe)
         self.distribution_test = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names)
         self.min_max_test = MinMaxChecker()
@@ -68,11 +70,13 @@ class DataContract(object):
         with open(data_contract_file_name, 'rb') as contract_file:
             return DataContract._deserialized_contract(contract_file.read())
 
-    def _save_to_redis(self, project_name, monitor_name, contract_name, inference_period, serialized_output):
+    def _save_to_redis(self, project_name, monitor_name, contract_name, inference_period, serialized_output, summary):
         from foundations_contrib.global_state import redis_connection
         key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}'
         counter_key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}:counter'
+        summary_key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}:summary'
         redis_connection.hset(key, inference_period, serialized_output)
+        redis_connection.hset(summary_key, inference_period, summary)
         redis_connection.incr(counter_key)
 
     def validate(self, dataframe_to_validate, inference_period=None):
@@ -83,6 +87,7 @@ class DataContract(object):
 
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
+        from foundations_orbit.data_contract_summary import DataContractSummary
         from foundations_orbit.report_formatter import ReportFormatter
 
         project_name = os.environ.get('PROJECT_NAME', 'default')
@@ -130,7 +135,9 @@ class DataContract(object):
                                     options=self.options)
         serialized_output = report_formatter.serialized_output()
 
-        self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output)
+        data_contract_summary = DataContractSummary(report_formatter.formatted_report())
+
+        self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, data_contract_summary.num_critical_tests)
 
         return validation_report
 
@@ -160,3 +167,14 @@ class DataContract(object):
         number_of_rows = len(dataframe)
 
         return column_names, column_types, number_of_rows
+
+    @staticmethod
+    def _remove_object_columns_and_types(column_names, column_types):
+        column_names_to_delete = []
+        for column_name, column_type in column_types.items():
+            if column_type == 'object':
+                column_names.remove(column_name)
+                column_names_to_delete.append(column_name)
+
+        for column_name in column_names_to_delete:
+            column_types.pop(column_name)

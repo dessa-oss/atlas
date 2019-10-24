@@ -33,6 +33,10 @@ class TestValidationReportListing(Spec):
         return self.faker.date()
 
     @let
+    def num_critical_tests(self):
+        return self.faker.random_number()
+
+    @let
     def monitor_package_2(self):
         return self.faker.word()
 
@@ -56,6 +60,9 @@ class TestValidationReportListing(Spec):
 
     def test_validation_report_listing_has_data_contract(self):
         self._test_validation_report_listing_has_property('data_contract')
+
+    def test_validation_report_listing_has_num_critical_tests(self):
+        self._test_validation_report_listing_has_property('num_critical_tests')
 
     def test_validation_report_listing_get_all_returns_empty_list_for_empty_redis(self):
         promise = ValidationReportListing.all(project_name=self.project_name)

@@ -82,6 +82,7 @@ class TestMonitorParser(Spec):
 
     def test_monitor_delete_with_specified_monitor_name_and_project_name_calls_delete(self):
         mock_monitor_delete = self.patch('foundations_contrib.cli.orbit_monitor_package_server.delete')
+        mock_monitor_delete.__name__ = 'delete'
         self._call_monitor_command('delete')
         mock_monitor_delete.assert_called_with(self.project_name, self.monitor_name, 'scheduler')
 
@@ -110,11 +111,13 @@ class TestMonitorParser(Spec):
 
     def test_monitor_calls_pause_sends_project_name_model_name_and_env_to_monitor_package_server(self):
         mock_pause = self.patch('foundations_contrib.cli.orbit_monitor_package_server.pause')
+        mock_pause.__name__ = 'pause'
         self._call_monitor_command('pause')
         mock_pause.assert_called_once_with(self.project_name, self.monitor_name, self.env)
 
     def test_monitor_calls_resume_sends_project_name_model_name_and_env_to_monitor_package_server(self):
         mock_resume = self.patch('foundations_contrib.cli.orbit_monitor_package_server.resume')
+        mock_resume.__name__ = 'resume'
         self._call_monitor_command('resume')
         mock_resume.assert_called_once_with(self.project_name, self.monitor_name, self.env)
 

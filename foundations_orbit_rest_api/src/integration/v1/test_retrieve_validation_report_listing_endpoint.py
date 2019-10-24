@@ -34,32 +34,38 @@ class TestRetrieveValidationReportListingEndpoint(Spec):
             {
                 'inference_period': '2019-02-01',
                 'monitor_package': 'model_one',
-                'data_contract': 'data_contract_1'
+                'data_contract': 'data_contract_1',
+                'num_critical_tests': 1
             },
             {
                 'inference_period': '2019-02-01',
                 'monitor_package': 'model_one',
-                'data_contract': 'data_contract_2'
+                'data_contract': 'data_contract_2',
+                'num_critical_tests': 2
             },
             {
                 'inference_period': '2019-02-02',
                 'monitor_package': 'model_one',
-                'data_contract': 'data_contract_1'
+                'data_contract': 'data_contract_1',
+                'num_critical_tests': 3
             },
             {
                 'inference_period': '2019-02-02',
                 'monitor_package': 'model_two',
-                'data_contract': 'data_contract_1'
+                'data_contract': 'data_contract_1',
+                'num_critical_tests': 4
             },
             {
                 'inference_period': '2019-02-02',
                 'monitor_package': 'model_two',
-                'data_contract': 'data_contract_2'
+                'data_contract': 'data_contract_2',
+                'num_critical_tests': 5
             },
             {
                 'inference_period': '2019-02-05',
                 'monitor_package': 'model_one',
-                'data_contract': 'data_contract_2'
+                'data_contract': 'data_contract_2',
+                'num_critical_tests': 6
             }
         ]
 
@@ -67,7 +73,9 @@ class TestRetrieveValidationReportListingEndpoint(Spec):
             contract_name = listing_entry['data_contract']
             inference_period = listing_entry['inference_period']
             monitor_package = listing_entry['monitor_package']
+            num_critical_tests = listing_entry['num_critical_tests']
             self.redis.hset(f'projects:test_project:monitors:{monitor_package}:validation:{contract_name}', inference_period, 'dummy')
+            self.redis.hset(f'projects:test_project:monitors:{monitor_package}:validation:{contract_name}:summary', inference_period, num_critical_tests)
 
         data = self._get_from_route()
 
