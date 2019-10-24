@@ -1,12 +1,19 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
+import Select from "react-select";
 
 class MonitorOverview extends Component {
   render() {
     const { monitorResult } = this.props;
     const nextRun = monitorResult.next_run_time ? monitorResult.next_run_time : "No next run specified";
-    const status = monitorResult.status.split("")[0].toUpperCase() + monitorResult.status.slice(1, -1);
+    const status = monitorResult.status.split("")[0].toUpperCase() + monitorResult.status.slice(1);
+
+    const scheduleOptions = [
+      { label: "Mothly", value: "Mothly" },
+      { label: "Weekly", value: "Weekly" },
+      { label: "Daily", value: "Daily" }
+    ];
 
     return (
       <div className="monitor-info">
@@ -43,11 +50,16 @@ class MonitorOverview extends Component {
             <li>
               <div className="monitor-overview-key">Repeats:</div>
               <div className="monitor-overview-value">
-                <select className="schedule-picker" name="schedule-picker">
+                {/* <select className="schedule-picker" name="schedule-picker">
                   <option value="weekly">Weekly</option>
                   <option value="daily">Daily</option>
                   <option value="monthly">Monthly</option>
-                </select>
+                </select> */}
+                <Select
+                  options={scheduleOptions}
+                  className="react-select"
+                  isMulti
+                />
               </div>
             </li>
             <li>
