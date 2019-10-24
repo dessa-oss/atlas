@@ -68,7 +68,7 @@ pipeline{
                         stage('Build Model Package Image and Push to Testing Env') {
                             steps {
                                 container("python3") {
-                                    ws("${WORKSPACE}/foundations_model_package/src"){
+                                    dir("${WORKSPACE}/foundations_model_package/src"){
                                         sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
                                         sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
                                         sh './build.sh'
@@ -88,7 +88,7 @@ pipeline{
                         stage('Build Worker Images and Push to Testing Env') {
                             steps {
                                 container("python3-1") {
-                                    ws("/home/jenkins/agent/workspace/${GIT_BRANCH}") {
+                                    dir("${WORKSPACE}") {
                                         sh 'pwd'
                                         sh 'ls -l'
                                         sh 'cd .. && pwd && ls -l'
@@ -130,7 +130,7 @@ pipeline{
                         stage('Install Foundations (container 1)'){
                             steps {
                                 container("python3-1") {
-                                    ws("${WORKSPACE}/testing") {
+                                    dir("${WORKSPACE}/testing") {
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                 }
@@ -146,7 +146,7 @@ pipeline{
                         stage('Install Foundations (container 2)'){
                             steps {
                                 container("python3-2") {
-                                    ws("${WORKSPACE}/testing") {
+                                    dir("${WORKSPACE}/testing") {
                                         sh 'python -m pip install -U foundations-scheduler'
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
@@ -163,7 +163,7 @@ pipeline{
                         stage('Install Foundations (container 3)'){
                             steps {
                                 container("python3-3") {
-                                    ws("${WORKSPACE}/testing") {
+                                    dir("${WORKSPACE}/testing") {
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                 }
@@ -179,7 +179,7 @@ pipeline{
                         stage('Install Foundations (container 4)'){
                             steps {
                                 container("python3-4") {
-                                    ws("${WORKSPACE}/testing") {
+                                    dir("${WORKSPACE}/testing") {
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                 }
@@ -194,7 +194,7 @@ pipeline{
                     stages{
                         stage('Install Foundations (aws ec2)'){
                             steps {
-                                ws("${WORKSPACE}") {
+                                dir("${WORKSPACE}") {
                                     script {
                                         customMetricsMap["jenkins_data"] = customMetrics
                                         checkout scm
@@ -219,7 +219,7 @@ pipeline{
                         stage('Python3 Foundations Acceptance Tests'){
                             steps{
                                 container("python3") {
-                                    ws("${WORKSPACE}/testing") {
+                                    dir("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
                                         sh "python -Wi -m unittest -f -v acceptance"
                                     }
@@ -236,7 +236,7 @@ pipeline{
                         stage('Parallel Foundations Acceptance Tests for Stageless Deploys'){
                             steps {
                                 container("python3-1") {
-                                    ws("${WORKSPACE}/testing") {
+                                    dir("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'python -Wi -m unittest -f -v stageless_acceptance'
                                     }
@@ -253,7 +253,7 @@ pipeline{
                         stage('Python3 Foundations Scheduler Acceptance Tests for Remote Deploys') {
                             steps {
                                 container("python3-2") {
-                                    ws("${WORKSPACE}/testing") {
+                                    dir("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v scheduler_acceptance'
                                     }
@@ -270,7 +270,7 @@ pipeline{
                         stage('Python3 Foundations REST API Acceptance Tests') {
                             steps {
                                 container("python3-3") {
-                                    ws("${WORKSPACE}/foundations_rest_api/src") {
+                                    dir("${WORKSPACE}/foundations_rest_api/src") {
                                         sh "python -Wi -m unittest -f -v acceptance"
                                     }
                                 }
@@ -286,7 +286,7 @@ pipeline{
                         stage('Python3 Foundations Orbit Acceptance Tests') {
                             steps {
                                 container("python3-4") {
-                                    ws("${WORKSPACE}/testing") {
+                                    dir("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v orbit_acceptance'
                                     }
@@ -302,7 +302,7 @@ pipeline{
                     stages {
                         stage('Parallel Foundations Local Scheduler Acceptance Tests') {
                             steps {
-                                ws("${WORKSPACE}/testing") {
+                                dir("${WORKSPACE}/testing") {
                                     sh 'python -Wi -m unittest -f -v local_docker_scheduler_acceptance'
                                 }
                             }
@@ -317,7 +317,7 @@ pipeline{
             }
             steps {
                 container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui/") {
+                    dir("${WORKSPACE}/foundations_ui/") {
                         sh "yarn install"
                     }
                 }
@@ -329,7 +329,7 @@ pipeline{
             }
             steps {
                 container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui/") {
+                    dir("${WORKSPACE}/foundations_ui/") {
                         sh "yarn run test"
                     }
                 }
@@ -341,7 +341,7 @@ pipeline{
             }
             steps {
                 container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui/") {
+                    dir("${WORKSPACE}/foundations_ui/") {
                         sh "node_modules/.bin/eslint ."
                     }
                 }
@@ -353,7 +353,7 @@ pipeline{
             }
             steps {
                 container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui_orbit/") {
+                    dir("${WORKSPACE}/foundations_ui_orbit/") {
                         sh "yarn install"
                     }
                 }
@@ -365,7 +365,7 @@ pipeline{
             }
             steps {
                 container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui_orbit/") {
+                    dir("${WORKSPACE}/foundations_ui_orbit/") {
                         sh "node_modules/.bin/eslint ."
                     }
                 }
@@ -407,7 +407,7 @@ pipeline{
             }
             steps {
                 container("python3"){
-                    ws("${WORKSPACE}/foundations_model_package/src"){
+                    dir("${WORKSPACE}/foundations_model_package/src"){
                         sh './push_green_images.sh'
                     }
                 }
