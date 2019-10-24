@@ -90,7 +90,7 @@ pipeline{
                                     sh 'python -m pip install ./dist/*.whl'
                                     sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
                                     sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-                                    sh './build_worker_images.sh '
+                                    sh './build_worker_images.sh'
                                 }
                             }
                         }
@@ -398,12 +398,18 @@ pipeline{
     }
     post {
         always {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             script {
                 customMetricsMap["jenkins_data"] = customMetrics
             }
             influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
         }
         failure {
+            agent {
+                label 'ci-pipeline-jenkins-slave'
+            }
             script {
                 def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
                 def attachments = [
@@ -414,7 +420,6 @@ pipeline{
                         color: '#FF0000'
                     ]
                 ]
-
                 slackSend(channel: '#f9s-builds', attachments: attachments)
             }
         }
