@@ -23,11 +23,10 @@
     display: inline-flex;
 
     .overview-summary, .overview-graph, .overview-graph-stats {
-      width: 30%;
+      width: 33%;
       background-color: #fff;
       display: inline-block;
-      padding: 30px;
-      padding-top: 40px;
+      height: 100%;
     }
 
     .overview-summary {
@@ -45,6 +44,63 @@
 
     .overview-labels {
       margin-right: 30px;
+    }
+
+    .overview-graph {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .overview-graph-stats {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      padding-left: 60px;
+
+      .attribute-select {
+        width: 70%;
+        margin-bottom: 15px;
+      }
+
+      .attribute-data-container {
+        font-size: 12px;
+        margin-bottom: 15px;
+
+        .attribute-data-label {
+          font-size: 18px;
+          margin-bottom: 10px;
+
+          .light-blue-box {
+            background-color: hsl(204%, 100%, 66%);
+            width: 15px;
+            height: 15px;
+            display: inline-block;
+            margin-right: 10px;
+            border-radius: 3px;
+          }
+
+          .dark-blue-box {
+            background-color: hsl(212%, 100%, 31%);
+            width: 15px;
+            height: 15px;
+            display: inline-block;
+            margin-right: 10px;
+            border-radius: 3px;
+          }
+        }
+
+        .attribute-data-container-left, .attribute-data-container-right {
+          display: inline-block;
+          color: hsl(0%, 0%, 51%);
+          line-height: 20px;
+        }
+
+        .attribute-data-container-left {
+          font-weight: 600;
+          margin-right: 30px;
+        }
+      }
     }
   }
 
