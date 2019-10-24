@@ -199,7 +199,7 @@ pipeline{
                 }
             }
         }
-         stage('Install dependencies for Foundations UI (Atlas)') {
+        stage('Install dependencies for Foundations UI (Atlas)') {
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
