@@ -44,6 +44,7 @@
     "react-dom": "^16.6.0",
     "react-flatpickr": "^3.6.4",
     "react-hot-loader": "^4.12.10",
+    "react-keycloak": "^7.0.1-191016",
     "react-markdown": "^4.1.0",
     "react-plotly.js": "^2.3.0",
     "react-router-dom": "^4.3.1",
