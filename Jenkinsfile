@@ -52,6 +52,7 @@ pipeline{
             }
             steps {
                 container("python3") {
+                    sh "./build_dist.sh"
                     sh "./run_unit_tests.sh"
                 }
             }
