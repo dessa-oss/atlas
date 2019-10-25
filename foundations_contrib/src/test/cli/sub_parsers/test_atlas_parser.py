@@ -5,10 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_spec import *
-from foundations_contrib.cli.command_line_interface import CommandLineInterface
 from unittest import mock
 from unittest.mock import patch
+from foundations_spec import *
+from foundations_contrib.cli.command_line_interface import CommandLineInterface
+from foundations_contrib.cli.sub_parsers.atlas_parser import AtlasParser
 
 class TestAtlasParser(Spec):
 
@@ -168,6 +169,16 @@ class TestAtlasParser(Spec):
 
     def fake_config_path(self, environment):
         return 'home/foundations/lou/config/{}.config.yaml'.format(environment)
+
+    def test_sub_parser_retrieves_command_line_interface_as_parameter(self):
+        cli = CommandLineInterface([''])
+        atlas_sub_parser = AtlasParser(cli)
+        self.assertTrue(type(atlas_sub_parser._cli) is CommandLineInterface)
+
+    def test_sub_parser_setup_parser_on_cli_instantiation(self):
+        mock_add_parser = self.patch('foundations_contrib.cli.sub_parsers.atlas_parser.AtlasParser.add_sub_parser')
+        CommandLineInterface([''])
+        mock_add_parser.assert_called_once()
 
     @patch('argparse.ArgumentParser')
     def test_retrieve_artifact_has_correct_options(self, parser_class_mock):
