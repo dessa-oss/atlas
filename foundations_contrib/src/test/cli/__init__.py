@@ -17,5 +17,6 @@ from test.cli.test_orbit_monitor_package_server import TestOrbitMonitorPackageSe
 from test.cli.test_config_listing import TestConfigListing
 from test.cli.sub_parsers.test_orbit_parser import TestOrbitParser
 from test.cli.sub_parsers.test_monitor_parser import TestMonitorParser
+from test.cli.sub_parsers.test_atlas_parser import TestAtlasParser
 
 from test.cli.job_submission import *

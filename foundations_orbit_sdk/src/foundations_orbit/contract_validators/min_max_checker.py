@@ -5,18 +5,14 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from foundations_orbit.contract_validators.checker import Checker
 class MinMaxChecker(object):
 
     def __init__(self, reference_column_types):
         self._attribute_and_bounds = {}
         self._reference_column_types = reference_column_types
         self._allowed_types = ['int', 'float', 'datetime']
-        self._attributes_not_allowed = []
-
-        valid_type_checker = lambda column_type: any([allowed_type in column_type for allowed_type in self._allowed_types])
-        for col_name, col_type in reference_column_types.items():
-            if not valid_type_checker(col_type):
-                self._attributes_not_allowed.append(col_name)
+        self._attributes_not_allowed = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
 
     def configure(self, attributes, lower_bound=None, upper_bound=None):
         error_dictionary = {}
@@ -52,15 +48,9 @@ class MinMaxChecker(object):
             return {}
 
         data_to_return = {}
-        allowed_data_types = {'u', 'i', 'f', 'c', 'M'}
         for attribute, bounds in self._attribute_and_bounds.items():
 
             attribute_data_type = dataframe_to_validate[attribute].dtype.kind
-
-            if attribute_data_type not in allowed_data_types:
-                continue
-            elif attribute_data_type == 'M' and (issubclass(type(bounds['lower_bound']), datetime.datetime) != True or issubclass(type(bounds['upper_bound']), datetime.datetime) != True):
-                continue
 
             min_value = dataframe_to_validate[attribute].min()
             max_value = dataframe_to_validate[attribute].max()

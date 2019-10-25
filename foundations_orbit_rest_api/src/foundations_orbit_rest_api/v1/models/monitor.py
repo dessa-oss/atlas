@@ -43,4 +43,9 @@ class Monitor(PropertyModel):
         from foundations_contrib.global_state import redis_connection
 
         redis_key = f'projects:{project_name}:monitors:{monitor_name}:jobs'
-        redis_connection.srem(redis_key, job_id)
+        result = redis_connection.srem(redis_key, job_id)
+
+        if result == 0:
+            return None
+        
+        return job_id

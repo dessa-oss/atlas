@@ -15,6 +15,7 @@ class TestMonitorParser(Spec):
     def set_up(self):
         mock_config_manager = self.patch('foundations_contrib.foundations_contrib.global_state.config_manager')
         mock_config_manager.config.return_value = {'scheduler_url': 'https://localhost:5000'}
+        self.mock_print = self.patch('builtins.print')
         self.patch('foundations_contrib.cli.job_submission.config.load')
 
     @let
@@ -60,6 +61,11 @@ class TestMonitorParser(Spec):
         help_msg = 'Provides operations for managing monitors in Orbit'
         mock_argument_parser.assert_any_call('monitor', help=help_msg)
 
+    def test_monitor_calls_start_method_when_create_command_is_triggered(self):
+        mock_method = self.patch('foundations_contrib.cli.orbit_monitor_package_server.start')
+        self._call_monitor_command('create')
+        mock_method.assert_called_once()
+
     def test_monitor_calls_pause_monitor_when_pause_command_is_triggered(self):
         mock_method = self.patch('foundations_contrib.cli.sub_parsers.monitor_parser.MonitorParser._pause_monitor')
         self._call_monitor_command('pause')
@@ -68,6 +74,10 @@ class TestMonitorParser(Spec):
     def test_monitor_calls_cron_job_scheduler_for_pausing_with_parameters_passed_by_cli(self):
         self._call_monitor_command('pause')
         self.cron_job_scheduler.pause_job.assert_called_once_with(self.monitor_package_id)
+
+    def test_monitor_prints_success_message_when_pause_executes_successfully(self):
+        self._call_monitor_command('pause')
+        self.mock_print.assert_called_with(f'Successfully paused monitor {self.monitor_name} from project {self.project_name}')
     
     def test_monitor_returns_exit_non_zero_when_cron_job_scheduler_fails_to_pause(self):
         error_message_thrown = 'Pausing failed'
@@ -93,6 +103,12 @@ class TestMonitorParser(Spec):
         self._call_monitor_command('delete')
         mock_exit.assert_called_once_with(f'Command failed with error: {error_message}')
 
+    def test_monitor_prints_success_message_when_delete_executes_successfully(self):
+        mock_monitor_delete = self.patch('foundations_contrib.cli.orbit_monitor_package_server.delete')
+        mock_monitor_delete.__name__ = 'delete'
+        self._call_monitor_command('delete')
+        self.mock_print.assert_called_with(f'Successfully deleted monitor {self.monitor_name} from project {self.project_name}')
+
     def test_monitor_calls_resume_monitor_when_resume_command_is_triggered(self):
         mock_method = self.patch('foundations_contrib.cli.sub_parsers.monitor_parser.MonitorParser._resume_monitor')
         self._call_monitor_command('resume')
@@ -108,6 +124,10 @@ class TestMonitorParser(Spec):
         self.cron_job_scheduler.resume_job.side_effect = CronJobSchedulerError(error_message_thrown)
         self._call_monitor_command('resume')
         mock_system_exit.assert_called_once_with(f'Command failed with error: {error_message_thrown}')
+
+    def test_monitor_prints_success_message_when_resume_executes_successfully(self):
+        self._call_monitor_command('resume')
+        self.mock_print.assert_called_with(f'Successfully resumed monitor {self.monitor_name} from project {self.project_name}')
 
     def test_monitor_calls_pause_sends_project_name_model_name_and_env_to_monitor_package_server(self):
         mock_pause = self.patch('foundations_contrib.cli.orbit_monitor_package_server.pause')

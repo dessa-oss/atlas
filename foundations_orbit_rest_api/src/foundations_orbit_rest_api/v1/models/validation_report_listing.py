@@ -45,15 +45,17 @@ class ValidationReportListing(PropertyModel):
     @staticmethod
     def _parsed_information(keys):
         from foundations_contrib.global_state import redis_connection
+        import pickle
 
         for key in keys:
             if not (key.endswith(b'counter') or key.endswith(b'summary')):
                 dates = redis_connection.hkeys(key)
-                summaries = redis_connection.hvals(f'{key.decode()}:summary')
+                summaries = redis_connection.hgetall(f'{key.decode()}:summary')
                 if len(dates) == len(summaries):
-                    for idx, date in enumerate(dates):
+                    for date in dates:
                         key_information = key.decode().split(':')
-                        yield key_information[3], key_information[5], date.decode(), int(summaries[idx].decode())
+                        deserialized_summaries = pickle.loads(summaries[date])
+                        yield key_information[3], key_information[5], date.decode(), int(deserialized_summaries['num_critical_tests'])
                 else:
                     for idx, date in enumerate(dates):
                         key_information = key.decode().split(':')

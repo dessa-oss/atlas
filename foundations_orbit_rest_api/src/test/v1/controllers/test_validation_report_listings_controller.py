@@ -157,6 +157,10 @@ class TestValidationReportListingsController(Spec):
                f'projects:{project_name}:monitors:{monitor_package}:validation:{data_contract}:summary'
 
     def _register_report(self, project_name, monitor_package, data_contract, inference_period, num_critical_tests):
+        import pickle
         key_to_write, summary_key_to_write = self._key_to_write(project_name, monitor_package, data_contract)
         self.redis_connection.hset(key_to_write, inference_period, 'dummy_report')
-        self.redis_connection.hset(summary_key_to_write, inference_period, num_critical_tests)
+        data_contract_summary = {
+            'num_critical_tests': num_critical_tests
+        }
+        self.redis_connection.hset(summary_key_to_write, inference_period, pickle.dumps(data_contract_summary))

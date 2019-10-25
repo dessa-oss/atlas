@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
 import MonitorOverview from "./MonitorOverview";
-import MonitorListing from "./MonitorListing";
+import MonitorJobsTable from "./MonitorJobsTable";
 import CommonActions from "../../../actions/CommonActions";
 
 class ScheduleDetails extends Component {
@@ -42,13 +42,12 @@ class ScheduleDetails extends Component {
   render() {
     const { monitorResult } = this.state;
 
+    const location = this.props.location;
+
     let mainRender = (
       <div className="monitor-summary">
         <MonitorOverview monitorResult={monitorResult} />
-        <div className="monitor-jobs-heading">
-          <h3>Monitor Jobs</h3>
-        </div>
-        <MonitorListing monitorResult={monitorResult} />
+        <MonitorJobsTable location={location} monitorResult={monitorResult} />
       </div>
     );
     if (!monitorResult || CommonActions.isEmptyObject(monitorResult)) {

@@ -45,7 +45,7 @@ class SchemaChecker(object):
     def validate(self, current_dataframe):
         import pandas
 
-        current_df_columns, current_df_types = self._dataframe_statistics(current_dataframe)
+        current_df_columns, current_df_types, _ = self._dataframe_statistics(current_dataframe)
         columns_to_validate = self._update_column_names_to_be_removed(current_df_columns, self._excluded_columns)
         types_to_validate = self._update_column_types(columns_to_validate, current_df_types)
 
@@ -149,7 +149,16 @@ class SchemaChecker(object):
 
     @staticmethod
     def _dataframe_statistics(dataframe):
+        import numpy
         column_names = list(dataframe.columns)
         column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
+        number_of_rows = len(dataframe)
 
-        return column_names, column_types
+        for col_name, col_type in column_types.items():
+            if col_type == "object":
+                object_type_column = dataframe[col_name]
+                string_column_mask = [type(value) == str or numpy.isnan(value) for value in object_type_column]
+                if all(string_column_mask):
+                    column_types[col_name] = "str"
+
+        return column_names, column_types, number_of_rows

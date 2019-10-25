@@ -27,7 +27,7 @@ const ValidationResultsActions = {
           time={result.inference_period}
           monitorName={result.monitor_package}
           contractName={result.data_contract}
-          numCritical={2}
+          numCritical={result.num_critical_tests}
         />
       );
     });
@@ -236,6 +236,34 @@ const ValidationResultsActions = {
       return ValidationResultsActions.getMaxRows(validationTestResult);
     }
     return [];
+  },
+
+  getOverviewForAttribute: (validationResult, projectName, attribute) => {
+    return {
+      category_names: ["10-20", "20-30", "30-40", "40-50", "50-60", "60-70", "70-80", "80-90"],
+      expected_data: {
+        percentage_missing: 0.1,
+        minimum: -1253.45,
+        maximum: 1010002.55,
+        data: [5, 10, -1, 4, 19, 15, 2, 4]
+      },
+      actual_data: {
+        percentage_missing: 0.1,
+        minimum: -1304.52,
+        maximum: 1221341.5,
+        data: [6, 13, 4, 2, 22, 13, 1, 6]
+      }
+    };
+    // eslint-disable-next-line max-len
+    // const url = `projects/${projectName}/${validationResult.monitor_package}/${validationResult.date}/overview/${attribute}`; // eslint-disable-line max-len
+
+    // return get(url)
+    //   .then(results => {
+    //     return results;
+    //   })
+    //   .catch(() => {
+    //     return [];
+    //   });
   }
 };
 

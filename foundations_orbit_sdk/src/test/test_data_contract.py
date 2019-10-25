@@ -126,6 +126,10 @@ class TestDataContract(Spec):
     def two_column_dataframe(self):
         import pandas
         return pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[1, 2.0]])
+    
+    @let_now
+    def two_column_dataframe_reference_types(self):
+        return {self.column_name: 'int64', self.column_name_2: 'float64'}
 
     @let_now
     def two_column_dataframe_with_datetime(self):
@@ -166,6 +170,12 @@ class TestDataContract(Spec):
         import pandas
         import datetime
         return pandas.DataFrame(columns=[self.column_name, self.column_name_2, self.column_name_3, self.column_name_4], data=[[self.faker.word(), True, self.faker.date_time(), self.faker.pyint()], [self.faker.word(), False, self.faker.date_time(), self.faker.word()]])
+
+    @let_now
+    def dataframe_with_strings_and_nans(self):
+        import pandas
+        import numpy
+        return pandas.DataFrame(columns=[self.column_name], data=[self.faker.word() * 10, numpy.nan * 5])
 
     def _generate_distinct(self, reference_values, generating_callback):
         candidate_value = generating_callback()
@@ -309,7 +319,7 @@ class TestDataContract(Spec):
 
         self.patch('foundations_orbit.contract_validators.special_values_checker.SpecialValuesChecker')
         mock_distribution_checker_class = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker', ConditionalReturn())
-        mock_distribution_checker_class.return_when(mock_distribution_checker, contract.options.distribution, self.bin_stats, [self.column_name, self.column_name_2])
+        mock_distribution_checker_class.return_when(mock_distribution_checker, contract.options.distribution, self.bin_stats, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types)
 
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         
@@ -382,6 +392,7 @@ class TestDataContract(Spec):
         report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
 
         expected_output = {
+            'attribute_names': list(self.two_column_dataframe.columns),
             'data_contract': f'{self.contract_name}',
             'data_quality': {
                 'details_by_attribute': [{
@@ -522,6 +533,7 @@ class TestDataContract(Spec):
         report = contract.validate(self.two_column_dataframe_with_datetime, inference_period=inference_period)
 
         expected_output = {
+            'attribute_names': list(self.two_column_dataframe_with_datetime.columns),
             'data_contract': f'{self.contract_name}',
             'date': f'{inference_period}',
             'data_quality': {},
@@ -771,23 +783,9 @@ class TestDataContract(Spec):
         with self.assertRaises(ValueError) as exception:
             contract = DataContract(self.contract_name)
 
-    @skip('to be completed later')
-    def test_data_contract_validate_returns_expected_errors_when_invalid_types_used_for_tests(self):
-        contract = DataContract(self.contract_name, df=self.one_column_dataframe_four_rows)
-        contract.min_max_test.configure(attributes=list(self.multiple_types_dataframe.columns), lower_bound=0, upper_bound=100)
-        report = contract.validate(self.multiple_types_dataframe, inference_period=self.inference_period)
-
-        expected_error_for_invalid_type = {
-            'Error': 'ValueError',
-            'Message': 'Invalid data type'
-        }
-
-        self.assertEquals(report['special_values_check_results'][self.column_name_4], expected_error_for_invalid_type)
-        self.assertEquals(report['schema_check_results'][self.column_name_4], expected_error_for_invalid_type)
-        self.assertEquals(report['min_max_test_results'][self.column_name_1], expected_error_for_invalid_type)
-        self.assertEquals(report['min_max_test_results'][self.column_name_2], expected_error_for_invalid_type)
-        self.assertEquals(report['min_max_test_results'][self.column_name_4], expected_error_for_invalid_type)
-        self.assertEquals(report['dist_check_results'][self.column_name_4], expected_error_for_invalid_type)
+    def test_dataframe_statistics_returns_string_column_type_when_column_contains_strings_and_nans_only(self):
+        _,column_types,_ = DataContract._dataframe_statistics(self.dataframe_with_strings_and_nans)
+        self.assertEqual('str', column_types[self.column_name])
 
     def _find_if_key_in_dictionary(self, dictionary_to_search, key):
         if key in dictionary_to_search: return True

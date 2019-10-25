@@ -34,6 +34,9 @@ class TestDistributionChecker(Spec):
     def one_column_dataframe(self):
         return pandas.DataFrame(columns=[self.column_name], data=[4], dtype=numpy.int8)
 
+    @let_now
+    def one_column_dataframe_reference_types(self):
+        return {self.column_name: 'int'}
     @let
     def bin_stats_one_column(self):
         return {
@@ -47,6 +50,10 @@ class TestDistributionChecker(Spec):
     @let_now
     def two_column_dataframe(self):
         return pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[5,6],[10,32]], dtype=numpy.int8)
+    
+    @let_now
+    def two_column_dataframe_reference_types(self):
+        return {self.column_name: 'int8', self.column_name_2: 'int8'}
 
     @let
     def bin_stats_two_column_no_special_value(self):
@@ -121,12 +128,15 @@ class TestDistributionChecker(Spec):
     def test_string_cast_for_distribution_checker_returns_expected_information(self):
         import json
 
-        checker = DistributionChecker(self.distribution_options, self.bin_stats, [self.column_name])
+        checker = DistributionChecker(self.distribution_options, self.bin_stats, [self.column_name], reference_column_types={self.column_name: 'int'})
 
         expected_information = {
             'distribution_options': self.distribution_options,
             'bin_stats': self.bin_stats,
-            'reference_column_names': [self.column_name]
+            'reference_column_names': [self.column_name],
+            'reference_column_types': {
+                self.column_name: 'int'
+            }
         }
 
         self.assertEqual(json.dumps(expected_information), str(checker))
@@ -136,7 +146,7 @@ class TestDistributionChecker(Spec):
         options['cols_to_ignore'] = []
         options['cols_to_include'] = []
 
-        checker = DistributionChecker(options, self.bin_stats, [self.column_name])
+        checker = DistributionChecker(options, self.bin_stats, [self.column_name], reference_column_types=self.one_column_dataframe_reference_types)
 
         with self.assertRaises(ValueError) as ex:
             checker.validate(self.one_column_dataframe)
@@ -145,11 +155,11 @@ class TestDistributionChecker(Spec):
 
     def test_distribution_check_throws_error_if_dataframe_is_none_when_validate_called(self):
         with self.assertRaises(ValueError) as ex:
-            DistributionChecker(self.distribution_options, self.bin_stats, []).validate(None)
+            DistributionChecker(self.distribution_options, self.bin_stats, [], {}).validate(None)
 
     def test_distribution_check_throws_error_if_dataframe_is_empty_when_validate_called(self):
         with self.assertRaises(ValueError) as ex:
-            DistributionChecker(self.distribution_options, self.bin_stats, []).validate(self.empty_dataframe)
+            DistributionChecker(self.distribution_options, self.bin_stats, [], {}).validate(self.empty_dataframe)
 
     def test_distribution_check_single_column_dataframe_against_itself_returns_dist_check_result_with_one_entry(self):
         expected_dist_check_result = {
@@ -158,7 +168,7 @@ class TestDistributionChecker(Spec):
                 'binned_passed': True
             }
         }
-        distribution_checker = DistributionChecker(self.distribution_options, self.bin_stats_one_column, [self.column_name])
+        distribution_checker = DistributionChecker(self.distribution_options, self.bin_stats_one_column, [self.column_name], self.one_column_dataframe_reference_types)
         
         self.assertEqual(expected_dist_check_result, distribution_checker.validate(self.one_column_dataframe))
 
@@ -174,7 +184,7 @@ class TestDistributionChecker(Spec):
                 'binned_passed': True
             }}
 
-        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types)
         validate_results = checker.validate(self.two_column_dataframe)
         self.assertEqual(expected_dist_check_result, validate_results)
 
@@ -186,7 +196,7 @@ class TestDistributionChecker(Spec):
             }
         }
 
-        checker = DistributionChecker(self.distribution_options, self.bin_stats_one_column_no_special_value, [self.column_name])
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_one_column_no_special_value, [self.column_name], self.one_column_dataframe_reference_types)
         self.assertEqual(expected_dist_check_result, checker.validate(self.one_column_dataframe))
 
     def test_distribution_check_one_column_dataframe_with_upper_edge(self):
@@ -205,7 +215,7 @@ class TestDistributionChecker(Spec):
             }
         }
 
-        checker = DistributionChecker(self.distribution_options, bin_stats, [self.column_name])
+        checker = DistributionChecker(self.distribution_options, bin_stats, [self.column_name], self.one_column_dataframe_reference_types)
         self.assertEqual(expected_dist_check_result, checker.validate(self.one_column_dataframe))
 
     def test_distribution_check_with_large_value_ranges(self):
@@ -226,7 +236,7 @@ class TestDistributionChecker(Spec):
             }
         }
 
-        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types)
         validate_results = checker.validate(dataframe)
         self.assertEqual(expected_dist_check_result, validate_results)
 
@@ -238,7 +248,7 @@ class TestDistributionChecker(Spec):
                 'binned_passed': True
             }}
 
-        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types)
         checker.configure(attributes = [self.column_name])
         validate_results = checker.validate(self.two_column_dataframe)
         self.assertEqual(expected_dist_check_result, validate_results)
@@ -251,7 +261,7 @@ class TestDistributionChecker(Spec):
                 'binned_passed': True
             }}
 
-        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types)
         checker.exclude(attributes = [self.column_name])
         validate_results = checker.validate(self.two_column_dataframe)
         self.assertEqual(expected_dist_check_result, validate_results)
@@ -260,7 +270,7 @@ class TestDistributionChecker(Spec):
 
         expected_dist_check_result = {}
     
-        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types)
         checker.exclude(attributes='all')
         validate_results = checker.validate(self.two_column_dataframe)
         self.assertEqual(expected_dist_check_result, validate_results)
@@ -274,7 +284,7 @@ class TestDistributionChecker(Spec):
         dataframe = pandas.DataFrame(data)
         
 
-        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types)
 
         expected_dist_check_result = {
             self.column_name: {
@@ -298,7 +308,7 @@ class TestDistributionChecker(Spec):
         }
         dataframe = pandas.DataFrame(data)
         
-        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types)
         checker.exclude(attributes='all')
         checker.configure(attributes=[self.column_name])
         checker.configure(attributes=[self.column_name_2])
@@ -327,7 +337,7 @@ class TestDistributionChecker(Spec):
             }
         }
         
-        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types)
         checker.exclude(attributes='all')
         checker.configure(attributes=[self.column_name])
         checker.configure(attributes=[self.column_name_2], threshold=0.7)
@@ -354,7 +364,7 @@ class TestDistributionChecker(Spec):
             }
         }
         
-        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value_no_zeros, [self.column_name, self.column_name_2])
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value_no_zeros, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types)
         checker.configure(attributes=[self.column_name, self.column_name_2], method='psi')
 
         validate_results = checker.validate(dataframe)
@@ -378,11 +388,26 @@ class TestDistributionChecker(Spec):
                 'binned_passed': False,
             }
         }
-        
-        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value_no_zeros, [self.column_name, self.column_name_2])
+
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value_no_zeros, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types)
         checker.configure(attributes=[self.column_name], method='l_infinity')
         checker.configure(attributes=[self.column_name_2], method='psi')
 
         validate_results = checker.validate(dataframe)
 
         self.assertEqual(expected_dist_check_result, validate_results)
+
+    def test_distribution_checker_configure_raises_value_error_when_unsupported_columns_used(self):
+        reference_column_types = {self.column_name: 'int', self.column_name_2: 'object'}
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value_no_zeros, [self.column_name, self.column_name_2], reference_column_types=reference_column_types)
+        checker.configure(attributes=[self.column_name], threshold=0.1, method='l_infinity')
+
+        expected_error_dictionary = {
+            self.column_name_2: 'object'
+        }
+
+        with self.assertRaises(ValueError) as e:
+            checker.configure(attributes=[self.column_name_2], threshold=0.1, method='l_infinity')
+
+        self.assertEqual(f'The following columns have invalid types: {expected_error_dictionary}', e.exception.args[0])
+    

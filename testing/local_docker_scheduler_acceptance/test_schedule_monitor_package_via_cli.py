@@ -85,7 +85,7 @@ class TestScheduleMonitorPackageViaCli(Spec):
         return requests.put(f'http://{scheduler_address}:5000/scheduled_jobs/{job_name}', json={'status': status})
 
     def _start_monitor(self):
-        command = f'python -m foundations monitor start --name={self.monitor_name} --project_name={self.project_name} --env={self.env} {self.monitor_package_dir} main.py '
+        command = f'python -m foundations monitor create --name={self.monitor_name} --project_name={self.project_name} --env={self.env} {self.monitor_package_dir} main.py '
         return subprocess.run(command.split(), cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/')
 
     def _call_monitor_with_command(self, operation):

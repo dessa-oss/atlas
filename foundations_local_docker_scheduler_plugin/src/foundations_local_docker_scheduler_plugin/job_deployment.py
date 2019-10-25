@@ -234,7 +234,7 @@ class JobDeployment(object):
             requests.delete(f"{scheduler_url}/completed_jobs/{job_id}").raise_for_status()
             return True
 
-        except Exception:
+        except Exception as ex:
             return False
 
     def _job_resources(self):

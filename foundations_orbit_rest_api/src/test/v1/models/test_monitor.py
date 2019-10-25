@@ -31,6 +31,10 @@ class TestMonitor(Spec):
     def job_id_2(self):
         return f'{self.project_name}-{self.monitor_name}_{self.faker.random_int()}'
 
+    @let
+    def nonexistent_job_id(self):
+        return self.faker.word()
+
     @set_up
     def set_up(self):
         self.redis_connection.flushall()
@@ -110,6 +114,22 @@ class TestMonitor(Spec):
         del expected_result[0]
 
         self.assertEqual(expected_result, promise.evaluate())
+
+    def test_delete_job_from_monitors_dictionary_return_deleted_job_id(self):
+        self._create_job_information_for_monitor(self.project_name, self.monitor_name, self._data_to_set())
+
+        promise = Monitor.delete_job(self.project_name, self.monitor_name, self.job_id)
+        self.assertEqual(self.job_id, promise.evaluate())
+
+    def test_delete_job_from_monitor_dictionary_returns_none_if_monitor_does_not_exist(self):
+        promise = Monitor.delete_job(self.project_name, self.monitor_name, self.job_id)
+        self.assertIsNone(promise.evaluate())
+
+    def test_delete_job_from_monitor_dictionary_returns_none_if_job_does_not_exist(self):
+        self._create_job_information_for_monitor(self.project_name, self.monitor_name, self._data_to_set())
+
+        promise = Monitor.delete_job(self.project_name, self.monitor_name, self.nonexistent_job_id)
+        self.assertIsNone(promise.evaluate())
 
     def _create_job_information_for_monitor(self, project_name, monitor_name, job_data):
         for job_listing in job_data:
