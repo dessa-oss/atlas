@@ -31,6 +31,7 @@ class ReportFormatter(object):
             'population_shift': self._formatted_population_shift_report() or {},
             'min': formatted_min_max_report['min_report'] or {},
             'max': formatted_min_max_report['max_report'] or {},
+            'attribute_names': self._validation_report['metadata']['reference_metadata']['column_names']
         }
 
     def serialized_output(self):
