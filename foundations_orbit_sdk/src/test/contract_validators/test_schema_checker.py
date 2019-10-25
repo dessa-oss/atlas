@@ -32,11 +32,15 @@ class TestSchemaChecker(Spec):
     def column_name_4(self):
         return self._generate_distinct([self.column_name, self.column_name_2, self.column_name_3], self.faker.word)
 
+    @let
+    def column_name_5(self):
+        return self._generate_distinct([self.column_name, self.column_name_2, self.column_name_3, self.column_name_4], self.faker.word)
+
     @let_now
     def one_column_dataframe(self):
         import numpy
         import pandas
-
+ 
         return pandas.DataFrame(columns=[self.column_name], data=[4], dtype=numpy.int8)
 
     @let_now
@@ -199,6 +203,48 @@ class TestSchemaChecker(Spec):
 
         self._assert_schema_check_results_for_dataframe(self.two_column_dataframe, self.two_column_dataframe_different_types, expected_schema_check_results)
 
+    def test_check_schema_of_all_types_dataframe_passes_when_columns_match(self):
+        import pandas
+
+        reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2, self.column_name_3, self.column_name_4, self.column_name_5],
+                                               data=[[1, "string", True, self.faker.date_time(), 1], [1, "string", False, self.faker.date_time(), "string"]])
+        expected_schema_check_results = {'passed': True}
+        self._assert_schema_check_results_for_dataframe(reference_dataframe, reference_dataframe, expected_schema_check_results)
+
+    def test_check_schema_of_all_types_dataframe_all_fail_that_do_not_match(self):
+        import pandas
+        reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2, self.column_name_3, self.column_name_4, self.column_name_5], 
+                                               data=[[1, "string", True, self.faker.date_time(), 1],
+                                                     [1, "string", False, self.faker.date_time(), "string"]])
+        current_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2, self.column_name_3, self.column_name_4, self.column_name_5],
+                                               data=[[1, self.faker.pyfloat(), self.faker.word(), self.faker.pyint(), self.faker.word()],
+                                                     [1, self.faker.pyfloat(), self.faker.word(), self.faker.pyint(), self.faker.word()]])
+
+        expected_schema_check_results = {
+            'passed': False,
+            'error_message': 'column datatype mismatches',
+            'cols': {
+                self.column_name_2: {
+                    'current_type': 'float64',
+                    'ref_type': 'str'
+                },
+                self.column_name_3: {
+                    'current_type': 'str',
+                    'ref_type': 'bool'
+                },
+                self.column_name_4: {
+                    'current_type': 'int64',
+                    'ref_type': 'datetime64[ns]'
+                },
+                self.column_name_5: {
+                    'current_type': 'str',
+                    'ref_type': 'object'
+                }
+            }
+        }
+
+        self._assert_schema_check_results_for_dataframe(reference_dataframe, current_dataframe, expected_schema_check_results)
+
     def test_string_cast_for_schema_check_returns_expected_information(self):
         import json
         import numpy
@@ -299,10 +345,19 @@ class TestSchemaChecker(Spec):
             self.assertTrue('invalid option' in str(ve).lower())
 
     def _dataframe_statistics(self, dataframe):
+        import numpy
         column_names = list(dataframe.columns)
         column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
 
+        for col_name, col_type in column_types.items():
+            if col_type == "object":
+                object_type_column = dataframe[col_name]
+                string_column_mask = [type(value) == str or numpy.isnan(value) for value in object_type_column]
+                if all(string_column_mask):
+                    column_types[col_name] = "str"
+
         return column_names, column_types
+
     
     def _schema_checker_from_dataframe(self, dataframe):
         column_names, column_types = self._dataframe_statistics(dataframe)

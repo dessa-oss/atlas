@@ -25,7 +25,8 @@ class DataContract(object):
 
         self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
         self.schema_test = SchemaChecker(self._column_names, self._column_types)
-        self._remove_object_columns_and_types(self._column_names, self._column_types)
+        ## Functionality added to configure for each individual checker 
+        # self._remove_object_columns_and_types(self._column_names, self._column_types)
 
         self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
 
