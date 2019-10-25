@@ -30,7 +30,7 @@ class DataContract(object):
         self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
 
         self.special_value_test = SpecialValuesChecker(self.options, self._bin_stats, self._column_names, self._column_types, self._dataframe)
-        self.distribution_test = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names)
+        self.distribution_test = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names, self._column_types)
         self.min_max_test = MinMaxChecker(self._column_types)
 
     @staticmethod

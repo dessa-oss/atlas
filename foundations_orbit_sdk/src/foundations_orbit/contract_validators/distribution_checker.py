@@ -8,10 +8,16 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import numpy as np
 class DistributionChecker(object):   
-    def __init__(self, distribution_options, bin_stats, reference_column_names):
+    def __init__(self, distribution_options, bin_stats, reference_column_names, reference_column_types):
+        from foundations_orbit.contract_validators.checker import Checker
+
         self._distribution_options = distribution_options.copy()
         self._bin_stats = bin_stats
         self._reference_column_names = reference_column_names
+        self._reference_column_types = reference_column_types
+        self._allowed_types = ['int', 'float', 'str', 'bool', 'datetime']
+        self._invalid_attributes = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
+
 
     def __str__(self):
         import json
@@ -19,12 +25,21 @@ class DistributionChecker(object):
         information =  {
             'distribution_options': self._distribution_options,
             'bin_stats': self._bin_stats,
-            'reference_column_names': self._reference_column_names
+            'reference_column_names': self._reference_column_names,
+            'reference_column_types': self._reference_column_types
         }
 
         return json.dumps(information)
 
     def configure(self, attributes, threshold=None, method=None):
+        error_dictionary = {}
+        for column in attributes:
+            if column in self._invalid_attributes:
+                error_dictionary[column] = self._reference_column_types[column]
+
+        if error_dictionary != {}:
+            raise ValueError(f'The following columns have invalid types: {error_dictionary}')
+
         if threshold is not None:
             for column_name in attributes:
                 self._distribution_options['custom_thresholds'][column_name] = threshold

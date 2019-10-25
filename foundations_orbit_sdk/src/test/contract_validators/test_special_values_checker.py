@@ -438,3 +438,4 @@ class TestSpecialValuesChecker(Spec):
             checker.configure(attributes=[self.column_name_2], thresholds={numpy.nan: 0.1})
 
         self.assertEqual(f'The following columns have invalid types: {expected_error_dictionary}', e.exception.args[0])
+    
