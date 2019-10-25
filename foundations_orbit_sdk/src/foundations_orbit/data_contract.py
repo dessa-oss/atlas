@@ -137,7 +137,7 @@ class DataContract(object):
 
         data_contract_summary = DataContractSummary(report_formatter.formatted_report())
 
-        self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, data_contract_summary.serialized_output())
+        self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, data_contract_summary.num_critical_tests)
 
         return validation_report
 

@@ -40,6 +40,16 @@
       justify-content: center;
       align-items: center;
     }
+
+    .val-critical-table-cell-healthy {
+      background-color: hsl(101%, 100%, 86%);
+      color: hsl(126%, 100%, 32%);
+      width: 20px;
+      height: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 
   &.selected-row {

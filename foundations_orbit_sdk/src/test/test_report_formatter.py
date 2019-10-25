@@ -263,11 +263,6 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(self.user, formatted_report['user'])
 
-    def test_report_formatter_returns_formatted_report_with_expected_attribute_names(self):
-        self.validation_report['schema_check_results'] = {'passed': True}
-        formatted_report = self._generate_formatted_report()
-        self.assertEqual(self.column_list, formatted_report['attribute_names'])
-
     def test_report_formatter_returns_formatted_report_with_expected_data_contract(self):
         self.validation_report['schema_check_results'] = {'passed': True}
         formatted_report = self._generate_formatted_report()
