@@ -32,3 +32,20 @@ class Monitor(PropertyModel):
             return internal_jobs
 
         return LazyResult(_callback)
+
+    @staticmethod
+    def delete_job(project_name, monitor_name, job_id):
+        from foundations_core_rest_api_components.lazy_result import LazyResult
+        return LazyResult(lambda: Monitor._delete_job_internal(project_name, monitor_name, job_id))
+
+    @staticmethod
+    def _delete_job_internal(project_name, monitor_name, job_id):
+        from foundations_contrib.global_state import redis_connection
+
+        redis_key = f'projects:{project_name}:monitors:{monitor_name}:jobs'
+        result = redis_connection.srem(redis_key, job_id)
+
+        if result == 0:
+            return None
+        
+        return job_id

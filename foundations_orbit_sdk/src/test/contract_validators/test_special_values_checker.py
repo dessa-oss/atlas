@@ -131,16 +131,20 @@ class TestSpecialValuesChecker(Spec):
     def two_column_dataframe_no_rows(self):
         return pandas.DataFrame(columns=[self.column_name, self.column_name_2])
 
+    @let
+    def reference_column_types_int(self):
+        return {self.column_name: 'int', self.column_name_2: 'int'}
+
     def _generate_distinct(self, reference_values, generating_callback):
         candidate_value = generating_callback()
         return candidate_value if candidate_value not in reference_values else self._generate_distinct(reference_values, generating_callback)
     
     def test_schema_checker_can_accept_configurations(self):
-        checker = SpecialValuesChecker(self.contract_options, None, None)
+        checker = SpecialValuesChecker(self.contract_options, None, None, {})
         self.assertIsNotNone(getattr(checker, "configure", None))
         
     def test_schema_checker_can_accept_exclusions(self):
-        checker = SpecialValuesChecker(self.contract_options, None, None)
+        checker = SpecialValuesChecker(self.contract_options, None, None, {})
         self.assertIsNotNone(getattr(checker, "exclude", None))
 
     def test_special_values_check_for_mulitple_column_df_against_itself_returns_all_passed_using_not_previously_defined_special_value(self):
@@ -178,7 +182,7 @@ class TestSpecialValuesChecker(Spec):
             }
         }
 
-        checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], dataframe)
+        checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], self.reference_column_types_int, dataframe)
         checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={ -1: 0.1 })
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
@@ -199,7 +203,8 @@ class TestSpecialValuesChecker(Spec):
             self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name])),
             self.column_name_2: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name_2]))
         }
-        return SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], dataframe), dataframe
+        return SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], {self.column_name: str(pandas.Series(data[self.column_name]).dtype),
+         self.column_name_2: str(pandas.Series(data[self.column_name_2]).dtype)},dataframe), dataframe
     
     def test_special_values_check_for_mulitple_column_df_against_itself_including_nans_returns_all_passed(self):
         expected_check_results = {
@@ -391,7 +396,7 @@ class TestSpecialValuesChecker(Spec):
         bin_stats = {
             self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name]))
         }
-        checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], dataframe)
+        checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], {self.column_name: 'float'} ,dataframe)
         checker.exclude(attributes='all')
         checker.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.1, -1: 0.1})
 
@@ -418,3 +423,18 @@ class TestSpecialValuesChecker(Spec):
         }
         results = checker.validate(dataframe_to_be_validated)
         self.assertEqual(expected_check_results, results)
+
+    def test_special_values_checker_configure_raises_value_error_when_unsupported_columns_used(self):
+        reference_column_types = {self.column_name: 'str', self.column_name_2: 'object'}
+        checker = SpecialValuesChecker(self.contract_options, self.bin_stats, [self.column_name, self.column_name_2], reference_column_types=reference_column_types)
+
+        checker.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.1})
+
+        expected_error_dictionary = {
+            self.column_name_2: 'object'
+        }
+
+        with self.assertRaises(ValueError) as e:
+            checker.configure(attributes=[self.column_name_2], thresholds={numpy.nan: 0.1})
+
+        self.assertEqual(f'The following columns have invalid types: {expected_error_dictionary}', e.exception.args[0])

@@ -260,7 +260,20 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         self.assertIn(self.monitor_name, jobs_list[1]['job_id'])
 
     def test_delete_monitor_job_deletes_job(self):
-        pass
+        import time
+
+        self._start_and_update_and_resume_monitor(self.monitor_name)
+        time.sleep(7)
+
+        jobs_list = self._get_monitor_jobs().json()
+        job_id = jobs_list[0]['job_id']
+
+        delete_job_response = self._delete_job(monitor_name=self.monitor_name, job_id=job_id)
+        self.assertEqual(200, delete_job_response.status_code)
+
+        jobs_list = self._get_monitor_jobs().json()
+        job_ids = [job['job_id'] for job in jobs_list]
+        self.assertNotIn(job_id, job_ids)
 
     def _get_monitor_jobs(self, monitor_name=None):
         monitor_name = self.monitor_name if monitor_name is None else monitor_name
@@ -282,7 +295,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
 
     def _start_monitor(self, name):
         import subprocess
-        return subprocess.run(['python', '-m', 'foundations', 'monitor', 'start', f'--project_name={self.project_name}', f'--name={name}', '.', 'main.py'], cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/')
+        return subprocess.run(['python', '-m', 'foundations', 'monitor', 'create', f'--project_name={self.project_name}', f'--name={name}', '.', 'main.py'], cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/')
 
     def _get_all_monitors(self):
         return requests.get(self.orbit_monitor_base_api_url)
@@ -314,6 +327,6 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         monitor_url = f'{self.orbit_monitor_base_api_url}/{monitor_name}'
         return requests.patch(monitor_url, json=schedule)
 
-    def _delete_job(self, job_id=None):
-        job_url = f'{self.atlas_job_listing_base_api_url}/{job_id}'
-        return requests.delete(job_url)
+    def _delete_job(self, monitor_name=None, job_id=None):
+        monitor_jobs_url = f'{self.orbit_monitor_base_api_url}/{monitor_name}/jobs'
+        return requests.delete(monitor_jobs_url, json={'job_id': job_id})

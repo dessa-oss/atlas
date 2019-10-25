@@ -29,7 +29,7 @@ class DataContract(object):
 
         self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
 
-        self.special_value_test = SpecialValuesChecker(self.options, self._bin_stats, self._column_names, self._dataframe)
+        self.special_value_test = SpecialValuesChecker(self.options, self._bin_stats, self._column_names, self._column_types, self._dataframe)
         self.distribution_test = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names)
         self.min_max_test = MinMaxChecker(self._column_types)
 
@@ -162,9 +162,17 @@ class DataContract(object):
 
     @staticmethod
     def _dataframe_statistics(dataframe):
+        import numpy
         column_names = list(dataframe.columns)
         column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
         number_of_rows = len(dataframe)
+
+        for col_name, col_type in column_types.items():
+            if col_type == "object":
+                object_type_column = dataframe[col_name]
+                string_column_mask = [type(value) == str or numpy.isnan(value) for value in object_type_column]
+                if all(string_column_mask):
+                    column_types[col_name] = "str"
 
         return column_names, column_types, number_of_rows
 

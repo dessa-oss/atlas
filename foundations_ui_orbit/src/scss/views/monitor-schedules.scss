@@ -1,6 +1,6 @@
 .monitor-schedules-container {
   margin-left: 80px;
-  width: 95%;
+  width: 97%;
   height: 90%;
   
 
@@ -19,6 +19,8 @@
       border-radius: 5px;
       display: inline-block;
       background-color: #fff;
+      border: 1px solid #D8D8D8;
+      overflow-x: hidden;
     }
 
     .monitor-listing {
@@ -35,7 +37,11 @@
         .selected-row {
           background-color: #D9EBFF;
           border-left: 3px solid #024B9C;
-          padding-left: 11px;
+          padding-left: 0px;
+          &:hover {
+            padding-left: 80px;
+          }
+
         }
         .monitor-table-row {
           padding-top: 10px;
@@ -115,6 +121,10 @@
                 }
               }
 
+              .react-select {
+                display: none!important;
+              }
+
               .monitor-overview-value {
                 color: #828282;
                 font-weight: 100;
@@ -147,13 +157,14 @@
                 border-radius: 3px;
                 background-color: #fff;
                 color: #024B9C;
+                border: 1px solid #024B9C;
                 width: 110px;
-                option {
-                  background-color: red!important;
-                }
               }
               div {
-                display: inline-block;
+                .react-select {
+                  display: block;
+                }
+                // display: inline-block;
                 &:nth-child(1) {
                   width: 120px;
                   font-weight: 900;
@@ -165,20 +176,101 @@
         }
       }
 
-      .monitor-jobs-heading {
-        height: 3%;
-        padding-left: 40px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid #D8D8D8;
-        h3 {
-          color: #5C5C5C;
-          font-size: 18px;
-          font-weight: 500;
-        }
-      }
-
       .monitor-jobs {
         height: 55%;
+        .monitor-jobs-heading {
+          height: 7%;
+          padding-left: 40px;
+          padding-bottom: 20px;
+          border-bottom: 1px solid #D8D8D8;
+          .i--icon-delete {
+            width: 25px!important;
+            height: 25px!important;
+            margin-top: 10px;
+          }
+          h3 {
+            color: #5C5C5C;
+            font-size: 18px;
+            font-weight: 500;
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-left: 0;
+          }
+          div, h3 {
+            display: inline-block;
+            vertical-align: middle;
+            padding-top: 10px;
+          }
+
+          .i--icon-refresh {
+            margin-top: 10px;
+            margin-left: 10px;
+          }
+        }
+        .monitor-job-listing {
+          margin-right: 40px;
+          width: 100%;
+          overflow-y: scroll;
+          height: 100%;
+          
+          .monitor-job-items {
+            width: 100%;
+            margin: 0 auto;
+            padding: 0;
+            .selected-row {
+              background-color: #D9EBFF;
+              border-left: 3px solid #024B9C;
+              padding-left: 11px;
+            }
+            .monitor-job-table-row {
+              padding-top: 10px;
+              padding-bottom: 10px;
+              border-bottom: 1px solid #DFDFDF;
+              width: 100%;
+              text-align: center;
+              width: calc(100% - 14px);
+              padding-left: 14px;
+              text-align: left;
+              .monitor-job-checkbox {
+                width: 30px;
+              }
+              .monitor-job-name-cell {
+                width: 23%;
+              }
+              .monitor-job-status-cell {
+                width: 100px;
+              }
+              .monitor-job-launched-cell {
+                width: 23%;
+              }
+              .monitor-job-duration-cell {
+                width: 23%;
+              }
+              .monitor-job-open-cell {
+                float: right;
+                padding-right: 20px;
+              }
+              &:not(:first-child) {
+                &:hover {
+                  border-left: 3px solid #024B9C;
+                  padding-left: 11px;
+                }
+              }
+              &:nth-child(1) {
+                padding-top: 10px;
+                padding-bottom: 10px;
+                div {
+                  font-weight: 900;
+                  font-size: 14px;
+                }
+              }
+              div {
+                display: inline-block;
+              }
+            }
+          }
+      
+        }
         h3 {
           padding-left: 40px;
         }

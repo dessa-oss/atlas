@@ -8,7 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class SpecialValuesChecker(object):
 
-    def __init__(self, config_options, bin_stats, reference_column_names, reference_dataframe=None):
+    def __init__(self, config_options, bin_stats, reference_column_names, reference_column_types, reference_dataframe=None):
+        from foundations_orbit.contract_validators.checker import Checker
+
         self._config_options = config_options
         self._bin_stats = bin_stats
         self._reference_column_names = reference_column_names.copy() if reference_column_names else []
@@ -17,6 +19,10 @@ class SpecialValuesChecker(object):
         self._default_special_values = self._config_options.special_values
         self._column_special_values = self._initialize_columns_special_values()
         self._reference_dataframe = reference_dataframe
+
+        self._allowed_types = ['int', 'float', 'str', 'bool', 'datetime']
+        self._reference_column_types = reference_column_types
+        self._invalid_attributes = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
 
 
     def _initialize_columns_special_values(self):
@@ -48,6 +54,15 @@ class SpecialValuesChecker(object):
 
         to_be_recalculate = False
         columns_to_be_recalculation = {}
+
+        error_dictionary = {}
+        for column in attributes:
+            if column in self._invalid_attributes:
+                error_dictionary[column] = self._reference_column_types[column]
+
+        if error_dictionary != {}:
+            raise ValueError(f'The following columns have invalid types: {error_dictionary}')
+
         for column in attributes:
             to_be_recalculate = self._check_if_column_needs_bin_recalculation(columns_to_be_recalculation, column, thresholds) or to_be_recalculate
             column_threshold = {

@@ -12,3 +12,4 @@ from .test_retrieve_validation_report_listing_endpoint import TestRetrieveValida
 from .test_retrieve_validation_report_endpoint import TestRetrieveValidationReportEndpoint
 from .test_switch_default_model import TestSwitchDefaultModel
 from .test_scheduled_monitor_endpoint import TestScheduledMonitorEndpoint
+from .test_monitor_jobs_endpoint import TestMonitorJobsEndpoint

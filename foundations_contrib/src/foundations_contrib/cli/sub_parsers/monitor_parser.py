@@ -18,17 +18,17 @@ class MonitorParser(object):
         monitor_sub_parser = monitor_parser.add_subparsers()
 
         pause_parser = monitor_sub_parser.add_parser('pause')
-        pause_parser.add_argument('project_name', type=str)
-        pause_parser.add_argument('name', type=str)
+        pause_parser.add_argument('project_name', type=str, help='Project containing monitor to pause')
+        pause_parser.add_argument('name', type=str, help='Name of monitor to pause')
         pause_parser.add_argument('--env', type=str, required=False, help='Specifies the scheduler environment')
         pause_parser.set_defaults(function=self._pause_monitor)
 
-        start_parser = monitor_sub_parser.add_parser('start')
-        start_parser.add_argument('--name', type=str, help='Name of monitor to delete')
+        start_parser = monitor_sub_parser.add_parser('create')
+        start_parser.add_argument('--name', type=str, help='Name of monitor to create')
         start_parser.add_argument('--project_name', type=str, help='Project that the monitor will be created in')
         start_parser.add_argument('--env', type=str, required=False, help='Specifies the scheduler environment')
-        start_parser.add_argument('job_directory', type=str, help='Directory from which to schedule the monitor')
-        start_parser.add_argument('command', type=str, nargs=REMAINDER, help='Monitor script to schedule')
+        start_parser.add_argument('job_directory', type=str, help='Directory from which to create the monitor')
+        start_parser.add_argument('command', type=str, nargs=REMAINDER, help='Monitor script to create')
         start_parser.set_defaults(function=self._start_monitor)
 
         delete_parser = monitor_sub_parser.add_parser('delete')
@@ -38,8 +38,8 @@ class MonitorParser(object):
         delete_parser.set_defaults(function=self._delete_monitor)
 
         resume_parser = monitor_sub_parser.add_parser('resume')
-        resume_parser.add_argument('project_name', type=str)
-        resume_parser.add_argument('name', type=str)
+        resume_parser.add_argument('project_name', type=str, help='Project containing monitor to resume')
+        resume_parser.add_argument('name', type=str, help='Name of monitor to resume')
         resume_parser.add_argument('--env', type=str, required=False, help='Specifies the scheduler environment')
         resume_parser.set_defaults(function=self._resume_monitor)
 
