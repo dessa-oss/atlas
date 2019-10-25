@@ -16,7 +16,7 @@ class DataContractSummary(object):
 
     def summarize_report(self):
         for test in self._tests_to_summarize:
-            if self._report[test]['summary']['critical'] > 0:
+            if 'summary' in self._report[test] and self._report[test]['summary']['critical'] > 0:
                 self._num_critical_tests += 1
 
     def serialized_output(self):
