@@ -1,0 +1,13 @@
+---
+
+- name: Destroy Local Docker Scheduler
+  hosts: localhost
+  tasks:
+    - name: Destroy aws instance
+      ec2_instance:
+        name: "{{ instance_name }}"
+        wait: yes
+        state: absent
+        region: us-east-1
+        security_group: sg-0c2e6585e6fd8c276
+        vpc_subnet_id: subnet-055c79b79818e9614

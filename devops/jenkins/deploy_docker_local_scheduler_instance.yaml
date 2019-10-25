@@ -1,0 +1,35 @@
+---
+
+- name: Deploy Local Docker Scheduler
+  hosts: localhost
+  tasks:
+    - name: Create aws instance
+      ec2:
+        image: ami-04670c8e8d4c718ac
+        instance_tags:
+          Name: "{{ instance_name }}"
+        instance_type: t2.small
+        key_name: jenkins
+        wait: yes
+        state: present
+        region: us-east-1
+        spot_price: "0.020"
+        spot_wait_timeout: 1200
+        spot_launch_group: integration_kubernetes_clusters
+        group_id: sg-0c2e6585e6fd8c276
+        vpc_subnet_id: subnet-055c79b79818e9614
+        instance_initiated_shutdown_behavior: terminate
+        volumes:
+        - device_name: /dev/sda1
+          volume_size: 160
+          volume_type: io1
+          iops: 500
+          delete_on_termination: true
+        assign_public_ip: True
+    - name: Wait for aws instance
+      ec2:
+        instance_tags:
+          Name: "{{ instance_name }}"
+        wait: yes
+        state: running
+        region: us-east-1
