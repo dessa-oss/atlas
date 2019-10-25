@@ -166,6 +166,9 @@ class TestAtlasParser(Spec):
     def command(self):
         return self.faker.word()
 
+    def fake_config_path(self, environment):
+        return 'home/foundations/lou/config/{}.config.yaml'.format(environment)
+
     @patch('argparse.ArgumentParser')
     def test_retrieve_artifact_has_correct_options(self, parser_class_mock):
         parser_mock = Mock()
@@ -362,12 +365,11 @@ class TestAtlasParser(Spec):
         CommandLineInterface(['get', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
         self.print_mock.assert_called_with('Error: Job `{}` does not exist for environment `{}`'.format(self.mock_job_id, self.fake_env))
 
-    @quarantine
     def test_get_job_logs_for_environment_that_exists_for_job_that_does_not_exist_exits_with_code_1(self):
         self._set_job_status(None)
 
         self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
-        CommandLineInterface(['get', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        CommandLineInterface(['get', 'logs', self.fake_env, self.mock_job_id]).execute()
         self.exit_mock.assert_called_with(1)
 
     @quarantine
