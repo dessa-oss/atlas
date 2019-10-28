@@ -39,7 +39,10 @@ class MinMaxChecker(object):
             return
 
         for attribute in attributes:
-            del self._attribute_and_bounds[attribute]
+            try:
+                del self._attribute_and_bounds[attribute]
+            except:
+                continue
 
     def validate(self, dataframe_to_validate):
         import datetime

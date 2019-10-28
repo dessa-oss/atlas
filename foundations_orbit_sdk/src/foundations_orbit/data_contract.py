@@ -25,8 +25,7 @@ class DataContract(object):
 
         self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
         self.schema_test = SchemaChecker(self._column_names, self._column_types)
-        ## Functionality added to configure for each individual checker 
-        # self._remove_object_columns_and_types(self._column_names, self._column_types)
+        self._remove_object_columns_and_types(self._column_names, self._column_types)
 
         self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
 
@@ -58,6 +57,14 @@ class DataContract(object):
             check_min_max=True,
             distribution=default_distribution
         )
+
+    def exclude(self, attributes):
+        if type(attributes) == str:
+            attributes = [attributes]
+
+        self.special_value_test.exclude(attributes=attributes)
+        self.distribution_test.exclude(attributes=attributes)
+        self.min_max_test.exclude(attributes=attributes)
 
     def save(self, monitor_package_directory):
         with open(self._data_contract_file_path(monitor_package_directory), 'wb') as contract_file:
@@ -101,8 +108,13 @@ class DataContract(object):
 
         columns_to_validate, types_to_validate, row_count_to_check = self._dataframe_statistics(dataframe_to_validate)
 
+        attributes_to_ignore = []
         validation_report = {}
         validation_report['schema_check_results'] = self.schema_test.validate(dataframe_to_validate)
+
+        if not validation_report['schema_check_results']['passed'] and validation_report['schema_check_results'].get('cols', None):
+            for column_to_ignore in validation_report['schema_check_results']['cols'].keys():
+                attributes_to_ignore.append(column_to_ignore)
 
         if self.options.check_row_count:
             validation_report['row_count'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
@@ -139,6 +151,21 @@ class DataContract(object):
         data_contract_summary = DataContractSummary(report_formatter.formatted_report())
 
         self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, data_contract_summary.serialized_output())
+
+
+
+        # for test_name, test_dictionary in validation_report.items():
+        #     if test_name == 'dist_check_results':
+        #         for attribute in attributes_to_ignore:
+        #             test_dictionary[attribute] = {"bin_passed": False, "message": "Schema Test Failed"}
+        #     elif test_name == 'special_values_check_results':
+        #         for attribute in attributes_to_ignore:
+        #             test_dictionary[attribute] = {"passed": False, "message": "Schema Test Failed"}
+        #     elif test_name == 'special_values_check_results':
+        #         for attribute in attributes_to_ignore:
+        #             test_dictionary[attribute]['min_test'] = {"passed": False, "message": "Schema Test Failed"}
+        #             test_dictionary[attribute]['max_test'] = {"passed": False, "message": "Schema Test Failed"}
+
 
         return validation_report
 
