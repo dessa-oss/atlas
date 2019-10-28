@@ -181,6 +181,30 @@ class TestDataContract(Spec):
         import numpy
         return pandas.DataFrame(columns=[self.column_name], data=[self.faker.word() * 10, numpy.nan * 5])
 
+    @let
+    def reference_dataframe_with_one_numerical_column(self):
+        import pandas
+        import numpy
+
+        values = []
+        for i in range(1, 12):
+            for _ in range(i):
+                values.append(i)
+
+        return pandas.DataFrame(data={'feat_1': values}, dtype=numpy.float64)
+
+    @let
+    def dataframe_to_validate_with_one_numerical_column(self):
+        import pandas
+        import numpy
+
+        values = []
+        for i in range(1, 12):
+            for _ in range(i):
+                values.append(12 - i)
+
+        return pandas.DataFrame(data={'feat_1': values}, dtype=numpy.float64)
+
     def _generate_distinct(self, reference_values, generating_callback):
         candidate_value = generating_callback()
         return candidate_value if candidate_value not in reference_values else self._generate_distinct(reference_values, generating_callback)
@@ -631,6 +655,46 @@ class TestDataContract(Spec):
 
         self.assertEqual(expected_output, deserialized_report)
 
+    def test_data_contract_validate_writes_correct_summary_info_to_redis(self):
+        import pickle
+
+        inference_period = self.inference_period
+        contract = DataContract(self.contract_name, df=self.reference_dataframe_with_one_numerical_column)
+        contract.validate(self.dataframe_to_validate_with_one_numerical_column, inference_period=inference_period)
+
+        expected_output = {
+            'attribute_summaries': {
+                'feat_1': {
+                    'expected_data_summary': {
+                        'percentage_missing': 0.0,
+                        'minimum': 1.0,
+                        'maximum': 11.0
+                    },
+                    'actual_data_summary': {
+                        'percentage_missing': 0.0,
+                        'minimum': 1.0,
+                        'maximum': 11.0
+                    },
+                    'binned_data': {
+                        'bins': ['1.0-2.0', '2.0-3.0', '3.0-4.0', '4.0-5.0', '5.0-6.0', '6.0-7.0', '7.0-8.0', '8.0-9.0',
+                                 '9.0-10.0', '10.0-11.0'],
+                        'data': {
+                            'expected_data': [1, 2, 3, 4, 5, 6, 7, 8, 9, 21],
+                            'actual_data': [11, 10, 9, 8, 7, 6, 5, 4, 3, 3]
+                        }
+                    }
+                }
+            },
+            'num_critical_tests': 1
+        }
+
+        key = f'projects:{self.project_name}:monitors:{self.model_name}:validation:{self.contract_name}:summary'
+        serialized_report = self._redis.hget(key, inference_period)
+        deserialized_report = pickle.loads(serialized_report)
+
+        self.maxDiff = None
+        self.assertEqual(expected_output, deserialized_report)
+
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_different_types(self):
         inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
@@ -660,8 +724,11 @@ class TestDataContract(Spec):
     def test_data_contract_has_distribution_checker(self):
         self._test_data_contract_has_test_as_attribute('distribution_test')
     
-    def test_data_contract_has_min_mex_checker(self):
+    def test_data_contract_has_min_max_checker(self):
         self._test_data_contract_has_test_as_attribute('min_max_test')
+
+    def test_data_contract_has_summary(self):
+        self._test_data_contract_has_test_as_attribute('summary')
     
     def test_data_contract_has_schema_checker_configured(self):
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
@@ -807,6 +874,33 @@ class TestDataContract(Spec):
 
         self.assertEqual(expected_results, dist_check_results)
 
+    def test_special_values_checker_for_datetime_input_returns_expected_result(self):
+        import numpy
+        data = {
+            self.column_name: [self.faker.date_time(), self.faker.date_time(), self.faker.date_time()] + [numpy.nan],
+            self.column_name_2: [self.faker.date_time(), self.faker.date_time(), self.faker.date_time()] + [numpy.nan]
+        }
+
+        self._test_special_values_checker_for_datatype_input_returns_expected_results(data)
+
+    def test_special_values_checker_for_string_input_returns_expected_result(self):
+        import numpy
+        data = {
+            self.column_name: [self.faker.word()]*3 + [numpy.nan],
+            self.column_name_2: [self.faker.word()]*3 + [numpy.nan]
+        }
+
+        self._test_special_values_checker_for_datatype_input_returns_expected_results(data)
+
+    def test_special_values_checker_for_bool_input_returns_expected_result(self):
+        import numpy
+        data = {
+            self.column_name: [True, False, False] + [numpy.nan],
+            self.column_name_2: [True, True, True] + [numpy.nan]
+        }
+
+        self._test_special_values_checker_for_datatype_input_returns_expected_results(data)
+
     def test_data_contract_with_no_reference_dataframe_throws_error(self):
         with self.assertRaises(ValueError) as exception:
             contract = DataContract(self.contract_name)
@@ -814,6 +908,38 @@ class TestDataContract(Spec):
     def test_dataframe_statistics_returns_string_column_type_when_column_contains_strings_and_nans_only(self):
         _,column_types,_ = DataContract._dataframe_statistics(self.dataframe_with_strings_and_nans)
         self.assertEqual('str', column_types[self.column_name])
+
+    def _test_special_values_checker_for_datatype_input_returns_expected_results(self, data):
+        import pandas, numpy
+        dataframe = pandas.DataFrame(data)
+        data_contract = DataContract(self.contract_name, dataframe)
+
+        expected_results = {
+            self.column_name: {
+                numpy.nan: {
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.25,
+                    'passed': True
+                }
+                
+            },
+            self.column_name_2: {
+                numpy.nan: {
+                    'percentage_diff': 0.25,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.50,
+                    'passed': False
+                }
+            }
+        }
+
+        data_contract.special_value_test.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
+        dataframe_to_validate = dataframe.copy()
+        dataframe_to_validate.iloc[0,1] = numpy.nan
+        results = data_contract.validate(dataframe_to_validate)['special_values_check_results']
+
+        self.assertEqual(expected_results, results)
 
     def _find_if_key_in_dictionary(self, dictionary_to_search, key):
         if key in dictionary_to_search: return True
