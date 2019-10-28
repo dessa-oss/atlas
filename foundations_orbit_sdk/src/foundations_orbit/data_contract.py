@@ -14,6 +14,7 @@ class DataContract(object):
         from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
         from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
         from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
+        from foundations_orbit.data_contract_summary import DataContractSummary
 
         self.options = self._default_options()
         self._contract_name = contract_name
@@ -32,6 +33,7 @@ class DataContract(object):
         self.special_value_test = SpecialValuesChecker(self.options, self._bin_stats, self._column_names, self._column_types, self._dataframe)
         self.distribution_test = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names, self._column_types)
         self.min_max_test = MinMaxChecker(self._column_types)
+        self.summary = DataContractSummary(self._dataframe, self._column_names, self._column_types)
 
     @staticmethod
     def _default_options():
@@ -95,7 +97,6 @@ class DataContract(object):
 
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
-        from foundations_orbit.data_contract_summary import DataContractSummary
         from foundations_orbit.report_formatter import ReportFormatter
 
         project_name = os.environ.get('PROJECT_NAME', 'default')
@@ -148,9 +149,9 @@ class DataContract(object):
                                     options=self.options)
         serialized_output = report_formatter.serialized_output()
 
-        data_contract_summary = DataContractSummary(report_formatter.formatted_report())
+        self.summary.validate(dataframe_to_validate, report_formatter.formatted_report())
 
-        self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, data_contract_summary.serialized_output())
+        self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, self.summary.serialized_output())
 
 
 
