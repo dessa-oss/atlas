@@ -90,3 +90,4 @@ def find_and_apply_edges(values, n_bins):
     binned_values = np.diff(binned_values, axis=0)
     binned_values = np.append(binned_values, values_sorted[values_sorted > edges[-1]].shape[0])
     return binned_values, edges
+
