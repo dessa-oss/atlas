@@ -3,7 +3,6 @@ import {
   BrowserRouter as Router, Route, Switch, Redirect,
 } from 'react-router-dom';
 import Keycloak from 'keycloak-js';
-import { KeycloakProvider } from 'react-keycloak';
 import { toast } from 'react-toastify';
 import ProjectPage from './ProjectPage/ProjectPage';
 import LoginPage from './LoginPage/LoginPage';
