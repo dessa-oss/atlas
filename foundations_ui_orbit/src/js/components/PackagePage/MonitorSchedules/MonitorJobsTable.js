@@ -5,11 +5,12 @@ import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
 class MonitorJobsTable extends Component {
   constructor(props) {
     super(props);
-    const { location } = this.props;
+    const { location, monitorResult } = this.props;
 
     this.state = {
       rows: null,
-      projectName: location.state.project.name
+      projectName: location.state.project.name,
+      monitorName: monitorResult.properties.spec.environment.MONITOR_NAME
     };
     this.reload = this.reload.bind(this);
   }
@@ -19,10 +20,10 @@ class MonitorJobsTable extends Component {
   }
 
   async reload() {
-    const { projectName } = this.state;
+    const { projectName, monitorName } = this.state;
     const { onClickRow, reload } = this.props;
 
-    const result = await MonitorSchedulesActions.getMonitorJobs(projectName);
+    const result = await MonitorSchedulesActions.getMonitorJobs(projectName, monitorName);
     const rows = MonitorSchedulesActions.getMonitorJobRows(result, onClickRow);
     this.setState({ rows: rows });
     reload();
@@ -44,8 +45,8 @@ class MonitorJobsTable extends Component {
       <div className="monitor-jobs">
         <div className="monitor-jobs-heading">
           <h3>Monitor Jobs</h3>
-          <div className="i--icon-delete" />
-          <div className="i--icon-refresh" onClick={this.reload} />
+          {/* <div className="i--icon-delete" /> */}
+          {/* <div className="i--icon-refresh" onClick={this.reload} /> */}
         </div>
         <div className="monitor-job-listing">
           <div className="monitor-job-items">
@@ -68,14 +69,16 @@ MonitorJobsTable.propTypes = {
   location: PropTypes.object,
   onClickRow: PropTypes.func,
   selectedRow: PropTypes.object,
-  reload: PropTypes.func
+  reload: PropTypes.func,
+  monitorResult: PropTypes.object
 };
 
 MonitorJobsTable.defaultProps = {
   location: { state: {} },
   onClickRow: () => {},
   selectedRow: {},
-  reload: () => {}
+  reload: () => {},
+  monitorResult: {}
 };
 
 export default MonitorJobsTable;

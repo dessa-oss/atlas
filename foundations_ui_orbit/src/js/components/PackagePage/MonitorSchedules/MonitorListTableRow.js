@@ -60,10 +60,22 @@ class MonitorListTableRow extends Component {
 
     const selectedClass = this.isSelectedRow() ? "selected-row" : "";
 
+    function addStatus(rowStatus) {
+      if (rowStatus === "paused") {
+        return <div className="status-icon status-green" />;
+      }
+
+      if (rowStatus === "active") {
+        return <div className="status-icon status-red" />;
+      }
+    }
+
+    const statusIcon = addStatus(status);
+
     return (
       <div className={`monitor-table-row ${selectedClass}`} onClick={this.onClick}>
         <div className="monitor-table-cell">{monitorName}</div>
-        <div className="monitor-status-table-cell">{status}</div>
+        <div className="monitor-status-table-cell">{statusIcon}</div>
         <div className="monitor-user-table-cell">{user}</div>
       </div>
     );

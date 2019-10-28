@@ -2,18 +2,71 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
 import Select from "react-select";
+import moment from "moment";
 
 class MonitorOverview extends Component {
+  constructor(props) {
+    super(props);
+
+    this.resumeMonitor = this.resumeMonitor.bind(this);
+    this.pauseMonitor = this.pauseMonitor.bind(this);
+    this.deleteMonitor = this.deleteMonitor.bind(this);
+  }
+
+  resumeMonitor() {
+    const { monitorResult } = this.props;
+    const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
+    const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
+    MonitorSchedulesActions.resumeMonitor(projectName, monitorName);
+  }
+
+  pauseMonitor() {
+    const { monitorResult } = this.props;
+    const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
+    const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
+    MonitorSchedulesActions.pauseMonitor(projectName, monitorName);
+  }
+
+  deleteMonitor() {
+    const { monitorResult } = this.props;
+    const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
+    const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
+    MonitorSchedulesActions.deleteMonitor(projectName, monitorName);
+  }
+
   render() {
     const { monitorResult } = this.props;
-    const nextRun = monitorResult.next_run_time ? monitorResult.next_run_time : "No next run specified";
+    const nextRun = monitorResult.next_run_time
+      ? moment.unix(monitorResult.next_run_time).format("YYYY-MM-DD MM:SS")
+      : "None scheduled";
+
     const status = monitorResult.status.split("")[0].toUpperCase() + monitorResult.status.slice(1);
 
+    const startTime = monitorResult.schedule.start_date ? monitorResult.schedule.start_date : "Not specified";
+    const endTime = monitorResult.schedule.end_date ? monitorResult.schedule.end_date : "Not specified";
+
     const scheduleOptions = [
-      { label: "Mothly", value: "Mothly" },
-      { label: "Weekly", value: "Weekly" },
-      { label: "Daily", value: "Daily" }
+      { label: "Year", value: monitorResult.schedule.year },
+      { label: "Month", value: monitorResult.schedule.month },
+      { label: "Week", value: monitorResult.schedule.week },
+      { label: "Day", value: monitorResult.schedule.day },
+      { label: "Hour", value: monitorResult.schedule.hour },
+      { label: "Minute", value: monitorResult.schedule.minute },
+      { label: "Second", value: monitorResult.schedule.second }
     ];
+
+    function findScheduleRepeat(schedule) {
+      const repeatOn = Object.keys(schedule).filter(timeFrame => {
+        return schedule[timeFrame] && schedule[timeFrame].toString().includes("/");
+      });
+      const jobHasSchedule = repeatOn[0];
+      if (jobHasSchedule) {
+        const formattedKey = repeatOn[0][0].toUpperCase() + repeatOn[0].slice(1);
+        return scheduleOptions.filter(timeFrame => timeFrame.label === formattedKey)[0];
+      }
+    }
+
+    const defaultScheduleValue = findScheduleRepeat(monitorResult.schedule);
 
     return (
       <div className="monitor-info">
@@ -21,9 +74,9 @@ class MonitorOverview extends Component {
           <h3>Overview</h3>
           <div className="monitor-overview-menu">
             <div className="i--icon-open" />
-            <div className="i--icon-start" />
-            <div className="i--icon-pause" />
-            <div className="i--icon-delete" />
+            <div className="i--icon-start" onClick={this.resumeMonitor} />
+            <div className="i--icon-pause" onClick={this.pauseMonitor} />
+            {/* <div className="i--icon-delete" onClick={this.deleteMonitor} /> */}
           </div>
           <ul>
             <li>
@@ -48,27 +101,24 @@ class MonitorOverview extends Component {
           <h3>Schedule Details</h3>
           <ul>
             <li>
-              <div className="monitor-overview-key">Repeats:</div>
+              <div className="monitor-overview-key">Repeats every:</div>
               <div className="monitor-overview-value">
-                {/* <select className="schedule-picker" name="schedule-picker">
-                  <option value="weekly">Weekly</option>
-                  <option value="daily">Daily</option>
-                  <option value="monthly">Monthly</option>
-                </select> */}
                 <Select
                   options={scheduleOptions}
                   className="react-select"
-                  isMulti
+                  defaultValue={defaultScheduleValue}
                 />
               </div>
             </li>
             <li>
               <div className="monitor-overview-key">Starting on:</div>
-              <div className="monitor-overview-value">Oct. 15 2020</div>
+              <div className="monitor-overview-value">{
+                startTime.split("2019")[0]}, at {startTime.split("2019")[1]}
+              </div>
             </li>
             <li>
               <div className="monitor-overview-key">Ending on:</div>
-              <div className="monitor-overview-value">Sept. 16 2020</div>
+              <div className="monitor-overview-value">{endTime}</div>
             </li>
           </ul>
         </div>
