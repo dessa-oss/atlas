@@ -23,6 +23,7 @@ class SpecialValuesChecker(object):
         self._allowed_types = ['int', 'float', 'str', 'bool', 'datetime']
         self._reference_column_types = reference_column_types
         self._invalid_attributes = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
+        self.temp_attributes_to_exclude = []
 
 
     def _initialize_columns_special_values(self):
@@ -42,6 +43,9 @@ class SpecialValuesChecker(object):
             for special_value, sv_details in column_results['special_values'].items():
                 special_values_results[column][special_value] = sv_details
         
+        self._config_columns = set(self._config_columns).union(set(self.temp_attributes_to_exclude))
+        self.temp_attributes_to_exclude = []
+
         return special_values_results
 
     def configure(self, attributes=None, thresholds=None):
@@ -54,7 +58,7 @@ class SpecialValuesChecker(object):
 
         to_be_recalculate = False
         columns_to_be_recalculation = {}
-
+        
         error_dictionary = {}
         for column in attributes:
             if column in self._invalid_attributes:
@@ -97,3 +101,7 @@ class SpecialValuesChecker(object):
             self._config_columns = []
         else:
             self._config_columns = set(self._config_columns) - set(attributes)
+
+    def temp_exclude(self, attributes):
+        self.temp_attributes_to_exclude = attributes
+        self.exclude(attributes=attributes)
