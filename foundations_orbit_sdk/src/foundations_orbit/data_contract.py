@@ -222,7 +222,7 @@ class DataContract(object):
         for test_name, test_dictionary in validation_report.items():
             if test_name == 'dist_check_results':
                 for attribute in attributes_to_ignore:
-                    test_dictionary[attribute] = {"binned_passed": False, "message": "Schema Test Failed"}
+                    test_dictionary[attribute] = {"bin_passed": False, "message": "Schema Test Failed"}
             elif test_name == 'special_values_check_results':
                 for attribute in attributes_to_ignore:
                     test_dictionary[attribute] = {"passed": False, "message": "Schema Test Failed"}
@@ -230,6 +230,30 @@ class DataContract(object):
                 for attribute in attributes_to_ignore:
                     test_dictionary[attribute]['min_test'] = {"passed": False, "message": "Schema Test Failed"}
                     test_dictionary[attribute]['max_test'] = {"passed": False, "message": "Schema Test Failed"}
+
+    @staticmethod
+    def _dataframe_statistics(dataframe):
+        import numpy
+        import datetime
+        column_names = list(dataframe.columns)
+        column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
+        number_of_rows = len(dataframe)
+
+        for col_name, col_type in column_types.items():
+            if col_type == "object":
+                object_type_column = dataframe[col_name]
+                string_column_mask = [type(value) == str or numpy.isnan(value) for value in object_type_column]
+                date_column_mask = [type(value) == datetime or value != value for value in object_type_column]
+                bool_column_mask = [type(value) == bool or value != value for value in object_type_column]
+                if all(string_column_mask):
+                    column_types[col_name] = 'str'
+                elif all(date_column_mask):
+                    column_types[col_name] = 'datetime'
+                elif all(bool_column_mask):
+                    column_types[col_name] = 'bool'
+                
+
+        return column_names, column_types, number_of_rows
 
     @staticmethod
     def _remove_object_columns_and_types(column_names, column_types):
