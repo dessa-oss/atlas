@@ -68,6 +68,15 @@ class DataContract(object):
         self.distribution_test.exclude(attributes=attributes)
         self.min_max_test.exclude(attributes=attributes)
 
+    def temp_exclude(self, attributes):
+        if type(attributes) == str:
+            attributes = [attributes]
+
+        self.special_value_test.temp_exclude(attributes=attributes)
+        self.distribution_test.temp_exclude(attributes=attributes)
+        self.min_max_test.temp_exclude(attributes=attributes)
+
+
     def save(self, monitor_package_directory):
         with open(self._data_contract_file_path(monitor_package_directory), 'wb') as contract_file:
             contract_file.write(self._serialized_contract())
@@ -116,6 +125,7 @@ class DataContract(object):
         if not validation_report['schema_check_results']['passed'] and validation_report['schema_check_results'].get('cols', None):
             for column_to_ignore in validation_report['schema_check_results']['cols'].keys():
                 attributes_to_ignore.append(column_to_ignore)
+            self.temp_exclude(attributes=attributes_to_ignore)
 
         if self.options.check_row_count:
             validation_report['row_count'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
@@ -155,17 +165,17 @@ class DataContract(object):
 
 
 
-        # for test_name, test_dictionary in validation_report.items():
-        #     if test_name == 'dist_check_results':
-        #         for attribute in attributes_to_ignore:
-        #             test_dictionary[attribute] = {"bin_passed": False, "message": "Schema Test Failed"}
-        #     elif test_name == 'special_values_check_results':
-        #         for attribute in attributes_to_ignore:
-        #             test_dictionary[attribute] = {"passed": False, "message": "Schema Test Failed"}
-        #     elif test_name == 'special_values_check_results':
-        #         for attribute in attributes_to_ignore:
-        #             test_dictionary[attribute]['min_test'] = {"passed": False, "message": "Schema Test Failed"}
-        #             test_dictionary[attribute]['max_test'] = {"passed": False, "message": "Schema Test Failed"}
+        for test_name, test_dictionary in validation_report.items():
+            if test_name == 'dist_check_results':
+                for attribute in attributes_to_ignore:
+                    test_dictionary[attribute] = {"bin_passed": False, "message": "Schema Test Failed"}
+            elif test_name == 'special_values_check_results':
+                for attribute in attributes_to_ignore:
+                    test_dictionary[attribute] = {"passed": False, "message": "Schema Test Failed"}
+            elif test_name == 'special_values_check_results':
+                for attribute in attributes_to_ignore:
+                    test_dictionary[attribute]['min_test'] = {"passed": False, "message": "Schema Test Failed"}
+                    test_dictionary[attribute]['max_test'] = {"passed": False, "message": "Schema Test Failed"}
 
 
         return validation_report
@@ -213,5 +223,5 @@ class DataContract(object):
                 column_names.remove(column_name)
                 column_names_to_delete.append(column_name)
 
-        for column_name in column_names_to_delete:
-            column_types.pop(column_name)
+        # for column_name in column_names_to_delete:
+        #     column_types.pop(column_name)
