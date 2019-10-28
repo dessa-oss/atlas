@@ -211,3 +211,5 @@ class TestCreateBinStats(Spec):
             temp_output.append(temp)
 
         self.assertEqual(expected_output, temp_output)
+
+    
