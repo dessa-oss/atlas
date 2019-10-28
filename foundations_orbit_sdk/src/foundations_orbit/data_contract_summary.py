@@ -74,15 +74,21 @@ class DataContractSummary(object):
 
     @staticmethod
     def _calculate_percentage_missing(dataframe, attribute):
-        return dataframe[attribute].isna().sum() / len(dataframe[attribute])
+        return DataContractSummary._numpy_type_to_python(dataframe[attribute].isna().sum() / len(dataframe[attribute]))
 
     @staticmethod
     def _calculate_minimum(dataframe, attribute):
-        return dataframe[attribute].min()
+        return DataContractSummary._numpy_type_to_python(dataframe[attribute].min())
 
     @staticmethod
     def _calculate_maximum(dataframe, attribute):
-        return dataframe[attribute].max()
+        return DataContractSummary._numpy_type_to_python(dataframe[attribute].max())
+
+    @staticmethod
+    def _numpy_type_to_python(value):
+        if type(value) == list:
+            return list(map(lambda v: float(v), value))
+        return float(value)
 
     @staticmethod
     def _get_bins_and_data_for_numerical_attribute(dataframe, attribute, bins=10):
@@ -101,7 +107,7 @@ class DataContractSummary(object):
         return {
             'bins': bin_labels,
             'data': {
-                'expected_data': list(data)
+                'expected_data': self._numpy_type_to_python(list(data))
             }
         }
 
@@ -111,7 +117,7 @@ class DataContractSummary(object):
         if self._is_numeric_column(attribute_type):
             _, data = self._get_bins_and_data_for_numerical_attribute(dataframe_to_validate, attribute, bins=expected_bins)
         # TODO - Add implementation for object dtypes
-        return list(data)
+        return self._numpy_type_to_python(list(data))
 
     def serialized_output(self):
         import pickle
