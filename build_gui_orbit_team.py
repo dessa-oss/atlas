@@ -3,7 +3,7 @@ import os
 build_version = os.environ['build_version']
 nexus_registry = os.environ['NEXUS_DOCKER_REGISTRY']
 
-from build_gui import build_and_tag_gui_image, print_logs
+from build_gui import build_and_tag_gui_image
 
 def main(argv):
     rest_api_docker_image = 'foundations-orbit-rest-api'
