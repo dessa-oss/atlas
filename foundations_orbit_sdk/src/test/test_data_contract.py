@@ -874,6 +874,44 @@ class TestDataContract(Spec):
 
         self.assertEqual(expected_results, dist_check_results)
 
+    def test_special_values_checker_for_datetime_input_returns_expected_result(self):
+        import pandas, numpy
+        data = {
+            self.column_name: [self.faker.date_time(), self.faker.date_time(), self.faker.date_time()] + [numpy.nan],
+            self.column_name_2: [self.faker.date_time(), self.faker.date_time(), self.faker.date_time()] + [numpy.nan]
+        }
+
+        dataframe = pandas.DataFrame(data)
+        
+        data_contract = DataContract(self.contract_name, dataframe)
+
+        expected_results = {
+            self.column_name: {
+                numpy.nan: {
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.25,
+                    'passed': True
+                }
+                
+            },
+            self.column_name_2: {
+                numpy.nan: {
+                    'percentage_diff': 0.25,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.50,
+                    'passed': False
+                }
+            }
+        }
+
+        data_contract.special_value_test.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
+        dataframe_to_validate = dataframe.copy()
+        dataframe_to_validate.iloc[0,1] = numpy.nan
+        results = data_contract.validate(dataframe_to_validate)['special_values_check_results']
+
+        self.assertEqual(expected_results, results)
+
     def test_data_contract_with_no_reference_dataframe_throws_error(self):
         with self.assertRaises(ValueError) as exception:
             contract = DataContract(self.contract_name)
