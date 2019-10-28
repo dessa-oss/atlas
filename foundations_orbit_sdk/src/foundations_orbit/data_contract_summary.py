@@ -103,7 +103,7 @@ class DataContractSummary(object):
             bins, data = self._get_bins_and_data_for_numerical_attribute(self._dataframe, attribute)
             self._expected_data_bin_by_attribute[attribute] = bins
         # TODO - Add implementation for object dtypes
-        bin_labels = [f'{bound1}-{bound2}' for bound1, bound2 in zip(bins, bins[1:])]
+        bin_labels = [f'{round(bound1, 2)}-{round(bound2, 2)}' for bound1, bound2 in zip(bins, bins[1:])]
         return {
             'bins': bin_labels,
             'data': {
