@@ -1,5 +1,5 @@
 import React from "react";
-import { get } from "./BaseActions";
+import { get, put, del } from "./BaseActions";
 import MonitorListTableRow from "../components/PackagePage/MonitorSchedules/MonitorListTableRow";
 import MonitorJobTableRow from "../components/PackagePage/MonitorSchedules/MonitorJobTableRow";
 
@@ -33,7 +33,7 @@ const MonitorSchedulesActions = {
   },
 
   getMonitorJobs: (projectName, monitorName) => {
-    const url = `projects/${projectName}/monitors/piece/jobs`;
+    const url = `projects/${projectName}/monitors/${monitorName}/jobs`;
 
     return get(url)
       .then(results => {
@@ -45,18 +45,46 @@ const MonitorSchedulesActions = {
   },
 
   getMonitorJobRows: results => {
-    return results.map(job => {
-      const key = job.job_id + job.duration;
-      return (
-        <MonitorJobTableRow
-          key={key}
-          jobID={job.job_id}
-          status={job.status}
-          launched={job.start_time}
-          duration={job.completed_time}
-        />
-      );
-    });
+    if (!results.error) {
+      return results.map(job => {
+        const key = job.job_id + job.duration;
+        return (
+          <MonitorJobTableRow
+            key={key}
+            jobID={job.job_id}
+            status={job.status}
+            launched={job.start_time}
+            duration={job.completed_time}
+          />
+        );
+      });
+    }
+  },
+
+  resumeMonitor: (projectName, monitorName) => {
+    const body = {
+      status: "active"
+    };
+
+    return put(
+      `projects/${projectName}/monitors/${monitorName}`,
+      body
+    );
+  },
+
+  pauseMonitor: (projectName, monitorName) => {
+    const body = {
+      status: "pause"
+    };
+
+    return put(
+      `projects/${projectName}/monitors/${monitorName}`,
+      body
+    );
+  },
+
+  deleteMonitor: (projectName, monitorName) => {
+    return del(`projects/${projectName}/monitors/${monitorName}`);
   }
 
 };

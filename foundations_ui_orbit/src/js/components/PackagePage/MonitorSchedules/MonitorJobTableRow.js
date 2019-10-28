@@ -68,18 +68,30 @@ class MonitorJobTableRow extends Component {
     } = this.state;
 
     const selectedClass = this.isSelectedRow() ? "selected-row" : "";
-    const formattedLaunchedTime = launched ? moment.unix(launched).format("YYYY-MM-DD") : "Not available";
-    const formattedDurationTime = duration ? moment.unix(duration).format("YYYY-MM-DD") : "Not available";
+    const formattedLaunchedTime = launched ? moment.unix(launched).format("YYYY-MM-DD HH:MM:SS") : "Not available";
     const launchTime = moment(launched);
     const endTime = moment(duration);
-    const timeDiff = duration ? `${moment.duration(launchTime.diff(endTime)).asSeconds()} seconds` : "Not available";
+    const timeDiff = duration ? `${moment.duration(endTime.diff(launchTime)).asSeconds()} seconds` : "Not available";
+
+    function addStatus(rowStatus) {
+      if (rowStatus === "completed") {
+        return <div className="status-icon status-green" />;
+      }
+
+      if (rowStatus === "failed") {
+        return <div className="status-icon status-red" />;
+      }
+      return <div className="status-icon status-running" />;
+    }
+
+    const statusIcon = addStatus(status);
 
 
     return (
       <div className={`monitor-job-table-row ${selectedClass}`} onClick={this.onClick}>
         <div className="monitor-job-checkbox"><input type="checkbox" /></div>
         <div className="monitor-job-name-cell">{jobID}</div>
-        <div className="monitor-job-status-cell">{status}</div>
+        <div className="monitor-job-status-cell">{statusIcon}</div>
         <div className="monitor-job-launched-cell">{formattedLaunchedTime}</div>
         <div className="monitor-job-duration-cell">{timeDiff}</div>
         <div className="monitor-job-open-cell">
