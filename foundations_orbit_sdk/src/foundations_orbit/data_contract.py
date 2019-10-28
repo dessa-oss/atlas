@@ -25,6 +25,11 @@ class DataContract(object):
             self._dataframe = df
 
         self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
+
+
+        self._categorical_attributes = {}
+        self._categorize_attributes()
+
         self.schema_test = SchemaChecker(self._column_names, self._column_types)
         self._remove_object_columns_and_types(self._column_names, self._column_types)
 
@@ -59,6 +64,27 @@ class DataContract(object):
             check_min_max=True,
             distribution=default_distribution
         )
+
+    def _categorize_attributes(self):
+        for col_name, col_type in self._column_types.items():
+            if 'float' in col_type:
+                self._categorical_attributes[col_name] = False
+            elif 'int' in col_type:
+                self._categorical_attributes[col_name] = self._check_if_attribute_is_categorical(col_name)
+            elif 'str' in col_type:
+                self._categorical_attributes[col_name] = self._check_if_attribute_is_categorical(col_name, threshold=0.5)
+            elif 'bool' in col_type:
+                self._categorical_attributes[col_name] = True
+            elif 'datetime' in col_type:
+                self._categorical_attributes[col_name] = self._check_if_attribute_is_categorical(col_name)
+
+    def _check_if_attribute_is_categorical(self, column_name, threshold=0.1):
+        column_values = self._dataframe[column_name]
+        num_unique_values = column_values.nunique()
+        num_total_values = len(column_values)
+        if num_unique_values/num_total_values > threshold: 
+            return False
+        return True
 
     def exclude(self, attributes):
         if type(attributes) == str:
@@ -210,7 +236,7 @@ class DataContract(object):
         for col_name, col_type in column_types.items():
             if col_type == "object":
                 object_type_column = dataframe[col_name]
-                string_column_mask = [type(value) == str or numpy.isnan(value) for value in object_type_column]
+                string_column_mask = ['str' in str(type(value)) or value != value for value in object_type_column]
                 date_column_mask = [type(value) == datetime or value != value for value in object_type_column]
                 bool_column_mask = [type(value) == bool or value != value for value in object_type_column]
                 if all(string_column_mask):
