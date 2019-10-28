@@ -969,5 +969,3 @@ class TestDataContract(Spec):
     def _test_data_contract_has_test_which_is_an_instance_of_expected_class(self, test_name, class_type):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         self.assertIsInstance(getattr(contract, test_name, None), class_type)
-
-    
