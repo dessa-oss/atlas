@@ -5,15 +5,12 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 06 2018
 """
 
-from foundations_spec.extensions import let_fake_redis
 from foundations_spec import *
 
 from foundations_orbit import DataContract
 from foundations_orbit_rest_api.v1.controllers.data_contract_summary_controller import DataContractSummaryController
 
 class TestDataContractSummary(Spec):
-
-    mock_redis = let_fake_redis()
 
     @let
     def reference_dataframe_with_one_numerical_column(self):
@@ -115,8 +112,6 @@ class TestDataContractSummary(Spec):
 
         os.environ['PROJECT_NAME'] = self.project_name
         os.environ['MONITOR_NAME'] = self.monitor_name
-
-        self.patch('foundations_contrib.global_state.redis_connection', self.mock_redis)
 
         self.controller.params = {
             'project_name': self.project_name,
