@@ -211,10 +211,13 @@ class DataContract(object):
                 object_type_column = dataframe[col_name]
                 string_column_mask = [type(value) == str or numpy.isnan(value) for value in object_type_column]
                 date_column_mask = [type(value) == datetime or value != value for value in object_type_column]
+                bool_column_mask = [type(value) == bool or value != value for value in object_type_column]
                 if all(string_column_mask):
                     column_types[col_name] = 'str'
                 elif all(date_column_mask):
                     column_types[col_name] = 'datetime'
+                elif all(bool_column_mask):
+                    column_types[col_name] = 'bool'
                 
 
         return column_names, column_types, number_of_rows
