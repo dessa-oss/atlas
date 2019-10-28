@@ -9,3 +9,4 @@ import foundations
 
 from orbit_acceptance.test_orbit_deploy_model_via_cli import TestOrbitDeployModelViaCli
 from orbit_acceptance.test_data_validation import TestDataValidation
+from orbit_acceptance.test_data_contract_summary import TestDataContractSummary
