@@ -66,6 +66,10 @@ class TestDataContract(Spec):
         return self._generate_distinct([self.column_name, self.column_name_2, self.column_name_3], self.faker.word)
 
     @let
+    def column_name_5(self):
+        return self._generate_distinct([self.column_name, self.column_name_2, self.column_name_3, self.column_name_4], self.faker.word)
+
+    @let
     def row_count_results(self):
         return self.faker.random.random()
     
@@ -306,6 +310,54 @@ class TestDataContract(Spec):
         contract.options.check_special_values = False
         validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
         self.assertEqual(mock_schema_check_results, validation_report['schema_check_results'])
+    
+    def test_data_contract_validate_excludes_columns_that_failed_from_other_tests(self):
+        import pandas, numpy
+        reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2, self.column_name_3, self.column_name_4, self.column_name_5], 
+                                               data=[[1, "string", True, self.faker.date_time(), 1],
+                                                     [1, "string", False, self.faker.date_time(), "string"]])
+        current_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2, self.column_name_3, self.column_name_4, self.column_name_5],
+                                               data=[[1, self.faker.pyfloat(), self.faker.word(), self.faker.pyint(), self.faker.word()],
+                                                     [1, self.faker.pyfloat(), self.faker.word(), self.faker.pyint(), self.faker.word()]])
+
+        contract = DataContract(self.contract_name, df=reference_dataframe)
+        contract.special_value_test.configure(attributes=list(current_dataframe.columns)[:-1], thresholds={numpy.nan: 0.1})
+        contract.min_max_test.configure(attributes=[list(current_dataframe.columns)[0]], lower_bound=0, upper_bound=2)
+        validation_report = contract.validate(current_dataframe, self.datetime_today)
+
+        del validation_report['metadata']
+        del validation_report['min_max_test_results']
+        del validation_report['row_count']
+        del validation_report['schema_check_results']
+        for test_dict in validation_report.values():
+            cols_to_ignore = {self.column_name_2, self.column_name_3, self.column_name_4}
+            self.assertTrue(cols_to_ignore.issubset(set(test_dict.keys())))
+            for ignored_col in cols_to_ignore:
+                self.assertEqual("Schema Test Failed", test_dict[ignored_col]['message'])
+
+    def test_data_contract_exclude_calls_exclude_of_all_tests_for_single_column(self):
+        distribution_checker_exclude = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker.exclude')
+        min_max_checker_exclude = self.patch('foundations_orbit.contract_validators.min_max_checker.MinMaxChecker.exclude')
+        special_values_checker_exclude = self.patch('foundations_orbit.contract_validators.special_values_checker.SpecialValuesChecker.exclude')
+
+        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
+        contract.exclude(self.column_name)
+
+        distribution_checker_exclude.assert_called_once()
+        min_max_checker_exclude.assert_called_once()
+        special_values_checker_exclude.assert_called_once()
+    
+    def test_data_contract_exclude_calls_exclude_of_all_tests_for_one_of_multiple_columns(self):
+        distribution_checker_exclude = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker.exclude')
+        min_max_checker_exclude = self.patch('foundations_orbit.contract_validators.min_max_checker.MinMaxChecker.exclude')
+        special_values_checker_exclude = self.patch('foundations_orbit.contract_validators.special_values_checker.SpecialValuesChecker.exclude')
+
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        contract.exclude([self.column_name, self.column_name_2])
+
+        distribution_checker_exclude.assert_called_once()
+        min_max_checker_exclude.assert_called_once()
+        special_values_checker_exclude.assert_called_once()
 
     def test_data_contract_validate_check_distributions_by_default(self):
 
@@ -385,6 +437,8 @@ class TestDataContract(Spec):
 
     def test_data_contract_validate_writes_correct_info_to_redis(self):
         import numpy
+
+        self.maxDiff = None
         inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         contract.special_value_test.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
@@ -402,19 +456,11 @@ class TestDataContract(Spec):
                         'pct_in_reference_data': 0.0,
                         'validation_outcome': 'healthy',
                         'value': 'nan'
-                    },
-                    {
-                        'attribute_name': f'{self.column_name_2}',
-                        'difference_in_pct': 0.0,
-                        'pct_in_current_data': 0.0,
-                        'pct_in_reference_data': 0.0,
-                        'validation_outcome': 'healthy',
-                        'value': 'nan'
                     }
                 ],
                 'summary': {
                     'critical': 0,
-                    'healthy': 2,
+                    'healthy': 1,
                     'warning': 0
                 }
             },
@@ -425,16 +471,11 @@ class TestDataContract(Spec):
                         'L-infinity': 0.0,
                         'attribute_name': f'{self.column_name}',
                         'validation_outcome': 'healthy'
-                    },
-                    {
-                        'L-infinity': 0.0,
-                        'attribute_name': f'{self.column_name_2}',
-                        'validation_outcome': 'healthy'
                     }
                 ],
                 'summary': {
                     'critical': 0,
-                    'healthy': 2,
+                    'healthy': 1,
                     'warning': 0
                 }
             },
@@ -462,16 +503,10 @@ class TestDataContract(Spec):
                     'lower_bound': 0,
                     'min_value': 1,
                     'validation_outcome': 'healthy',
-                },
-                {
-                    'attribute_name': f'{self.column_name_2}',
-                    'lower_bound': 0,
-                    'min_value': 2,
-                    'validation_outcome': 'healthy',
                 }],
                 'summary': {
                     'critical': 0,
-                    'healthy': 2,
+                    'healthy': 1,
                     'warning': 0
                 }
             },
@@ -481,16 +516,9 @@ class TestDataContract(Spec):
                     'upper_bound': 1,
                     'max_value': 1,
                     'validation_outcome': 'healthy',
-                },
-                {
-                    'attribute_name': f'{self.column_name_2}',
-                    'upper_bound': 1,
-                    'max_value': 2,
-                    'percentage_out_of_bounds': 1,
-                    'validation_outcome': 'critical',
                 }],
                 'summary': {
-                    'critical': 1,
+                    'critical': 0,
                     'healthy': 1,
                     'warning': 0
                 }
@@ -616,8 +644,8 @@ class TestDataContract(Spec):
                 'binned_passed': True
             },
             self.column_name_2: {
-                'binned_l_infinity': 0.0,
-                'binned_passed': True
+                'bin_passed': False,
+                'message': 'Schema Test Failed'
             }
         }
 
@@ -691,7 +719,7 @@ class TestDataContract(Spec):
         import datetime
 
         inference_period=self.inference_period
-        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe_with_datetime)
 
         upper_bound = datetime.datetime(2023,5,6)
 
@@ -815,3 +843,5 @@ class TestDataContract(Spec):
     def _test_data_contract_has_test_which_is_an_instance_of_expected_class(self, test_name, class_type):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         self.assertIsInstance(getattr(contract, test_name, None), class_type)
+
+    

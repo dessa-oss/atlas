@@ -17,7 +17,7 @@ class DistributionChecker(object):
         self._reference_column_types = reference_column_types
         self._allowed_types = ['int', 'float', 'str', 'bool', 'datetime']
         self._invalid_attributes = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
-
+        self.temp_attributes_to_exclude = []
 
     def __str__(self):
         import json
@@ -55,6 +55,10 @@ class DistributionChecker(object):
         else:
             self._reference_column_names = set(self._reference_column_names) - set(attributes)
 
+    def temp_exclude(self, attributes):
+        self.temp_attributes_to_exclude = attributes
+        self.exclude(attributes=attributes)
+
     def validate(self, dataframe_to_validate):
         if dataframe_to_validate is None or len(dataframe_to_validate) == 0:
             raise ValueError('Invalid Dataframe provided')
@@ -66,4 +70,6 @@ class DistributionChecker(object):
         from foundations_orbit.contract_validators.prototype import distribution_and_special_values_check
         test_data = distribution_and_special_values_check(self._distribution_options, self._reference_column_names, self._bin_stats, dataframe_to_validate)
         
+        self._reference_column_names = set(self._reference_column_names).union(set(self.temp_attributes_to_exclude))
+        self.temp_attributes_to_exclude = []
         return test_data
