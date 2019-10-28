@@ -77,12 +77,14 @@ class ValidationResultsOverview extends Component {
     const binLabels = selectedOverview.binned_data.bins;
     const series = [
       {
-        name: "Expected Data",
-        data: selectedOverview.binned_data.data.expected_data
+        name: "Reference Data",
+        data: selectedOverview.binned_data.data.expected_data,
+        color: "#50B8FF"
       },
       {
-        name: "Actual Data",
-        data: selectedOverview.binned_data.data.actual_data
+        name: "Current Data",
+        data: selectedOverview.binned_data.data.actual_data,
+        color: "#004A9C"
       }
     ];
 
@@ -115,15 +117,11 @@ class ValidationResultsOverview extends Component {
           const actualPoint = this.points[1];
           const expectedTooltip = `${expectedPoint.series.name}: ${expectedPoint.y}`;
           const actualTooltip = `${actualPoint.series.name}: ${actualPoint.y}`;
-          const diffTooltip = `Difference: ${Math.abs(expectedPoint.y - actualPoint.y)}`;
+          const diffTooltip = `<b>Difference:</b> ${Math.abs(expectedPoint.y - actualPoint.y)}`;
           return `<b>${this.x}</b><br/>${expectedTooltip}<br/>${actualTooltip}<br/>${diffTooltip}`;
         },
         shared: true
       },
-      colors: [
-        "#004A9C",
-        "#50B8FF"
-      ],
       series: series,
       credits: {
         enabled: false
@@ -179,7 +177,7 @@ class ValidationResultsOverview extends Component {
           />
           <div className="attribute-data-container">
             <div className="attribute-data-label">
-              <div className="light-blue-box" />Expected Data
+              <div className="light-blue-box" />Reference Data
             </div>
             <div className="attribute-data-container-left">
               Percent Missing:<br />Minimum:<br />Maximum:<br />
@@ -190,7 +188,7 @@ class ValidationResultsOverview extends Component {
           </div>
           <div className="attribute-data-container">
             <div className="attribute-data-label">
-              <div className="dark-blue-box" />Actual Data
+              <div className="dark-blue-box" />Current Data
             </div>
             <div className="attribute-data-container-left">
               Percent Missing:<br />Minimum:<br />Maximum:<br />
