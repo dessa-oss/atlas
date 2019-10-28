@@ -3,19 +3,16 @@
 # Proprietary and confidential
 # Written by Susan Davis <t.rogers@dessa.com>, 10 2019
 
-FROM tiangolo/uwsgi-nginx-flask:python3.6-alpine3.8
+FROM tiangolo/uwsgi-nginx-flask:python3.6
 
 ARG main_file
 
-# COPY --from=lachlanevenson/k8s-kubectl:v1.10.13 /usr/local/bin/kubectl /usr/local/bin/kubectl
-RUN mkdir -p /var/foundations ~/.ssh
-
 ENV SERVER_NAME=localhost
+RUN mkdir -p /var/foundations ~/.ssh
 
 WORKDIR /var/foundations
 COPY ./tmp/pip_wheels /var/foundations/
 
-RUN apk add --no-cache alpine-sdk python-dev gcc gfortran libressl-dev libffi-dev linux-headers openblas-dev perl
 
 RUN pip install -U pip setuptools wheel
 RUN pip install pandas==0.23.3

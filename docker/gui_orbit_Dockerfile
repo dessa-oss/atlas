@@ -3,21 +3,21 @@
 # Proprietary and confidential
 # Written by Susan Davis <s.davis@dessa.com>, 10 2019
 
-FROM node:10.16-alpine
+FROM node:10.16-jessie
 
-RUN apk add --update gettext libintl nginx openssl && \
-    mkdir /run/nginx/ && \
-    nginx && \ 
-    openssl req -x509 -nodes -days 365 \
-                -subj "/C=CA/ST=Ontario/L=Toronto/O=Dessa/OU=Engineering/CN=localhost" \
-                -newkey rsa:2048 \
-                -keyout /etc/nginx/localhost.key \
-                -out /etc/nginx/localhost.crt
+RUN apt-get update \
+    && apt-get install -y openssl curl nginx gettext-base \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY --from=loicmahieu/alpine-envsubst /usr/local/bin/envsubst /usr/local/bin/envsubst
+RUN openssl req -x509 -nodes -days 365 \
+            -subj "/C=CA/ST=Ontario/L=Toronto/O=Dessa/OU=Engineering/CN=localhost" \
+            -newkey rsa:2048 \
+            -keyout /etc/nginx/localhost.key \
+            -out /etc/nginx/localhost.crt
 
-RUN mkdir -p /var/foundations_ui
-WORKDIR /var/foundations_ui
+RUN mkdir -p /var/foundations_ui_orbit
+WORKDIR /var/foundations_ui_orbit
 
 ENV REACT_APP_API_URL=/foundations_rest_api/api/v1/
 ENV REACT_APP_API_STAGING_URL=/foundations_rest_api/api/v2beta/
@@ -31,7 +31,6 @@ COPY ./ /var/foundations_ui_orbit/
 RUN npm install -g -s --no-progress yarn && \
     yarn && \
     yarn run build && \
-    yarn run prune && \
     yarn cache clean
 
 EXPOSE 8011
