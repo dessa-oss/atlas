@@ -229,6 +229,3 @@ class DataContract(object):
             if column_type == 'object':
                 column_names.remove(column_name)
                 column_names_to_delete.append(column_name)
-
-        # for column_name in column_names_to_delete:
-        #     column_types.pop(column_name)
