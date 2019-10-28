@@ -14,18 +14,22 @@ class ValidationResultsOverview extends Component {
     this.state = {
       selectedAttribute: null,
       selectedOverview: {
-        category_names: [],
-        expected_data: {
+        expected_data_summary: {
           percentage_missing: null,
           minimum: null,
-          maximum: null,
-          data: []
+          maximum: null
         },
-        actual_data: {
+        actual_data_summary: {
           percentage_missing: null,
           minimum: null,
-          maximum: null,
-          data: []
+          maximum: null
+        },
+        binned_data: {
+          bins: [],
+          data: {
+            expected_data: [],
+            actual_data: []
+          }
         }
       }
     };
@@ -70,15 +74,17 @@ class ValidationResultsOverview extends Component {
     const rowDiff = Math.round(Math.abs(validationResult.row_count.row_count_diff) * 1000) / 1000;
     const rowCount = `${validationResult.row_count.expected_row_count} -> ${validationResult.row_count.actual_row_count} (${sign}${rowDiff}%)`; // eslint-disable-line max-len
 
-    const binLabels = selectedOverview.category_names;
+    const binLabels = selectedOverview.binned_data.bins;
     const series = [
       {
-        name: "Expected Data",
-        data: selectedOverview.expected_data.data
+        name: "Reference Data",
+        data: selectedOverview.binned_data.data.expected_data,
+        color: "#50B8FF"
       },
       {
-        name: "Actual Data",
-        data: selectedOverview.actual_data.data
+        name: "Current Data",
+        data: selectedOverview.binned_data.data.actual_data,
+        color: "#004A9C"
       }
     ];
 
@@ -111,15 +117,11 @@ class ValidationResultsOverview extends Component {
           const actualPoint = this.points[1];
           const expectedTooltip = `${expectedPoint.series.name}: ${expectedPoint.y}`;
           const actualTooltip = `${actualPoint.series.name}: ${actualPoint.y}`;
-          const diffTooltip = `Difference: ${Math.abs(expectedPoint.y - actualPoint.y)}`;
+          const diffTooltip = `<b>Difference:</b> ${Math.abs(expectedPoint.y - actualPoint.y)}`;
           return `<b>${this.x}</b><br/>${expectedTooltip}<br/>${actualTooltip}<br/>${diffTooltip}`;
         },
         shared: true
       },
-      colors: [
-        "#004A9C",
-        "#50B8FF"
-      ],
       series: series,
       credits: {
         enabled: false
@@ -129,12 +131,14 @@ class ValidationResultsOverview extends Component {
     const columns = validationResult.attribute_names;
     const selectOptions = columns.map(col => ({ value: col, label: col }));
 
-    const expectedMissing = CommonActions.decimalToPercentage(selectedOverview.expected_data.percentage_missing);
-    const expectedMinimum = selectedOverview.expected_data.minimum;
-    const expectedMaximum = selectedOverview.expected_data.maximum;
-    const actualMissing = CommonActions.decimalToPercentage(selectedOverview.actual_data.percentage_missing);
-    const actualMinimum = selectedOverview.actual_data.minimum;
-    const actualMaximum = selectedOverview.actual_data.maximum;
+    const expectedMissing = CommonActions.decimalToPercentage(
+      selectedOverview.expected_data_summary.percentage_missing
+    );
+    const expectedMinimum = selectedOverview.expected_data_summary.minimum;
+    const expectedMaximum = selectedOverview.expected_data_summary.maximum;
+    const actualMissing = CommonActions.decimalToPercentage(selectedOverview.actual_data_summary.percentage_missing);
+    const actualMinimum = selectedOverview.actual_data_summary.minimum;
+    const actualMaximum = selectedOverview.actual_data_summary.maximum;
 
     return (
       <div className="validation-results-overview">
@@ -173,7 +177,7 @@ class ValidationResultsOverview extends Component {
           />
           <div className="attribute-data-container">
             <div className="attribute-data-label">
-              <div className="light-blue-box" />Expected Data
+              <div className="light-blue-box" />Reference Data
             </div>
             <div className="attribute-data-container-left">
               Percent Missing:<br />Minimum:<br />Maximum:<br />
@@ -184,7 +188,7 @@ class ValidationResultsOverview extends Component {
           </div>
           <div className="attribute-data-container">
             <div className="attribute-data-label">
-              <div className="dark-blue-box" />Actual Data
+              <div className="dark-blue-box" />Current Data
             </div>
             <div className="attribute-data-container-left">
               Percent Missing:<br />Minimum:<br />Maximum:<br />
