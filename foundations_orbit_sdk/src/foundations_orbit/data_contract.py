@@ -162,20 +162,7 @@ class DataContract(object):
 
         self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, data_contract_summary.serialized_output())
 
-
-
-        for test_name, test_dictionary in validation_report.items():
-            if test_name == 'dist_check_results':
-                for attribute in attributes_to_ignore:
-                    test_dictionary[attribute] = {"bin_passed": False, "message": "Schema Test Failed"}
-            elif test_name == 'special_values_check_results':
-                for attribute in attributes_to_ignore:
-                    test_dictionary[attribute] = {"passed": False, "message": "Schema Test Failed"}
-            elif test_name == 'special_values_check_results':
-                for attribute in attributes_to_ignore:
-                    test_dictionary[attribute]['min_test'] = {"passed": False, "message": "Schema Test Failed"}
-                    test_dictionary[attribute]['max_test'] = {"passed": False, "message": "Schema Test Failed"}
-
+        self._modify_validation_report_with_schema_failures(validation_report, attributes_to_ignore)
 
         return validation_report
 
@@ -197,6 +184,19 @@ class DataContract(object):
     def _deserialized_contract(serialized_contract):
         import pickle
         return pickle.loads(serialized_contract)
+
+    def _modify_validation_report_with_schema_failures(self, validation_report, attributes_to_ignore):
+        for test_name, test_dictionary in validation_report.items():
+            if test_name == 'dist_check_results':
+                for attribute in attributes_to_ignore:
+                    test_dictionary[attribute] = {"bin_passed": False, "message": "Schema Test Failed"}
+            elif test_name == 'special_values_check_results':
+                for attribute in attributes_to_ignore:
+                    test_dictionary[attribute] = {"passed": False, "message": "Schema Test Failed"}
+            elif test_name == 'special_values_check_results':
+                for attribute in attributes_to_ignore:
+                    test_dictionary[attribute]['min_test'] = {"passed": False, "message": "Schema Test Failed"}
+                    test_dictionary[attribute]['max_test'] = {"passed": False, "message": "Schema Test Failed"}
 
     @staticmethod
     def _dataframe_statistics(dataframe):
