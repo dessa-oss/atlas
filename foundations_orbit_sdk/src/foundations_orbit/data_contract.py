@@ -201,6 +201,7 @@ class DataContract(object):
     @staticmethod
     def _dataframe_statistics(dataframe):
         import numpy
+        import datetime
         column_names = list(dataframe.columns)
         column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
         number_of_rows = len(dataframe)
@@ -209,8 +210,12 @@ class DataContract(object):
             if col_type == "object":
                 object_type_column = dataframe[col_name]
                 string_column_mask = [type(value) == str or numpy.isnan(value) for value in object_type_column]
+                date_column_mask = [type(value) == datetime or value != value for value in object_type_column]
                 if all(string_column_mask):
-                    column_types[col_name] = "str"
+                    column_types[col_name] = 'str'
+                elif all(date_column_mask):
+                    column_types[col_name] = 'datetime'
+                
 
         return column_names, column_types, number_of_rows
 
