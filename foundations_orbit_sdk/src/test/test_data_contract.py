@@ -875,14 +875,43 @@ class TestDataContract(Spec):
         self.assertEqual(expected_results, dist_check_results)
 
     def test_special_values_checker_for_datetime_input_returns_expected_result(self):
-        import pandas, numpy
+        import numpy
         data = {
             self.column_name: [self.faker.date_time(), self.faker.date_time(), self.faker.date_time()] + [numpy.nan],
             self.column_name_2: [self.faker.date_time(), self.faker.date_time(), self.faker.date_time()] + [numpy.nan]
         }
 
+        self._test_special_values_checker_for_datatype_input_returns_expected_results(data)
+
+    def test_special_values_checker_for_string_input_returns_expected_result(self):
+        import numpy
+        data = {
+            self.column_name: [self.faker.word()]*3 + [numpy.nan],
+            self.column_name_2: [self.faker.word()]*3 + [numpy.nan]
+        }
+
+        self._test_special_values_checker_for_datatype_input_returns_expected_results(data)
+
+    def test_special_values_checker_for_bool_input_returns_expected_result(self):
+        import numpy
+        data = {
+            self.column_name: [True, False, False] + [numpy.nan],
+            self.column_name_2: [True, True, True] + [numpy.nan]
+        }
+
+        self._test_special_values_checker_for_datatype_input_returns_expected_results(data)
+
+    def test_data_contract_with_no_reference_dataframe_throws_error(self):
+        with self.assertRaises(ValueError) as exception:
+            contract = DataContract(self.contract_name)
+
+    def test_dataframe_statistics_returns_string_column_type_when_column_contains_strings_and_nans_only(self):
+        _,column_types,_ = DataContract._dataframe_statistics(self.dataframe_with_strings_and_nans)
+        self.assertEqual('str', column_types[self.column_name])
+
+    def _test_special_values_checker_for_datatype_input_returns_expected_results(self, data):
+        import pandas, numpy
         dataframe = pandas.DataFrame(data)
-        
         data_contract = DataContract(self.contract_name, dataframe)
 
         expected_results = {
@@ -911,14 +940,6 @@ class TestDataContract(Spec):
         results = data_contract.validate(dataframe_to_validate)['special_values_check_results']
 
         self.assertEqual(expected_results, results)
-
-    def test_data_contract_with_no_reference_dataframe_throws_error(self):
-        with self.assertRaises(ValueError) as exception:
-            contract = DataContract(self.contract_name)
-
-    def test_dataframe_statistics_returns_string_column_type_when_column_contains_strings_and_nans_only(self):
-        _,column_types,_ = DataContract._dataframe_statistics(self.dataframe_with_strings_and_nans)
-        self.assertEqual('str', column_types[self.column_name])
 
     def _find_if_key_in_dictionary(self, dictionary_to_search, key):
         if key in dictionary_to_search: return True

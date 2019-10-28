@@ -250,6 +250,94 @@ class TestSpecialValuesChecker(Spec):
         results = checker.validate(dataframe_to_validate)
         self.assertEqual(expected_check_results, results)
 
+    def test_special_values_checker_for_bool_input_returns_expected_result(self):
+        data = {
+            self.column_name: [True, False, False] + [numpy.nan],
+            self.column_name_2: [True, True, True] + [numpy.nan]
+        }
+
+        dataframe = pandas.DataFrame(data)
+        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
+
+        special_values = [numpy.nan]
+
+        bin_stats = {
+            self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name])),
+            self.column_name_2: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name_2]))
+        }
+
+        checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], {self.column_name: 'bool',
+         self.column_name_2: 'bool'})
+
+        expected_check_results = {
+            self.column_name:{
+                numpy.nan: {
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.25,
+                    'passed': True
+                }
+            },
+            self.column_name_2:{
+                numpy.nan: {
+                    'percentage_diff': 0.25,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.50,
+                    'passed': False
+                }
+            }
+        }
+
+        checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
+        dataframe_to_validate = dataframe.copy()
+        dataframe_to_validate.iloc[0,1] = numpy.nan
+        results = checker.validate(dataframe_to_validate)
+        self.assertEqual(expected_check_results, results)
+
+    def test_special_values_checker_for_string_input_returns_expected_result(self):
+        data = {
+            self.column_name: [self.faker.word()]*3 + [numpy.nan],
+            self.column_name_2: [self.faker.word()]*3 + [numpy.nan]
+        }
+
+        dataframe = pandas.DataFrame(data)
+        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
+
+        special_values = [numpy.nan]
+
+        bin_stats = {
+            self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name])),
+            self.column_name_2: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name_2]))
+        }
+
+        checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], {self.column_name: 'str',
+         self.column_name_2: 'str'})
+
+        expected_check_results = {
+            self.column_name:{
+                numpy.nan: {
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.25,
+                    'passed': True
+                }
+            },
+            self.column_name_2:{
+                numpy.nan: {
+                    'percentage_diff': 0.25,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.50,
+                    'passed': False
+                }
+            }
+        }
+
+        checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
+        dataframe_to_validate = dataframe.copy()
+        dataframe_to_validate.iloc[0,1] = numpy.nan
+        results = checker.validate(dataframe_to_validate)
+        self.assertEqual(expected_check_results, results)
+
     def test_special_values_check_for_mulitple_column_df_against_itself_including_nans_returns_all_passed(self):
         expected_check_results = {
             self.column_name:{

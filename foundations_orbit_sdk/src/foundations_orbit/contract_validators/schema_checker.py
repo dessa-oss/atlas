@@ -149,7 +149,7 @@ class SchemaChecker(object):
 
     @staticmethod
     def _dataframe_statistics(dataframe):
-        import numpy
+        import numpy, datetime
         column_names = list(dataframe.columns)
         column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
         number_of_rows = len(dataframe)
@@ -158,7 +158,13 @@ class SchemaChecker(object):
             if col_type == "object":
                 object_type_column = dataframe[col_name]
                 string_column_mask = [type(value) == str or numpy.isnan(value) for value in object_type_column]
+                date_column_mask = [type(value) == datetime or value != value for value in object_type_column]
+                bool_column_mask = [type(value) == bool or value != value for value in object_type_column]
                 if all(string_column_mask):
-                    column_types[col_name] = "str"
+                    column_types[col_name] = 'str'
+                elif all(date_column_mask):
+                    column_types[col_name] = 'datetime'
+                elif all(bool_column_mask):
+                    column_types[col_name] = 'bool'
 
         return column_names, column_types, number_of_rows
