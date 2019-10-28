@@ -1,0 +1,34 @@
+---
+  
+- name: Install ansible dependencies
+  gather_facts: False
+  hosts: "tag_Name_{{ instance_name }}"
+  become: yes  
+  tasks:
+  - name: Wait 600 seconds for target connection to become reachable/usable
+    wait_for_connection:
+
+- name: Login and Pull Docker Images
+  hosts: "tag_Name_{{ instance_name }}"
+  become: yes
+  tasks:
+    - name : Load All Docker Images needed
+      shell: /home/ubuntu/scheduler_installer.py -N -i 
+
+    - name : Login Docker
+      shell: docker login docker.shehanigans.net -u {{ NEXUS_USER }} -p {{ NEXUS_PASSWORD }}
+    - name : Login Docker staging
+      shell: docker login docker-staging.shehanigans.net -u {{ NEXUS_USER }} -p {{ NEXUS_PASSWORD }}
+    
+    - name : Pull Orbit Worker Images
+      shell: docker pull docker-staging.shehanigans.net/orbit/worker:latest
+    - name : Retag Orbit Worker Images
+      shell: docker tag docker-staging.shehanigans.net/orbit/worker:latest orbit/worker:latest
+      
+    - name : Pull Atlas Worker Images
+      shell: docker pull docker-staging.shehanigans.net/atlas-ce/worker:latest
+    - name : Retag Atlas Worker Images
+      shell: docker pull docker-staging.shehanigans.net/atlas-ce/worker:latest atlas-ce/worker:latest
+    
+    - name : 'Using Scheduler Installer to setup configs'
+      shell: /home/ubuntu/scheduler_installer.py -N -c 

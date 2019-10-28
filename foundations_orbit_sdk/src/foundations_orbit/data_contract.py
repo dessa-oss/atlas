@@ -26,8 +26,7 @@ class DataContract(object):
 
         self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
         self.schema_test = SchemaChecker(self._column_names, self._column_types)
-        ## Functionality added to configure for each individual checker 
-        # self._remove_object_columns_and_types(self._column_names, self._column_types)
+        self._remove_object_columns_and_types(self._column_names, self._column_types)
 
         self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
 
@@ -60,6 +59,23 @@ class DataContract(object):
             check_min_max=True,
             distribution=default_distribution
         )
+
+    def exclude(self, attributes):
+        if type(attributes) == str:
+            attributes = [attributes]
+
+        self.special_value_test.exclude(attributes=attributes)
+        self.distribution_test.exclude(attributes=attributes)
+        self.min_max_test.exclude(attributes=attributes)
+
+    def temp_exclude(self, attributes):
+        if type(attributes) == str:
+            attributes = [attributes]
+
+        self.special_value_test.temp_exclude(attributes=attributes)
+        self.distribution_test.temp_exclude(attributes=attributes)
+        self.min_max_test.temp_exclude(attributes=attributes)
+
 
     def save(self, monitor_package_directory):
         with open(self._data_contract_file_path(monitor_package_directory), 'wb') as contract_file:
@@ -102,8 +118,14 @@ class DataContract(object):
 
         columns_to_validate, types_to_validate, row_count_to_check = self._dataframe_statistics(dataframe_to_validate)
 
+        attributes_to_ignore = []
         validation_report = {}
         validation_report['schema_check_results'] = self.schema_test.validate(dataframe_to_validate)
+
+        if not validation_report['schema_check_results']['passed'] and validation_report['schema_check_results'].get('cols', None):
+            for column_to_ignore in validation_report['schema_check_results']['cols'].keys():
+                attributes_to_ignore.append(column_to_ignore)
+            self.temp_exclude(attributes=attributes_to_ignore)
 
         if self.options.check_row_count:
             validation_report['row_count'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
@@ -141,6 +163,8 @@ class DataContract(object):
 
         self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, self.summary.serialized_output())
 
+        self._modify_validation_report_with_schema_failures(validation_report, attributes_to_ignore)
+
         return validation_report
 
     def __eq__(self, other):
@@ -162,9 +186,23 @@ class DataContract(object):
         import pickle
         return pickle.loads(serialized_contract)
 
+    def _modify_validation_report_with_schema_failures(self, validation_report, attributes_to_ignore):
+        for test_name, test_dictionary in validation_report.items():
+            if test_name == 'dist_check_results':
+                for attribute in attributes_to_ignore:
+                    test_dictionary[attribute] = {"bin_passed": False, "message": "Schema Test Failed"}
+            elif test_name == 'special_values_check_results':
+                for attribute in attributes_to_ignore:
+                    test_dictionary[attribute] = {"passed": False, "message": "Schema Test Failed"}
+            elif test_name == 'special_values_check_results':
+                for attribute in attributes_to_ignore:
+                    test_dictionary[attribute]['min_test'] = {"passed": False, "message": "Schema Test Failed"}
+                    test_dictionary[attribute]['max_test'] = {"passed": False, "message": "Schema Test Failed"}
+
     @staticmethod
     def _dataframe_statistics(dataframe):
         import numpy
+        import datetime
         column_names = list(dataframe.columns)
         column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
         number_of_rows = len(dataframe)
@@ -173,8 +211,15 @@ class DataContract(object):
             if col_type == "object":
                 object_type_column = dataframe[col_name]
                 string_column_mask = [type(value) == str or numpy.isnan(value) for value in object_type_column]
+                date_column_mask = [type(value) == datetime or value != value for value in object_type_column]
+                bool_column_mask = [type(value) == bool or value != value for value in object_type_column]
                 if all(string_column_mask):
-                    column_types[col_name] = "str"
+                    column_types[col_name] = 'str'
+                elif all(date_column_mask):
+                    column_types[col_name] = 'datetime'
+                elif all(bool_column_mask):
+                    column_types[col_name] = 'bool'
+                
 
         return column_names, column_types, number_of_rows
 
@@ -185,6 +230,3 @@ class DataContract(object):
             if column_type == 'object':
                 column_names.remove(column_name)
                 column_names_to_delete.append(column_name)
-
-        for column_name in column_names_to_delete:
-            column_types.pop(column_name)

@@ -52,12 +52,10 @@ def count_and_remove_special_values(ref_special_values, current_values):
     # count and remove special values
     current_special_value_percentages = list()
     for sv in ref_special_values:
-        if np.isnan(sv) and current_values.dtype.kind in {'u', 'i', 'f', 'c'}:
-            sv_count = len(current_values[np.isnan(current_values)])
-        elif not np.isnan(sv):
-            sv_count = len(current_values[current_values == sv])
+        if np.isnan(sv):
+            sv_count = len(list(filter(lambda val: val!=val, current_values)))  # counts the number of nans in current_values
         else:
-            sv_count = 0
+            sv_count = len(current_values[current_values == sv])
         current_special_value_percentages.append(sv_count / n_current_vals)
         # drop current special value
         current_values = current_values[current_values != sv]

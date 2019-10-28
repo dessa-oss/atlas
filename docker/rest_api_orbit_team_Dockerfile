@@ -1,0 +1,36 @@
+# Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+# Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+# Written by Susan Davis <t.rogers@dessa.com>, 10 2019
+
+FROM tiangolo/uwsgi-nginx-flask:python3.6-alpine3.8
+
+ARG main_file
+
+# COPY --from=lachlanevenson/k8s-kubectl:v1.10.13 /usr/local/bin/kubectl /usr/local/bin/kubectl
+RUN mkdir -p /var/foundations ~/.ssh
+
+ENV SERVER_NAME=localhost
+
+WORKDIR /var/foundations
+COPY ./tmp/pip_wheels /var/foundations/
+
+RUN apk add --no-cache alpine-sdk python-dev gcc gfortran libressl-dev libffi-dev linux-headers openblas-dev perl
+
+RUN pip install -U pip setuptools wheel
+RUN pip install pandas==0.23.3
+RUN pip install scipy==1.3.1
+
+RUN find -iname "foundations_internal-*.whl" | xargs pip install \
+    && find -iname "foundations_events-*.whl" | xargs pip install \
+    && find -iname "foundations_contrib-*.whl" | xargs pip install \
+    && find -iname "dessa_foundations-*.whl" | xargs pip install \
+    && find -iname "foundations_local_docker_scheduler_plugin-*.whl" | xargs pip install \
+    && find -iname "foundations_core_rest_api_components-*.whl" | xargs pip install
+
+RUN find -iname "foundations_orbit*.whl" | xargs pip install \
+    && find -iname "foundations_orbit_rest_api-*.whl" | xargs pip install \
+    && echo "Completed foundations package installation"
+
+WORKDIR /app/
+COPY docker/${main_file} /app/main.py

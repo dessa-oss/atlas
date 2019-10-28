@@ -34,7 +34,7 @@ def main(argv):
         rest_api_docker_image = 'foundations-rest-api'
         rest_api_main_file = 'run_api_server.py'
         gui_directory = 'foundations_ui'
-        gui_docker_file = 'gui_Dockerfile'
+        gui_docker_file = 'gui_ce_Dockerfile'
         gui_docker_image = 'foundations-gui'
     elif atlas_or_orbit == 'orbit':
         rest_api_docker_image = 'foundations-orbit-rest-api'
