@@ -5,6 +5,7 @@ nexus_registry = os.environ['NEXUS_DOCKER_REGISTRY']
 
 from build_gui import build_and_tag_gui_image
 
+
 def main(argv):
     rest_api_docker_image = 'foundations-orbit-rest-api'
     rest_api_docker_file = 'docker/rest_api_orbit_team_Dockerfile'
@@ -15,6 +16,7 @@ def main(argv):
 
     build_and_tag_gui_image('.', rest_api_docker_file, f'{nexus_registry}/{rest_api_docker_image}', buildargs={'main_file': rest_api_main_file})
     build_and_tag_gui_image(gui_directory, gui_docker_file, f'{nexus_registry}/{gui_docker_image}')
+
 
 if __name__ == '__main__':
     import sys

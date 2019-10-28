@@ -1,0 +1,2 @@
+-r ./foundations_requirements.txt
+pandas==0.25.2
