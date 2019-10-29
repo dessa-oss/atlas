@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
+from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats, create_bin_stats_categorical
 import pandas as pd
 import numpy as np
 
@@ -212,4 +212,142 @@ class TestCreateBinStats(Spec):
 
         self.assertEqual(expected_output, temp_output)
 
+    def test_create_bin_stats_categorical_returns_empty_dict_when_empty_arguments_passed(self):
+        import numpy, pandas
+        result = create_bin_stats_categorical(special_values=[], col_values=pandas.Series([]), min_category_threshold=0)
+
+        self.assertEqual(result, [])
     
+    def test_create_bin_stats_categorical_returns_expected_output_with_single_value_input(self):
+        import numpy, pandas
+        single_value_series = pandas.Series([1]*100)
+        result = create_bin_stats_categorical(special_values=[], col_values=single_value_series, min_category_threshold=0)
+
+        expected_result = [
+            {
+                'category_value':1,
+                'percentage':1.0
+            },
+            {
+                'other_bins':True,
+                'percentage':0
+            }
+        ]
+        self.assertEqual(result, expected_result)
+
+
+    def test_create_bin_stats_categorical_returns_expected_output_with_single_value_input_and_nan_special_value(self):
+        import pandas
+        single_value_series = pandas.Series([1]*90 + [np.nan]*10)
+        result = create_bin_stats_categorical(special_values=[np.nan], col_values=single_value_series, min_category_threshold=0)
+
+        expected_result = [
+            {
+                'value': str(np.nan),
+                'percentage': 0.1
+            },
+            {
+                'category_value':1,
+                'percentage':0.90
+            },
+            {
+                'other_bins':True,
+                'percentage':0
+            }
+        ]
+
+        self.assertEqual(result, expected_result)
+
+    def test_create_bin_stats_categorical_returns_expected_output_with_multiple_cateogry_input(self):
+        import pandas
+        single_value_series = pandas.Series([1]*20 +  [2]*30 + [3]*30 + [4]*10 + [np.nan]*10)
+        result = create_bin_stats_categorical(special_values=[np.nan], col_values=single_value_series, min_category_threshold=0)
+
+        expected_result = [
+            {
+                'value': str(np.nan),
+                'percentage': 0.1
+            },
+            {
+                'category_value':1,
+                'percentage':0.2
+            },
+            {
+                'category_value':2,
+                'percentage':0.3
+            },
+            {
+                'category_value':3,
+                'percentage':0.3
+            },
+            {
+                'category_value':4,
+                'percentage':0.1
+            },
+            {
+                'other_bins':True,
+                'percentage':0
+            }
+        ]
+
+        self.assertEqual(result, expected_result)
+
+    def test_create_bin_stats_categorical_returns_expected_output_with_multiple_cateogry_input_and_multiple_special_values(self):
+        import pandas
+        single_value_series = pandas.Series([1]*20 +  [2]*30 + [np.nan]*10 + [np.inf]*20 + [7]*20)
+        result = create_bin_stats_categorical(special_values=[np.nan, np.inf, 7], col_values=single_value_series, min_category_threshold=0)
+
+        expected_result = [
+            {
+                'value': str(np.nan),
+                'percentage': 0.1
+            },
+            {
+                'value': np.inf,
+                'percentage': 0.2
+            },
+            {
+                'value': 7,
+                'percentage': 0.2
+            },
+            {
+                'category_value':1,
+                'percentage':0.2
+            },
+            {
+                'category_value':2,
+                'percentage':0.3
+            },
+            {
+                'other_bins':True,
+                'percentage':0
+            }
+        ]
+
+        self.assertEqual(result, expected_result)
+
+    def test_create_bin_stats_categorical_returns_expected_output_with_multiple_cateogry_input_and_min_treshold(self):
+        import pandas
+        single_value_series = pandas.Series([1]*50 +  [2]*30 + [4]*5 + [5]*5 + [np.nan]*10)
+        result = create_bin_stats_categorical(special_values=[np.nan], col_values=single_value_series, min_category_threshold=0.1)
+
+        expected_result = [
+            {
+                'value': str(np.nan),
+                'percentage': 0.1
+            },
+            {
+                'category_value':1,
+                'percentage':0.5
+            },
+            {
+                'category_value':2,
+                'percentage':0.3
+            },
+            {
+                'other_bins':True,
+                'percentage':0.1
+            }
+        ]
+
+        self.assertEqual(result, expected_result)

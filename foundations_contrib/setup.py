@@ -26,9 +26,11 @@ exclude = []
 if cli == 'atlas':
     exclude.append('*sub_parsers.monitor*')
     exclude.append('*sub_parsers.orbit*')
+    exclude.append('*sub_parsers.setup*')
 elif cli == 'orbit':
     exclude.append('*sub_parsers.orbit*')
     exclude.append('*sub_parsers.atlas*')
+    exclude.append('*sub_parsers.setup*')
 
 here = path.abspath(path.dirname(__file__))
 build_version = environ.get('build_version', '0.0.0')
