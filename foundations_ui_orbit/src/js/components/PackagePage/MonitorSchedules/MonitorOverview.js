@@ -83,7 +83,7 @@ class MonitorOverview extends Component {
     // const { editMode } = this.state;
     const { calDate, calDateTimeEnd } = this.state;
     const nextRun = monitorResult.next_run_time
-      ? moment.unix(monitorResult.next_run_time).format("YYYY-MM-DD MM:SS")
+      ? moment.unix(monitorResult.next_run_time).format("YYYY-MM-DD HH:mm:ss")
       : "None scheduled";
 
     const status = monitorResult.status.split("")[0].toUpperCase() + monitorResult.status.slice(1);
@@ -92,27 +92,30 @@ class MonitorOverview extends Component {
     const endTime = monitorResult.schedule.end_date ? monitorResult.schedule.end_date : "Not specified";
 
     const scheduleOptions = [
-      { label: "Year", value: monitorResult.schedule.year },
-      { label: "Month", value: monitorResult.schedule.month },
-      { label: "Week", value: monitorResult.schedule.week },
-      { label: "Day", value: monitorResult.schedule.day },
-      { label: "Hour", value: monitorResult.schedule.hour },
-      { label: "Minute", value: monitorResult.schedule.minute },
-      { label: "Second", value: monitorResult.schedule.second }
+      { label: "Years", value: monitorResult.schedule.year },
+      { label: "Months", value: monitorResult.schedule.month },
+      { label: "Weeks", value: monitorResult.schedule.week },
+      { label: "Days", value: monitorResult.schedule.day },
+      { label: "Hours", value: monitorResult.schedule.hour },
+      { label: "Minutes", value: monitorResult.schedule.minute },
+      { label: "Seconds", value: monitorResult.schedule.second }
     ];
 
     function findScheduleRepeat(schedule) {
-      const repeatOn = Object.keys(schedule).filter(timeFrame => {
-        return schedule[timeFrame] && schedule[timeFrame].toString().includes("/");
-      });
-      const jobHasSchedule = repeatOn[0];
-      if (jobHasSchedule) {
-        const formattedKey = repeatOn[0][0].toUpperCase() + repeatOn[0].slice(1);
-        return scheduleOptions.filter(timeFrame => timeFrame.label === formattedKey)[0];
+      for (let i = 0; i < schedule.length; i += 1) {
+        if (schedule[i].value !== "*") {
+          if (schedule[i].value.includes("/")) {
+            return {
+              label: schedule[i].label,
+              value: schedule[i].value.split("/")[1]
+            };
+          }
+          return schedule[i];
+        }
       }
     }
 
-    const defaultScheduleValue = findScheduleRepeat(monitorResult.schedule);
+    const defaultScheduleValue = findScheduleRepeat(scheduleOptions);
 
     const calStartTime = startTime.split(" ").slice(0, 4).join(" ");
     const calEndTime = endTime.split(" ").slice(0, 4).join(" ");
@@ -120,15 +123,19 @@ class MonitorOverview extends Component {
     const calStartTime2 = startTime.split(" ")[4];
     const calEndTime2 = endTime.split(" ")[4];
 
+    const clockTimeHour = monitorResult.schedule.hour;
+    const clockTimeMinute = monitorResult.schedule.minute;
+    const clockTimeSecond = monitorResult.schedule.second;
+
+    const clockTime = `${clockTimeHour}:${clockTimeMinute}:${clockTimeSecond}`;
+
     return (
       <div className="monitor-info">
         <div className="monitor-overview">
           <h3>Overview</h3>
           <div className="monitor-overview-menu">
-            {/* <div className="i--icon-open" /> */}
             <div className="i--icon-start" onClick={this.resumeMonitor} />
             <div className="i--icon-pause" onClick={this.pauseMonitor} />
-            {/* <div className="i--icon-delete" onClick={this.deleteMonitor} /> */}
           </div>
           <ul>
             <li>
@@ -159,7 +166,6 @@ class MonitorOverview extends Component {
         </div>
         <div className="monitor-details">
           <h3>Schedule Details</h3>
-          {/* <input onClick={this.changeEditMode} type="checkbox" /> */}
           {/* {findEditMode} */}
           <div>
             {/* <button type="button" onClick={this.changeEditMode} /> */}
@@ -168,37 +174,26 @@ class MonitorOverview extends Component {
             <li>
               <div className="monitor-overview-key">Repeats every:</div>
               <div className="monitor-overview-value">
+                <input
+                  value={defaultScheduleValue.value}
+                  className="monitor-repeat-value"
+                  type="number"
+                />
                 <Select
                   options={scheduleOptions}
                   className="react-select"
                   defaultValue={defaultScheduleValue}
                 />
-              </div>
-            </li>
-            <li>
-              <div className="monitor-overview-key">Starting time:</div>
-              <div className="monitor-overview-value">
+                <p> at </p>
                 <Flatpickr
-                  // value={calDateTimeEnd}
+                  value={clockTime}
+                  className="schedule-flatpickr"
                   onChange={time => { this.setState({ calDateTimeEnd: time }); }}
                   options={{
                     enableTime: true,
                     noCalendar: true,
                     dateFormat: "H:i",
                     defaultDate: calStartTime2
-                  }}
-                />
-              </div>
-            </li>
-            <li>
-              <div className="monitor-overview-key">Ending time:</div>
-              <div className="monitor-overview-value">
-                <Flatpickr
-                  options={{
-                    enableTime: true,
-                    noCalendar: true,
-                    dateFormat: "H:i",
-                    defaultDate: calEndTime2
                   }}
                 />
               </div>
@@ -213,28 +208,18 @@ class MonitorOverview extends Component {
                     altFormat: "F j, Y",
                     dateFormat: "Y-m-d",
                     defaultDate: [new Date(), "2020-10-30"],
-                    mode: "range",
-                    minDate: "today"
+                    mode: "range"
                   }}
                 />
               </div>
             </li>
             <div className="monitor-details-options">
               <button onClick={this.updateMonitorSchedule} type="button">Save</button>
-              {/* <button type="button">Cancel</button> */}
             </div>
           </ul>
         </div>
         <div className="monitor-calendar">
-          {/* <Calendar activeStartDate={new Date()} /> */}
-          {/* <Flatpickr
-            data-enable-time
-            value={new Date()}
-            options={{
-              inline: true,
-              minTime: new Date()
-            }}
-          /> */}
+          <h3> </h3>
         </div>
       </div>
     );

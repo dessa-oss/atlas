@@ -164,8 +164,8 @@
           ul {
             li {
               width: 400px;
-              padding-top: 8px;
-              padding-bottom: 8px;
+              padding-top: 10px;
+              margin-bottom: 30px;
               font-size: 14px;
               display: flex;
               .schedule-picker {
@@ -181,8 +181,17 @@
                 margin-left: 20px;
                 height: 34px;
                 p {
-                  width: 200px;
-                  margin-left: 30px;
+                  margin-left: 15px;
+                }
+                .monitor-repeat-value {
+                  width: 50px;
+                  height: 40px;
+                  margin-right: 20px;
+                  border-radius: 2px;
+                  border: 1px solid #ccc;
+                  color: #828282;
+                  font-weight: 900;
+                  text-align: center;
                 }
               }
               div {
@@ -195,6 +204,17 @@
                   font-weight: 900;
                   color: #828282;
                 }
+              }
+              .schedule-flatpickr {
+                border-radius: 5px;
+                margin-left: 20px;
+                height: 44px;
+                width: 80px;
+                border-radius: 2px;
+                border: 1px solid #ccc;
+                color: #828282;
+                font-weight: 900;
+                text-align: center;
               }
             }
             .monitor-details-options {
