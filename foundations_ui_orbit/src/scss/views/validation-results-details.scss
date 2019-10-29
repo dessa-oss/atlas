@@ -195,6 +195,7 @@
       display: inline-block;
       width: calc(75% - 1px);
       height: 100%;
+      overflow-y: scroll;
 
       .validation-results-tests-pane-empty-state {
         color: #4F4F4F;
