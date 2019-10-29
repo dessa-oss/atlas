@@ -71,7 +71,10 @@ from foundations.job_actions import *
 from foundations.artifacts import *
 from foundations.local_run import set_up_default_environment_if_present
 #Commented for Atlas CE
-from foundations_orbit import *
+try:
+    from foundations_orbit import *
+except ModuleNotFoundError:
+    pass
 from foundations.set_tensorboard_logdir import set_tensorboard_logdir
 
 def _append_module():

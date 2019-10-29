@@ -16,10 +16,16 @@ build_module () {
     unset BUILD_FOUNDATIONS_OBFUSCATED
 
     cd ${directory} && \
-        python setup.py sdist bdist_wheel && \
-        cd .. && \
-        mkdir -p ${cwd}/dist 2>/dev/null && \
-        cp $wheel_path ${cwd}/dist
+
+    if [ ${directory} = 'foundations_contrib' ]
+    then
+        export FOUNDATIONS_CLI='atlas'
+    fi
+
+    python setup.py sdist bdist_wheel && \
+    cd .. && \
+    mkdir -p ${cwd}/dist 2>/dev/null && \
+    cp $wheel_path ${cwd}/dist
 }
 
 cwd=`pwd`
