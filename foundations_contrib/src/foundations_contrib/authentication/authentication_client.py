@@ -4,7 +4,7 @@ import webbrowser
 
 from keycloak import KeycloakOpenID
 
-from typing import Callable
+from typing import Callable, Dict
 
 
 class AuthenticationClient:
@@ -19,6 +19,9 @@ class AuthenticationClient:
 
     def browser_login(self) -> None:
         webbrowser.open(self.authentication_url())
+
+    def token(self) -> Dict[str, str]:
+        self.client.token()
 
 
 def keycloak_client(conf: str) -> KeycloakOpenID:
