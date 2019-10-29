@@ -4,7 +4,7 @@ import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
 import Select from "react-select";
 import moment from "moment";
 import Flatpickr from "react-flatpickr";
-import Calendar from "react-calendar";
+// import Calendar from "react-calendar";
 
 class MonitorOverview extends Component {
   constructor(props) {
