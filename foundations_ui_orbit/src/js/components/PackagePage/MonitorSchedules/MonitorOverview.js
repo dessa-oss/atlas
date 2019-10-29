@@ -112,6 +112,8 @@ class MonitorOverview extends Component {
       }
     }
 
+    const defaultScheduleValue = findScheduleRepeat(monitorResult.schedule);
+
     const calStartTime = startTime.split(" ").slice(0, 4).join(" ");
     const calEndTime = endTime.split(" ").slice(0, 4).join(" ");
 
@@ -163,7 +165,7 @@ class MonitorOverview extends Component {
             {/* <button type="button" onClick={this.changeEditMode} /> */}
           </div>
           <ul>
-            {/* <li>
+            <li>
               <div className="monitor-overview-key">Repeats every:</div>
               <div className="monitor-overview-value">
                 <Select
@@ -172,8 +174,8 @@ class MonitorOverview extends Component {
                   defaultValue={defaultScheduleValue}
                 />
               </div>
-            </li> */}
-            {/* <li>
+            </li>
+            <li>
               <div className="monitor-overview-key">Starting time:</div>
               <div className="monitor-overview-value">
                 <Flatpickr
@@ -187,8 +189,8 @@ class MonitorOverview extends Component {
                   }}
                 />
               </div>
-            </li> */}
-            {/* <li>
+            </li>
+            <li>
               <div className="monitor-overview-key">Ending time:</div>
               <div className="monitor-overview-value">
                 <Flatpickr
@@ -200,7 +202,7 @@ class MonitorOverview extends Component {
                   }}
                 />
               </div>
-            </li> */}
+            </li>
             <li>
               <div className="monitor-overview-key">Date range:</div>
               <div className="monitor-overview-value">

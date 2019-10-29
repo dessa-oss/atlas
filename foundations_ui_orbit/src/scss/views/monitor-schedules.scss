@@ -54,8 +54,8 @@
           .monitor-status-table-cell {
             .status-icon {
               border-radius: 25px;
-              width: 20px;
-              height: 20px;
+              width: 25px;
+              height: 25px;
             }
           }
           &:not(:first-child) {
@@ -346,6 +346,21 @@
 .status-red {
   background-color: $color-status-red;
   background-image: url('../assets/svgs/status-error-icon.svg');
+  @include icon-helper;
+  width: 20px;
+  height: 20px;
+  // cursor: pointer;
+  opacity: 0.7;
+  border: none;
+  &:hover {
+    opacity: 1;
+  }
+  margin-top: 5px;
+}
+
+.status-paused-orange {
+  background-color: orange;
+  // background-image: url('../assets/svgs/icon-pause.svg');
   @include icon-helper;
   width: 20px;
   height: 20px;
