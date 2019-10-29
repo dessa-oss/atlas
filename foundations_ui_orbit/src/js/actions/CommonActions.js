@@ -18,6 +18,10 @@ const CommonActions = {
       d = parseFloat(d);
     }
     return `${Math.round(d * 100 * 1000) / 1000}%`;
+  },
+
+  nullToNA: val => {
+    return val === null ? "N/A" : val;
   }
 };
 

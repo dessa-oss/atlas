@@ -168,12 +168,12 @@ class ValidationResultsOverview extends Component {
     const columns = validationResult.attribute_names;
     const selectOptions = columns.map(col => ({ value: col, label: col }));
 
-    const expectedMissing = selectedOverview.expected_data_summary.percentage_missing;
-    const expectedMinimum = selectedOverview.expected_data_summary.minimum;
-    const expectedMaximum = selectedOverview.expected_data_summary.maximum;
-    const actualMissing = selectedOverview.actual_data_summary.percentage_missing;
-    const actualMinimum = selectedOverview.actual_data_summary.minimum;
-    const actualMaximum = selectedOverview.actual_data_summary.maximum;
+    const expectedMissing = CommonActions.nullToNA(selectedOverview.expected_data_summary.percentage_missing);
+    const expectedMinimum = CommonActions.nullToNA(selectedOverview.expected_data_summary.minimum);
+    const expectedMaximum = CommonActions.nullToNA(selectedOverview.expected_data_summary.maximum);
+    const actualMissing = CommonActions.nullToNA(selectedOverview.actual_data_summary.percentage_missing);
+    const actualMinimum = CommonActions.nullToNA(selectedOverview.actual_data_summary.minimum);
+    const actualMaximum = CommonActions.nullToNA(selectedOverview.actual_data_summary.maximum);
 
     const graph = (
       isDefaultSelectedOverview
