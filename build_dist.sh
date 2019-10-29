@@ -1,6 +1,7 @@
 #!/bin/bash
 
 wheel_suffix=`python -c "import sys; print(sys.version_info.major)"`
+cli=$1
 
 python -m pip install setuptools_scm
 export build_version=`python get_version.py`
@@ -16,11 +17,17 @@ build_module () {
     unset BUILD_FOUNDATIONS_OBFUSCATED
 
     cd ${directory} && \
-        python setup.py sdist bdist_wheel && \
-        cd .. && \
-        python -m pip install -U $wheel_path && \
-        mkdir -p ${cwd}/dist 2>/dev/null && \
-        cp $wheel_path ${cwd}/dist
+
+    if [ ${directory} = 'foundations_contrib' ]
+    then
+        export FOUNDATIONS_CLI=${cli}
+    fi
+
+    python setup.py sdist bdist_wheel && \
+    cd .. && \
+    python -m pip install -U $wheel_path && \
+    mkdir -p ${cwd}/dist 2>/dev/null && \
+    cp $wheel_path ${cwd}/dist
 }
 
 cwd=`pwd`
@@ -39,4 +46,6 @@ rm -rf dist/* && \
     build_module foundations_sdk dessa_foundations $cwd && \
     build_module foundations_core_rest_api_components foundations_core_rest_api_components $cwd && \
     build_module foundations_rest_api foundations_rest_api $cwd && \
-    build_module foundations_orbit_rest_api foundations_orbit_rest_api $cwd
+    build_module foundations_orbit_rest_api foundations_orbit_rest_api $cwd && \
+
+unset FOUNDATIONS_CLI
