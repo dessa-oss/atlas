@@ -15,63 +15,69 @@ def start(job_directory, command, project_name, name, env):
     import os
     import yaml
     from os import path
-    from foundations_contrib.change_directory import ChangeDirectory
     from foundations_contrib.set_job_resources import set_job_resources
     from foundations_contrib.global_state import current_foundations_context, config_manager
     from foundations_local_docker_scheduler_plugin.bundle_deployment import job_bundle, submit_job_bundle
     from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler
+    from foundations_contrib.cli.orbit_model_package_server import save_project_to_redis
+    from foundations_contrib.change_directory import ChangeDirectory
 
     _update_config(env)
     config = config_manager.config()
 
     with ChangeDirectory(job_directory):
-        with open('job.config.yaml', 'r') as file:
-            job_config = yaml.load(file.read())
+        try:
+            with open('job.config.yaml', 'r') as file:
+                job_config = yaml.load(file.read())
+        except IOError:
+            job_config = {}
 
-        project_name = project_name or job_config.get('project_name') or path.basename(os.getcwd())
-        name = name or job_config.get('monitor_name') or command[0].replace('.', '-')
-        monitor_package = f'{project_name}-{name}'
+    project_name = project_name or job_config.get('project_name') or path.basename(os.getcwd())
+    name = name or job_config.get('monitor_name') or command[0].replace('.', '-')
+    monitor_package = f'{project_name}-{name}'
 
-        bundle = job_bundle(monitor_package)
+    save_project_to_redis(project_name)
 
-        job_resource_args = {}
+    bundle = job_bundle(monitor_package)
 
-        if 'log_level' in job_config:
-            config['log_level'] = job_config['log_level']
-        if 'worker' in job_config:
-            config['worker_container_overrides'].update(job_config['worker'])
-        if 'num_gpus' in job_config:
-            job_resource_args['num_gpus'] = job_config.get('num_gpus')
+    job_resource_args = {}
 
-        config['worker_container_overrides']['args'] = command
-        if not os.path.exists(command[0]):
-            print(f"Hey, seems like your command '{command[0]}' is not an existing file in your current directory. If you are using Atlas's advanced custom docker image functionality and know what you are doing, you can ignore this message.")
+    if 'log_level' in job_config:
+        config['log_level'] = job_config['log_level']
+    if 'worker' in job_config:
+        config['worker_container_overrides'].update(job_config['worker'])
+    if 'num_gpus' in job_config:
+        job_resource_args['num_gpus'] = job_config.get('num_gpus')
 
-        set_job_resources(**job_resource_args)
+    config['worker_container_overrides']['args'] = command
+    if not os.path.exists(command[0]):
+        print(f"Hey, seems like your command '{command[0]}' is not an existing file in your current directory. If you are using Atlas's advanced custom docker image functionality and know what you are doing, you can ignore this message.")
 
-        response = submit_job_bundle(bundle)
+    set_job_resources(**job_resource_args)
 
-        if response.status_code != 200:
-            raise RuntimeError(f'Unable to submit job bundle. {response.text}')
+    response = submit_job_bundle(bundle)
 
-        foundations_context = current_foundations_context()
-        foundations_context.pipeline_context().provenance.monitor_name = name
-        username = _get_username()
-        monitor_job_spec = _get_monitor_job_spec(project_name, name, username, job_config, config, foundations_context)
-        monitor_gpu_spec = _get_monitor_gpu_spec(foundations_context)
-        monitor_metadata = {'project_name': project_name, 'username': username}
+    if response.status_code != 200:
+        raise RuntimeError(f'Unable to submit job bundle. {response.text}')
 
-        scheduler_url = config.get('scheduler_url', 'http://localhost:5000')
+    foundations_context = current_foundations_context()
+    foundations_context.pipeline_context().provenance.monitor_name = name
+    username = _get_username()
+    monitor_job_spec = _get_monitor_job_spec(project_name, name, username, job_config, config, foundations_context)
+    monitor_gpu_spec = _get_monitor_gpu_spec(foundations_context)
+    monitor_metadata = {'project_name': project_name, 'username': username}
 
-        CronJobScheduler(scheduler_url).schedule_job(
-            monitor_package,
-            monitor_job_spec,
-            job_config.get('schedule', {}),
-            metadata=monitor_metadata,
-            gpu_spec=monitor_gpu_spec
-        )
+    scheduler_url = config.get('scheduler_url', 'http://localhost:5000')
 
-        bundle.cleanup()
+    CronJobScheduler(scheduler_url).schedule_job(
+        monitor_package,
+        monitor_job_spec,
+        job_config.get('schedule', {}),
+        metadata=monitor_metadata,
+        gpu_spec=monitor_gpu_spec
+    )
+
+    bundle.cleanup()
 
 
 def pause(project_name, monitor_name, env='scheduler'):
@@ -104,6 +110,9 @@ def get_by_project(project_name, env=None):
 
     cron_job_scheduler = CronJobScheduler(config_manager.config()['scheduler_url'])
     return cron_job_scheduler.get_job_with_params(job_scheduler_request_param)
+
+def _get_job_config(job_directory):
+    pass
 
 def _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback):
     from foundations_contrib.global_state import config_manager

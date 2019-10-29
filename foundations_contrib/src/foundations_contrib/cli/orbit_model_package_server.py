@@ -49,7 +49,7 @@ def _save_model_to_redis(project_name, model_name, model_details):
     project_model_listings.update({model_name: serialized_model_information})
     redis_connection.hmset(f'projects:{project_name}:model_listing', project_model_listings)
 
-def _save_project_to_redis(project_name):
+def save_project_to_redis(project_name):
     from time import time
     from foundations_contrib.global_state import redis_connection
 
@@ -191,7 +191,7 @@ def _deploy_setup(project_name, model_name, project_directory, env='local', setu
         if _is_model_activated(project_name, model_name):
             raise ValueError(f'{model_name} exists and is activated in {project_name}. The model name must be unique.')
 
-    _save_project_to_redis(project_name)
+    save_project_to_redis(project_name)
     _log().debug(f'Project {project_name} successfully saved to redis')
     model_information =  _get_default_model_information()
     model_information['entrypoints']  = _load_entrypoints_from_manifest(project_manifest_file)

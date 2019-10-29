@@ -14,6 +14,14 @@ class TestOrbitMonitorPackageServer(Spec):
         mock_config_manager.config.return_value = {'scheduler_url': 'https://localhost:5000'}
 
     @let
+    def cwd(self):
+        return '.'
+
+    @let
+    def command(self):
+        return self.faker.word()
+
+    @let
     def monitor_name(self):
         return self.faker.word()
 
@@ -74,3 +82,11 @@ class TestOrbitMonitorPackageServer(Spec):
         from foundations_contrib.cli.orbit_monitor_package_server import get_by_project
         get_by_project(self.project_name, self.env)
         self.cron_job_scheduler.get_job_with_params.assert_called_once_with({'job_id_prefix':  self.project_name})
+
+    def test_start_handles_no_job_config_case(self):
+        from foundations_contrib.cli.orbit_monitor_package_server import start
+
+        mock_yaml_load = self.patch('yaml.load')
+        mock_yaml_load.side_effect = IOError
+        with self.assertRaises(KeyError):
+            start(self.cwd, self.command, None, None, None)
