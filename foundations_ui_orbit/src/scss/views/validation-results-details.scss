@@ -35,15 +35,25 @@
       align-items: center;
     }
 
+    .overview-summary-center {
+      width: 80%;
+    }
+
     .overview-labels, .overview-values {
       display: inline-block;
       margin-top: 20px;
       color: #828282;
       line-height: 20px;
+      overflow-x: hidden;
     }
 
     .overview-labels {
       margin-right: 30px;
+      width: calc(30% - 30px);
+    }
+
+    .overview-values {
+      width: 70%;
     }
 
     .overview-graph {
