@@ -66,6 +66,40 @@ class TestDataContractSummary(Spec):
         return pandas.DataFrame(data={'feat_1': values_1, 'feat_2': values_2}, dtype=numpy.float64)
 
     @let
+    def reference_dataframe_with_one_str_column(self):
+        import pandas
+        import numpy
+
+        values = []
+        for i in range(1, 12):
+            for _ in range(i):
+                values.append(str(i))
+
+        return pandas.DataFrame(data={'feat_1': values})
+
+    @let
+    def reference_dataframe_with_one_str_column_and_nans(self):
+        import pandas
+        import numpy
+
+        values = []
+        for i in range(1, 12):
+            for _ in range(i):
+                values.append(str(i))
+        nans = [numpy.nan] * 9
+        values.extend(nans)
+
+        return pandas.DataFrame(data={'feat_1': values})
+
+    @let
+    def reference_dataframe_with_one_bool_column(self):
+        import pandas
+
+        values = [True] * 5 + [False] * 10
+
+        return pandas.DataFrame(data={'feat_1': values})
+
+    @let
     def dataframe_to_validate_with_one_numerical_column(self):
         import pandas
         import numpy
@@ -76,6 +110,26 @@ class TestDataContractSummary(Spec):
                 values.append(12 - i)
 
         return pandas.DataFrame(data={'feat_1': values}, dtype=numpy.float64)
+
+    @let
+    def dataframe_to_validate_with_one_str_column(self):
+        import pandas
+        import numpy
+
+        values = []
+        for i in range(1, 12):
+            for _ in range(i):
+                values.append(str(12 - i))
+
+        return pandas.DataFrame(data={'feat_1': values})
+
+    @let
+    def dataframe_to_validate_with_one_bool_column(self):
+        import pandas
+
+        values = [True] * 10 + [False] * 5
+
+        return pandas.DataFrame(data={'feat_1': values})
 
     @let
     def dataframe_to_validate_with_one_numerical_column_and_different_attribute_name(self):
@@ -132,11 +186,12 @@ class TestDataContractSummary(Spec):
 
         return pandas.DataFrame(data={'feat_1': values_1, 'feat_2': values_2}, dtype=numpy.float64)
 
-    def _create_data_contract_summary(self, dataframe):
+    def _create_data_contract_summary(self, dataframe, column_types=None, categorical_columns=None):
         from foundations_orbit.data_contract_summary import DataContractSummary
         column_names = list(dataframe.columns)
-        column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
-        return DataContractSummary(dataframe, column_names, column_types)
+        if not column_types:
+            column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
+        return DataContractSummary(dataframe, column_names, column_types, categorical_columns)
 
     def _create_formatted_report(self, reference_dataframe):
         return {
@@ -433,3 +488,106 @@ class TestDataContractSummary(Spec):
         }
 
         self.assertEqual(expected_data, pickle.loads(data_contract_summary.serialized_output()))
+
+    def test_data_contract_summary_init_bins_reference_dataframe_with_one_str_column(self):
+        data_contract_summary = self._create_data_contract_summary(self.reference_dataframe_with_one_str_column, {'feat_1': 'str'}, {'feat_1': True})
+        attribute_summary = data_contract_summary.data_contract_summary['attribute_summaries']['feat_1']
+
+        expected_data = {
+            'expected_data_summary': {
+                'percentage_missing': 0.0,
+                'minimum': None,
+                'maximum': None
+            },
+            'binned_data': {
+                'bins': ['11', '10', '9', '8', '7', '6', '5', '4', '3', 'Other'],
+                'data': {
+                    'expected_data': [11, 10, 9, 8, 7, 6, 5, 4, 3, 3]
+                }
+            }
+        }
+
+        self.assertEqual(expected_data, attribute_summary)
+
+    def test_data_contract_summary_init_bins_reference_dataframe_with_one_str_column_with_nans(self):
+        data_contract_summary = self._create_data_contract_summary(self.reference_dataframe_with_one_str_column_and_nans, {'feat_1': 'str'}, {'feat_1': True})
+        attribute_summary = data_contract_summary.data_contract_summary['attribute_summaries']['feat_1']
+
+        expected_data = {
+            'expected_data_summary': {
+                'percentage_missing': 0.12,
+                'minimum': None,
+                'maximum': None
+            },
+            'binned_data': {
+                'bins': ['11', '10', '9', '8', '7', '6', '5', '4', '3', 'Other'],
+                'data': {
+                    'expected_data': [11, 10, 9, 8, 7, 6, 5, 4, 3, 3]
+                }
+            }
+        }
+
+        self.assertEqual(expected_data, attribute_summary)
+
+    def test_data_contract_summary_validation_creates_binned_summary_of_current_dataframe_against_reference_dataframe_with_str_column(self):
+        data_contract_summary = self._create_data_contract_summary(self.reference_dataframe_with_one_str_column, {'feat_1': 'str'}, {'feat_1': True})
+        data_contract_summary.validate(
+            self.dataframe_to_validate_with_one_str_column,
+            self._create_formatted_report(self.reference_dataframe_with_one_str_column)
+        )
+        attribute_summaries = data_contract_summary.data_contract_summary['attribute_summaries']
+
+        expected_data = {
+            'feat_1': {
+                'expected_data_summary': {
+                    'percentage_missing': 0.0,
+                    'minimum': None,
+                    'maximum': None
+                },
+                'actual_data_summary': {
+                    'percentage_missing': 0.0,
+                    'minimum': None,
+                    'maximum': None
+                },
+                'binned_data': {
+                    'bins': ['11', '10', '9', '8', '7', '6', '5', '4', '3', 'Other'],
+                    'data': {
+                        'expected_data': [11.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 3.0],
+                        'actual_data': [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 21.0]
+                    }
+                }
+            }
+        }
+        self.assertEqual(expected_data, attribute_summaries)
+
+    def test_data_contract_summary_validation_creates_binned_summary_of_current_dataframe_against_reference_dataframe_with_bool_column(self):
+        data_contract_summary = self._create_data_contract_summary(self.reference_dataframe_with_one_bool_column, {'feat_1': 'bool'}, {'feat_1': True})
+        data_contract_summary.validate(
+            self.dataframe_to_validate_with_one_bool_column,
+            self._create_formatted_report(self.reference_dataframe_with_one_bool_column)
+        )
+        attribute_summaries = data_contract_summary.data_contract_summary['attribute_summaries']
+
+        expected_data = {
+            'feat_1': {
+                'expected_data_summary': {
+                    'percentage_missing': 0.0,
+                    'minimum': None,
+                    'maximum': None
+                },
+                'actual_data_summary': {
+                    'percentage_missing': 0.0,
+                    'minimum': None,
+                    'maximum': None
+                },
+                'binned_data': {
+                    'bins': [False, True],
+                    'data': {
+                        'expected_data': [10.0, 5.0],
+                        'actual_data': [5.0, 10.0]
+                    }
+                }
+            }
+        }
+
+        self.assertEqual(expected_data, attribute_summaries)

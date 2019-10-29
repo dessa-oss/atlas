@@ -15,6 +15,7 @@ class DataContract(object):
         from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
         from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
         from foundations_orbit.data_contract_summary import DataContractSummary
+        from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
 
         self.options = self._default_options()
         self._contract_name = contract_name
@@ -24,7 +25,7 @@ class DataContract(object):
         else:
             self._dataframe = df
 
-        self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
+        self._column_names, self._column_types, self._number_of_rows = dataframe_statistics(self._dataframe)
 
 
         self._categorical_attributes = {}
@@ -38,7 +39,7 @@ class DataContract(object):
         self.special_value_test = SpecialValuesChecker(self.options, self._bin_stats, self._column_names, self._column_types, self._dataframe)
         self.distribution_test = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names, self._column_types)
         self.min_max_test = MinMaxChecker(self._column_types)
-        self.summary = DataContractSummary(self._dataframe, self._column_names, self._column_types)
+        self.summary = DataContractSummary(self._dataframe, self._column_names, self._column_types, self._categorical_attributes)
 
     @staticmethod
     def _default_options():
@@ -133,6 +134,7 @@ class DataContract(object):
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         from foundations_orbit.report_formatter import ReportFormatter
+        from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
 
         project_name = os.environ.get('PROJECT_NAME', 'default')
         monitor_name = os.environ.get('MONITOR_NAME', os.path.basename(__file__))
@@ -142,7 +144,7 @@ class DataContract(object):
         if inference_period is None:
             inference_period = str(datetime.datetime.now())
 
-        columns_to_validate, types_to_validate, row_count_to_check = self._dataframe_statistics(dataframe_to_validate)
+        columns_to_validate, types_to_validate, row_count_to_check = dataframe_statistics(dataframe_to_validate)
 
         attributes_to_ignore = []
         validation_report = {}
@@ -224,30 +226,6 @@ class DataContract(object):
                 for attribute in attributes_to_ignore:
                     test_dictionary[attribute]['min_test'] = {"passed": False, "message": "Schema Test Failed"}
                     test_dictionary[attribute]['max_test'] = {"passed": False, "message": "Schema Test Failed"}
-
-    @staticmethod
-    def _dataframe_statistics(dataframe):
-        import numpy
-        import datetime
-        column_names = list(dataframe.columns)
-        column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
-        number_of_rows = len(dataframe)
-
-        for col_name, col_type in column_types.items():
-            if col_type == "object":
-                object_type_column = dataframe[col_name]
-                string_column_mask = ['str' in str(type(value)) or value != value for value in object_type_column]
-                date_column_mask = [type(value) == datetime or value != value for value in object_type_column]
-                bool_column_mask = [type(value) == bool or value != value for value in object_type_column]
-                if all(string_column_mask):
-                    column_types[col_name] = 'str'
-                elif all(date_column_mask):
-                    column_types[col_name] = 'datetime'
-                elif all(bool_column_mask):
-                    column_types[col_name] = 'bool'
-                
-
-        return column_names, column_types, number_of_rows
 
     @staticmethod
     def _remove_object_columns_and_types(column_names, column_types):

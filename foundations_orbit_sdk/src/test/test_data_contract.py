@@ -906,7 +906,8 @@ class TestDataContract(Spec):
             contract = DataContract(self.contract_name)
 
     def test_dataframe_statistics_returns_string_column_type_when_column_contains_strings_and_nans_only(self):
-        _,column_types,_ = DataContract._dataframe_statistics(self.dataframe_with_strings_and_nans)
+        from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
+        _,column_types,_ = dataframe_statistics(self.dataframe_with_strings_and_nans)
         self.assertEqual('str', column_types[self.column_name])
 
     def _test_special_values_checker_for_datatype_input_returns_expected_results(self, data):
