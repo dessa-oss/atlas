@@ -57,6 +57,37 @@ def create_bin_stats(special_values, max_bins, col_values):
     return bin_dicts
 
 
+def create_bin_stats_categorical(special_values, col_values, min_category_threshold=0.01):
+    bin_dicts = []
+    if len(col_values) == 0:
+        return bin_dicts
+
+    n_vals = len(col_values)
+
+    for special_value in special_values:
+        if special_value is np.nan:
+            sv_count = col_values.isna().sum()
+        else:
+            sv_count = len(col_values[col_values == special_value])
+
+        sv_dict = {'value': str(special_value) if special_value is np.nan else special_value, "percentage": sv_count/n_vals}
+        col_values = col_values[col_values != special_value]
+        bin_dicts.append(sv_dict)
+
+    col_values.dropna(inplace=True)
+
+    other_percentage = 0
+    for category in col_values.unique(): 
+        num_category_in_values = len(col_values[col_values == category])
+        percentage = num_category_in_values/n_vals
+        if percentage >= min_category_threshold:
+            bin_dicts.append({'category_value':category, 'percentage': num_category_in_values/n_vals})
+        else:
+            other_percentage += percentage
+    
+    bin_dicts.append({'other_bins':True, 'percentage':other_percentage})
+    return bin_dicts
+
 def bin_values(values, max_num_bins):
     values = values[values != np.inf]
     n_unique_values = values.nunique()
