@@ -17,52 +17,68 @@ class ValidationResultsOverview extends Component {
       isDefaultSelectedOverview: true
     };
 
+    this.update = this.update.bind(this);
     this.reload = this.reload.bind(this);
     this.onChangeAttribute = this.onChangeAttribute.bind(this);
     this.defaultSelectedOverview = this.defaultSelectedOverview.bind(this);
   }
 
-  componentDidMount() {
+  update() {
     const { validationResult } = this.props;
 
     if (validationResult.attribute_names.length > 0) {
-      this.setState({ selectedAttribute: validationResult.attribute_names[0] }, this.reload);
+      this.setState({ selectedAttribute: null }, this.reload);
     } else {
       this.reload();
     }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { validationResult } = this.props;
+    if (!CommonActions.deepEqual(validationResult, prevProps.validationResult)) {
+      this.update();
+    }
+  }
+
+  componentDidMount() {
+    this.update();
   }
 
   async reload() {
     const { selectedAttribute } = this.state;
     const { location, validationResult } = this.props;
 
-    if (location && !CommonActions.isEmptyObject(validationResult) && selectedAttribute) {
-      let overview = await ValidationResultsActions.getOverviewForAttribute(
-        validationResult,
-        location.state.project.name,
-        selectedAttribute
-      );
+    if (location && !CommonActions.isEmptyObject(validationResult)) {
+      if (selectedAttribute) {
+        let overview = await ValidationResultsActions.getOverviewForAttribute(
+          validationResult,
+          location.state.project.name,
+          selectedAttribute.value
+        );
 
-      let isDefaultSelectedOverview = false;
+        let isDefaultSelectedOverview = false;
 
-      if (overview.expected_data_summary === null || overview.actual_data_summary === null) {
-        overview = this.defaultSelectedOverview();
-        isDefaultSelectedOverview = true;
+        if (overview.expected_data_summary === null || overview.actual_data_summary === null) {
+          overview = this.defaultSelectedOverview();
+          isDefaultSelectedOverview = true;
+        } else {
+          overview.actual_data_summary.percentage_missing = CommonActions.decimalToPercentage(
+            overview.actual_data_summary.percentage_missing
+          );
+          overview.expected_data_summary.percentage_missing = CommonActions.decimalToPercentage(
+            overview.expected_data_summary.percentage_missing
+          );
+        }
+
+        this.setState({ selectedOverview: overview, isDefaultSelectedOverview: isDefaultSelectedOverview });
       } else {
-        overview.actual_data_summary.percentage_missing = CommonActions.decimalToPercentage(
-          overview.actual_data_summary.percentage_missing
-        );
-        overview.expected_data_summary.percentage_missing = CommonActions.decimalToPercentage(
-          overview.expected_data_summary.percentage_missing
-        );
+        this.setState({ isDefaultSelectedOverview: true });
       }
-
-      this.setState({ selectedOverview: overview, isDefaultSelectedOverview: isDefaultSelectedOverview });
     }
   }
 
   onChangeAttribute(selectedOption) {
-    this.setState({ selectedAttribute: selectedOption.value }, this.reload);
+    this.setState({ selectedAttribute: selectedOption }, this.reload);
   }
 
   defaultSelectedOverview() {
@@ -88,7 +104,7 @@ class ValidationResultsOverview extends Component {
   }
 
   render() {
-    const { selectedOverview, isDefaultSelectedOverview } = this.state;
+    const { selectedAttribute, selectedOverview, isDefaultSelectedOverview } = this.state;
     const { validationResult } = this.props;
     const date = moment(validationResult.date).format("YYYY-MM-DD h:mm A");
     const sign = validationResult.row_count.row_count_diff >= 0 ? "+" : "-";
@@ -164,7 +180,6 @@ class ValidationResultsOverview extends Component {
         ? (
           <div className="empty-overview-graph-container">
             <div className="empty-overview-graph" />
-            This column type is not supported yet.
           </div>
         )
         : <HighchartsReact highcharts={Highcharts} options={options} />
@@ -201,7 +216,8 @@ class ValidationResultsOverview extends Component {
         <div className="overview-graph-stats">
           <Select
             className="attribute-select"
-            defaultValue={selectOptions[0]}
+            defaultValue={null}
+            value={selectedAttribute}
             options={selectOptions}
             onChange={this.onChangeAttribute}
           />
