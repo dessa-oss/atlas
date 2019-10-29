@@ -62,11 +62,11 @@ class MonitorListTableRow extends Component {
 
     function addStatus(rowStatus) {
       if (rowStatus === "paused") {
-        return <div className="status-icon status-green" />;
+        return <div className="status-icon status-paused-orange" />;
       }
 
       if (rowStatus === "active") {
-        return <div className="status-icon status-red" />;
+        return <div className="status-icon status-green" />;
       }
     }
 
