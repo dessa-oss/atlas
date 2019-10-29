@@ -10,23 +10,38 @@ from tabulate import tabulate
 class CommandLineInterface(object):
 
     def __init__(self, args):
-        from foundations_contrib.cli.sub_parsers.setup_parser import SetupParser
-        from foundations_contrib.cli.sub_parsers.orbit_parser import OrbitParser
-        from foundations_contrib.cli.sub_parsers.monitor_parser import MonitorParser
-        from foundations_contrib.cli.sub_parsers.atlas_parser import AtlasParser
-        
         self._input_arguments = args
 
         self._argument_parser = self._initialize_argument_parser()
         self._subparsers = self._argument_parser.add_subparsers()
 
+        try:
+            from foundations_contrib.cli.sub_parsers.setup.setup_parser import SetupParser
+            SetupParser(self).add_sub_parser()
+        except ModuleNotFoundError:
+            pass
+
+        try:
+            from foundations_contrib.cli.sub_parsers.orbit.orbit_parser import OrbitParser
+            OrbitParser(self).add_sub_parser()
+        except ModuleNotFoundError:
+            pass
+
+        try:
+            from foundations_contrib.cli.sub_parsers.monitor.monitor_parser import MonitorParser
+            MonitorParser(self).add_sub_parser()
+        except ModuleNotFoundError:
+            pass
+
+        try:
+            from foundations_contrib.cli.sub_parsers.atlas.atlas_parser import AtlasParser
+            AtlasParser(self).add_sub_parser()
+        except ModuleNotFoundError:
+            pass
+
         self._initialize_init_parser()
         self._initialize_info_parser()
 
-        SetupParser(self).add_sub_parser()
-        OrbitParser(self).add_sub_parser()
-        MonitorParser(self).add_sub_parser()
-        AtlasParser(self).add_sub_parser()
 
     def add_sub_parser(self, name, help=None):
         sub_parser = self._subparsers.add_parser(name, help=help)
