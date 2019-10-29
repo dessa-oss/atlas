@@ -51,11 +51,18 @@
       justify-content: center;
       align-items: center;
 
-      .empty-overview-graph {
-        background-image: url('../assets/svgs/empty-graph.svg');
-        @include icon-helper;
-        width: 200px;
-        height: 200px;
+      .empty-overview-graph-container {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+
+        .empty-overview-graph {
+          background-image: url('../assets/svgs/empty-graph.svg');
+          @include icon-helper;
+          width: 70%;
+          height: 70%;
+          margin: auto;
+        }
       }
     }
 

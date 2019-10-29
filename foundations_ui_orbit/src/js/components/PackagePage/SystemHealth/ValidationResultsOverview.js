@@ -162,7 +162,7 @@ class ValidationResultsOverview extends Component {
     const graph = (
       isDefaultSelectedOverview
         ? (
-          <div>
+          <div className="empty-overview-graph-container">
             <div className="empty-overview-graph" />
             This column type is not supported yet.
           </div>
