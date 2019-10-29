@@ -6,23 +6,19 @@ client = docker.from_env()
 build_version = os.environ['build_version']
 nexus_registry = os.environ['NEXUS_DOCKER_REGISTRY']
 
-def build_and_tag_gui_image(path, dockerfile, repository, buildargs=None):
-    if buildargs is None:
-        buildargs = {}
+from build_gui import build_and_tag_gui_image
 
-    try:
-        image, image_logs = client.images.build(path=path, dockerfile=dockerfile, tag='{}:{}'.format(repository, build_version), buildargs=buildargs)
-        image.tag(repository, tag='latest')
-        print_logs(image_logs)
-    except docker.errors.BuildError as ex:
-        print_logs(ex.build_log)
+def main(argv):
+    rest_api_docker_image = 'foundations-rest-api'
+    rest_api_docker_file = 'docker/rest_api_ce_Dockerfile'
+    rest_api_main_file = 'run_api_server.py'
+    gui_directory = 'foundations_ui'
+    gui_docker_file = 'gui_ce_Dockerfile'
+    gui_docker_image = 'foundations-gui'
 
-def print_logs(logs):
-    for line in logs:
-        if 'stream' in line:
-            print(line['stream'].strip())
+    build_and_tag_gui_image('.', rest_api_docker_file, f'{nexus_registry}/{rest_api_docker_image}', buildargs={'main_file': rest_api_main_file})
+    build_and_tag_gui_image(gui_directory, gui_docker_file, f'{nexus_registry}/{gui_docker_image}')
 
-build_and_tag_gui_image('.', 'docker/rest_api_ce_Dockerfile', '{}/foundations-rest-api'.format(nexus_registry), buildargs={'main_file': 'run_api_server.py'})
-# build_and_tag_gui_image('.', 'docker/rest_api_ce_Dockerfile', '{}/foundations-orbit-rest-api'.format(nexus_registry), buildargs={'main_file': 'run_orbit_api_server.py'})
-build_and_tag_gui_image('foundations_ui', 'gui_ce_Dockerfile', '{}/foundations-gui'.format(nexus_registry))
-# build_and_tag_gui_image('foundations_ui_orbit', 'orbit_gui_Dockerfile', '{}/foundations-orbit-gui'.format(nexus_registry))
+if __name__ == '__main__':
+    import sys
+    main(sys.argv)
