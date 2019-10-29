@@ -23,12 +23,14 @@
 
   .val-time-table-cell, .val-monitor-table-cell, .val-contract-table-cell, .val-critical-table-cell {
     display: inline-block;
-    width: 30%;
+    width: calc(30% - 5px);
     position: relative;
+    margin-right: 5px;
+    overflow-x: hidden;
   }
 
   .val-critical-table-cell {
-    width: 10%;
+    width: calc(10% - 5px);
     text-align: right;
 
     .val-critical-table-cell-critical {
