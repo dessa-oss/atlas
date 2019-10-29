@@ -69,13 +69,6 @@
         justify-content: center;
         align-items: center;
         flex-direction: column;
-
-        .empty-overview-graph {
-          background-image: url('../assets/svgs/empty-graph.svg');
-          @include icon-helper;
-          width: 70%;
-          height: 70%;
-        }
       }
     }
 

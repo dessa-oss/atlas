@@ -155,3 +155,10 @@ See assets/svgs/README.md for further information on SVG conversion process
   margin-right: 8px;
   vertical-align: top;
 }
+
+.empty-overview-graph {
+  background-image: url('../assets/svgs/empty-graph.svg');
+  @include icon-helper;
+  width: 70%;
+  height: 70%;
+}
