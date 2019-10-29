@@ -13,29 +13,13 @@ class ValidationResultsOverview extends Component {
 
     this.state = {
       selectedAttribute: null,
-      selectedOverview: {
-        expected_data_summary: {
-          percentage_missing: null,
-          minimum: null,
-          maximum: null
-        },
-        actual_data_summary: {
-          percentage_missing: null,
-          minimum: null,
-          maximum: null
-        },
-        binned_data: {
-          bins: [],
-          data: {
-            expected_data: [],
-            actual_data: []
-          }
-        }
-      }
+      selectedOverview: this.defaultSelectedOverview(),
+      isDefaultSelectedOverview: true
     };
 
     this.reload = this.reload.bind(this);
     this.onChangeAttribute = this.onChangeAttribute.bind(this);
+    this.defaultSelectedOverview = this.defaultSelectedOverview.bind(this);
   }
 
   componentDidMount() {
@@ -53,12 +37,27 @@ class ValidationResultsOverview extends Component {
     const { location, validationResult } = this.props;
 
     if (location && !CommonActions.isEmptyObject(validationResult) && selectedAttribute) {
-      const overview = await ValidationResultsActions.getOverviewForAttribute(
+      let overview = await ValidationResultsActions.getOverviewForAttribute(
         validationResult,
         location.state.project.name,
         selectedAttribute
       );
-      this.setState({ selectedOverview: overview });
+
+      let isDefaultSelectedOverview = false;
+
+      if (overview.expected_data_summary === null || overview.actual_data_summary === null) {
+        overview = this.defaultSelectedOverview();
+        isDefaultSelectedOverview = true;
+      } else {
+        overview.actual_data_summary.percentage_missing = CommonActions.decimalToPercentage(
+          overview.actual_data_summary.percentage_missing
+        );
+        overview.expected_data_summary.percentage_missing = CommonActions.decimalToPercentage(
+          overview.expected_data_summary.percentage_missing
+        );
+      }
+
+      this.setState({ selectedOverview: overview, isDefaultSelectedOverview: isDefaultSelectedOverview });
     }
   }
 
@@ -66,8 +65,30 @@ class ValidationResultsOverview extends Component {
     this.setState({ selectedAttribute: selectedOption.value }, this.reload);
   }
 
+  defaultSelectedOverview() {
+    return {
+      expected_data_summary: {
+        percentage_missing: "N/A",
+        minimum: "N/A",
+        maximum: "N/A"
+      },
+      actual_data_summary: {
+        percentage_missing: "N/A",
+        minimum: "N/A",
+        maximum: "N/A"
+      },
+      binned_data: {
+        bins: [],
+        data: {
+          expected_data: [],
+          actual_data: []
+        }
+      }
+    };
+  }
+
   render() {
-    const { selectedOverview } = this.state;
+    const { selectedOverview, isDefaultSelectedOverview } = this.state;
     const { validationResult } = this.props;
     const date = moment(validationResult.date).format("YYYY-MM-DD h:mm A");
     const sign = validationResult.row_count.row_count_diff >= 0 ? "+" : "-";
@@ -131,14 +152,23 @@ class ValidationResultsOverview extends Component {
     const columns = validationResult.attribute_names;
     const selectOptions = columns.map(col => ({ value: col, label: col }));
 
-    const expectedMissing = CommonActions.decimalToPercentage(
-      selectedOverview.expected_data_summary.percentage_missing
-    );
+    const expectedMissing = selectedOverview.expected_data_summary.percentage_missing;
     const expectedMinimum = selectedOverview.expected_data_summary.minimum;
     const expectedMaximum = selectedOverview.expected_data_summary.maximum;
-    const actualMissing = CommonActions.decimalToPercentage(selectedOverview.actual_data_summary.percentage_missing);
+    const actualMissing = selectedOverview.actual_data_summary.percentage_missing;
     const actualMinimum = selectedOverview.actual_data_summary.minimum;
     const actualMaximum = selectedOverview.actual_data_summary.maximum;
+
+    const graph = (
+      isDefaultSelectedOverview
+        ? (
+          <div>
+            <div className="empty-overview-graph" />
+            This column type is not supported yet.
+          </div>
+        )
+        : <HighchartsReact highcharts={Highcharts} options={options} />
+    );
 
     return (
       <div className="validation-results-overview">
@@ -166,7 +196,7 @@ class ValidationResultsOverview extends Component {
           </div>
         </div>
         <div className="overview-graph">
-          <HighchartsReact highcharts={Highcharts} options={options} />
+          {graph}
         </div>
         <div className="overview-graph-stats">
           <Select

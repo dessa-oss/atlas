@@ -50,6 +50,13 @@
       display: flex;
       justify-content: center;
       align-items: center;
+
+      .empty-overview-graph {
+        background-image: url('../assets/svgs/empty-graph.svg');
+        @include icon-helper;
+        width: 200px;
+        height: 200px;
+      }
     }
 
     .overview-graph-stats {
