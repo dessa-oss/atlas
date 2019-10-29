@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 from foundations_spec import *
-from foundations_contrib.cli.sub_parsers.orbit_parser import OrbitParser
+from foundations_contrib.cli.sub_parsers.orbit.orbit_parser import OrbitParser
 from foundations_contrib.cli.command_line_interface import CommandLineInterface
 
 
@@ -45,7 +45,7 @@ class TestOrbitParser(Spec):
         self.assertTrue(type(orbit_sub_parser._cli) is CommandLineInterface)
 
     def test_sub_parser_setup_parser_on_cli_instantiation(self):
-        mock_add_parser = self.patch('foundations_contrib.cli.sub_parsers.orbit_parser.OrbitParser.add_sub_parser')
+        mock_add_parser = self.patch('foundations_contrib.cli.sub_parsers.orbit.orbit_parser.OrbitParser.add_sub_parser')
         CommandLineInterface([''])
         mock_add_parser.assert_called_once()
 
@@ -56,7 +56,7 @@ class TestOrbitParser(Spec):
         mock_argument_parser.assert_any_call('orbit', help=help_msg)
 
     def test_orbit_sub_parser_is_triggered_when_orbit_command_is_provided(self):
-        mock_deploy = self.patch('foundations_contrib.cli.sub_parsers.orbit_parser.OrbitParser._kubernetes_orbit_model_serving_deploy')
+        mock_deploy = self.patch('foundations_contrib.cli.sub_parsers.orbit.orbit_parser.OrbitParser._kubernetes_orbit_model_serving_deploy')
         self._run_orbit_with_project_name_model_name_project_directory('project', 'model', 'dir')
         mock_deploy.assert_called_once()
 

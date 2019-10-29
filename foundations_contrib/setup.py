@@ -5,11 +5,30 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+import argparse
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
-from os import path, environ
+from os import path, environ, listdir
+from shutil import rmtree
+
+if 'build' in listdir():
+    rmtree('build')
+if 'dist' in listdir():
+    rmtree('dist')
+if 'foundations_contrib.egg-info' in listdir('src'):
+    rmtree('src/foundations_contrib.egg-info')
+
+cli = environ.get('FOUNDATIONS_CLI', '')
+exclude = []
+
+if cli == 'atlas':
+    exclude.append('*sub_parsers.monitor*')
+    exclude.append('*sub_parsers.orbit*')
+elif cli == 'orbit':
+    exclude.append('*sub_parsers.orbit*')
+    exclude.append('*sub_parsers.atlas*')
 
 here = path.abspath(path.dirname(__file__))
 build_version = environ.get('build_version', '0.0.0')
@@ -50,10 +69,9 @@ setup(
         'foundations-internal=={}'.format(build_version),
         'foundations-events=={}'.format(build_version)
     ],
-    packages=find_packages(package_source),
+    packages=find_packages(package_source, exclude=exclude),
     package_dir={'': package_source},
     package_data={
         'foundations_contrib': package_data,
     },
-    include_package_data=True
 )

@@ -42,7 +42,7 @@ class MonitorListTable extends Component {
 
     return (
       <div>
-        <div className="i--icon-refresh" onClick={this.reload} />
+        {/* <div className="i--icon-refresh" onClick={this.reload} /> */}
         <div className="monitor-listing">
           <div className="monitor-items">
             <div className="monitor-table-row" onClick={this.onClick}>
