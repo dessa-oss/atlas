@@ -99,11 +99,19 @@
         height: 38%;
         display: flex;
         border-bottom: 1px solid #D8D8D8;
-        .monitor-overview, .monitor-details, .monitor-calendar {
+        .monitor-overview {
           width: 33%;
           height: 100%;
           display: inline-block;
         }
+
+        .monitor-details {
+          width: 45%;
+        }
+
+        // .monitor-calendar {
+        //   width: 33%;
+        // }
 
         .monitor-overview {
           border-right: 1px solid #D8D8D8;
@@ -168,6 +176,15 @@
                 border: 1px solid #024B9C;
                 width: 110px;
               }
+              .monitor-overview-value {
+                display: inline-flex;
+                margin-left: 20px;
+                height: 34px;
+                p {
+                  width: 200px;
+                  margin-left: 30px;
+                }
+              }
               div {
                 .react-select {
                   display: block;
@@ -178,6 +195,12 @@
                   font-weight: 900;
                   color: #828282;
                 }
+              }
+            }
+            .monitor-details-options {
+              button {
+                float: right;
+                margin-right: 50px;
               }
             }
           }

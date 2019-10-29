@@ -1,5 +1,7 @@
 import React from "react";
-import { get, put, del } from "./BaseActions";
+import {
+  get, put, del, patch
+} from "./BaseActions";
 import MonitorListTableRow from "../components/PackagePage/MonitorSchedules/MonitorListTableRow";
 import MonitorJobTableRow from "../components/PackagePage/MonitorSchedules/MonitorJobTableRow";
 
@@ -85,6 +87,14 @@ const MonitorSchedulesActions = {
 
   deleteMonitor: (projectName, monitorName) => {
     return del(`projects/${projectName}/monitors/${monitorName}`);
+  },
+
+  updateMonitorSchedule: (projectName, monitorName, scheduleBody) => {
+    const url = `projects/${projectName}/monitors/${monitorName}`;
+    const body = {
+      schedule: scheduleBody
+    };
+    return patch(url, body);
   }
 
 };

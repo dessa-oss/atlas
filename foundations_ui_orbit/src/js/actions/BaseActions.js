@@ -52,6 +52,25 @@ const post = (url, body) => {
     });
 };
 
+const patch = (url, body) => {
+  const fullURL = baseURL.concat(url);
+  return fetch(fullURL, {
+    method: "patch",
+    body: JSON.stringify(body),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    }
+  })
+    .then(res => res.json())
+    .then(result => {
+      return result;
+    })
+    .catch(() => {
+      return null;
+    });
+};
+
 const postApiary = (url, body) => {
   const fullURL = baseApiaryURL.concat(url);
   return fetch(fullURL, {
@@ -168,5 +187,5 @@ const postJSONFile = (url, fileName, data) => {
 };
 
 export {
-  get, getFromApiary, getMaster, post, postApiary, postMaster, put, putApiary, del, postJSONFile
+  get, getFromApiary, getMaster, post, postApiary, postMaster, put, putApiary, del, postJSONFile, patch
 };
