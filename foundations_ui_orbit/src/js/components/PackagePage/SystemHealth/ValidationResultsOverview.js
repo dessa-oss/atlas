@@ -80,7 +80,7 @@ class ValidationResultsOverview extends Component {
 
         this.setState({ selectedOverview: overview, isDefaultSelectedOverview: isDefaultSelectedOverview });
       } else {
-        this.setState({ isDefaultSelectedOverview: true });
+        this.setState({ selectedOverview: this.defaultSelectedOverview(), isDefaultSelectedOverview: true });
       }
     }
   }
@@ -254,7 +254,9 @@ class ValidationResultsOverview extends Component {
                   Percent Missing:<br />Minimum:<br />Maximum:<br />
                 </div>
                 <div className="attribute-data-container-right">
-                  {expectedMissing}<br />{expectedMinimum}<br />{expectedMaximum}<br />
+                  <OverflowTooltip text={expectedMissing} /><br />
+                  <OverflowTooltip text={expectedMinimum} /><br />
+                  <OverflowTooltip text={expectedMaximum} /><br />
                 </div>
               </div>
             </div>
