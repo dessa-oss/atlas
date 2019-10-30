@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class SpecialValuesChecker(object):
 
-    def __init__(self, config_options, bin_stats, reference_column_names, reference_column_types, reference_dataframe=None):
+    def __init__(self, config_options, bin_stats, reference_column_names, reference_column_types, categorical_attributes, reference_dataframe=None):
         from foundations_orbit.contract_validators.checker import Checker
 
         self._config_options = config_options
@@ -25,6 +25,8 @@ class SpecialValuesChecker(object):
         self._invalid_attributes = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
         self.temp_attributes_to_exclude = []
 
+        self._categorical_attributes = categorical_attributes
+
 
     def _initialize_columns_special_values(self):
         _column_special_values = {}
@@ -36,7 +38,7 @@ class SpecialValuesChecker(object):
 
     def validate(self, dataframe_to_validate):
         from foundations_orbit.contract_validators.prototype import distribution_and_special_values_check
-        full_distribution_check_results = distribution_and_special_values_check(self._config_options.distribution, self._config_columns, self._bin_stats, dataframe_to_validate, True)
+        full_distribution_check_results = distribution_and_special_values_check(self._config_options.distribution, self._config_columns, self._bin_stats, dataframe_to_validate, self._categorical_attributes, True)
         special_values_results = {}
         for column, column_results in full_distribution_check_results.items():
             special_values_results[column] = {}

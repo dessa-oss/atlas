@@ -77,6 +77,7 @@ def bin_current_values(current_values, ref_edges, n_current_vals, unique_ref_val
 
 def add_special_value_l_infinity(col, threshold, dist_check_results, ref_special_values, ref_special_value_percentages,
                        current_special_value_percentages):
+
     # percentage differences for special values
     dist_check_results[col]['special_values'] = {}
     for sv, ref_pct, cur_pct in zip(ref_special_values, ref_special_value_percentages,
