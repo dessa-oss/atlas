@@ -6,6 +6,7 @@ import Select from "react-select";
 import PropTypes from "prop-types";
 import CommonActions from "../../../actions/CommonActions";
 import ValidationResultsActions from "../../../actions/ValidationResultsActions";
+import OverflowTooltip from "../../common/OverflowTooltip";
 
 class ValidationResultsOverview extends Component {
   constructor(props) {
@@ -218,7 +219,7 @@ class ValidationResultsOverview extends Component {
                 Row count:
               </div>
               <div className="overview-values">
-                {validationResult.monitor_package}<br />
+                <OverflowTooltip text={validationResult.monitor_package} /><br />
                 {validationResult.job_id}<br />
                 {date}<br />
                 {validationResult.user}<br />

@@ -44,7 +44,6 @@
       white-space: nowrap;
 
       .overview-labels, .overview-values {
-        display: inline-block;
         margin-top: 20px;
         color: #828282;
         line-height: 20px;
@@ -52,6 +51,11 @@
 
       .overview-labels {
         margin-right: 30px;
+        float: left;
+      }
+
+      .overview-values {
+        overflow-x: hidden;
       }
     }
 

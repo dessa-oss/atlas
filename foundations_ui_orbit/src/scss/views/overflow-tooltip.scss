@@ -1,0 +1,41 @@
+.overflow-tooltip-container {
+  width: 100%;
+  display: inline-block;
+  color: inherit;
+
+  .overflow-tooltip-text {
+    display: inline-block;
+    width: calc(100% - 15px);
+    overflow-x: hidden;
+    vertical-align: bottom;
+    color: inherit;
+  }
+
+  .overflow-tooltip-hoverable {
+    display: inline-block;
+    width: 15px;
+    vertical-align: bottom;
+    color: inherit;
+    cursor: pointer;
+    font-weight: 800;
+
+    .overflow-tooltip {
+      visibility: hidden;
+      background-color: black;
+      opacity: 0.8;
+      color: #fff;
+      text-align: center;
+      padding: 5px;
+      border-radius: 6px;
+      position: absolute;
+      z-index: 1;
+      margin-left: 5px;
+    }
+
+    &:hover {
+      .overflow-tooltip {
+        visibility: visible;
+      }
+    }
+  }
+}
