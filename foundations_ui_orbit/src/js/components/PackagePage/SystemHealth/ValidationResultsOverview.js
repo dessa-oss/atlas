@@ -14,7 +14,9 @@ class ValidationResultsOverview extends Component {
     this.state = {
       selectedAttribute: null,
       selectedOverview: this.defaultSelectedOverview(),
-      isDefaultSelectedOverview: true
+      isDefaultSelectedOverview: true,
+      graphWidth: null,
+      graphHeight: null
     };
 
     this.update = this.update.bind(this);
@@ -41,6 +43,11 @@ class ValidationResultsOverview extends Component {
   }
 
   componentDidMount() {
+    if (this.graphDiv) {
+      const graphWidth = this.graphDiv.clientWidth;
+      const graphHeight = this.graphDiv.clientHeight;
+      this.setState({ graphWidth: graphWidth, graphHeight: graphHeight });
+    }
     this.update();
   }
 
@@ -104,7 +111,13 @@ class ValidationResultsOverview extends Component {
   }
 
   render() {
-    const { selectedAttribute, selectedOverview, isDefaultSelectedOverview } = this.state;
+    const {
+      selectedAttribute,
+      selectedOverview,
+      isDefaultSelectedOverview,
+      graphWidth,
+      graphHeight
+    } = this.state;
     const { validationResult } = this.props;
     const date = moment(validationResult.date).format("YYYY-MM-DD h:mm A");
     const sign = validationResult.row_count.row_count_diff >= 0 ? "+" : "-";
@@ -127,7 +140,9 @@ class ValidationResultsOverview extends Component {
 
     const options = {
       chart: {
-        type: "column"
+        type: "column",
+        width: graphWidth,
+        height: graphHeight - 30
       },
       title: {
         text: ""
@@ -210,7 +225,12 @@ class ValidationResultsOverview extends Component {
             </div>
           </div>
         </div>
-        <div className="overview-graph">
+        <div
+          className="overview-graph"
+          ref={divElement => {
+            this.graphDiv = divElement;
+          }}
+        >
           {graph}
         </div>
         <div className="overview-graph-stats">

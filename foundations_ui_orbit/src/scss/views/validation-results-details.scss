@@ -23,7 +23,6 @@
     border-radius: 5px;
 
     .overview-summary, .overview-graph, .overview-graph-stats {
-      width: 33%;
       background-color: #fff;
       display: inline-block;
       height: 100%;
@@ -33,6 +32,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      width: 30%;
     }
 
     .overview-summary-center {
@@ -52,6 +52,8 @@
     }
 
     .overview-graph {
+      position: relative;
+      width: 45%;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -72,6 +74,7 @@
       justify-content: center;
       flex-direction: column;
       padding-left: 60px;
+      width: calc(25% - 60px);
 
       .attribute-select {
         width: 70%;
