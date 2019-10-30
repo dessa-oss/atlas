@@ -142,7 +142,7 @@ class ValidationResultsOverview extends Component {
     const options = {
       chart: {
         type: "column",
-        width: graphWidth,
+        width: graphWidth - 60,
         height: graphHeight - 30
       },
       title: {
@@ -220,10 +220,10 @@ class ValidationResultsOverview extends Component {
               </div>
               <div className="overview-values">
                 <OverflowTooltip text={validationResult.monitor_package} /><br />
-                {validationResult.job_id}<br />
-                {date}<br />
-                {validationResult.user}<br />
-                {rowCount}
+                <OverflowTooltip text={validationResult.job_id} /><br />
+                <OverflowTooltip text={date} /><br />
+                <OverflowTooltip text={validationResult.user} /><br />
+                <OverflowTooltip text={rowCount} /><br />
               </div>
             </div>
           </div>
@@ -237,33 +237,41 @@ class ValidationResultsOverview extends Component {
           {graph}
         </div>
         <div className="overview-graph-stats">
-          <Select
-            className="attribute-select"
-            defaultValue={null}
-            value={selectedAttribute}
-            options={selectOptions}
-            onChange={this.onChangeAttribute}
-          />
-          <div className="attribute-data-container">
-            <div className="attribute-data-label">
-              <div className="light-blue-box" />Reference Data
+          <div className="overview-graph-stats-center">
+            <Select
+              className="attribute-select"
+              defaultValue={null}
+              value={selectedAttribute}
+              options={selectOptions}
+              onChange={this.onChangeAttribute}
+            />
+            <div className="attribute-data-container">
+              <div className="attribute-data-label">
+                <div className="light-blue-box" />Reference Data
+              </div>
+              <div className="attribute-data-container-left-right-container">
+                <div className="attribute-data-container-left">
+                  Percent Missing:<br />Minimum:<br />Maximum:<br />
+                </div>
+                <div className="attribute-data-container-right">
+                  {expectedMissing}<br />{expectedMinimum}<br />{expectedMaximum}<br />
+                </div>
+              </div>
             </div>
-            <div className="attribute-data-container-left">
-              Percent Missing:<br />Minimum:<br />Maximum:<br />
-            </div>
-            <div className="attribute-data-container-right">
-              {expectedMissing}<br />{expectedMinimum}<br />{expectedMaximum}<br />
-            </div>
-          </div>
-          <div className="attribute-data-container">
-            <div className="attribute-data-label">
-              <div className="dark-blue-box" />Current Data
-            </div>
-            <div className="attribute-data-container-left">
-              Percent Missing:<br />Minimum:<br />Maximum:<br />
-            </div>
-            <div className="attribute-data-container-right">
-              {actualMissing}<br />{actualMinimum}<br />{actualMaximum}<br />
+            <div className="attribute-data-container">
+              <div className="attribute-data-label">
+                <div className="dark-blue-box" />Current Data
+              </div>
+              <div className="attribute-data-container-left-right-container">
+                <div className="attribute-data-container-left">
+                  Percent Missing:<br />Minimum:<br />Maximum:<br />
+                </div>
+                <div className="attribute-data-container-right">
+                  <OverflowTooltip text={actualMissing} /><br />
+                  <OverflowTooltip text={actualMinimum} /><br />
+                  <OverflowTooltip text={actualMaximum} /><br />
+                </div>
+              </div>
             </div>
           </div>
         </div>

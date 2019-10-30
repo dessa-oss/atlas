@@ -3,6 +3,7 @@ import { get, post } from "./BaseActions";
 import ValidationResultsTableRow from "../components/PackagePage/SystemHealth/ValidationResultsTableRow";
 import ValidationResultsTestsListRow from "../components/PackagePage/SystemHealth/ValidationResultsTestListRow";
 import CommonActions from "./CommonActions";
+import OverflowTooltip from "../components/common/OverflowTooltip";
 
 const ValidationResultsActions = {
   getValidationResultList: projectName => {
@@ -94,10 +95,12 @@ const ValidationResultsActions = {
       return (
         // eslint-disable-next-line react/no-array-index-key
         <tr key={ind} className="validation-results-test-pane-table-row">
-          <th>{test.attribute_name}</th>
-          <th>{test.data_type}</th>
-          <th>{issueType}</th>
-          <th className={`validation-outcome-${test.validation_outcome}`}>{test.validation_outcome}</th>
+          <th><OverflowTooltip text={test.attribute_name} /></th>
+          <th><OverflowTooltip text={test.data_type} /></th>
+          <th><OverflowTooltip text={issueType} /></th>
+          <th className={`validation-outcome-${test.validation_outcome}`}>
+            <OverflowTooltip text={test.validation_outcome} />
+          </th>
         </tr>
       );
     });
@@ -120,10 +123,12 @@ const ValidationResultsActions = {
       return (
         // eslint-disable-next-line react/no-array-index-key
         <tr key={ind} className="validation-results-test-pane-table-row">
-          <th>{test.attribute_name}</th>
-          <th>{distShift}</th>
-          <th>{measureType}</th>
-          <th className={`validation-outcome-${test.validation_outcome}`}>{test.validation_outcome}</th>
+          <th><OverflowTooltip text={test.attribute_name} /></th>
+          <th><OverflowTooltip text={distShift} /></th>
+          <th><OverflowTooltip text={measureType} /></th>
+          <th className={`validation-outcome-${test.validation_outcome}`}>
+            <OverflowTooltip text={test.validation_outcome} />
+          </th>
         </tr>
       );
     });
@@ -144,12 +149,14 @@ const ValidationResultsActions = {
     const rows = validationTestResult.data_quality.details_by_attribute.map((test, ind) => (
       // eslint-disable-next-line react/no-array-index-key
       <tr key={ind} className="validation-results-test-pane-table-row">
-        <th>{test.attribute_name}</th>
-        <th>{test.value}</th>
-        <th>{CommonActions.decimalToPercentage(test.pct_in_reference_data)}</th>
-        <th>{CommonActions.decimalToPercentage(test.pct_in_current_data)}</th>
-        <th>{CommonActions.decimalToPercentage(test.difference_in_pct)}</th>
-        <th className={`validation-outcome-${test.validation_outcome}`}>{test.validation_outcome}</th>
+        <th><OverflowTooltip text={test.attribute_name} /></th>
+        <th><OverflowTooltip text={test.value} /></th>
+        <th><OverflowTooltip text={CommonActions.decimalToPercentage(test.pct_in_reference_data)} /></th>
+        <th><OverflowTooltip text={CommonActions.decimalToPercentage(test.pct_in_current_data)} /></th>
+        <th><OverflowTooltip text={CommonActions.decimalToPercentage(test.difference_in_pct)} /></th>
+        <th className={`validation-outcome-${test.validation_outcome}`}>
+          <OverflowTooltip text={test.validation_outcome} />
+        </th>
       </tr>
     ));
     return header.concat(rows);
@@ -175,11 +182,13 @@ const ValidationResultsActions = {
       return (
         // eslint-disable-next-line react/no-array-index-key
         <tr key={ind} className="validation-results-test-pane-table-row">
-          <th>{test.attribute_name}</th>
-          <th>{test.lower_bound}</th>
-          <th>{test.min_value}</th>
-          <th>{outOfBounds}</th>
-          <th className={`validation-outcome-${test.validation_outcome}`}>{test.validation_outcome}</th>
+          <th><OverflowTooltip text={test.attribute_name} /></th>
+          <th><OverflowTooltip text={test.lower_bound} /></th>
+          <th><OverflowTooltip text={test.min_value} /></th>
+          <th><OverflowTooltip text={outOfBounds} /></th>
+          <th className={`validation-outcome-${test.validation_outcome}`}>
+            <OverflowTooltip text={test.validation_outcome} />
+          </th>
         </tr>
       );
     });
@@ -206,11 +215,13 @@ const ValidationResultsActions = {
       return (
         // eslint-disable-next-line react/no-array-index-key
         <tr key={ind} className="validation-results-test-pane-table-row">
-          <th>{test.attribute_name}</th>
-          <th>{test.upper_bound}</th>
-          <th>{test.max_value}</th>
-          <th>{outOfBounds}</th>
-          <th className={`validation-outcome-${test.validation_outcome}`}>{test.validation_outcome}</th>
+          <th><OverflowTooltip text={test.attribute_name} /></th>
+          <th><OverflowTooltip text={test.upper_bound} /></th>
+          <th><OverflowTooltip text={test.max_value} /></th>
+          <th><OverflowTooltip text={outOfBounds} /></th>
+          <th className={`validation-outcome-${test.validation_outcome}`}>
+            <OverflowTooltip text={test.validation_outcome} />
+          </th>
         </tr>
       );
     });
