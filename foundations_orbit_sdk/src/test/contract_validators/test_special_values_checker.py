@@ -134,17 +134,21 @@ class TestSpecialValuesChecker(Spec):
     @let
     def reference_column_types_int(self):
         return {self.column_name: 'int', self.column_name_2: 'int'}
+    
+    @let
+    def reference_categorical_attributes_two_columns(self):
+        return {self.column_name: False, self.column_name_2: False}
 
     def _generate_distinct(self, reference_values, generating_callback):
         candidate_value = generating_callback()
         return candidate_value if candidate_value not in reference_values else self._generate_distinct(reference_values, generating_callback)
     
     def test_schema_checker_can_accept_configurations(self):
-        checker = SpecialValuesChecker(self.contract_options, None, None, {})
+        checker = SpecialValuesChecker(self.contract_options, None, None, {}, {})
         self.assertIsNotNone(getattr(checker, "configure", None))
         
     def test_schema_checker_can_accept_exclusions(self):
-        checker = SpecialValuesChecker(self.contract_options, None, None, {})
+        checker = SpecialValuesChecker(self.contract_options, None, None, {}, {})
         self.assertIsNotNone(getattr(checker, "exclude", None))
 
     def test_special_values_check_for_mulitple_column_df_against_itself_returns_all_passed_using_not_previously_defined_special_value(self):
@@ -182,7 +186,7 @@ class TestSpecialValuesChecker(Spec):
             }
         }
 
-        checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], self.reference_column_types_int, dataframe)
+        checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], self.reference_column_types_int, self.reference_categorical_attributes_two_columns, dataframe)
         checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={ -1: 0.1 })
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
@@ -204,7 +208,7 @@ class TestSpecialValuesChecker(Spec):
             self.column_name_2: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name_2]))
         }
         return SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], {self.column_name: str(pandas.Series(data[self.column_name]).dtype),
-         self.column_name_2: str(pandas.Series(data[self.column_name_2]).dtype)},dataframe), dataframe
+         self.column_name_2: str(pandas.Series(data[self.column_name_2]).dtype)}, self.reference_categorical_attributes_two_columns, dataframe), dataframe
     
     def test_special_values_checker_for_datetime_input_returns_expected_result(self):
         data = {
@@ -223,7 +227,7 @@ class TestSpecialValuesChecker(Spec):
         }
 
         checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], {self.column_name: 'datetime64[ns]',
-         self.column_name_2: 'datetime64[ns]'})
+         self.column_name_2: 'datetime64[ns]'}, self.reference_categorical_attributes_two_columns)
 
         expected_check_results = {
             self.column_name:{
@@ -267,7 +271,7 @@ class TestSpecialValuesChecker(Spec):
         }
 
         checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], {self.column_name: 'bool',
-         self.column_name_2: 'bool'})
+         self.column_name_2: 'bool'}, self.reference_categorical_attributes_two_columns)
 
         expected_check_results = {
             self.column_name:{
@@ -311,7 +315,7 @@ class TestSpecialValuesChecker(Spec):
         }
 
         checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], {self.column_name: 'str',
-         self.column_name_2: 'str'})
+         self.column_name_2: 'str'}, self.reference_categorical_attributes_two_columns)
 
         expected_check_results = {
             self.column_name:{
@@ -528,7 +532,7 @@ class TestSpecialValuesChecker(Spec):
         bin_stats = {
             self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name]))
         }
-        checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], {self.column_name: 'float'} ,dataframe)
+        checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], {self.column_name: 'float'}, self.reference_categorical_attributes_two_columns, dataframe)
         checker.exclude(attributes='all')
         checker.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.1, -1: 0.1})
 
@@ -558,7 +562,7 @@ class TestSpecialValuesChecker(Spec):
 
     def test_special_values_checker_configure_raises_value_error_when_unsupported_columns_used(self):
         reference_column_types = {self.column_name: 'str', self.column_name_2: 'object'}
-        checker = SpecialValuesChecker(self.contract_options, self.bin_stats, [self.column_name, self.column_name_2], reference_column_types=reference_column_types)
+        checker = SpecialValuesChecker(self.contract_options, self.bin_stats, [self.column_name, self.column_name_2], reference_column_types, self.reference_categorical_attributes_two_columns)
 
         checker.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.1})
 
