@@ -18,12 +18,14 @@ class MonitorOverview extends Component {
     this.updateMonitorSchedule = this.updateMonitorSchedule.bind(this);
     // this.changeEditMode = this.changeEditMode.bind(this);
     this.state = {
-      calDate: monitorResult.schedule.start_date
-        ? [monitorResult.schedule.start_date, monitorResult.schedule.end_date]
-        : new Date(),
-      calDateTimeEnd: monitorResult.schedule.end_date
-        ? monitorResult.schedule.end_date.split(" ").slice(0, 4).join(" ")
-        : "12:00"
+      calDateStart: monitorResult.schedule.start_date || new Date(),
+      calDateEnd: monitorResult.schedule.end_date || "",
+      clockTimeHour: monitorResult.schedule.hour.replace(/\D/g, "") !== "" ? monitorResult.schedule.hour : "12",
+      clockTimeMinute: monitorResult.schedule.minute.replace(/\D/g, "") !== ""
+        ? monitorResult.schedule.minute.replace(/\D/g, "")
+        : "00",
+      scheduleRepeatUnit: { label: "Days" },
+      scheduleRepeatUnitValue: "1"
     };
   }
 
@@ -50,22 +52,28 @@ class MonitorOverview extends Component {
 
   updateMonitorSchedule() {
     const { monitorResult } = this.props;
-    const { calDate } = this.state;
-    const calStartDate = moment(calDate[0]).format("YYYY-MM-DD");
-    const calEndDate = moment(calDate[1]).format("YYYY-MM-DD");
+    const {
+      calDateStart,
+      calDateEnd,
+      clockTimeHour,
+      clockTimeMinute,
+      scheduleRepeatUnit,
+      scheduleRepeatUnitValue
+    } = this.state;
+    const calStartDate = moment(calDateStart).format("YYYY-MM-DD");
 
     const scheduleBody = {
-      day: "*",
-      day_of_week: "*",
-      hour: "*",
-      minute: "*",
-      month: "*",
-      second: "*/19",
-      week: "*",
-      year: "*",
-      start_date: calStartDate,
-      end_date: calEndDate
+      hour: clockTimeHour,
+      minute: clockTimeMinute,
+      start_date: calStartDate
     };
+
+    if (calDateEnd !== "") {
+      scheduleBody.end_date = moment(calDateEnd).format("YYYY-MM-DD");
+    }
+
+    scheduleBody[scheduleRepeatUnit.label.toLocaleLowerCase().slice(0, -1)] = `*/${scheduleRepeatUnitValue}`;
+
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
     MonitorSchedulesActions.updateMonitorSchedule(projectName, monitorName, scheduleBody);
@@ -80,8 +88,14 @@ class MonitorOverview extends Component {
 
   render() {
     const { monitorResult } = this.props;
-    // const { editMode } = this.state;
-    const { calDate, calDateTimeEnd } = this.state;
+    const {
+      calDateStart,
+      calDateEnd,
+      clockTimeHour,
+      clockTimeMinute,
+      scheduleRepeatUnitValue
+    } = this.state;
+
     const nextRun = monitorResult.next_run_time
       ? moment.unix(monitorResult.next_run_time).format("YYYY-MM-DD HH:mm:ss")
       : "None scheduled";
@@ -123,11 +137,7 @@ class MonitorOverview extends Component {
     const calStartTime2 = startTime.split(" ")[4];
     const calEndTime2 = endTime.split(" ")[4];
 
-    const clockTimeHour = monitorResult.schedule.hour;
-    const clockTimeMinute = monitorResult.schedule.minute;
-    const clockTimeSecond = monitorResult.schedule.second;
-
-    const clockTime = `${clockTimeHour}:${clockTimeMinute}:${clockTimeSecond}`;
+    const clockTime = `${clockTimeHour}:${clockTimeMinute}`;
 
     return (
       <div className="monitor-info">
@@ -175,20 +185,35 @@ class MonitorOverview extends Component {
               <div className="monitor-overview-key">Repeats every:</div>
               <div className="monitor-overview-value">
                 <input
-                  value={defaultScheduleValue.value}
+                  value={scheduleRepeatUnitValue}
                   className="monitor-repeat-value"
                   type="number"
+                  onChange={value => {
+                    this.setState({
+                      scheduleRepeatUnitValue: value.target.value
+                    });
+                  }}
                 />
                 <Select
                   options={scheduleOptions}
                   className="react-select"
                   defaultValue={defaultScheduleValue}
+                  onChange={value => {
+                    this.setState({
+                      scheduleRepeatUnit: value
+                    });
+                  }}
                 />
                 <p> at </p>
                 <Flatpickr
                   value={clockTime}
                   className="schedule-flatpickr"
-                  onChange={time => { this.setState({ calDateTimeEnd: time }); }}
+                  onChange={time => {
+                    this.setState({
+                      clockTimeHour: time[0].getHours(),
+                      clockTimeMinute: time[0].getMinutes()
+                    });
+                  }}
                   options={{
                     enableTime: true,
                     noCalendar: true,
@@ -199,22 +224,36 @@ class MonitorOverview extends Component {
               </div>
             </li>
             <li>
-              <div className="monitor-overview-key">Date range:</div>
+              <div className="monitor-overview-key">Starting on:</div>
               <div className="monitor-overview-value">
                 <Flatpickr
-                  value={calDate}
-                  onChange={date => { this.setState({ calDate: date }); }}
+                  className="cal-picker"
+                  value={calDateStart}
+                  onChange={date => { this.setState({ calDateStart: date[0] }); }}
                   options={{
                     altFormat: "F j, Y",
                     dateFormat: "Y-m-d",
-                    defaultDate: [new Date(), "2020-10-30"],
-                    mode: "range"
+                    defaultDate: new Date()
+                  }}
+                />
+              </div>
+            </li>
+            <li>
+              <div className="monitor-overview-key">Ending on:</div>
+              <div className="monitor-overview-value">
+                <Flatpickr
+                  className="cal-picker"
+                  value={calDateEnd}
+                  onChange={date => { this.setState({ calDateEnd: date[0] }); }}
+                  options={{
+                    altFormat: "F j, Y",
+                    dateFormat: "Y-m-d"
                   }}
                 />
               </div>
             </li>
             <div className="monitor-details-options">
-              <button onClick={this.updateMonitorSchedule} type="button">Save</button>
+              <button className="save-schedule-btn" onClick={this.updateMonitorSchedule} type="button">Save</button>
             </div>
           </ul>
         </div>
