@@ -23,7 +23,9 @@ class AuthenticationClient:
 
     def token_using_auth_code(self, code) -> Dict[str, str]:
         return self.client.token(
-            code, grant_type=["authorization_code"], redirect_uri=self._redirect_url
+            code=code,
+            grant_type=["authorization_code"],
+            redirect_uri=self._redirect_url,
         )
 
     @staticmethod
