@@ -91,7 +91,19 @@ class TestOrbitMonitorPackageServer(Spec):
     def test_start_handles_no_job_config_case(self):
         from foundations_contrib.cli.orbit_monitor_package_server import start
 
+        self.patch('foundations_contrib.cli.orbit_monitor_package_server.get_by_project')
         mock_yaml_load = self.patch('yaml.load')
         mock_yaml_load.side_effect = IOError
         with self.assertRaises(KeyError):
             start(self.cwd, self.command, None, None, None)
+
+    def test_start_fails_with_correct_error_if_monitor_already_exists(self):
+        from foundations_contrib.cli.orbit_monitor_package_server import start
+
+        mock_get_by_project = self.patch('foundations_contrib.cli.orbit_monitor_package_server.get_by_project', ConditionalReturn())
+        mock_get_by_project.return_when({f'{self.project_name}-{self.monitor_name}': ''}, self.project_name)
+
+        with self.assertRaises(ValueError) as error:
+            start(self.cwd, self.command, self.project_name, self.monitor_name, self.env)
+
+        self.assertEqual('Monitor already exists', str(error.exception))
