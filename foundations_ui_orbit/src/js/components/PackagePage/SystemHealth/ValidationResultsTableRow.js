@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import moment from "moment";
 import PropTypes from "prop-types";
 import CommonActions from "../../../actions/CommonActions";
+import OverflowTooltip from "../../common/OverflowTooltip";
 
 class ValidationResultsTableRow extends Component {
   constructor(props) {
@@ -71,9 +72,15 @@ class ValidationResultsTableRow extends Component {
 
     return (
       <div className={`validation-results-table-row ${selectedClass}`} onClick={this.onClick}>
-        <div className="val-time-table-cell">{date}</div>
-        <div className="val-monitor-table-cell">{monitorName}</div>
-        <div className="val-contract-table-cell">{contractName}</div>
+        <div className="val-time-table-cell">
+          <OverflowTooltip text={date} />
+        </div>
+        <div className="val-monitor-table-cell">
+          <OverflowTooltip text={monitorName} />
+        </div>
+        <div className="val-contract-table-cell">
+          <OverflowTooltip text={contractName} />
+        </div>
         <div className="val-critical-table-cell">
           <div className={`val-critical-table-cell-${criticalState}`}>
             {numCriticalVal}
