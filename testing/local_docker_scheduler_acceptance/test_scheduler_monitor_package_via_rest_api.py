@@ -166,10 +166,12 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         expected_schedule = {
             'day': '*',
             'day_of_week': '*',
+            'end_date': None,
             'hour': '*',
             'minute': '*',
             'month': '*',
             'second': '*',
+            'start_date': None,
             'week': '*',
             'year': '*'
         }
@@ -268,7 +270,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         import time
 
         self._start_and_update_and_resume_monitor(self.monitor_name)
-        time.sleep(7)
+        time.sleep(9)
 
         jobs_list = self._get_monitor_jobs().json()
         job_id = jobs_list[0]['job_id']
