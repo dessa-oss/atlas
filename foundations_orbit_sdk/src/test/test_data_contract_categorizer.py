@@ -178,3 +178,23 @@ class TestDataContractCategorizer(Spec):
         }
 
         self.assertEqual(expected_report, dist_check_report)
+    
+
+    def test_data_contract_uses_categorical_logic_for_distribution_check(self):
+        import numpy, pandas
+
+        dataframe = pandas.DataFrame({self.column_name_1: ['a']*3 + ['b']*3 + ['c']*3 + ['d']*3})
+        current_dataframe = pandas.DataFrame({self.column_name_1: ['a','a','b','b','c','c','d','d'] + ['e']*4})
+        contract = DataContract(self.contract_name, dataframe)
+
+        validation_report = contract.validate(current_dataframe)
+        dist_check_report = validation_report['dist_check_results']
+
+        expected_report = {
+            self.column_name_1: {
+                'binned_l_infinity':  0.333,
+                'binned_passed': False
+            }
+        }
+
+        self.assertEqual(expected_report, dist_check_report)
