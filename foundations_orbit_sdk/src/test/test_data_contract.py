@@ -712,7 +712,7 @@ class TestDataContract(Spec):
                 'binned_passed': True
             },
             self.column_name_2: {
-                'bin_passed': False,
+                'binned_passed': False,
                 'message': 'Schema Test Failed'
             }
         }
