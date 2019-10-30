@@ -159,3 +159,23 @@ class TestDataContractCategorizer(Spec):
         }
 
         self.assertEqual(expected_report, dist_check_report)
+
+    
+    def test_data_contract_ignores_non_categorical_string_column(self):
+        import numpy, pandas
+
+        dataframe = pandas.DataFrame({self.column_name_1: [self.faker.word() for _ in range(20)]})
+        contract = DataContract(self.contract_name, dataframe)
+
+        validation_report = contract.validate(dataframe)
+        dist_check_report = validation_report['dist_check_results']
+
+        expected_report = {
+            self.column_name_1: {
+                'message': 'non-categorical strings are not supported',
+                'binned_passed': False,
+            }
+        }
+
+        self.assertEqual(expected_report, dist_check_report)
+
