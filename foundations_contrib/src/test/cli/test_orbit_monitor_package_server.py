@@ -6,12 +6,17 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 from foundations_spec import *
 
+
 class TestOrbitMonitorPackageServer(Spec):
+    @let_now
+    def redis(self):
+        return self.patch('foundations_contrib.global_state.redis_connection')
 
     @set_up
     def set_up(self):
         mock_config_manager = self.patch('foundations_contrib.foundations_contrib.global_state.config_manager')
         mock_config_manager.config.return_value = {'scheduler_url': 'https://localhost:5000'}
+
 
     @let
     def cwd(self):
@@ -81,7 +86,7 @@ class TestOrbitMonitorPackageServer(Spec):
     def test_get_called_cron_job_scheduler_get_job_with_params_with_project_name_as_parameter(self):
         from foundations_contrib.cli.orbit_monitor_package_server import get_by_project
         get_by_project(self.project_name, self.env)
-        self.cron_job_scheduler.get_job_with_params.assert_called_once_with({'job_id_prefix':  self.project_name})
+        self.cron_job_scheduler.get_job_with_params.assert_called_once_with({'project':  self.project_name})
 
     def test_start_handles_no_job_config_case(self):
         from foundations_contrib.cli.orbit_monitor_package_server import start
