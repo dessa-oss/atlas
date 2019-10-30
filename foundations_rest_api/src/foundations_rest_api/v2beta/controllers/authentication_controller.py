@@ -27,7 +27,9 @@ conf = {
     "confidential-port": 0,
 }
 
-client = AuthenticationClient(conf, redirect_url="http://localhost:37722/api/v2beta/auth")
+client = AuthenticationClient(
+    conf, redirect_url="http://localhost:37722/api/v2beta/auth"
+)
 
 
 @api_resource("/api/v2beta/auth")
@@ -38,17 +40,6 @@ class AuthenticationController:
             token = client.token_using_auth_code(code=code)
             return Response("Authentication", LazyResult(lambda: token))
         else:
+            # TODO: Fix our custom Response class to handle redirects.
             client.browser_login()
             return Response("Authentication", LazyResult(lambda: ""))
-
-            # return Response('Authentication', LazyResult(lambda: redirect(self.client.authentication_url()())))
-
-
-@api_resource("/api/v2beta/auth/redirect")
-class Redirect:
-    def index(self):
-        code = self.params.get("code", None)
-        if code:
-            # self.token = client.token_using_auth_code(code=code)
-            return Response("Auth", LazyResult(lambda: code))
-
