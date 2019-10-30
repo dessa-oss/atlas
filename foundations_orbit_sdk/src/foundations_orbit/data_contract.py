@@ -222,7 +222,7 @@ class DataContract(object):
         for test_name, test_dictionary in validation_report.items():
             if test_name == 'dist_check_results':
                 for attribute in attributes_to_ignore:
-                    test_dictionary[attribute] = {"bin_passed": False, "message": "Schema Test Failed"}
+                    test_dictionary[attribute] = {"binned_passed": False, "message": "Schema Test Failed"}
             elif test_name == 'special_values_check_results':
                 for attribute in attributes_to_ignore:
                     test_dictionary[attribute] = {"passed": False, "message": "Schema Test Failed"}
