@@ -37,9 +37,9 @@
         .selected-row {
           background-color: #D9EBFF;
           border-left: 3px solid #024B9C;
-          padding-left: 0px;
+          padding-left: 10px!important;
           &:hover {
-            padding-left: 80px;
+            padding-left: 10px!important;
           }
 
         }
@@ -163,35 +163,48 @@
 
           ul {
             li {
-              width: 400px;
+              width: 460px;
               padding-top: 10px;
               margin-bottom: 30px;
               font-size: 14px;
               display: flex;
               .schedule-picker {
                 height: 40px;
-                border-radius: 3px;
+                border-radius:  3px;
                 background-color: #fff;
                 color: #024B9C;
                 border: 1px solid #024B9C;
                 width: 110px;
               }
+              .monitor-overview-key {
+                padding-top: 10px;
+              }
               .monitor-overview-value {
                 display: inline-flex;
-                margin-left: 20px;
-                height: 34px;
                 p {
                   margin-left: 15px;
+                }
+                input {
+                  width: 100px;
+                  border-radius: 3px;
+                  height: 30px;
+                  border: 1px solid #ccc;
+                  font-weight: 900;
+                  color: #828282;
                 }
                 .monitor-repeat-value {
                   width: 50px;
                   height: 40px;
                   margin-right: 20px;
-                  border-radius: 2px;
+                  border-radius: 3px;
                   border: 1px solid #ccc;
                   color: #828282;
                   font-weight: 900;
                   text-align: center;
+                }
+                .cal-picker {
+                  height: 40px;
+                  weight: 100px;
                 }
               }
               div {
@@ -208,19 +221,33 @@
               .schedule-flatpickr {
                 border-radius: 5px;
                 margin-left: 20px;
-                height: 44px;
+                height: 50px;
                 width: 80px;
-                border-radius: 2px;
+                border-radius: 3px;
                 border: 1px solid #ccc;
                 color: #828282;
                 font-weight: 900;
                 text-align: center;
+                padding: 21px;
               }
             }
             .monitor-details-options {
+              bottom: 69px;
+              position: relative;
+              left: 246px;
               button {
                 float: right;
                 margin-right: 50px;
+                margin-bottom: 50px;
+                border-radius: 3px;
+                color: #fff;
+                width: 80px;
+                height: 40px;
+                font-size: 16px;
+                font-weight: 400;
+                background: #004A9C;
+                box-shadow: 0px 3px 0px rgba(155, 155, 155, 0.25);
+                border-radius: 4px;
               }
             }
           }
