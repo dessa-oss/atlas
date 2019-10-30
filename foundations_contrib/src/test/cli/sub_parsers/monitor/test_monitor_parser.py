@@ -168,10 +168,31 @@ class TestMonitorParser(Spec):
         error_message_thrown = 'Creating failed'
         mock_system_exit = self.patch('sys.exit')
         mock_monitor_start = self.patch('foundations_contrib.cli.orbit_monitor_package_server.start')
+
         mock_monitor_start.side_effect = ValueError(error_message_thrown)
         command = f'monitor create --project_name={self.project_name} --name={self.monitor_name} --env={self.env} . main.py'
         CommandLineInterface(command.split()).execute()
         mock_system_exit.assert_called_once_with(f'Command failed with error: {error_message_thrown}')
+
+    def test_monitor_prints_success_message_when_created_successfully(self):
+        self.patch('foundations_contrib.cli.orbit_monitor_package_server.start')
+        self._call_monitor_command('resume')
+
+        command = f'monitor create --project_name={self.project_name} --name={self.monitor_name} --env={self.env} . main.py'
+        CommandLineInterface(command.split()).execute()
+
+        self.mock_print.assert_called_with(f'Successfully created monitor {self.monitor_name} in project {self.project_name}')
+
+    def test_monitor_prints_success_message_when_created_successfully_without_project_name_or_monitor_name_specified(self):
+        mock_getcwd = self.patch('os.getcwd')
+        mock_getcwd.return_value = self.job_directory
+        self.patch('foundations_contrib.cli.orbit_monitor_package_server.start')
+        self._call_monitor_command('resume')
+
+        command = f'monitor create --env={self.env} . main.py'
+        CommandLineInterface(command.split()).execute()
+
+        self.mock_print.assert_called_with(f'Successfully created monitor main-py in project {self.job_directory}')
 
     def test_invalid_option_for_monitor_command(self):
         try:

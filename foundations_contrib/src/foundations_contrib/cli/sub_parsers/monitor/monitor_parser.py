@@ -55,6 +55,8 @@ class MonitorParser(object):
         
         try:
             start(job_directory, command, project_name, name, env)
+            name, project_name = self._get_name_and_project_name_for_error(name, project_name, command)
+            print(f'Successfully created monitor {name} in project {project_name}')
         except ValueError as ex:
             import sys
 
