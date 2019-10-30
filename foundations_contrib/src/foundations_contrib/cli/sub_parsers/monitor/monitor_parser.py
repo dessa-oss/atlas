@@ -53,7 +53,24 @@ class MonitorParser(object):
         name = arguments.name
         env = self._cli.arguments().env if self._cli.arguments().env is not None else 'scheduler'
         
-        start(job_directory, command, project_name, name, env)
+        try:
+            start(job_directory, command, project_name, name, env)
+        except ValueError as ex:
+            import sys
+
+            name, project_name = self._get_name_and_project_name_for_error(name, project_name, command)
+            print(f'Unable to create monitor {name} in project {project_name}')
+            sys.exit(f'Command failed with error: {str(ex)}')
+
+    def _get_name_and_project_name_for_error(self, name, project_name, command):
+        from os import path, getcwd
+
+        if name is None:
+            name = command[0].replace('.', '-')
+        if project_name is None:
+            project_name = path.basename(getcwd())
+
+        return name, project_name
 
     def _modify_monitor(self, monitor_modifier_func):
         from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobSchedulerError

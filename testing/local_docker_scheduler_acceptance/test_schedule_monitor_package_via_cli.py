@@ -86,7 +86,7 @@ class TestScheduleMonitorPackageViaCli(Spec):
 
     def _start_monitor(self):
         command = f'python -m foundations monitor create --name={self.monitor_name} --project_name={self.project_name} --env={self.env} {self.monitor_package_dir} main.py '
-        return subprocess.run(command.split(), cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/')
+        return subprocess.run(command.split(), cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def _call_monitor_with_command(self, operation):
         command = f'python -m foundations monitor {operation} --env={self.env} {self.project_name} {self.monitor_name}'
@@ -110,6 +110,30 @@ class TestScheduleMonitorPackageViaCli(Spec):
         for metric_set in metric_sets:
             self.assertEqual('current_time', metric_set.yAxis['title']['text'])
 
+    def test_schedule_monitor_package_via_cli_with_same_monitor_name_twice_returns_correct_error(self):
+        import subprocess
+
+        result = self._start_monitor()
+        self.assertEqual(0, result.returncode)
+
+        result = self._start_monitor()
+        self.assertNotEqual(0, result.returncode)
+        self.assertEqual(f'Unable to create monitor {self.monitor_name} in project {self.project_name}\n', result.stdout.decode())
+        self.assertEqual('Command failed with error: Monitor already exists\n', result.stderr.decode())
+
+    def test_schedule_monitor_package_via_cli_with_same_monitor_name_twice_returns_correct_error_when_monitor_name_and_project_name_not_set(self):
+        import subprocess
+
+        command = f'python -m foundations monitor create --env={self.env} {self.monitor_package_dir} main.py'
+        result = subprocess.run(command.split(), cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.assertEqual(0, result.returncode)
+
+        command = f'python -m foundations monitor create --env={self.env} {self.monitor_package_dir} main.py'
+        result = subprocess.run(command.split(), cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.assertNotEqual(0, result.returncode)
+        self.assertEqual(f'Unable to create monitor main-py in project this_cool_monitor\n', result.stdout.decode())
+        self.assertEqual('Command failed with error: Monitor already exists\n', result.stderr.decode())
+
     def test_pause_scheduled_monitor_package_via_cli_halts_execution_but_can_resume_later(self):
         import time
 
@@ -124,12 +148,13 @@ class TestScheduleMonitorPackageViaCli(Spec):
         pause_result = self._call_monitor_with_command('pause')
         self.assertEqual(0, pause_result.returncode)
 
-        metric_sets_during_pause = self._wait_for_expected_number_of_runs(3, timeout=30)
+        time.sleep(5)
+        metric_sets_during_pause = ProductionMetricSet.all(self.project_name).evaluate()
         self.assertEqual(before_pause_data_series_length, len(metric_sets_during_pause[0].series[0]['data']))
 
         resume_result = self._call_monitor_with_command('resume')
         self.assertEqual(0, resume_result.returncode)
-        time.sleep(6)  # monitor scheduled to run every 2 seconds
+        time.sleep(5)  # monitor scheduled to run every 2 seconds
 
         metric_sets_after_resume = ProductionMetricSet.all(self.project_name).evaluate()
         data_series_length_after_resume = len(metric_sets_after_resume[0].series[0]['data'])

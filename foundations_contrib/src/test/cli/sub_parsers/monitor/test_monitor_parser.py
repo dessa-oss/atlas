@@ -31,6 +31,10 @@ class TestMonitorParser(Spec):
         return 'scheduler'
 
     @let
+    def job_directory(self):
+        return self.faker.word()
+
+    @let
     def monitor_package_id(self):
         return f'{self.project_name}-{self.monitor_name}'
 
@@ -140,6 +144,34 @@ class TestMonitorParser(Spec):
         mock_resume.__name__ = 'resume'
         self._call_monitor_command('resume')
         mock_resume.assert_called_once_with(self.project_name, self.monitor_name, self.env)
+
+    def test_monitor_prints_failure_message_when_start_raises_value_error(self):
+        mock_monitor_start = self.patch('foundations_contrib.cli.orbit_monitor_package_server.start')
+        self.patch('sys.exit')
+        mock_monitor_start.side_effect = ValueError('Creating failed')
+        command = f'monitor create --project_name={self.project_name} --name={self.monitor_name} --env={self.env} . main.py'
+        CommandLineInterface(command.split()).execute()
+        self.mock_print.assert_called_with(f'Unable to create monitor {self.monitor_name} in project {self.project_name}')
+
+    def test_monitor_prints_failure_message_when_start_raises_value_error_when_name_and_project_name_not_set(self):
+        mock_getcwd = self.patch('os.getcwd')
+        mock_getcwd.return_value = self.job_directory
+        mock_monitor_start = self.patch('foundations_contrib.cli.orbit_monitor_package_server.start')
+        self.patch('sys.exit')
+        mock_monitor_start.side_effect = ValueError('Creating failed')
+
+        command = f'monitor create --env={self.env} . main.py'
+        CommandLineInterface(command.split()).execute()
+        self.mock_print.assert_called_with(f'Unable to create monitor main-py in project {self.job_directory}')
+
+    def test_monitor_returns_exit_non_zero_when_start_raises_value_error(self):
+        error_message_thrown = 'Creating failed'
+        mock_system_exit = self.patch('sys.exit')
+        mock_monitor_start = self.patch('foundations_contrib.cli.orbit_monitor_package_server.start')
+        mock_monitor_start.side_effect = ValueError(error_message_thrown)
+        command = f'monitor create --project_name={self.project_name} --name={self.monitor_name} --env={self.env} . main.py'
+        CommandLineInterface(command.split()).execute()
+        mock_system_exit.assert_called_once_with(f'Command failed with error: {error_message_thrown}')
 
     def test_invalid_option_for_monitor_command(self):
         try:

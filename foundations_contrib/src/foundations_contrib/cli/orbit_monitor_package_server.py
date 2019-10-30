@@ -24,6 +24,8 @@ def start(job_directory, command, project_name, name, env):
     _update_config(env)
     config = config_manager.config()
 
+    scheduler_url = config.get('scheduler_url', 'http://localhost:5000')
+
     with ChangeDirectory(job_directory):
         try:
             with open('job.config.yaml', 'r') as file:
@@ -34,6 +36,11 @@ def start(job_directory, command, project_name, name, env):
     project_name = project_name or job_config.get('project_name') or path.basename(getcwd())
     name = name or job_config.get('monitor_name') or command[0].replace('.', '-')
     monitor_package = f'{project_name}-{name}'
+
+    monitors_list = get_by_project(project_name)
+
+    if f'{project_name}-{name}'in monitors_list:
+        raise ValueError('Monitor already exists')
 
     save_project_to_redis(project_name)
 
@@ -66,7 +73,6 @@ def start(job_directory, command, project_name, name, env):
     monitor_gpu_spec = _get_monitor_gpu_spec(foundations_context)
     monitor_metadata = {'project_name': project_name, 'username': username}
 
-    scheduler_url = config.get('scheduler_url', 'http://localhost:5000')
 
     CronJobScheduler(scheduler_url).schedule_job(
         monitor_package,
@@ -100,10 +106,6 @@ def get_by_project(project_name, env=None):
     _update_config(env)
     cron_job_scheduler = CronJobScheduler(config_manager.config()['scheduler_url'])
     return cron_job_scheduler.get_job_with_params({'project': project_name})
-
-
-def _get_job_config(job_directory):
-    pass
 
 
 def _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback):
