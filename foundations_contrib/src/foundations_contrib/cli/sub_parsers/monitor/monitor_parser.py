@@ -81,6 +81,7 @@ class MonitorParser(object):
         return name, project_name
 
     def _modify_monitor(self, monitor_modifier_func):
+        from requests.exceptions import ConnectionError
         from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobSchedulerError
         
         monitor_name = self._cli.arguments().name
@@ -94,7 +95,11 @@ class MonitorParser(object):
             import sys
             print(f'Unable to {str(monitor_modifier_func.__name__)} monitor {monitor_name} from project {project_name}')
             sys.exit(f'Command failed with error: {str(ce)}')
-    
+        except ConnectionError as ce:
+            import sys
+            print(f'Unable to {str(monitor_modifier_func.__name__)} monitor {monitor_name} from project {project_name}')
+            sys.exit('Command failed with error: Could not connect to docker scheduler')
+
     def _delete_monitor(self):
         from foundations_contrib.cli.orbit_monitor_package_server import delete
         self._modify_monitor(delete)
