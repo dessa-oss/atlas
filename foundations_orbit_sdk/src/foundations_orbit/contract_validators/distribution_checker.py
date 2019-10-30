@@ -8,9 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import numpy as np
 class DistributionChecker(object):   
-    def __init__(self, distribution_options, bin_stats, reference_column_names, reference_column_types):
+    def __init__(self, distribution_options, bin_stats, reference_column_names, reference_column_types, categorical_attributes):
         from foundations_orbit.contract_validators.checker import Checker
-
+        self._categorical_attributes = categorical_attributes
         self._distribution_options = distribution_options.copy()
         self._bin_stats = bin_stats
         self._reference_column_names = reference_column_names
@@ -68,7 +68,7 @@ class DistributionChecker(object):
 
         ##### PROTOTYPE CODE - rebuild distribution checker using TDD or Black-box based approach asap
         from foundations_orbit.contract_validators.prototype import distribution_and_special_values_check
-        test_data = distribution_and_special_values_check(self._distribution_options, self._reference_column_names, self._bin_stats, dataframe_to_validate)
+        test_data = distribution_and_special_values_check(self._distribution_options, self._reference_column_names, self._bin_stats, dataframe_to_validate, categorical_attributes = self._categorical_attributes)
         
         self._reference_column_names = set(self._reference_column_names).union(set(self.temp_attributes_to_exclude))
         self.temp_attributes_to_exclude = []

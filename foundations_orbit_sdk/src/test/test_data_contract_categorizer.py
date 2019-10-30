@@ -141,20 +141,20 @@ class TestDataContractCategorizer(Spec):
 
         self.assertEqual(expected_attribute_categories, contract._categorical_attributes)
 
-    @skip('not implemented')
     def test_data_contract_uses_categorical_logic_for_distribution_check(self):
         import numpy, pandas
 
-        dataframe = pandas.DataFrame({self.column_name: [1,1,1, 2,2,2, 3,3,3, 4,4,4]})
+        dataframe = pandas.DataFrame({self.column_name_1: [1,1,1, 2,2,2, 3,3,3, 4,4,4]})
+        current_dataframe = pandas.DataFrame({self.column_name_1: [1,1, 2,2, 3,3, 4,4, 5,5,5,5]})
         contract = DataContract(self.contract_name, dataframe)
 
-        validation_report = contract.validate(dataframe)
+        validation_report = contract.validate(current_dataframe)
         dist_check_report = validation_report['dist_check_results']
 
         expected_report = {
-            self.column_name: {     
-                'binned_l_infinity':  0,
-                'binned_passed': True
+            self.column_name_1: {
+                'binned_l_infinity':  0.333,
+                'binned_passed': False
             }
         }
 

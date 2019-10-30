@@ -70,7 +70,7 @@ def create_bin_stats_categorical(special_values, col_values, min_category_thresh
         else:
             sv_count = len(col_values[col_values == special_value])
 
-        sv_dict = {'value': str(special_value) if special_value is np.nan else special_value, "percentage": sv_count/n_vals}
+        sv_dict = {'value': special_value, "percentage": sv_count/n_vals}
         col_values = col_values[col_values != special_value]
         bin_dicts.append(sv_dict)
 

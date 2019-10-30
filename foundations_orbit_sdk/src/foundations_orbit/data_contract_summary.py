@@ -100,6 +100,8 @@ class DataContractSummary(object):
     def _numpy_type_to_python(value):
         if type(value) == list:
             return list(map(lambda v: float(v), value))
+        elif 'timestamp' in str(type(value)):
+            return value.to_pydatetime()
         return float(value)
 
     @staticmethod

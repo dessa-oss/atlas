@@ -11,7 +11,7 @@ class DataContract(object):
         import pandas
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
+        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats, create_bin_stats_categorical
         from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
         from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
         from foundations_orbit.data_contract_summary import DataContractSummary
@@ -27,17 +27,21 @@ class DataContract(object):
 
         self._column_names, self._column_types, self._number_of_rows = dataframe_statistics(self._dataframe)
 
-
+        self._bin_stats = {}
         self._categorical_attributes = {}
         self._categorize_attributes()
 
         self.schema_test = SchemaChecker(self._column_names, self._column_types)
         self._remove_object_columns_and_types(self._column_names, self._column_types)
 
-        self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
+        for column_name in self._column_names:
+            if self._categorical_attributes[column_name]:
+                self._bin_stats[column_name] = create_bin_stats_categorical(self.options.special_values, self._dataframe[column_name])
+            else:
+                self._bin_stats[column_name] = create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name])  
 
-        self.special_value_test = SpecialValuesChecker(self.options, self._bin_stats, self._column_names, self._column_types, self._dataframe)
-        self.distribution_test = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names, self._column_types)
+        self.special_value_test = SpecialValuesChecker(self.options, self._bin_stats, self._column_names, self._column_types, self._categorical_attributes, self._dataframe)
+        self.distribution_test = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names, self._column_types, self._categorical_attributes)
         self.min_max_test = MinMaxChecker(self._column_types)
         self.summary = DataContractSummary(self._dataframe, self._column_names, self._column_types, self._categorical_attributes)
 

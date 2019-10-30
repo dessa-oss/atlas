@@ -68,7 +68,7 @@ class MonitorJobTableRow extends Component {
     } = this.state;
 
     const selectedClass = this.isSelectedRow() ? "selected-row" : "";
-    const formattedLaunchedTime = launched ? moment.unix(launched).format("YYYY-MM-DD HH:MM:SS") : "Not available";
+    const formattedLaunchedTime = launched ? moment.unix(launched).format("YYYY-MM-DD HH:mm:ss") : "Not available";
     const launchTime = moment(launched);
     const endTime = moment(duration);
     const timeDiff = duration ? `${moment.duration(endTime.diff(launchTime)).asSeconds()} seconds` : "Not available";

@@ -11,10 +11,9 @@ def delete(project_name, monitor_name, env='scheduler'):
     _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
 
 
-def start(job_directory, command, project_name, name, env):    
-    import os
+def start(job_directory, command, project_name, name, env):
     import yaml
-    from os import path
+    from os import path, getcwd
     from foundations_contrib.set_job_resources import set_job_resources
     from foundations_contrib.global_state import current_foundations_context, config_manager
     from foundations_local_docker_scheduler_plugin.bundle_deployment import job_bundle, submit_job_bundle
@@ -32,7 +31,7 @@ def start(job_directory, command, project_name, name, env):
         except IOError:
             job_config = {}
 
-    project_name = project_name or job_config.get('project_name') or path.basename(os.getcwd())
+    project_name = project_name or job_config.get('project_name') or path.basename(getcwd())
     name = name or job_config.get('monitor_name') or command[0].replace('.', '-')
     monitor_package = f'{project_name}-{name}'
 
@@ -50,7 +49,7 @@ def start(job_directory, command, project_name, name, env):
         job_resource_args['num_gpus'] = job_config.get('num_gpus')
 
     config['worker_container_overrides']['args'] = command
-    if not os.path.exists(command[0]):
+    if not path.exists(command[0]):
         print(f"Hey, seems like your command '{command[0]}' is not an existing file in your current directory. If you are using Atlas's advanced custom docker image functionality and know what you are doing, you can ignore this message.")
 
     set_job_resources(**job_resource_args)
@@ -81,38 +80,31 @@ def start(job_directory, command, project_name, name, env):
 
 
 def pause(project_name, monitor_name, env='scheduler'):
-    from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobSchedulerError
-
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.pause_job(monitor_id)
-
     _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
     return True
+
 
 def resume(project_name, monitor_name, env='scheduler'):
-    from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobSchedulerError
-
     cron_scheduler_callback = lambda scheduler, monitor_id: scheduler.resume_job(monitor_id)
-
     _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback)
     return True
+
 
 def get_by_project(project_name, env=None):
     from foundations_contrib.global_state import config_manager
     from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler
 
-    if env is None:
-        env = 'scheduler'
+    env = env if env is not None else 'scheduler'
 
     _update_config(env)
-    job_scheduler_request_param = {
-        'job_id_prefix': project_name
-    }
-
     cron_job_scheduler = CronJobScheduler(config_manager.config()['scheduler_url'])
-    return cron_job_scheduler.get_job_with_params(job_scheduler_request_param)
+    return cron_job_scheduler.get_job_with_params({'project': project_name})
+
 
 def _get_job_config(job_directory):
     pass
+
 
 def _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback):
     from foundations_contrib.global_state import config_manager
@@ -122,7 +114,6 @@ def _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback):
     monitor_id = f'{project_name}-{monitor_name}'
 
     cron_job_scheduler = CronJobScheduler(config_manager.config()['scheduler_url'])
-
     return cron_scheduler_callback(cron_job_scheduler, monitor_id)
 
 

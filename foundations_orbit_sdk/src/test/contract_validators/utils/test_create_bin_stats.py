@@ -243,7 +243,7 @@ class TestCreateBinStats(Spec):
 
         expected_result = [
             {
-                'value': str(np.nan),
+                'value': np.nan,
                 'percentage': 0.1
             },
             {
@@ -265,7 +265,7 @@ class TestCreateBinStats(Spec):
 
         expected_result = [
             {
-                'value': str(np.nan),
+                'value': np.nan,
                 'percentage': 0.1
             },
             {
@@ -299,7 +299,7 @@ class TestCreateBinStats(Spec):
 
         expected_result = [
             {
-                'value': str(np.nan),
+                'value': np.nan,
                 'percentage': 0.1
             },
             {
@@ -333,7 +333,7 @@ class TestCreateBinStats(Spec):
 
         expected_result = [
             {
-                'value': str(np.nan),
+                'value': np.nan,
                 'percentage': 0.1
             },
             {
