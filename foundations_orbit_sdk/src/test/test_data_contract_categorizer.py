@@ -178,4 +178,3 @@ class TestDataContractCategorizer(Spec):
         }
 
         self.assertEqual(expected_report, dist_check_report)
-
