@@ -1,3 +1,4 @@
+import json
 from foundations_spec import (
     Spec,
     let_mock,
@@ -17,21 +18,21 @@ from mock import mock_open, patch, Mock
 
 class TestAuthenticationClient(Spec):
 
-    conf = "test/authentication/fixtures/auth_config.json"
     redirect_url = "http://some_outher_url:0000"
+    conf_file = "test/authentication/fixtures/auth_config.json"
 
     @set_up
     def set_up(self):
-        self.mock_keycloak_class = self.patch(
+        self.patch(
             "foundations_contrib.authentication.authentication_client.KeycloakOpenID",
             Mock(),
         )
-        with open(self.conf) as conf:
-            with patch("builtins.open", mock_open(read_data=conf.read())):
-                self.auth_client = AuthenticationClient(self.conf, self.redirect_url)
-                self.mock_keycloak = self.auth_client.client
+        with open(self.conf_file) as conf:
+            config = json.load(conf)
+            self.auth_client = AuthenticationClient(config, self.redirect_url)
+            self.mock_keycloak = self.auth_client.client
 
-    def test_keycloak_client_uses_a_config_to_create_a_keycloak_open_id_instance(self):
+    def test_keycloak_client_uses_a_dict_to_create_a_keycloak_open_id_instance(self):
         self.mock_keycloak_class = self.patch(
             "foundations_contrib.authentication.authentication_client.KeycloakOpenID",
             ConditionalReturn(),
@@ -44,15 +45,24 @@ class TestAuthenticationClient(Spec):
             client_id="some_resource",
             client_secret_key="some_secret",
         )
-        client = keycloak_client(self.conf)
+        with open(self.conf_file) as conf:
+            config = json.load(conf)
+        client = keycloak_client(config)
         self.assertEqual(client, "KeycloakInstance")
+
+    def test_can_initalize_auth_client_with_file_path(self):
+        with open(self.conf_file) as conf:
+            with patch("builtins.open", mock_open(read_data=conf.read())):
+                client = AuthenticationClient(self.conf_file, self.redirect_url)
+        self.assertIsInstance(client, AuthenticationClient)
 
     def test_authentication_url_calls_keycloak_auth_url_with_the_redirect(self):
         self.auth_client.authentication_url()
         self.mock_keycloak.auth_url.assert_called_once_with(self.redirect_url)
 
     def test_browser_login_opens_window_to_authentication_url(self):
-        with patch('webbrowser.open') as mock_browser:
+        with patch("webbrowser.open") as mock_browser:
             self.auth_client.browser_login()
             mock_browser.assert_called_once_with(self.auth_client.authentication_url())
 
+    # def test_token_
