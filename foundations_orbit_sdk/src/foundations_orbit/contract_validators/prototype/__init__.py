@@ -85,23 +85,23 @@ def distribution_and_special_values_check(config_dict, column_names, bin_stats, 
             value_to_percentage_map = {}
             for unique_value_dict in ref_column_bin_stats:
                 if unique_value_dict.get('category_value', None):
-                    value_to_percentage_map[unique_value_dict['category_value']] = unique_value_dict['percentage']
+                    value_to_percentage_map[str(unique_value_dict['category_value'])] = unique_value_dict['percentage']
                 elif unique_value_dict.get('value', None):
                     ref_special_values.append(unique_value_dict['value'])
-                    value_to_percentage_map[unique_value_dict['value']] = unique_value_dict['percentage']
+                    value_to_percentage_map[str(unique_value_dict['value'])] = unique_value_dict['percentage']
                 else:
                     value_to_percentage_map['other_bins'] = unique_value_dict['percentage']
 
             current_bin_percentages_dict, current_special_value_percentages_dict = bin_current_values_categorical(column_values, ref_column_bin_stats)
 
             for value_bin, current_value_percentage in current_bin_percentages_dict.items():
-                ref_value_percentage = value_to_percentage_map[value_bin]
+                ref_value_percentage = value_to_percentage_map[str(value_bin)]
                 ref_bin_percentages.append(ref_value_percentage)
                 current_bin_percentages.append(current_value_percentage)
 
 
             for value_bin, current_value_percentage in current_special_value_percentages_dict.items():
-                ref_value_percentage = value_to_percentage_map[value_bin]
+                ref_value_percentage = value_to_percentage_map[str(value_bin)]
                 ref_special_value_percentages.append(ref_value_percentage)
                 current_special_value_percentages.append(current_value_percentage)
         
