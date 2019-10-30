@@ -174,6 +174,41 @@ class TestMonitorParser(Spec):
         CommandLineInterface(command.split()).execute()
         mock_system_exit.assert_called_once_with(f'Command failed with error: {error_message_thrown}')
 
+    def test_monitor_prints_failure_message_when_start_raises_connection_error(self):
+        from requests.exceptions import ConnectionError
+
+        mock_monitor_start = self.patch('foundations_contrib.cli.orbit_monitor_package_server.start')
+        self.patch('sys.exit')
+        mock_monitor_start.side_effect = ConnectionError
+        command = f'monitor create --project_name={self.project_name} --name={self.monitor_name} --env={self.env} . main.py'
+        CommandLineInterface(command.split()).execute()
+        self.mock_print.assert_called_with(f'Unable to create monitor {self.monitor_name} in project {self.project_name}')
+
+    def test_monitor_prints_failure_message_when_start_raises_connection_error_when_project_name_and_directory_not_set(self):
+        from requests.exceptions import ConnectionError
+
+        mock_getcwd = self.patch('os.getcwd')
+        mock_getcwd.return_value = self.job_directory
+        mock_monitor_start = self.patch('foundations_contrib.cli.orbit_monitor_package_server.start')
+        self.patch('sys.exit')
+        mock_monitor_start.side_effect = ConnectionError
+
+        command = f'monitor create --env={self.env} . main.py'
+        CommandLineInterface(command.split()).execute()
+        self.mock_print.assert_called_with(f'Unable to create monitor main-py in project {self.job_directory}')
+
+    def test_monitor_returns_exit_non_zero_when_start_raises_connection_error(self):
+        from requests.exceptions import ConnectionError
+
+        error_message_thrown = 'Could not connect to docker scheduler'
+        mock_system_exit = self.patch('sys.exit')
+        mock_monitor_start = self.patch('foundations_contrib.cli.orbit_monitor_package_server.start')
+        mock_monitor_start.side_effect = ConnectionError
+
+        command = f'monitor create --project_name={self.project_name} --name={self.monitor_name} --env={self.env} . main.py'
+        CommandLineInterface(command.split()).execute()
+        mock_system_exit.assert_called_once_with(f'Command failed with error: {error_message_thrown}')
+
     def test_monitor_prints_success_message_when_created_successfully(self):
         self.patch('foundations_contrib.cli.orbit_monitor_package_server.start')
         self._call_monitor_command('resume')
