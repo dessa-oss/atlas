@@ -121,8 +121,8 @@ class ValidationResultsOverview extends Component {
     const { validationResult } = this.props;
     const date = moment(validationResult.date).format("YYYY-MM-DD h:mm A");
     const sign = validationResult.row_count.row_count_diff >= 0 ? "+" : "-";
-    const rowDiff = Math.round(Math.abs(validationResult.row_count.row_count_diff) * 1000) / 1000;
-    const rowCount = `${validationResult.row_count.expected_row_count} -> ${validationResult.row_count.actual_row_count} (${sign}${rowDiff}%)`; // eslint-disable-line max-len
+    const rowDiff = CommonActions.decimalToPercentage(validationResult.row_count.row_count_diff);
+    const rowCount = `${validationResult.row_count.expected_row_count} -> ${validationResult.row_count.actual_row_count} (${sign}${rowDiff})`; // eslint-disable-line max-len
 
     const binLabels = selectedOverview.binned_data.bins;
     const series = [
@@ -209,19 +209,21 @@ class ValidationResultsOverview extends Component {
               <div className="overview-contract-name">{validationResult.data_contract}</div>
               <div className="i--icon-open" />
             </div>
-            <div className="overview-labels font-bold">
-              Monitor Name:<br />
-              Job ID:<br />
-              Time:<br />
-              User:<br />
-              Row count:
-            </div>
-            <div className="overview-values">
-              {validationResult.monitor_package}<br />
-              {validationResult.job_id}<br />
-              {date}<br />
-              {validationResult.user}<br />
-              {rowCount}
+            <div className="overview-labels-values-container">
+              <div className="overview-labels font-bold">
+                Monitor Name:<br />
+                Job ID:<br />
+                Time:<br />
+                User:<br />
+                Row count:
+              </div>
+              <div className="overview-values">
+                {validationResult.monitor_package}<br />
+                {validationResult.job_id}<br />
+                {date}<br />
+                {validationResult.user}<br />
+                {rowCount}
+              </div>
             </div>
           </div>
         </div>

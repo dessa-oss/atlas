@@ -39,16 +39,20 @@
       width: 80%;
     }
 
-    .overview-labels, .overview-values {
-      display: inline-block;
-      margin-top: 20px;
-      color: #828282;
-      line-height: 20px;
+    .overview-labels-values-container {
       overflow-x: hidden;
-    }
+      white-space: nowrap;
 
-    .overview-labels {
-      margin-right: 30px;
+      .overview-labels, .overview-values {
+        display: inline-block;
+        margin-top: 20px;
+        color: #828282;
+        line-height: 20px;
+      }
+
+      .overview-labels {
+        margin-right: 30px;
+      }
     }
 
     .overview-graph {
