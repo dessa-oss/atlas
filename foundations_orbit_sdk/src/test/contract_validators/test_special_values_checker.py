@@ -440,6 +440,40 @@ class TestSpecialValuesChecker(Spec):
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
 
+    def test_special_values_check_configure_multiple_times_works_and_overrides_previous_settings(self):
+        self.maxDiff = None
+        expected_check_results = {
+            self.column_name:{
+                numpy.nan: {
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.25,
+                    'passed': True
+                },
+                numpy.inf: {
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0,
+                    'current_percentage': 0.0,
+                    'passed': True
+                }
+            },
+            self.column_name_2:{
+                numpy.nan: {
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.25,
+                    'passed': True
+                }
+            }
+        }
+
+        checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
+        checker.exclude(attributes='all')
+        checker.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.1, numpy.inf: 0.1})
+        checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.2})
+        results = checker.validate(dataframe)
+        self.assertEqual(expected_check_results, results)
+
     def test_special_values_check_requires_attributes_as_a_parameter(self):
         checker, _ = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
         try:
