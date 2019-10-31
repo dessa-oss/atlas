@@ -21,10 +21,8 @@ class MonitorOverview extends Component {
     this.state = {
       calDateStart: monitorResult.schedule.start_date || new Date(),
       calDateEnd: monitorResult.schedule.end_date || "",
-      clockTimeHour: monitorResult.schedule.hour.replace(/\D/g, "") !== "" ? monitorResult.schedule.hour : "12",
-      clockTimeMinute: monitorResult.schedule.minute.replace(/\D/g, "") !== ""
-        ? monitorResult.schedule.minute.replace(/\D/g, "")
-        : "00",
+      clockTimeHour: new Date(monitorResult.schedule.start_date).getHours() || "12",
+      clockTimeMinute: new Date(monitorResult.schedule.start_date).getMinutes() || "00",
       scheduleRepeatUnit: { label: "Days" },
       scheduleRepeatUnitValue: "1"
     };
@@ -57,7 +55,6 @@ class MonitorOverview extends Component {
   }
 
   reload() {
-    const { scheduleRepeatUnitValue } = this.state;
     const result = this.findScheduleRepeat();
     if (result) {
       this.setState(() => ({
@@ -109,15 +106,15 @@ class MonitorOverview extends Component {
       week: "*",
       day: "*",
       hour: "*",
-      minute: "*",
       second: "*",
-      start_date: calStartDate
+      start_date: `${calStartDate} ${clockTimeHour}:${clockTimeMinute}`
     };
 
     if (calDateEnd !== "") {
       scheduleBody.end_date = moment(calDateEnd).format("YYYY-MM-DD");
     }
     scheduleBody[scheduleRepeatUnit.label.toLocaleLowerCase().slice(0, -1)] = `*/${scheduleRepeatUnitValue}`;
+
 
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
@@ -173,8 +170,8 @@ class MonitorOverview extends Component {
     const calStartTime = startTime.split(" ").slice(0, 4).join(" ");
     const calEndTime = endTime.split(" ").slice(0, 4).join(" ");
 
-    const calStartTime2 = startTime.split(" ")[4];
-    const clockTime = `${clockTimeHour}:${clockTimeMinute}`;
+    const clockTimeDateObject = new Date(calDateStart);
+    const clockTime = `${clockTimeDateObject.getHours()}:${clockTimeDateObject.getMinutes()}`;
 
     return (
       <div className="monitor-info">
@@ -261,7 +258,7 @@ class MonitorOverview extends Component {
                     enableTime: true,
                     noCalendar: true,
                     dateFormat: "H:i",
-                    defaultDate: calStartTime2,
+                    defaultDate: clockTime,
                     time_24hr: true
                   }}
                 />
