@@ -334,12 +334,6 @@
                 float: right;
                 padding-right: 20px;
               }
-              &:not(:first-child) {
-                &:hover {
-                  border-left: 3px solid #024B9C;
-                  padding-left: 11px;
-                }
-              }
               &:nth-child(1) {
                 padding-top: 10px;
                 padding-bottom: 10px;
