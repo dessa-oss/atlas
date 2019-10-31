@@ -44,7 +44,6 @@
       white-space: nowrap;
 
       .overview-labels, .overview-values {
-        display: inline-block;
         margin-top: 20px;
         color: #828282;
         line-height: 20px;
@@ -52,6 +51,11 @@
 
       .overview-labels {
         margin-right: 30px;
+        float: left;
+      }
+
+      .overview-values {
+        overflow-x: hidden;
       }
     }
 
@@ -59,7 +63,6 @@
       position: relative;
       width: 45%;
       display: flex;
-      justify-content: center;
       align-items: center;
 
       .empty-overview-graph-container {
@@ -77,11 +80,13 @@
       display: flex;
       justify-content: center;
       flex-direction: column;
-      padding-left: 60px;
-      width: calc(25% - 60px);
+      width: 25%;
+
+      .overview-graph-stats-center {
+        width: 80%;
+      }
 
       .attribute-select {
-        width: 70%;
         margin-bottom: 15px;
       }
 
@@ -112,15 +117,23 @@
           }
         }
 
-        .attribute-data-container-left, .attribute-data-container-right {
-          display: inline-block;
+        .attribute-data-container-left-right-container {
+          overflow-x: hidden;
+          white-space: nowrap;
           color: hsl(0%, 0%, 51%);
           line-height: 20px;
-        }
 
-        .attribute-data-container-left {
-          font-weight: 600;
-          margin-right: 30px;
+          .attribute-data-container-left {
+            float: left;
+            font-weight: 600;
+            margin-right: 30px;
+            color: hsl(0%, 0%, 51%);
+          }
+
+          .attribute-data-container-right {
+            color: hsl(0%, 0%, 51%);
+            overflow-x: hidden;
+          }
         }
       }
     }

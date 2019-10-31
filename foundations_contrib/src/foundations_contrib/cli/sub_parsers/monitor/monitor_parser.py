@@ -68,7 +68,7 @@ class MonitorParser(object):
             import sys
 
             print(f'Unable to create monitor {name} in project {project_name}')
-            sys.exit('Command failed with error: Could not connect to docker scheduler')
+            sys.exit(f'Command failed with error: Could not connect to scheduler at {self._scheduler_url()}')
 
     def _get_name_and_project_name_for_error(self, name, project_name, command):
         from os import path, getcwd
@@ -97,8 +97,13 @@ class MonitorParser(object):
             sys.exit(f'Command failed with error: {str(ce)}')
         except ConnectionError as ce:
             import sys
+
             print(f'Unable to {str(monitor_modifier_func.__name__)} monitor {monitor_name} from project {project_name}')
-            sys.exit('Command failed with error: Could not connect to docker scheduler')
+            sys.exit(f'Command failed with error: Could not connect to scheduler at {self._scheduler_url()}')
+
+    def _scheduler_url(self):
+        from foundations_contrib.global_state import config_manager
+        return config_manager.config().get('scheduler_url', 'http://localhost:5000')
 
     def _delete_monitor(self):
         from foundations_contrib.cli.orbit_monitor_package_server import delete

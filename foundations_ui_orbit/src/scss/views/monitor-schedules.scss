@@ -51,6 +51,9 @@
           text-align: center;
           width: calc(100% - 14px);
           padding-left: 14px;
+          &:not(:first-child) {
+            cursor: pointer;
+          }
           .monitor-status-table-cell {
             .status-icon {
               border-radius: 25px;
@@ -116,7 +119,28 @@
         .monitor-overview {
           border-right: 1px solid #D8D8D8;
           .monitor-overview-menu {
-            padding-left: 30px;
+            padding-left: 40px;
+            button {
+              border-radius: 3px;
+              margin-right: 10px;
+              width: 35px;
+              height: 35px;
+              &:focus {
+                outline: 0;
+              }
+              &:active {
+                background-color: rgb(185, 185, 185);
+              }
+              &:hover {
+                background-color: rgb(223, 223, 223);
+              }
+              .i--icon-delete, .i--icon-pause, .i--icon-start {
+                margin: 0;
+                padding: 0;
+                width: 15px;
+                height: 15px;
+              }
+            }
           }
           h3 {
             font-size: 24px;
@@ -333,12 +357,6 @@
               .monitor-job-open-cell {
                 float: right;
                 padding-right: 20px;
-              }
-              &:not(:first-child) {
-                &:hover {
-                  border-left: 3px solid #024B9C;
-                  padding-left: 11px;
-                }
               }
               &:nth-child(1) {
                 padding-top: 10px;

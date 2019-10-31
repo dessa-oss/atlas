@@ -95,6 +95,9 @@ class TestScheduleMonitorPackageViaCli(Spec):
     def test_schedule_monitor_package_via_cli_runs_package_code_on_a_schedule(self):
         result = self._start_monitor()
         self.assertEqual(0, result.returncode)
+        self.assertIn('Foundations INFO: Job bundle submitted.\n', result.stdout.decode())
+        self.assertIn('Foundations INFO: Monitor scheduled.\n', result.stdout.decode())
+        self.assertIn(f'Successfully created monitor {self.monitor_name} in project {self.project_name}\n', result.stdout.decode())
 
         metric_sets = ProductionMetricSet.all(self.project_name).evaluate()
         self.assertEqual([], metric_sets)

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
+import { del, delAtlas } from "../../../actions/BaseActions";
 
 class MonitorJobsTable extends Component {
   constructor(props) {
@@ -10,8 +11,12 @@ class MonitorJobsTable extends Component {
     this.state = {
       rows: null,
       projectName: location.state.project.name,
-      monitorName: monitorResult.properties.spec.environment.MONITOR_NAME
+      monitorName: monitorResult.properties.spec.environment.MONITOR_NAME,
+      selectedRows: new Set()
     };
+
+    this.onSelectRow = this.onSelectRow.bind(this);
+    this.deleteJobs = this.deleteJobs.bind(this);
     this.reload = this.reload.bind(this);
   }
 
@@ -21,23 +26,51 @@ class MonitorJobsTable extends Component {
 
   async reload() {
     const { projectName, monitorName } = this.state;
-    const { onClickRow, reload } = this.props;
+    const { reload, toggleLogsModal } = this.props;
 
     const result = await MonitorSchedulesActions.getMonitorJobs(projectName, monitorName);
-    const rows = MonitorSchedulesActions.getMonitorJobRows(result, onClickRow);
+    const rows = MonitorSchedulesActions.getMonitorJobRows(result, this.onSelectRow, toggleLogsModal);
     this.setState({ rows: rows });
     reload();
   }
 
+  onSelectRow(jobID) {
+    const { selectedRows } = this.state;
+
+    if (selectedRows.has(jobID)) {
+      selectedRows.delete(jobID);
+    } else {
+      selectedRows.add(jobID);
+    }
+
+    this.setState({ selectedRows: selectedRows });
+  }
+
+  async deleteJobs() {
+    const { selectedRows, projectName, monitorName } = this.state;
+
+    const atlasPromises = Array.from(selectedRows).map(jobID => {
+      const URL = `projects/${projectName}/job_listing/${jobID}`;
+      return delAtlas(URL);
+    });
+    const orbitPromises = Array.from(selectedRows).map(jobID => {
+      const URL = `projects/${projectName}/monitors/${monitorName}/jobs?job_id=${jobID}`;
+      return del(URL);
+    });
+    await Promise.all(atlasPromises.concat(orbitPromises));
+
+    this.setState({ selectedRows: new Set() });
+    this.reload();
+  }
+
   render() {
-    const { rows } = this.state;
-    const { selectedRow } = this.props;
+    const { rows, selectedRows } = this.state;
 
     let rowsWithProps = [];
     if (rows) {
       rowsWithProps = rows.map(row => React.cloneElement(
         row,
-        { selectedRow: selectedRow }
+        { selectedRows: selectedRows }
       ));
     }
 
@@ -45,8 +78,8 @@ class MonitorJobsTable extends Component {
       <div className="monitor-jobs">
         <div className="monitor-jobs-heading">
           <h3>Monitor Jobs</h3>
-          {/* <div className="i--icon-delete" /> */}
-          {/* <div className="i--icon-refresh" onClick={this.reload} /> */}
+          <div className="i--icon-delete" onClick={this.deleteJobs} />
+          <div className="i--icon-refresh" onClick={this.reload} />
         </div>
         <div className="monitor-job-listing">
           <div className="monitor-job-items">
@@ -67,18 +100,16 @@ class MonitorJobsTable extends Component {
 
 MonitorJobsTable.propTypes = {
   location: PropTypes.object,
-  onClickRow: PropTypes.func,
-  selectedRow: PropTypes.object,
   reload: PropTypes.func,
-  monitorResult: PropTypes.object
+  monitorResult: PropTypes.object,
+  toggleLogsModal: PropTypes.func
 };
 
 MonitorJobsTable.defaultProps = {
   location: { state: {} },
-  onClickRow: () => {},
-  selectedRow: {},
   reload: () => {},
-  monitorResult: {}
+  monitorResult: {},
+  toggleLogsModal: () => {}
 };
 
 export default MonitorJobsTable;
