@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import CommonActions from "../../../actions/CommonActions";
 import moment from "moment";
 
 class MonitorJobTableRow extends Component {
@@ -18,42 +17,21 @@ class MonitorJobTableRow extends Component {
       duration: duration
     };
 
-    this.onClick = this.onClick.bind(this);
+    this.onSelect = this.onSelect.bind(this);
     this.isSelectedRow = this.isSelectedRow.bind(this);
     this.onOpenLogs = this.onOpenLogs.bind(this);
   }
 
-  onClick() {
-    const {
-      status,
-      launched,
-      duration
-    } = this.state;
-    const { jobID, onClick } = this.props;
+  onSelect() {
+    const { jobID, onSelect } = this.props;
 
-    onClick({
-      jobID: jobID,
-      status: status,
-      launched: launched,
-      duration: duration
-    });
+    onSelect(jobID);
   }
 
   isSelectedRow() {
-    const {
-      status,
-      launched,
-      duration
-    } = this.state;
-    const { jobID, selectedRow } = this.props;
-    const thisRow = {
-      jobID: jobID,
-      status: status,
-      launched: launched,
-      duration: duration
-    };
+    const { jobID, selectedRows } = this.props;
 
-    return CommonActions.deepEqual(thisRow, selectedRow);
+    return selectedRows.has(jobID);
   }
 
   onOpenLogs() {
@@ -89,8 +67,8 @@ class MonitorJobTableRow extends Component {
     const statusIcon = addStatus(status);
 
     return (
-      <div className={`monitor-job-table-row ${selectedClass}`} onClick={this.onClick}>
-        <div className="monitor-job-checkbox"><input type="checkbox" /></div>
+      <div className={`monitor-job-table-row ${selectedClass}`}>
+        <div className="monitor-job-checkbox"><input type="checkbox" onClick={this.onSelect} /></div>
         <div className="monitor-job-name-cell">{jobID}</div>
         <div className="monitor-job-status-cell">{statusIcon}</div>
         <div className="monitor-job-launched-cell">{formattedLaunchedTime}</div>
@@ -108,8 +86,8 @@ MonitorJobTableRow.propTypes = {
   status: PropTypes.string,
   launched: PropTypes.number,
   duration: PropTypes.number,
-  onClick: PropTypes.func,
-  selectedRow: PropTypes.object,
+  onSelect: PropTypes.func,
+  selectedRows: PropTypes.object,
   onClickLogs: PropTypes.func
 };
 
@@ -118,8 +96,8 @@ MonitorJobTableRow.defaultProps = {
   status: "Missing",
   launched: "Missing",
   duration: "Missing",
-  onClick: () => {},
-  selectedRow: {},
+  onSelect: () => {},
+  selectedRows: new Set(),
   onClickLogs: () => {}
 };
 

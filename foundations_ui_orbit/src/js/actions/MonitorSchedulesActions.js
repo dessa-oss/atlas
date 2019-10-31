@@ -46,7 +46,7 @@ const MonitorSchedulesActions = {
       });
   },
 
-  getMonitorJobRows: (results, onClickRow, toggleLogsModal) => {
+  getMonitorJobRows: (results, onSelectRow, toggleLogsModal) => {
     if (!results.error) {
       return results.map(job => {
         const key = job.job_id + job.duration;
@@ -57,7 +57,7 @@ const MonitorSchedulesActions = {
             status={job.status}
             launched={job.start_time}
             duration={job.completed_time}
-            onClick={onClickRow}
+            onSelect={onSelectRow}
             onClickLogs={toggleLogsModal}
           />
         );
