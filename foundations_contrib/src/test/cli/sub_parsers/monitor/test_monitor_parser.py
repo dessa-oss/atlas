@@ -14,7 +14,7 @@ class TestMonitorParser(Spec):
     @set_up
     def set_up(self):
         mock_config_manager = self.patch('foundations_contrib.foundations_contrib.global_state.config_manager')
-        mock_config_manager.config.return_value = {'scheduler_url': 'https://localhost:5000'}
+        mock_config_manager.config.return_value = {'scheduler_url': self.scheduler_url}
         self.mock_print = self.patch('builtins.print')
         self.patch('foundations_contrib.cli.job_submission.config.load')
 
@@ -41,6 +41,10 @@ class TestMonitorParser(Spec):
     @let
     def invalid_operation(self):
         return self.faker.word()
+
+    @let
+    def scheduler_url(self):
+        return self.faker.url()
 
     @let_now
     def cron_job_scheduler(self):
@@ -200,7 +204,7 @@ class TestMonitorParser(Spec):
     def test_monitor_returns_exit_non_zero_when_start_raises_connection_error(self):
         from requests.exceptions import ConnectionError
 
-        error_message_thrown = 'Could not connect to docker scheduler'
+        error_message_thrown = f'Could not connect to scheduler at {self.scheduler_url}'
         mock_system_exit = self.patch('sys.exit')
         mock_monitor_start = self.patch('foundations_contrib.cli.orbit_monitor_package_server.start')
         mock_monitor_start.side_effect = ConnectionError
@@ -247,8 +251,23 @@ class TestMonitorParser(Spec):
     def test_monitor_returns_exit_non_zero_when_resume_raises_connection_error(self):
         self._test_command_exits_with_connection_error('resume')
 
-    def _test_command_exits_with_connection_error(self, command):
-        error_message = 'Could not connect to docker scheduler'
+    def test_monitor_returns_exit_non_zero_when_resume_raises_connection_error_when_no_url_set(self):
+        self._test_command_exits_with_connection_error_when_no_scheduler_url_in_config('resume')
+    
+    def test_monitor_returns_exit_non_zero_when_pause_raises_connection_error_when_no_url_set(self):
+        self._test_command_exits_with_connection_error_when_no_scheduler_url_in_config('pause')
+
+    def test_monitor_returns_exit_non_zero_when_delete_raises_connection_error_when_no_url_set(self):
+        self._test_command_exits_with_connection_error_when_no_scheduler_url_in_config('delete')
+
+    def _test_command_exits_with_connection_error_when_no_scheduler_url_in_config(self, command):
+        mock_config_manager = self.patch('foundations_contrib.global_state.config_manager')
+        mock_config_manager.config.return_value = {}
+        self._test_command_exits_with_connection_error(command, url='http://localhost:5000')
+
+    def _test_command_exits_with_connection_error(self, command, url=None):
+        url = url if url is not None else self.scheduler_url
+        error_message = f'Could not connect to scheduler at {url}'
         mock_system_exit = self.patch('sys.exit')
         self._patch_monitor_command_with_connection_error(command)
         mock_system_exit.assert_called_with(f'Command failed with error: {error_message}')
