@@ -20,16 +20,12 @@ from flask import redirect, jsonify
 
 conf = {
     "realm": "Atlas",
-    "auth-server-url": "http://localhost:8080/auth/",
+    "auth-server-url": "http://localhost:8080/auth",
     "ssl-required": "external",
-    "resource": "flask",
-    "credentials": {"secret": "b52bd653-2b4f-449a-a129-fb1a6a188bf9"},
+    "resource": "foundations",
     "confidential-port": 0,
 }
-
-client = AuthenticationClient(
-    conf, redirect_url="/api/v2beta/auth"
-)
+client = AuthenticationClient(conf, redirect_url="/api/v2beta/auth")
 
 
 @api_resource("/api/v2beta/auth")
