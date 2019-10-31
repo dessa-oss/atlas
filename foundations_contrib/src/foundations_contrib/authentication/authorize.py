@@ -75,7 +75,7 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = get_token_from_header()
-        jsonurl = urlopen("https://" + AUTH0_DOMAIN + "/.well-known/jwks.json")
+        jsonurl = urlopen("http://" + AUTH0_DOMAIN + "/.well-known/jwks.json")
         jwks = json.loads(jsonurl.read())
         unverified_header = jwt.get_unverified_header(token)
         rsa_key = {}
@@ -94,7 +94,7 @@ def requires_auth(f):
                     token,
                     rsa_key,
                     algorithms=ALGORITHMS,
-                    issuer="https://" + AUTH0_DOMAIN + "/",
+                    issuer=f"http://{AUTH_DOMAIN}/realms/Atlas",
                 )
             except jwt.ExpiredSignatureError:
                 raise AuthError(
