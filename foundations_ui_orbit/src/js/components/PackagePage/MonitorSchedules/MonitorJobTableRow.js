@@ -7,14 +7,12 @@ class MonitorJobTableRow extends Component {
   constructor(props) {
     super(props);
     const {
-      jobID,
       status,
       launched,
       duration
     } = this.props;
 
     this.state = {
-      jobID: jobID,
       status: status,
       launched: launched,
       duration: duration
@@ -22,16 +20,16 @@ class MonitorJobTableRow extends Component {
 
     this.onClick = this.onClick.bind(this);
     this.isSelectedRow = this.isSelectedRow.bind(this);
+    this.onOpenLogs = this.onOpenLogs.bind(this);
   }
 
   onClick() {
     const {
-      jobID,
       status,
       launched,
       duration
     } = this.state;
-    const { onClick } = this.props;
+    const { jobID, onClick } = this.props;
 
     onClick({
       jobID: jobID,
@@ -43,12 +41,11 @@ class MonitorJobTableRow extends Component {
 
   isSelectedRow() {
     const {
-      jobID,
       status,
       launched,
       duration
     } = this.state;
-    const { selectedRow } = this.props;
+    const { jobID, selectedRow } = this.props;
     const thisRow = {
       jobID: jobID,
       status: status,
@@ -59,13 +56,18 @@ class MonitorJobTableRow extends Component {
     return CommonActions.deepEqual(thisRow, selectedRow);
   }
 
+  onOpenLogs() {
+    const { onClickLogs, jobID } = this.props;
+    onClickLogs(jobID);
+  }
+
   render() {
     const {
-      jobID,
       status,
       launched,
       duration
     } = this.state;
+    const { jobID } = this.props;
 
     const selectedClass = this.isSelectedRow() ? "selected-row" : "";
     const formattedLaunchedTime = launched ? moment.unix(launched).format("YYYY-MM-DD HH:mm:ss") : "Not available";
@@ -94,9 +96,9 @@ class MonitorJobTableRow extends Component {
         <div className="monitor-job-status-cell">{statusIcon}</div>
         <div className="monitor-job-launched-cell">{formattedLaunchedTime}</div>
         <div className="monitor-job-duration-cell">{timeDiff}</div>
-        {/* <div className="monitor-job-open-cell">
-          <div className="i--icon-open" />
-        </div> */}
+        <div className="monitor-job-open-cell">
+          <div className="i--icon-open" onClick={this.onOpenLogs} />
+        </div>
       </div>
     );
   }
@@ -108,7 +110,8 @@ MonitorJobTableRow.propTypes = {
   launched: PropTypes.number,
   duration: PropTypes.number,
   onClick: PropTypes.func,
-  selectedRow: PropTypes.func
+  selectedRow: PropTypes.func,
+  onClickLogs: PropTypes.func
 };
 
 MonitorJobTableRow.defaultProps = {
@@ -117,7 +120,8 @@ MonitorJobTableRow.defaultProps = {
   launched: "Missing",
   duration: "Missing",
   onClick: () => {},
-  selectedRow: PropTypes.object
+  selectedRow: PropTypes.object,
+  onClickLogs: () => {}
 };
 
 

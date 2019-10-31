@@ -46,7 +46,7 @@ const MonitorSchedulesActions = {
       });
   },
 
-  getMonitorJobRows: results => {
+  getMonitorJobRows: (results, onClickRow, toggleLogsModal) => {
     if (!results.error) {
       return results.map(job => {
         const key = job.job_id + job.duration;
@@ -57,6 +57,8 @@ const MonitorSchedulesActions = {
             status={job.status}
             launched={job.start_time}
             duration={job.completed_time}
+            onClick={onClickRow}
+            onClickLogs={toggleLogsModal}
           />
         );
       });

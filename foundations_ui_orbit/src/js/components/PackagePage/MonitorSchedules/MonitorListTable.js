@@ -32,8 +32,6 @@ class MonitorListTable extends Component {
     const { rows } = this.state;
     const { selectedRow } = this.props;
 
-    console.log("selected row: ", selectedRow);
-
     let rowsWithProps = [];
     if (rows) {
       rowsWithProps = rows.map(row => React.cloneElement(
