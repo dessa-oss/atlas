@@ -481,3 +481,34 @@ class TestDistributionChecker(Spec):
         validate_results = checker.validate(dataframe)
 
         self.assertEqual(expected_dist_check_result, validate_results)
+
+    def test_distribution_checker_provides_expected_output_with_zeros_input(self):
+        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats, create_bin_stats_categorical
+        import numpy
+
+        reference_data = {
+            self.column_name: [0]*99 + [1],
+        }
+
+        reference_dataframe = pandas.DataFrame(reference_data)
+
+        current_data = {
+            
+        }
+        categorical_attributes = {self.column_name:True}
+
+        bin_stats = {}
+        bin_stats[self.column_name] = create_bin_stats_categorical(special_values=[], col_values=reference_dataframe[self.column_name])
+
+        expected_dist_check_result = {
+            self.column_name: {
+                'binned_l_infinity':  0.0,
+                'binned_passed': True,
+            },
+        }
+        checker = DistributionChecker(self.distribution_options, bin_stats, [self.column_name], self.one_column_dataframe_reference_types, categorical_attributes=categorical_attributes)
+        checker.configure(attributes=[self.column_name], method='l_infinity')
+
+        validate_results = checker.validate(reference_dataframe)
+
+        self.assertEqual(expected_dist_check_result, validate_results)

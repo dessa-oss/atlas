@@ -21,9 +21,9 @@ def bin_current_values_categorical(column_values, ref_column_bin_stats):
     category_bins, special_values_bin = [], []
 
     for category_bin in ref_column_bin_stats:
-        if category_bin.get('category_value', None):
+        if category_bin.get('category_value', None) != None:
             category_bins.append(category_bin['category_value'])
-        elif category_bin.get('value', None):
+        elif category_bin.get('value', None) != None:
             special_values_bin.append(category_bin['value'])
 
     for unique_value in current_unique_values:
@@ -84,9 +84,9 @@ def distribution_and_special_values_check(config_dict, column_names, bin_stats, 
 
             value_to_percentage_map = {}
             for unique_value_dict in ref_column_bin_stats:
-                if unique_value_dict.get('category_value', None):
+                if unique_value_dict.get('category_value', None) != None:
                     value_to_percentage_map[str(unique_value_dict['category_value'])] = unique_value_dict['percentage']
-                elif unique_value_dict.get('value', None):
+                elif unique_value_dict.get('value', None) != None:
                     ref_special_values.append(unique_value_dict['value'])
                     value_to_percentage_map[str(unique_value_dict['value'])] = unique_value_dict['percentage']
                 else:
