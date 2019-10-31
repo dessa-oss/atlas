@@ -305,18 +305,14 @@ pipeline{
                         stage('Build Orbit Team') {
                             steps {
                                 container("python3-1") {
-                                    ws("${WORKSPACE}") {
-                                        sh './build_orbit_team_dist.sh'
-                                    }
+                                    sh './build_orbit_team_dist.sh'
                                 }
                             }
                         }
                         stage('Build GUI Orbit Team') {
                             steps {
                                 container("python3-1") {
-                                    ws("${WORKSPACE}") {
-                                        sh './build_gui_orbit_team.sh'
-                                    }
+                                    sh './build_gui_orbit_team.sh'
                                 }
                             }
                         }
@@ -335,18 +331,14 @@ pipeline{
                         stage('Build Atlas CE') {
                             steps {
                                 container("python3-1") {
-                                    ws("${WORKSPACE}") {
-                                        sh './build_ce_dist.sh'
-                                    }
+                                    sh './build_ce_dist.sh'
                                 }
                             }
                         }
                         stage('Build GUI Atlas CE') {
                             steps {
                                 container("python3-1") {
-                                    ws("${WORKSPACE}") {
-                                        sh './build_gui_ce.sh'
-                                    }
+                                    sh './build_gui_ce.sh'
                                 }
                             }
                         }
