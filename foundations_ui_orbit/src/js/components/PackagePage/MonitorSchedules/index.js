@@ -1,21 +1,24 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import Layout from "../Layout";
-import { get, post } from "../../../actions/BaseActions";
-import PropTypes from "prop-types";
-import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
 import MonitorListTable from "./MonitorListTable";
 import ScheduleDetails from "./ScheduleDetails";
+import MonitorLogsModal from "./MonitorLogsModal";
 
 class MonitorSchedules extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      selectedMonitor: {}
+      selectedMonitor: {},
+      logsModalIsOpen: false,
+      logsModalJobID: null
     };
+
     this.selectRow = this.selectRow.bind(this);
     this.reload = this.reload.bind(this);
+    this.toggleLogsModal = this.toggleLogsModal.bind(this);
   }
 
   selectRow(selectedItem) {
@@ -26,10 +29,14 @@ class MonitorSchedules extends Component {
     this.setState({ selectedMonitor: {} });
   }
 
-  render() {
-    const { selectedMonitor } = this.state;
+  toggleLogsModal(logsModalJobID) {
+    const { logsModalIsOpen } = this.state;
+    this.setState({ logsModalIsOpen: !logsModalIsOpen, logsModalJobID: logsModalJobID });
+  }
 
-    const location = this.props.location;
+  render() {
+    const { selectedMonitor, logsModalIsOpen, logsModalJobID } = this.state;
+    const { location } = this.props;
 
     return (
       <Layout tab="Schedules" title="Data Health">
@@ -37,7 +44,17 @@ class MonitorSchedules extends Component {
           <h3 className="section-title">Monitor Schedules</h3>
           <div className="schedule-details">
             <MonitorListTable location={location} onClickRow={this.selectRow} selectedRow={selectedMonitor} />
-            <ScheduleDetails location={location} selectedMonitor={selectedMonitor} />
+            <ScheduleDetails
+              location={location}
+              selectedMonitor={selectedMonitor}
+              toggleLogsModal={this.toggleLogsModal}
+            />
+            <MonitorLogsModal
+              isOpen={logsModalIsOpen}
+              toggle={this.toggleLogsModal}
+              jobID={logsModalJobID}
+              projectName={location.state.project.name}
+            />
           </div>
         </div>
       </Layout>

@@ -41,13 +41,12 @@ class ScheduleDetails extends Component {
 
   render() {
     const { monitorResult } = this.state;
-
-    const location = this.props.location;
+    const { location, toggleLogsModal } = this.props;
 
     let mainRender = (
       <div className="monitor-summary">
         <MonitorOverview monitorResult={monitorResult} />
-        <MonitorJobsTable location={location} monitorResult={monitorResult} />
+        <MonitorJobsTable location={location} monitorResult={monitorResult} toggleLogsModal={toggleLogsModal} />
       </div>
     );
     if (!monitorResult || CommonActions.isEmptyObject(monitorResult)) {
@@ -69,12 +68,14 @@ class ScheduleDetails extends Component {
 
 ScheduleDetails.propTypes = {
   location: PropTypes.object,
-  selectedMonitor: PropTypes.object
+  selectedMonitor: PropTypes.object,
+  toggleLogsModal: PropTypes.func
 };
 
 ScheduleDetails.defaultProps = {
   location: {},
-  selectedMonitor: {}
+  selectedMonitor: {},
+  toggleLogsModal: () => {}
 };
 
 export default ScheduleDetails;

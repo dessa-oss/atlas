@@ -21,10 +21,10 @@ class MonitorJobsTable extends Component {
 
   async reload() {
     const { projectName, monitorName } = this.state;
-    const { onClickRow, reload } = this.props;
+    const { onClickRow, reload, toggleLogsModal } = this.props;
 
     const result = await MonitorSchedulesActions.getMonitorJobs(projectName, monitorName);
-    const rows = MonitorSchedulesActions.getMonitorJobRows(result, onClickRow);
+    const rows = MonitorSchedulesActions.getMonitorJobRows(result, onClickRow, toggleLogsModal);
     this.setState({ rows: rows });
     reload();
   }
@@ -70,7 +70,8 @@ MonitorJobsTable.propTypes = {
   onClickRow: PropTypes.func,
   selectedRow: PropTypes.object,
   reload: PropTypes.func,
-  monitorResult: PropTypes.object
+  monitorResult: PropTypes.object,
+  toggleLogsModal: PropTypes.func
 };
 
 MonitorJobsTable.defaultProps = {
@@ -78,7 +79,8 @@ MonitorJobsTable.defaultProps = {
   onClickRow: () => {},
   selectedRow: {},
   reload: () => {},
-  monitorResult: {}
+  monitorResult: {},
+  toggleLogsModal: () => {}
 };
 
 export default MonitorJobsTable;

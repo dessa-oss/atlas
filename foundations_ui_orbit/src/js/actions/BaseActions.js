@@ -1,9 +1,22 @@
 const baseURL = process.env.REACT_APP_API_URL;
 const baseApiaryURL = process.env.REACT_APP_APIARY_URL;
 const baseMasterURL = process.env.REACT_APP_MASTER_URL;
+const atlasURL = process.env.REACT_APP_ATLAS_URL;
 
 const get = url => {
   const fullURL = baseURL.concat(url);
+  return fetch(fullURL)
+    .then(res => res.json())
+    .then(result => {
+      return result;
+    })
+    .catch(() => {
+      return null;
+    });
+};
+
+const getAtlas = url => {
+  const fullURL = atlasURL.concat(url);
   return fetch(fullURL)
     .then(res => res.json())
     .then(result => {
@@ -187,5 +200,5 @@ const postJSONFile = (url, fileName, data) => {
 };
 
 export {
-  get, getFromApiary, getMaster, post, postApiary, postMaster, put, putApiary, del, postJSONFile, patch
+  get, getAtlas, getFromApiary, getMaster, post, postApiary, postMaster, put, putApiary, del, postJSONFile, patch
 };
