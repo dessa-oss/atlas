@@ -51,6 +51,9 @@
           text-align: center;
           width: calc(100% - 14px);
           padding-left: 14px;
+          &:not(:first-child) {
+            cursor: pointer;
+          }
           .monitor-status-table-cell {
             .status-icon {
               border-radius: 25px;
