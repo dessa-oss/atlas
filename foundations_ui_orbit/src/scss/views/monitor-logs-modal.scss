@@ -1,0 +1,74 @@
+.modal {
+  .close {
+    position: absolute;
+    right: 25px;
+    top: 15px;
+    width: 25px;
+    height: 25px;
+    padding: 10px;
+    outline: none;
+    cursor: pointer;
+  }
+}
+
+.modal-dialog {
+  top: 100px;
+}
+
+.modal-content {
+  background-color: #F9F9F9;
+}
+
+.monitor-logs-modal {
+  width: 80%;
+  min-width: 480px;
+  margin-left: 10% !important; // important needed to override the reactstrap library
+  margin-top: 10% !important;
+  height: 50%;
+
+  .monitor-logs-modal-container-main {
+    width: 100%;
+    height: 600px;
+
+    .monitor-logs-modal-container-title {
+      display: inline-block;
+
+      .monitor-logs-modal-label-id {
+        display: inline-block;
+        font-size: 18px;
+        @extend .f--roboto-bold;
+      }
+
+      .monitor-logs-modal-container-id {
+        display: inline-block;
+        border: solid 1px #BEBEBE;
+        margin-left: 10px;
+        position: relative;
+        border-radius: 3px;
+        background: white;
+
+        .monitor-logs-modal-text-id {
+          display: inline-block;
+          margin-left: 10px;
+          margin-right: 10px;
+          padding-right: 25px;
+          font-size: 18px;
+          margin-top: 10px;
+          margin-bottom: 10px;
+        }
+      }
+    }
+
+    .monitor-logs-modal-container-logs {
+      height: 450px;
+      border: solid 1px #e9ecef;
+      border-radius: 8px;
+      margin-top: 20px;
+      overflow-y: scroll;
+      white-space: pre-wrap;
+      padding: 15px;
+      background: white;
+      font-family: 'Inconsolata', monospace;
+    }
+  }
+}
