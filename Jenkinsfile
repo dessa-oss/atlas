@@ -297,62 +297,6 @@ pipeline{
                 }
             }
         }
-        stage('Parallel Foundations Orbit Acceptance Tests') {
-            failFast true
-            parallel{
-                stage('Build and Push Orbit Team') {
-                    stages {
-                        stage('Build Orbit Team') {
-                            steps {
-                                container("python3-1") {
-                                    sh './build_orbit_team_dist.sh'
-                                }
-                            }
-                        }
-                        stage('Build GUI Orbit Team') {
-                            steps {
-                                container("python3-1") {
-                                    sh './build_gui_orbit_team.sh'
-                                }
-                            }
-                        }
-                        stage('Push Orbit Team') {
-                            steps {
-                                container("python3-1") {
-                                    sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-                                    sh './push_orbit_team.sh'
-                                }
-                            }
-                        }
-                    }
-                }
-                stage('Build and Push Atlas CE') {
-                    stages {
-                        stage('Build Atlas CE') {
-                            steps {
-                                container("python3-1") {
-                                    sh './build_ce_dist.sh'
-                                }
-                            }
-                        }
-                        stage('Build GUI Atlas CE') {
-                            steps {
-                                container("python3-1") {
-                                    sh './build_gui_ce.sh'
-                                }
-                            }
-                        }
-                        stage('Push Atlas CE') {
-                            steps {
-                                container("python3-1") {
-                                    sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
         stage("Calculate Recovery Metrics") {
             steps {
                 script {
