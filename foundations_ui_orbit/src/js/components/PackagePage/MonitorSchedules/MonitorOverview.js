@@ -144,8 +144,15 @@ class MonitorOverview extends Component {
         <div className="monitor-overview">
           <h3>Overview</h3>
           <div className="monitor-overview-menu">
-            <div className="i--icon-start" onClick={this.resumeMonitor} />
-            <div className="i--icon-pause" onClick={this.pauseMonitor} />
+            <button className="monitor-btn" type="button" onClick={this.resumeMonitor}>
+              <div className="i--icon-start" />
+            </button>
+            <button className="monitor-btn" type="button" onClick={this.pauseMonitor}>
+              <div className="i--icon-pause" />
+            </button>
+            <button className="monitor-btn" type="button" onClick={this.deleteMonitor}>
+              <div className="i--icon-delete" />
+            </button>
           </div>
           <ul>
             <li>
