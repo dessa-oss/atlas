@@ -28,6 +28,7 @@ class MonitorLogsModal extends React.Component {
         isOpen={isOpen}
         toggle={this.onToggleModal}
         className="monitor-logs-modal"
+        fade={false}
       >
         <ModalBody>
           <div className="monitor-logs-modal-container-main">
