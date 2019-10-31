@@ -44,6 +44,7 @@ class MonitorParser(object):
         resume_parser.set_defaults(function=self._resume_monitor)
 
     def _start_monitor(self):
+        from requests.exceptions import ConnectionError
         from foundations_contrib.cli.orbit_monitor_package_server import start
 
         arguments = self._cli.arguments()
@@ -53,9 +54,34 @@ class MonitorParser(object):
         name = arguments.name
         env = self._cli.arguments().env if self._cli.arguments().env is not None else 'scheduler'
         
-        start(job_directory, command, project_name, name, env)
+        name, project_name = self._get_name_and_project_name_for_error(name, project_name, command)
+
+        try:
+            start(job_directory, command, project_name, name, env)
+            print(f'Successfully created monitor {name} in project {project_name}')
+        except ValueError as ex:
+            import sys
+
+            print(f'Unable to create monitor {name} in project {project_name}')
+            sys.exit(f'Command failed with error: {str(ex)}')
+        except ConnectionError as ex:
+            import sys
+
+            print(f'Unable to create monitor {name} in project {project_name}')
+            sys.exit('Command failed with error: Could not connect to docker scheduler')
+
+    def _get_name_and_project_name_for_error(self, name, project_name, command):
+        from os import path, getcwd
+
+        if name is None:
+            name = command[0].replace('.', '-')
+        if project_name is None:
+            project_name = path.basename(getcwd())
+
+        return name, project_name
 
     def _modify_monitor(self, monitor_modifier_func):
+        from requests.exceptions import ConnectionError
         from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobSchedulerError
         
         monitor_name = self._cli.arguments().name
@@ -69,7 +95,11 @@ class MonitorParser(object):
             import sys
             print(f'Unable to {str(monitor_modifier_func.__name__)} monitor {monitor_name} from project {project_name}')
             sys.exit(f'Command failed with error: {str(ce)}')
-    
+        except ConnectionError as ce:
+            import sys
+            print(f'Unable to {str(monitor_modifier_func.__name__)} monitor {monitor_name} from project {project_name}')
+            sys.exit('Command failed with error: Could not connect to docker scheduler')
+
     def _delete_monitor(self):
         from foundations_contrib.cli.orbit_monitor_package_server import delete
         self._modify_monitor(delete)

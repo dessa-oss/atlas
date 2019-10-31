@@ -71,11 +71,11 @@ class SpecialValuesChecker(object):
 
         for column in attributes:
             to_be_recalculate = self._check_if_column_needs_bin_recalculation(columns_to_be_recalculation, column, thresholds) or to_be_recalculate
-            column_threshold = {
-                column: thresholds
-            }
 
-            self._config_options.distribution['special_value_thresholds'].update(column_threshold)
+            for special_value, threshold in thresholds.items():
+                if not self._config_options.distribution['special_value_thresholds'].get(column, False):
+                    self._config_options.distribution['special_value_thresholds'][column] = {}
+                self._config_options.distribution['special_value_thresholds'][column][special_value] = threshold
 
         self._config_columns = list(set(self._config_columns).union(set(attributes)))
 
