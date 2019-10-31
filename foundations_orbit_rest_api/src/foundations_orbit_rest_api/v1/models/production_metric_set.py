@@ -74,8 +74,10 @@ def _metric_set_from_simple_metric_information(metric_name, metric_series):
         series=metric_series
     )
 
-def _convert_date_string_to_timestamp(date_string):
+def _convert_date_string_to_timestamp(time):
     from dateutil import parser
 
-    datetime = parser.parse(date_string)
-    return datetime.timestamp() * 1000
+    if type(time) == str:
+        time = parser.parse(time)
+
+    return time.timestamp() * 1000

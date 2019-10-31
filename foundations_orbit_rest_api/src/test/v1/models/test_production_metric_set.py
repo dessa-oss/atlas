@@ -111,6 +111,14 @@ class TestProductionMetricSet(Spec):
         return self._convert_formatted_date_string_to_timestamp(self.time_format_4)
 
     @let
+    def date_time(self):
+        return self.faker.date_time()
+
+    @let
+    def date_timestamp(self):
+        return self._convert_datetime_object_to_timestamp(self.date_time)
+
+    @let
     def metric_column(self):
         time = self.faker.date_time()
         return str(time)
@@ -149,6 +157,10 @@ class TestProductionMetricSet(Spec):
     def timestamp_2(self):
         date_string = self.metric_column_2
         return self._convert_date_string_to_timestamp(date_string)
+
+    def _convert_datetime_object_to_timestamp(self, datetime):
+        from dateutil import parser
+        return datetime.timestamp() * 1000
 
     def _convert_formatted_date_string_to_timestamp(self, date_string):
         from dateutil import parser
@@ -214,6 +226,25 @@ class TestProductionMetricSet(Spec):
             yAxis={'title': {'text': self.metric_name}},
             xAxis={'type': 'datetime'},
             series=[{'data': [[self.timestamp, self.metric_value]], 'name': self.monitor_name}]
+        )
+
+        self.assertEqual([expected_metric_set], promise.evaluate())
+
+    def test_all_returns_promise_with_singleton_list_containing_singleton_metric_set_if_metric_logged_with_one_key_value_pair_using_datetime_object_as_date(self):
+        from foundations_orbit import track_production_metrics
+
+        self.environ['PROJECT_NAME'] = self.project_name
+        self.environ['MONITOR_NAME'] = self.monitor_name
+
+        track_production_metrics(self.metric_name, {self.date_time: self.metric_value})
+
+        promise = ProductionMetricSet.all(self.project_name)
+
+        expected_metric_set = ProductionMetricSet(
+            title={'text': f'{self.metric_name} over time'},
+            yAxis={'title': {'text': self.metric_name}},
+            xAxis={'type': 'datetime'},
+            series=[{'data': [[self.date_timestamp, self.metric_value]], 'name': self.monitor_name}]
         )
 
         self.assertEqual([expected_metric_set], promise.evaluate())
