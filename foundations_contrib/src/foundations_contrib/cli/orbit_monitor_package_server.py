@@ -20,6 +20,9 @@ def start(job_directory, command, project_name, name, env):
     from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler
     from foundations_contrib.cli.orbit_model_package_server import save_project_to_redis
     from foundations_contrib.change_directory import ChangeDirectory
+    from foundations_contrib.global_state import log_manager
+
+    logger = log_manager.get_logger(__name__)
 
     _update_config(env)
     config = config_manager.config()
@@ -41,8 +44,6 @@ def start(job_directory, command, project_name, name, env):
 
     if f'{project_name}-{name}'in monitors_list:
         raise ValueError('Monitor already exists')
-
-    save_project_to_redis(project_name)
 
     bundle = job_bundle(monitor_package)
 
@@ -66,13 +67,14 @@ def start(job_directory, command, project_name, name, env):
     if response.status_code != 200:
         raise RuntimeError(f'Unable to submit job bundle. {response.text}')
 
+    logger.info('Job bundle submitted.')
+
     foundations_context = current_foundations_context()
     foundations_context.pipeline_context().provenance.monitor_name = name
     username = _get_username()
     monitor_job_spec = _get_monitor_job_spec(project_name, name, username, job_config, config, foundations_context)
     monitor_gpu_spec = _get_monitor_gpu_spec(foundations_context)
     monitor_metadata = {'project_name': project_name, 'username': username}
-
 
     CronJobScheduler(scheduler_url).schedule_job(
         monitor_package,
@@ -81,6 +83,10 @@ def start(job_directory, command, project_name, name, env):
         metadata=monitor_metadata,
         gpu_spec=monitor_gpu_spec
     )
+
+    logger.info('Monitor scheduled.')
+
+    save_project_to_redis(project_name)
 
     bundle.cleanup()
 
