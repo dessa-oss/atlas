@@ -88,7 +88,6 @@ class MonitorJobTableRow extends Component {
 
     const statusIcon = addStatus(status);
 
-
     return (
       <div className={`monitor-job-table-row ${selectedClass}`} onClick={this.onClick}>
         <div className="monitor-job-checkbox"><input type="checkbox" /></div>
