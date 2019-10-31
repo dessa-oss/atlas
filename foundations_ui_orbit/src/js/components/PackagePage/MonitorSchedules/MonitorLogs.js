@@ -39,7 +39,7 @@ class MonitorLogs extends React.Component {
     const { message } = this.state;
 
     return (
-      <div className="container-logs">
+      <div className="monitor-logs-modal-container-logs">
         {message}
       </div>
     );

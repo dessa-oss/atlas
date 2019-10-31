@@ -1,7 +1,8 @@
 import React from "react";
-import { Modal, ModalBody } from "reactstrap";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
+import { Modal, ModalBody } from "reactstrap";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import MonitorLogs from "./MonitorLogs";
 
 class MonitorLogsModal extends React.Component {
@@ -18,7 +19,6 @@ class MonitorLogsModal extends React.Component {
   render() {
     const {
       isOpen,
-      toggle,
       jobID,
       projectName
     } = this.props;
@@ -27,14 +27,21 @@ class MonitorLogsModal extends React.Component {
       <Modal
         isOpen={isOpen}
         toggle={this.onToggleModal}
-        className="modal-job-details"
+        className="monitor-logs-modal"
       >
         <ModalBody>
-          <div className="contanier-main">
-            <div className="container-title">
-              <p className="label-id">Details For Job</p>
-              <div className="container-id">
-                <p className="text-id">{jobID}</p>
+          <div className="monitor-logs-modal-container-main">
+            <div className="monitor-logs-modal-container-title">
+              <p className="monitor-logs-modal-label-id">Details For Job</p>
+              <div className="monitor-logs-modal-container-id">
+                <p className="monitor-logs-modal-text-id">{jobID}</p>
+                <CopyToClipboard text={jobID}>
+                  <span
+                    onClick={this.notifiedCopy}
+                    className="i--icon-copy"
+                    role="presentation"
+                  />
+                </CopyToClipboard>
               </div>
               <div
                 className="close"
