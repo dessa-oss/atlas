@@ -55,7 +55,7 @@ const post = (url, body) => {
 const patch = (url, body) => {
   const fullURL = baseURL.concat(url);
   return fetch(fullURL, {
-    method: "patch",
+    method: "PATCH",
     body: JSON.stringify(body),
     headers: {
       Accept: "application/json",
@@ -151,10 +151,9 @@ const putApiary = (url, body) => {
 const del = url => {
   const fullURL = baseURL.concat(url);
   return fetch(fullURL, {
-    method: "del",
+    method: "DELETE",
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
+      Accept: "application/json"
     }
   })
     .then(res => res.json())
