@@ -27,6 +27,20 @@ const getAtlas = url => {
     });
 };
 
+const delAtlas = url => {
+  const fullURL = atlasURL.concat(url);
+  return fetch(fullURL, {
+    method: "delete"
+  })
+    .then(res => res.json())
+    .then(result => {
+      return result;
+    })
+    .catch(() => {
+      return null;
+    });
+};
+
 const getFromApiary = url => {
   const fullURL = baseApiaryURL.concat(url);
   return fetch(fullURL)
@@ -164,11 +178,7 @@ const putApiary = (url, body) => {
 const del = url => {
   const fullURL = baseURL.concat(url);
   return fetch(fullURL, {
-    method: "del",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
+    method: "delete"
   })
     .then(res => res.json())
     .then(result => {
@@ -200,5 +210,17 @@ const postJSONFile = (url, fileName, data) => {
 };
 
 export {
-  get, getAtlas, getFromApiary, getMaster, post, postApiary, postMaster, put, putApiary, del, postJSONFile, patch
+  get,
+  getAtlas,
+  delAtlas,
+  getFromApiary,
+  getMaster,
+  post,
+  postApiary,
+  postMaster,
+  put,
+  putApiary,
+  del,
+  postJSONFile,
+  patch
 };
