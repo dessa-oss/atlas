@@ -110,7 +110,7 @@ MonitorJobTableRow.propTypes = {
   launched: PropTypes.number,
   duration: PropTypes.number,
   onClick: PropTypes.func,
-  selectedRow: PropTypes.func,
+  selectedRow: PropTypes.object,
   onClickLogs: PropTypes.func
 };
 
@@ -120,7 +120,7 @@ MonitorJobTableRow.defaultProps = {
   launched: "Missing",
   duration: "Missing",
   onClick: () => {},
-  selectedRow: PropTypes.object,
+  selectedRow: {},
   onClickLogs: () => {}
 };
 
