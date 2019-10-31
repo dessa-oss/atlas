@@ -6,15 +6,15 @@ from push_gui_images import push_image_to_repository
 if __name__ == '__main__':
     retag_to_alias_for_installer('foundations-orbit-rest-api', 'orbit-rest-api')
     retag_to_alias_for_installer('foundations-orbit-gui', 'orbit-gui')
-    retag_to_alias_for_installer('foundations-rest-api', 'rest-api')
+    # retag_to_alias_for_installer('foundations-rest-api', 'rest-api')
 
     images_to_be_pushed = [
         'foundations-orbit-rest-api',
-        'foundations-rest-api',
+        # 'foundations-rest-api',
         'foundations-orbit-gui',
         'orbit-rest-api',
         'orbit-gui',
-        'rest-api'
+        # 'rest-api'
     ]
     for image_name in images_to_be_pushed:
         push_image_to_repository(image_name=image_name)
