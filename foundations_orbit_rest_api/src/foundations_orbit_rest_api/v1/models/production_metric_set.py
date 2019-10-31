@@ -75,5 +75,7 @@ def _metric_set_from_simple_metric_information(metric_name, metric_series):
     )
 
 def _convert_date_string_to_timestamp(date_string):
-    from datetime import datetime
-    return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S").timestamp() * 1000
+    from dateutil import parser
+
+    datetime = parser.parse(date_string)
+    return datetime.timestamp() * 1000
