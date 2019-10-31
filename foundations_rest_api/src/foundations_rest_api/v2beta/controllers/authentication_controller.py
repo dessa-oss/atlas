@@ -28,7 +28,7 @@ conf = {
 }
 
 client = AuthenticationClient(
-    conf, redirect_url="http://localhost:37722/api/v2beta/auth"
+    conf, redirect_url="/api/v2beta/auth"
 )
 
 
