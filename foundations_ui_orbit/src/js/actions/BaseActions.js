@@ -178,10 +178,7 @@ const putApiary = (url, body) => {
 const del = url => {
   const fullURL = baseURL.concat(url);
   return fetch(fullURL, {
-    method: "DELETE",
-    headers: {
-      Accept: "application/json"
-    }
+    method: "DELETE"
   })
     .then(res => res.json())
     .then(result => {
