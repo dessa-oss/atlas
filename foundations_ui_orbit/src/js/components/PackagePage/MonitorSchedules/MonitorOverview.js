@@ -115,7 +115,6 @@ class MonitorOverview extends Component {
     }
     scheduleBody[scheduleRepeatUnit.label.toLocaleLowerCase().slice(0, -1)] = `*/${scheduleRepeatUnitValue}`;
 
-
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
     MonitorSchedulesActions.updateMonitorSchedule(projectName, monitorName, scheduleBody);
@@ -165,7 +164,7 @@ class MonitorOverview extends Component {
       }
     }
 
-    const defaultScheduleValue = findScheduleRepeat(scheduleOptions);
+    const defaultScheduleValue = findScheduleRepeat(scheduleOptions) || { label: "Days" };
 
     const calStartTime = startTime.split(" ").slice(0, 4).join(" ");
     const calEndTime = endTime.split(" ").slice(0, 4).join(" ");
