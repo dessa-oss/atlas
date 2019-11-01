@@ -79,6 +79,46 @@ class TestProductionMetricSet(Spec):
         return self.faker.word()
 
     @let
+    def time_format_1(self):
+        return 'January 21, 2019'
+
+    @let
+    def timestamp_format_1(self):
+        return self._convert_formatted_date_string_to_timestamp(self.time_format_1)
+
+    @let
+    def time_format_2(self):
+        return 'oct. 2/2007'
+
+    @let
+    def timestamp_format_2(self):
+        return self._convert_formatted_date_string_to_timestamp(self.time_format_2)
+
+    @let
+    def time_format_3(self):
+        return '10/13/1998 10:30PM'
+
+    @let
+    def timestamp_format_3(self):
+        return self._convert_formatted_date_string_to_timestamp(self.time_format_3)
+
+    @let
+    def time_format_4(self):
+        return '09/1972 23:30:43'
+
+    @let
+    def timestamp_format_4(self):
+        return self._convert_formatted_date_string_to_timestamp(self.time_format_4)
+
+    @let
+    def date_time(self):
+        return self.faker.date_time()
+
+    @let
+    def date_timestamp(self):
+        return self._convert_datetime_object_to_timestamp(self.date_time)
+
+    @let
     def metric_column(self):
         time = self.faker.date_time()
         return str(time)
@@ -117,6 +157,16 @@ class TestProductionMetricSet(Spec):
     def timestamp_2(self):
         date_string = self.metric_column_2
         return self._convert_date_string_to_timestamp(date_string)
+
+    def _convert_datetime_object_to_timestamp(self, datetime):
+        from dateutil import parser
+        return datetime.timestamp() * 1000
+
+    def _convert_formatted_date_string_to_timestamp(self, date_string):
+        from dateutil import parser
+
+        datetime = parser.parse(date_string)
+        return datetime.timestamp() * 1000
 
     def _convert_date_string_to_timestamp(self, date_string):
         from datetime import datetime
@@ -180,6 +230,25 @@ class TestProductionMetricSet(Spec):
 
         self.assertEqual([expected_metric_set], promise.evaluate())
 
+    def test_all_returns_promise_with_singleton_list_containing_singleton_metric_set_if_metric_logged_with_one_key_value_pair_using_datetime_object_as_date(self):
+        from foundations_orbit import track_production_metrics
+
+        self.environ['PROJECT_NAME'] = self.project_name
+        self.environ['MONITOR_NAME'] = self.monitor_name
+
+        track_production_metrics(self.metric_name, {self.date_time: self.metric_value})
+
+        promise = ProductionMetricSet.all(self.project_name)
+
+        expected_metric_set = ProductionMetricSet(
+            title={'text': f'{self.metric_name} over time'},
+            yAxis={'title': {'text': self.metric_name}},
+            xAxis={'type': 'datetime'},
+            series=[{'data': [[self.date_timestamp, self.metric_value]], 'name': self.monitor_name}]
+        )
+
+        self.assertEqual([expected_metric_set], promise.evaluate())
+
     def test_all_returns_promise_with_singleton_list_containing_metric_set_if_metric_logged_with_multiple_key_value_pairs(self):
         from foundations_orbit import track_production_metrics
 
@@ -195,6 +264,35 @@ class TestProductionMetricSet(Spec):
             yAxis={'title': {'text': self.metric_name}},
             xAxis={'type': 'datetime'},
             series=[{'data': [[self.timestamp, self.metric_value], [self.timestamp_2, self.metric_value_2]], 'name': self.monitor_name}]
+        )
+
+        self.assertEqual([expected_metric_set], promise.evaluate())
+
+    def test_all_returns_promise_with_singleton_list_containing_metric_set_if_metric_logged_with_multiple_key_value_pairs_with_varying_datetime_formats(self):
+        from foundations_orbit import track_production_metrics
+
+        self.environ['PROJECT_NAME'] = self.project_name
+        self.environ['MONITOR_NAME'] = self.monitor_name
+
+        track_production_metrics(self.metric_name, {
+            self.time_format_1: self.metric_value,
+            self.time_format_2: self.metric_value_2,
+            self.time_format_3: self.metric_value_3,
+            self.time_format_4: self.metric_value_4
+        })
+
+        promise = ProductionMetricSet.all(self.project_name)
+
+        expected_metric_set = ProductionMetricSet(
+            title={'text': f'{self.metric_name} over time'},
+            yAxis={'title': {'text': self.metric_name}},
+            xAxis={'type': 'datetime'},
+            series=[{'data': [
+                [self.timestamp_format_1, self.metric_value],
+                [self.timestamp_format_2, self.metric_value_2],
+                [self.timestamp_format_3, self.metric_value_3],
+                [self.timestamp_format_4, self.metric_value_4]
+            ], 'name': self.monitor_name}]
         )
 
         self.assertEqual([expected_metric_set], promise.evaluate())

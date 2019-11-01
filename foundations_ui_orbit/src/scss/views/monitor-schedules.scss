@@ -286,8 +286,8 @@
           padding-bottom: 20px;
           border-bottom: 1px solid #D8D8D8;
           .i--icon-delete {
-            width: 25px!important;
-            height: 25px!important;
+            width: 15px!important;
+            height: 15px!important;
             margin-top: 10px;
           }
           h3 {
@@ -352,6 +352,9 @@
               }
               .monitor-job-duration-cell {
                 width: 23%;
+              }
+              .i--icon-open {
+                background-size: unset!important;
               }
               .monitor-job-open-cell {
                 float: right;

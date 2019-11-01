@@ -17,16 +17,54 @@ class MonitorOverview extends Component {
     this.deleteMonitor = this.deleteMonitor.bind(this);
     this.updateMonitorSchedule = this.updateMonitorSchedule.bind(this);
     // this.changeEditMode = this.changeEditMode.bind(this);
+    this.reload = this.reload.bind(this);
     this.state = {
       calDateStart: monitorResult.schedule.start_date || new Date(),
       calDateEnd: monitorResult.schedule.end_date || "",
-      clockTimeHour: monitorResult.schedule.hour.replace(/\D/g, "") !== "" ? monitorResult.schedule.hour : "12",
-      clockTimeMinute: monitorResult.schedule.minute.replace(/\D/g, "") !== ""
-        ? monitorResult.schedule.minute.replace(/\D/g, "")
-        : "00",
+      clockTimeHour: new Date(monitorResult.schedule.start_date).getHours() || "12",
+      clockTimeMinute: new Date(monitorResult.schedule.start_date).getMinutes() || "00",
       scheduleRepeatUnit: { label: "Days" },
       scheduleRepeatUnitValue: "1"
     };
+  }
+
+  findScheduleRepeat() {
+    const { monitorResult } = this.props;
+
+    const scheduleOptions = [
+      { label: "Years", value: monitorResult.schedule.year },
+      { label: "Months", value: monitorResult.schedule.month },
+      { label: "Weeks", value: monitorResult.schedule.week },
+      { label: "Days", value: monitorResult.schedule.day },
+      { label: "Hours", value: monitorResult.schedule.hour },
+      { label: "Minutes", value: monitorResult.schedule.minute },
+      { label: "Seconds", value: monitorResult.schedule.second }
+    ];
+
+    for (let i = 0; i < scheduleOptions.length; i += 1) {
+      if (scheduleOptions[i].value !== "*") {
+        if (scheduleOptions[i].value.includes("/")) {
+          return {
+            label: scheduleOptions[i].label,
+            value: scheduleOptions[i].value.split("/")[1]
+          };
+        }
+        return scheduleOptions[i];
+      }
+    }
+  }
+
+  reload() {
+    const result = this.findScheduleRepeat();
+    if (result) {
+      this.setState(() => ({
+        scheduleRepeatUnitValue: result.value
+      }));
+    }
+  }
+
+  componentDidMount() {
+    this.reload();
   }
 
   resumeMonitor() {
@@ -63,28 +101,25 @@ class MonitorOverview extends Component {
     const calStartDate = moment(calDateStart).format("YYYY-MM-DD");
 
     const scheduleBody = {
-      hour: clockTimeHour,
-      minute: clockTimeMinute,
-      start_date: calStartDate
+      year: "*",
+      month: "*",
+      week: "*",
+      day: "*",
+      hour: "*",
+      second: "*",
+      start_date: `${calStartDate} ${clockTimeHour}:${clockTimeMinute}`
     };
 
     if (calDateEnd !== "") {
       scheduleBody.end_date = moment(calDateEnd).format("YYYY-MM-DD");
     }
-
     scheduleBody[scheduleRepeatUnit.label.toLocaleLowerCase().slice(0, -1)] = `*/${scheduleRepeatUnitValue}`;
+
 
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
     MonitorSchedulesActions.updateMonitorSchedule(projectName, monitorName, scheduleBody);
   }
-
-  // changeEditMode() {
-  //   const { editMode } = this.state;
-  //   this.setState(prevState => ({
-  //     editMode: !prevState.editMode
-  //   }));
-  // }
 
   render() {
     const { monitorResult } = this.props;
@@ -93,7 +128,8 @@ class MonitorOverview extends Component {
       calDateEnd,
       clockTimeHour,
       clockTimeMinute,
-      scheduleRepeatUnitValue
+      scheduleRepeatUnitValue,
+      scheduleRepeatUnit
     } = this.state;
 
     const nextRun = monitorResult.next_run_time
@@ -134,10 +170,8 @@ class MonitorOverview extends Component {
     const calStartTime = startTime.split(" ").slice(0, 4).join(" ");
     const calEndTime = endTime.split(" ").slice(0, 4).join(" ");
 
-    const calStartTime2 = startTime.split(" ")[4];
-    const calEndTime2 = endTime.split(" ")[4];
-
-    const clockTime = `${clockTimeHour}:${clockTimeMinute}`;
+    const clockTimeDateObject = new Date(calDateStart);
+    const clockTime = `${clockTimeDateObject.getHours()}:${clockTimeDateObject.getMinutes()}`;
 
     return (
       <div className="monitor-info">
@@ -183,10 +217,6 @@ class MonitorOverview extends Component {
         </div>
         <div className="monitor-details">
           <h3>Schedule Details</h3>
-          {/* {findEditMode} */}
-          <div>
-            {/* <button type="button" onClick={this.changeEditMode} /> */}
-          </div>
           <ul>
             <li>
               <div className="monitor-overview-key">Repeats every:</div>
@@ -195,6 +225,9 @@ class MonitorOverview extends Component {
                   value={scheduleRepeatUnitValue}
                   className="monitor-repeat-value"
                   type="number"
+                  step="1"
+                  min="0"
+                  pattern="[0-9]"
                   onChange={value => {
                     this.setState({
                       scheduleRepeatUnitValue: value.target.value
@@ -225,7 +258,8 @@ class MonitorOverview extends Component {
                     enableTime: true,
                     noCalendar: true,
                     dateFormat: "H:i",
-                    defaultDate: calStartTime2
+                    defaultDate: clockTime,
+                    time_24hr: true
                   }}
                 />
               </div>

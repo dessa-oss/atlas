@@ -3,11 +3,10 @@ FROM python:3.6
 MAINTAINER Eric Kin Ho Lee
 
 COPY ./orbit_worker_requirements.txt /tmp/orbit_worker_requirements.txt
-COPY ./run.sh /prejob/run.sh
-
-RUN chmod +x /prejob/run.sh
-
 RUN pip install --requirement /tmp/orbit_worker_requirements.txt
 RUN rm /tmp/orbit_worker_requirements.txt
+
+COPY ./run.sh /prejob/run.sh
+RUN chmod +x /prejob/run.sh
 
 ENTRYPOINT ["/prejob/run.sh"]

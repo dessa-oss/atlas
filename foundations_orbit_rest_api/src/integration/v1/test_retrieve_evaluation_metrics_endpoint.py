@@ -115,6 +115,86 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
 
         self.assertEqual(expected_data, data)
 
+    def test_retrieve_evaluation_metrics_gets_stored_metrics_from_redis_python_data_types_for_different_time_format(self):
+        import os
+        from foundations_orbit import track_production_metrics
+
+        os.environ['PROJECT_NAME'] = 'test_project'
+
+        os.environ['MONITOR_NAME'] = 'this_job'
+
+        track_production_metrics('MSE', {
+            'February 1, 2019 12:13:14': int(1),
+            'March 1, 2019 13:14:15': int(2),
+            'April 1, 2019 14:15:16': int(3),
+            'May 1, 2019 15:16:17': int(4)
+        })
+
+        track_production_metrics('Customer Response (%)', {
+            _string_to_datetime_object('feb 2, 2029 16:17:18'): float(17.56),
+            _string_to_datetime_object('mar 2, 2029 18:19:20'): float(17.57),
+            _string_to_datetime_object('apr 2, 2029 19:20:21'): float(17.53),
+            _string_to_datetime_object('may 2, 2029 20:21:22'): float(17.43)
+        })
+
+        os.environ['MONITOR_NAME'] = 'that_job'
+
+        track_production_metrics('MSE', {
+            'Feb. 01/2019 12:13:14': int(5),
+            'Mar. 01/2019 13:14:15': int(6),
+            'Apr. 01/2019 14:15:16': int(7),
+            'May 01/2019 15:16:17': int(8)
+        })
+
+        track_production_metrics('Customer Response (%)', {
+            '02/02/2029 16:17:18': float(27.56),
+            '03/02/2029 18:19:20': float(27.57),
+            '04/02/2029 19:20:21': float(27.53),
+            '05/02/2029 20:21:22': float(27.43)
+        })
+
+        expected_data = [
+            {
+                'title': {'text': 'Customer Response (%) over time'},
+                'yAxis': {'title': {'text': 'Customer Response (%)'}},
+                'xAxis': {
+                    'type': 'datetime'
+                },
+                'series': [
+                    {
+                        'data': [[_convert_date_string_to_timestamp('2029-02-02 16:17:18'), 27.56], [_convert_date_string_to_timestamp('2029-03-02 18:19:20'), 27.57], [_convert_date_string_to_timestamp('2029-04-02 19:20:21'), 27.53], [_convert_date_string_to_timestamp('2029-05-02 20:21:22'), 27.43]],
+                        'name': 'that_job'
+                    },
+                    {
+                        'data': [[_convert_date_string_to_timestamp('2029-02-02 16:17:18'), 17.56], [_convert_date_string_to_timestamp('2029-03-02 18:19:20'), 17.57], [_convert_date_string_to_timestamp('2029-04-02 19:20:21'), 17.53], [_convert_date_string_to_timestamp('2029-05-02 20:21:22'), 17.43]],
+                        'name': 'this_job'
+                    }
+                ]
+            },
+            {
+                'title': {'text': 'MSE over time'},
+                'yAxis': {'title': {'text': 'MSE'}},
+                'xAxis': {
+                    'type': 'datetime'
+                },
+                'series': [
+                    {
+                        'data': [[_convert_date_string_to_timestamp('2019-02-01 12:13:14'), 5], [_convert_date_string_to_timestamp('2019-03-01 13:14:15'), 6], [_convert_date_string_to_timestamp('2019-04-01 14:15:16'), 7], [_convert_date_string_to_timestamp('2019-05-01 15:16:17'), 8]],
+                        'name': 'that_job'
+                    },
+                    {
+                        'data': [[_convert_date_string_to_timestamp('2019-02-01 12:13:14'), 1], [_convert_date_string_to_timestamp('2019-03-01 13:14:15'), 2], [_convert_date_string_to_timestamp('2019-04-01 14:15:16'), 3], [_convert_date_string_to_timestamp('2019-05-01 15:16:17'), 4]],
+                        'name': 'this_job'
+                    }
+                ]
+            }
+        ]
+
+        data = self._get_from_route()
+        self._sort_series_entries(data)
+
+        self.assertEqual(expected_data, data)
+
     def test_retrieve_evaluation_metrics_gets_stored_metrics_from_redis_numpy_data_types(self):
         import os
         import numpy
@@ -216,3 +296,7 @@ def _cast_to_float_like_and_then_back(value, float_like_class):
 def _convert_date_string_to_timestamp(date_string):
     from datetime import datetime
     return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S").timestamp() * 1000
+
+def _string_to_datetime_object(date_string):
+    from dateutil import parser
+    return parser.parse(date_string)
