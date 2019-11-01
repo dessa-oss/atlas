@@ -5,15 +5,17 @@ import Layout from "../Layout";
 import MonitorListTable from "./MonitorListTable";
 import ScheduleDetails from "./ScheduleDetails";
 import MonitorLogsModal from "./MonitorLogsModal";
+import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
 
 class MonitorSchedules extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      selectedMonitor: {},
+      selectedMonitor: null,
       logsModalIsOpen: false,
-      logsModalJobID: null
+      logsModalJobID: null,
+      allMonitors: {}
     };
 
     this.selectRow = this.selectRow.bind(this);
@@ -25,8 +27,18 @@ class MonitorSchedules extends Component {
     this.setState({ selectedMonitor: selectedItem });
   }
 
-  reload() {
-    this.setState({ selectedMonitor: {} });
+  componentDidMount() {
+    this.reload();
+  }
+
+  async reload() {
+    const { location } = this.props;
+
+    if (location) {
+      const projectName = location.state.project.name;
+      const monitorResult = await MonitorSchedulesActions.getMonitorList(projectName);
+      this.setState({ allMonitors: monitorResult });
+    }
   }
 
   toggleLogsModal(logsModalJobID) {
@@ -35,7 +47,12 @@ class MonitorSchedules extends Component {
   }
 
   render() {
-    const { selectedMonitor, logsModalIsOpen, logsModalJobID } = this.state;
+    const {
+      selectedMonitor,
+      logsModalIsOpen,
+      logsModalJobID,
+      allMonitors
+    } = this.state;
     const { location } = this.props;
 
     return (
@@ -43,11 +60,17 @@ class MonitorSchedules extends Component {
         <div className="monitor-schedules-container">
           <h3 className="section-title">Monitor Schedules</h3>
           <div className="schedule-details">
-            <MonitorListTable location={location} onClickRow={this.selectRow} selectedRow={selectedMonitor} />
+            <MonitorListTable
+              onClickRow={this.selectRow}
+              selectedRow={selectedMonitor}
+              allMonitors={allMonitors}
+            />
             <ScheduleDetails
               location={location}
               selectedMonitor={selectedMonitor}
               toggleLogsModal={this.toggleLogsModal}
+              reload={this.reload}
+              allMonitors={allMonitors}
             />
             <MonitorLogsModal
               isOpen={logsModalIsOpen}

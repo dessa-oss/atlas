@@ -6,49 +6,19 @@ import CommonActions from "../../../actions/CommonActions";
 class MonitorListTableRow extends Component {
   constructor(props) {
     super(props);
-    const {
-      monitorName, status, user
-    } = this.props;
-
-    this.state = {
-      monitorName: monitorName,
-      status: status,
-      user: user
-    };
-
     this.onClick = this.onClick.bind(this);
     this.isSelectedRow = this.isSelectedRow.bind(this);
   }
 
   onClick() {
-    const {
-      monitorName,
-      status,
-      user
-    } = this.state;
-    const { onClick } = this.props;
+    const { onClick, monitorName } = this.props;
 
-    onClick({
-      monitorName: monitorName,
-      status: status,
-      user: user
-    });
+    onClick(monitorName);
   }
 
   isSelectedRow() {
-    const {
-      monitorName,
-      status,
-      user
-    } = this.state;
-    const { selectedRow } = this.props;
-    const thisRow = {
-      monitorName: monitorName,
-      status: status,
-      user: user
-    };
-
-    return CommonActions.deepEqual(thisRow, selectedRow);
+    const { selectedRow, monitorName } = this.props;
+    return monitorName === selectedRow;
   }
 
   render() {
@@ -56,7 +26,7 @@ class MonitorListTableRow extends Component {
       monitorName,
       status,
       user
-    } = this.state;
+    } = this.props;
 
     const selectedClass = this.isSelectedRow() ? "selected-row" : "";
 
@@ -87,7 +57,7 @@ MonitorListTableRow.propTypes = {
   status: PropTypes.string,
   user: PropTypes.string,
   onClick: PropTypes.func,
-  selectedRow: PropTypes.object
+  selectedRow: PropTypes.string
 };
 
 MonitorListTableRow.defaultProps = {
@@ -95,7 +65,7 @@ MonitorListTableRow.defaultProps = {
   status: "Invalid contract name",
   user: "",
   onClick: () => {},
-  selectedRow: PropTypes.object
+  selectedRow: ""
 };
 
 
