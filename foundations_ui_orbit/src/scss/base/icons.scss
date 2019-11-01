@@ -139,18 +139,6 @@ See assets/svgs/README.md for further information on SVG conversion process
   margin-left: 8px;
 }
 
-.i--icon-delete-small {
-  background-image: url('../assets/svgs/icon-delete-small.svg');
-  @include icon-helper;
-  display: inline-block;
-  width: 25px;
-  height: 25px;
-  border: none;
-  cursor: pointer;
-  margin-left: 8px;
-  margin-top: 10px;
-}
-
 .i--icon-clipboard {
   background-image: url('../assets/svgs/icon-clipboard.svg');
   @include icon-helper;

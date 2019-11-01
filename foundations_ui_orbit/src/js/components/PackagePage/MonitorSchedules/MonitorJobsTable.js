@@ -78,8 +78,8 @@ class MonitorJobsTable extends Component {
       <div className="monitor-jobs">
         <div className="monitor-jobs-heading">
           <h3>Monitor Jobs</h3>
-          <div className="i--icon-delete-small" onClick={this.deleteJobs} />
           <div className="i--icon-refresh" onClick={this.reload} />
+          <div className="i--icon-delete" onClick={this.deleteJobs} />
         </div>
         <div className="monitor-job-listing">
           <div className="monitor-job-items">
