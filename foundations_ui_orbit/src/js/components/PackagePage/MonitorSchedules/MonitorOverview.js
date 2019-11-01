@@ -4,7 +4,6 @@ import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
 import Select from "react-select";
 import moment from "moment";
 import Flatpickr from "react-flatpickr";
-// import Calendar from "react-calendar";
 
 class MonitorOverview extends Component {
   constructor(props) {
@@ -16,7 +15,6 @@ class MonitorOverview extends Component {
     this.pauseMonitor = this.pauseMonitor.bind(this);
     this.deleteMonitor = this.deleteMonitor.bind(this);
     this.updateMonitorSchedule = this.updateMonitorSchedule.bind(this);
-    // this.changeEditMode = this.changeEditMode.bind(this);
     this.reload = this.reload.bind(this);
     this.state = {
       calDateStart: monitorResult.schedule.start_date || new Date(),
@@ -125,10 +123,7 @@ class MonitorOverview extends Component {
     const {
       calDateStart,
       calDateEnd,
-      clockTimeHour,
-      clockTimeMinute,
-      scheduleRepeatUnitValue,
-      scheduleRepeatUnit
+      scheduleRepeatUnitValue
     } = this.state;
 
     const nextRun = monitorResult.next_run_time
@@ -243,6 +238,21 @@ class MonitorOverview extends Component {
                     });
                   }}
                 />
+              </div>
+            </li>
+            <li>
+              <div className="monitor-overview-key">Starting on:</div>
+              <div className="monitor-overview-value">
+                <Flatpickr
+                  className="cal-picker"
+                  value={calDateStart}
+                  onChange={date => { this.setState({ calDateStart: date[0] }); }}
+                  options={{
+                    altFormat: "F j, Y",
+                    dateFormat: "Y-m-d",
+                    defaultDate: new Date()
+                  }}
+                />
                 <p> at </p>
                 <Flatpickr
                   value={clockTime}
@@ -259,21 +269,6 @@ class MonitorOverview extends Component {
                     dateFormat: "H:i",
                     defaultDate: clockTime,
                     time_24hr: true
-                  }}
-                />
-              </div>
-            </li>
-            <li>
-              <div className="monitor-overview-key">Starting on:</div>
-              <div className="monitor-overview-value">
-                <Flatpickr
-                  className="cal-picker"
-                  value={calDateStart}
-                  onChange={date => { this.setState({ calDateStart: date[0] }); }}
-                  options={{
-                    altFormat: "F j, Y",
-                    dateFormat: "Y-m-d",
-                    defaultDate: new Date()
                   }}
                 />
               </div>
