@@ -131,10 +131,10 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
         })
 
         track_production_metrics('Customer Response (%)', {
-            'feb 2, 2029 16:17:18': float(17.56),
-            'mar 2, 2029 18:19:20': float(17.57),
-            'apr 2, 2029 19:20:21': float(17.53),
-            'may 2, 2029 20:21:22': float(17.43)
+            _string_to_datetime_object('feb 2, 2029 16:17:18'): float(17.56),
+            _string_to_datetime_object('mar 2, 2029 18:19:20'): float(17.57),
+            _string_to_datetime_object('apr 2, 2029 19:20:21'): float(17.53),
+            _string_to_datetime_object('may 2, 2029 20:21:22'): float(17.43)
         })
 
         os.environ['MONITOR_NAME'] = 'that_job'
@@ -296,3 +296,7 @@ def _cast_to_float_like_and_then_back(value, float_like_class):
 def _convert_date_string_to_timestamp(date_string):
     from datetime import datetime
     return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S").timestamp() * 1000
+
+def _string_to_datetime_object(date_string):
+    from dateutil import parser
+    return parser.parse(date_string)
