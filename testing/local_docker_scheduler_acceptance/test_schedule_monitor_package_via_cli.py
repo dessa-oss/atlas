@@ -30,6 +30,10 @@ class TestScheduleMonitorPackageViaCli(Spec):
         return '.'
 
     @let
+    def monitor_package_id_2(self):
+        return 'this_cool_monitor-main-py'
+
+    @let
     def env(self):
         return 'scheduler'
 
@@ -41,6 +45,7 @@ class TestScheduleMonitorPackageViaCli(Spec):
     @tear_down
     def tear_down(self):
         self._delete_scheduled_job(self.monitor_package_id)
+        self._delete_scheduled_job(self.monitor_package_id_2)
 
     @staticmethod
     def _delete_scheduled_job(job_name):

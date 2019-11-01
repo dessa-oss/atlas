@@ -180,7 +180,7 @@
           }
           .monitor-details-options {
             display: inline-flex;
-            margin-left: 115px;
+            margin-left: 25px;
             button {
               display: inline-block;
               float: right;
@@ -193,6 +193,7 @@
               background: #004A9C;
               box-shadow: 0px 3px 0px rgba(155, 155, 155, 0.25);
               border-radius: 4px;
+              cursor: pointer;
 
             }
           }
