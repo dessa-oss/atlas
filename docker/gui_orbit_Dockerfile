@@ -3,18 +3,18 @@
 # Proprietary and confidential
 # Written by Susan Davis <s.davis@dessa.com>, 10 2019
 
-FROM node:10.16-jessie
+FROM node:10.16-alpine
 
-RUN apt-get update \
-    && apt-get install -y openssl curl nginx gettext-base \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
+RUN apk add --no-cache gettext libintl nginx openssl
+RUN mkdir /run/nginx/ && \
+    nginx
 RUN openssl req -x509 -nodes -days 365 \
             -subj "/C=CA/ST=Ontario/L=Toronto/O=Dessa/OU=Engineering/CN=localhost" \
             -newkey rsa:2048 \
             -keyout /etc/nginx/localhost.key \
             -out /etc/nginx/localhost.crt
+
+COPY --from=loicmahieu/alpine-envsubst /usr/local/bin/envsubst /usr/local/bin/envsubst
 
 RUN mkdir -p /var/foundations_ui_orbit
 WORKDIR /var/foundations_ui_orbit
