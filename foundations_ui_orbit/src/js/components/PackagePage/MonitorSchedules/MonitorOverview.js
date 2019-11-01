@@ -17,8 +17,6 @@ class MonitorOverview extends Component {
     this.updateMonitorSchedule = this.updateMonitorSchedule.bind(this);
     this.reload = this.reload.bind(this);
     this.state = {
-      // job_id: monitorResult.properties.job_id,
-      // monitorResult: monitorResult,
       nextRunTime: monitorResult.next_run_time || "None set",
       calDateStart: monitorResult.schedule.start_date || new Date(),
       calDateEnd: monitorResult.schedule.end_date || "",
@@ -66,9 +64,8 @@ class MonitorOverview extends Component {
         calDateEnd: monitorResult.schedule.end_date || "",
         clockTimeHour: new Date(monitorResult.schedule.start_date).getHours() || "12",
         clockTimeMinute: new Date(monitorResult.schedule.start_date).getMinutes() || "00",
-        scheduleRepeatUnit: this.findScheduleRepeat() || { label: "Days" }
+        scheduleRepeatUnit: result
       }));
-      // const defaultScheduleValue = this.findScheduleRepeat() || { label: "Days" };
     }
     reload();
   }
@@ -151,14 +148,7 @@ class MonitorOverview extends Component {
       nextRunTime
     } = this.state;
 
-    // const nextRun = monitorResult.next_run_time
-    //   ? moment.unix(monitorResult.next_run_time).format("YYYY-MM-DD HH:mm:ss")
-    //   : "None scheduled";
-
     const status = monitorResult.status.split("")[0].toUpperCase() + monitorResult.status.slice(1);
-
-    const startTime = monitorResult.schedule.start_date ? monitorResult.schedule.start_date : "Not specified";
-    const endTime = monitorResult.schedule.end_date ? monitorResult.schedule.end_date : "Not specified";
 
     const scheduleOptions = [
       { label: "Years", value: monitorResult.schedule.year },
@@ -169,25 +159,6 @@ class MonitorOverview extends Component {
       { label: "Minutes", value: monitorResult.schedule.minute },
       { label: "Seconds", value: monitorResult.schedule.second }
     ];
-
-    function findScheduleRepeat(schedule) {
-      for (let i = 0; i < schedule.length; i += 1) {
-        if (schedule[i].value !== "*") {
-          if (schedule[i].value.includes("/")) {
-            return {
-              label: schedule[i].label,
-              value: schedule[i].value.split("/")[1]
-            };
-          }
-          return schedule[i];
-        }
-      }
-    }
-
-    // const defaultScheduleValue = findScheduleRepeat(scheduleOptions) || { label: "Days" };
-
-    // const calStartTime = startTime.split(" ").slice(0, 4).join(" ");
-    // const calEndTime = endTime.split(" ").slice(0, 4).join(" ");
 
     const clockTimeDateObject = new Date(calDateStart);
     const clockTime = `${clockTimeDateObject.getHours()}:${clockTimeDateObject.getMinutes()}`;
@@ -210,7 +181,7 @@ class MonitorOverview extends Component {
           <ul>
             <li>
               <div className="monitor-overview-key">Monitor Name:</div>
-              <div className="monitor-overview-value">{monitorResult.properties.job_id}</div>
+              <div className="monitor-overview-value">{monitorResult.properties.spec.environment.MONITOR_NAME}</div>
             </li>
             <li>
               <div className="monitor-overview-key">Status:</div>
@@ -251,7 +222,7 @@ class MonitorOverview extends Component {
                 <Select
                   options={scheduleOptions}
                   className="react-select"
-                  defaultValue={scheduleRepeatUnit}
+                  value={scheduleRepeatUnit}
                   onChange={value => {
                     this.setState({
                       scheduleRepeatUnit: value
