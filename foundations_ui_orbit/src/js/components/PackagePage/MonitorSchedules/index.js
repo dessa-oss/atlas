@@ -12,7 +12,7 @@ class MonitorSchedules extends Component {
     super(props);
 
     this.state = {
-      selectedMonitor: {},
+      selectedMonitor: null,
       logsModalIsOpen: false,
       logsModalJobID: null,
       allMonitors: {}
