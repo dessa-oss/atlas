@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
 import MonitorOverview from "./MonitorOverview";
 import MonitorJobsTable from "./MonitorJobsTable";
 import CommonActions from "../../../actions/CommonActions";
@@ -21,31 +20,30 @@ class ScheduleDetails extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { selectedMonitor } = this.props;
-    if (!CommonActions.deepEqual(selectedMonitor, prevProps.selectedMonitor)) {
+    const { selectedMonitor, allMonitors } = this.props;
+    if (!CommonActions.deepEqual(selectedMonitor, prevProps.selectedMonitor)
+      || !CommonActions.deepEqual(allMonitors, prevProps.allMonitors)) {
       this.reload();
     }
   }
 
   async reload() {
-    const { location, selectedMonitor } = this.props;
+    const { selectedMonitor, allMonitors } = this.props;
 
-    if (location && !CommonActions.isEmptyObject(selectedMonitor)) {
-      const projectName = location.state.project.name;
-      const monitorResult = await MonitorSchedulesActions.getMonitorList(projectName);
-      this.setState({ monitorResult: monitorResult[selectedMonitor.monitorName] });
-    } else if (CommonActions.isEmptyObject(selectedMonitor)) {
+    if (!CommonActions.isEmptyObject(selectedMonitor)) {
+      this.setState({ monitorResult: allMonitors[selectedMonitor.monitorName] });
+    } else {
       this.setState({ monitorResult: {} });
     }
   }
 
   render() {
     const { monitorResult } = this.state;
-    const { location, toggleLogsModal } = this.props;
+    const { location, toggleLogsModal, reload } = this.props;
 
     let mainRender = (
       <div className="monitor-summary">
-        <MonitorOverview monitorResult={monitorResult} />
+        <MonitorOverview monitorResult={monitorResult} reload={reload} />
         <MonitorJobsTable location={location} monitorResult={monitorResult} toggleLogsModal={toggleLogsModal} />
       </div>
     );
@@ -69,13 +67,17 @@ class ScheduleDetails extends Component {
 ScheduleDetails.propTypes = {
   location: PropTypes.object,
   selectedMonitor: PropTypes.object,
-  toggleLogsModal: PropTypes.func
+  toggleLogsModal: PropTypes.func,
+  allMonitors: PropTypes.object,
+  reload: PropTypes.func
 };
 
 ScheduleDetails.defaultProps = {
   location: {},
   selectedMonitor: {},
-  toggleLogsModal: () => {}
+  toggleLogsModal: () => {},
+  allMonitors: {},
+  reload: () => {}
 };
 
 export default ScheduleDetails;

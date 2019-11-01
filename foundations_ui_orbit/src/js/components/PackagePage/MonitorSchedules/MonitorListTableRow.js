@@ -6,27 +6,17 @@ import CommonActions from "../../../actions/CommonActions";
 class MonitorListTableRow extends Component {
   constructor(props) {
     super(props);
-    const {
-      monitorName, status, user
-    } = this.props;
-
-    this.state = {
-      monitorName: monitorName,
-      status: status,
-      user: user
-    };
-
     this.onClick = this.onClick.bind(this);
     this.isSelectedRow = this.isSelectedRow.bind(this);
   }
 
   onClick() {
     const {
+      onClick,
       monitorName,
       status,
       user
-    } = this.state;
-    const { onClick } = this.props;
+    } = this.props;
 
     onClick({
       monitorName: monitorName,
@@ -37,11 +27,11 @@ class MonitorListTableRow extends Component {
 
   isSelectedRow() {
     const {
+      selectedRow,
       monitorName,
       status,
       user
-    } = this.state;
-    const { selectedRow } = this.props;
+    } = this.props;
     const thisRow = {
       monitorName: monitorName,
       status: status,
@@ -56,7 +46,7 @@ class MonitorListTableRow extends Component {
       monitorName,
       status,
       user
-    } = this.state;
+    } = this.props;
 
     const selectedClass = this.isSelectedRow() ? "selected-row" : "";
 
