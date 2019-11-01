@@ -37,11 +37,7 @@
         .selected-row {
           background-color: #D9EBFF;
           border-left: 3px solid #024B9C;
-          padding-left: 10px!important;
-          &:hover {
-            padding-left: 10px!important;
-          }
-
+          padding-left: 11px !important;
         }
         .monitor-table-row {
           padding-top: 10px;
@@ -437,5 +433,4 @@
   &:hover {
     opacity: 1;
   }
-  margin-top: 5px;
 }
