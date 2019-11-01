@@ -6,12 +6,11 @@ import { del, delAtlas } from "../../../actions/BaseActions";
 class MonitorJobsTable extends Component {
   constructor(props) {
     super(props);
-    const { location, monitorResult } = this.props;
+    const { location } = this.props;
 
     this.state = {
       rows: null,
       projectName: location.state.project.name,
-      monitorName: monitorResult.properties.spec.environment.MONITOR_NAME,
       selectedRows: new Set()
     };
 
@@ -24,10 +23,22 @@ class MonitorJobsTable extends Component {
     this.reload();
   }
 
-  async reload() {
-    const { projectName, monitorName } = this.state;
-    const { reload, toggleLogsModal } = this.props;
+  componentDidUpdate(prevProps) {
+    const { monitorResult } = this.props;
 
+    const prevMonitorName = prevProps.monitorResult.properties.spec.environment.MONITOR_NAME;
+    const curMonitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
+
+    if (prevMonitorName !== curMonitorName) {
+      this.reload();
+    }
+  }
+
+  async reload() {
+    const { projectName } = this.state;
+    const { reload, toggleLogsModal, monitorResult } = this.props;
+
+    const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
     const result = await MonitorSchedulesActions.getMonitorJobs(projectName, monitorName);
     const rows = MonitorSchedulesActions.getMonitorJobRows(result, this.onSelectRow, toggleLogsModal);
     this.setState({ rows: rows });
@@ -47,8 +58,10 @@ class MonitorJobsTable extends Component {
   }
 
   async deleteJobs() {
-    const { selectedRows, projectName, monitorName } = this.state;
+    const { selectedRows, projectName } = this.state;
+    const { monitorResult } = this.props;
 
+    const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
     const atlasPromises = Array.from(selectedRows).map(jobID => {
       const URL = `projects/${projectName}/job_listing/${jobID}`;
       return delAtlas(URL);
