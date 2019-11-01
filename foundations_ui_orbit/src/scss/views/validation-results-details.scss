@@ -151,7 +151,7 @@
   }
 
   .validation-results-tests {
-    height: 60%;
+    height: calc(60% - 20px);
     border: solid 1px #dcdcdc;
     background-color: white;
     margin-top: 15px;
