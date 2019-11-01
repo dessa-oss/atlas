@@ -118,6 +118,22 @@ class TestOrbitMonitorPackageServer(Spec):
 
         self.assertEqual('Monitor already exists', str(error.exception))
 
+    def test_monitor_create_logs_correct_message_when_start_called(self):
+        self.mock_config_manager.config.return_value = {'scheduler_url': 'https://localhost:5000', 'worker_container_overrides': {'args': ''}}
+
+        from foundations_contrib.cli.orbit_monitor_package_server import start
+
+        mock_get_by_project = self.patch('foundations_contrib.cli.orbit_monitor_package_server.get_by_project')
+        mock_get_by_project.return_value = []
+
+        self.patch('foundations_local_docker_scheduler_plugin.bundle_deployment.job_bundle')
+        mock_submit_job_bundle = self.patch('foundations_local_docker_scheduler_plugin.bundle_deployment.submit_job_bundle')
+
+        with self.assertRaises(RuntimeError):
+            start(self.cwd, self.command, None, None, None)
+
+        self.mock_logger.info.assert_called_with('Creating monitor ...')
+
     def test_monitor_create_logs_correct_message_when_job_bundle_submitted(self):
         self.mock_config_manager.config.return_value = {'scheduler_url': 'https://localhost:5000', 'worker_container_overrides': {'args': ''}}
 
