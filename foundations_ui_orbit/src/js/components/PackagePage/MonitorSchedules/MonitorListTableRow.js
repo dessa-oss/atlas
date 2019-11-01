@@ -11,34 +11,14 @@ class MonitorListTableRow extends Component {
   }
 
   onClick() {
-    const {
-      onClick,
-      monitorName,
-      status,
-      user
-    } = this.props;
+    const { onClick, monitorName } = this.props;
 
-    onClick({
-      monitorName: monitorName,
-      status: status,
-      user: user
-    });
+    onClick(monitorName);
   }
 
   isSelectedRow() {
-    const {
-      selectedRow,
-      monitorName,
-      status,
-      user
-    } = this.props;
-    const thisRow = {
-      monitorName: monitorName,
-      status: status,
-      user: user
-    };
-
-    return CommonActions.deepEqual(thisRow, selectedRow);
+    const { selectedRow, monitorName } = this.props;
+    return monitorName === selectedRow;
   }
 
   render() {
@@ -77,7 +57,7 @@ MonitorListTableRow.propTypes = {
   status: PropTypes.string,
   user: PropTypes.string,
   onClick: PropTypes.func,
-  selectedRow: PropTypes.object
+  selectedRow: PropTypes.string
 };
 
 MonitorListTableRow.defaultProps = {
@@ -85,7 +65,7 @@ MonitorListTableRow.defaultProps = {
   status: "Invalid contract name",
   user: "",
   onClick: () => {},
-  selectedRow: PropTypes.object
+  selectedRow: ""
 };
 
 

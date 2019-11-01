@@ -60,14 +60,14 @@ class MonitorListTable extends Component {
 
 MonitorListTable.propTypes = {
   onClickRow: PropTypes.func,
-  selectedRow: PropTypes.object,
+  selectedRow: PropTypes.string,
   reload: PropTypes.func,
   allMonitors: PropTypes.object
 };
 
 MonitorListTable.defaultProps = {
   onClickRow: () => {},
-  selectedRow: {},
+  selectedRow: "",
   reload: () => {},
   allMonitors: {}
 };

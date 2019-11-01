@@ -21,7 +21,7 @@ class ScheduleDetails extends Component {
 
   componentDidUpdate(prevProps) {
     const { selectedMonitor, allMonitors } = this.props;
-    if (!CommonActions.deepEqual(selectedMonitor, prevProps.selectedMonitor)
+    if (selectedMonitor !== prevProps.selectedMonitor
       || !CommonActions.deepEqual(allMonitors, prevProps.allMonitors)) {
       this.reload();
     }
@@ -30,8 +30,8 @@ class ScheduleDetails extends Component {
   async reload() {
     const { selectedMonitor, allMonitors } = this.props;
 
-    if (!CommonActions.isEmptyObject(selectedMonitor)) {
-      this.setState({ monitorResult: allMonitors[selectedMonitor.monitorName] });
+    if (selectedMonitor) {
+      this.setState({ monitorResult: allMonitors[selectedMonitor] });
     } else {
       this.setState({ monitorResult: {} });
     }
@@ -66,7 +66,7 @@ class ScheduleDetails extends Component {
 
 ScheduleDetails.propTypes = {
   location: PropTypes.object,
-  selectedMonitor: PropTypes.object,
+  selectedMonitor: PropTypes.string,
   toggleLogsModal: PropTypes.func,
   allMonitors: PropTypes.object,
   reload: PropTypes.func
@@ -74,7 +74,7 @@ ScheduleDetails.propTypes = {
 
 ScheduleDetails.defaultProps = {
   location: {},
-  selectedMonitor: {},
+  selectedMonitor: "",
   toggleLogsModal: () => {},
   allMonitors: {},
   reload: () => {}
