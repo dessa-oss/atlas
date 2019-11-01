@@ -53,6 +53,9 @@ class MonitorOverview extends Component {
   }
 
   reload() {
+    const { reload } = this.props;
+
+    reload();
     const result = this.findScheduleRepeat();
     if (result) {
       this.setState(() => ({
@@ -69,21 +72,21 @@ class MonitorOverview extends Component {
     const { monitorResult } = this.props;
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-    MonitorSchedulesActions.resumeMonitor(projectName, monitorName);
+    MonitorSchedulesActions.resumeMonitor(projectName, monitorName).then(this.reload);
   }
 
   pauseMonitor() {
     const { monitorResult } = this.props;
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-    MonitorSchedulesActions.pauseMonitor(projectName, monitorName);
+    MonitorSchedulesActions.pauseMonitor(projectName, monitorName).then(this.reload);
   }
 
   deleteMonitor() {
     const { monitorResult } = this.props;
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-    MonitorSchedulesActions.deleteMonitor(projectName, monitorName);
+    MonitorSchedulesActions.deleteMonitor(projectName, monitorName).then(this.reload);
   }
 
   updateMonitorSchedule() {
@@ -301,11 +304,13 @@ class MonitorOverview extends Component {
 }
 
 MonitorOverview.propTypes = {
-  monitorResult: PropTypes.object
+  monitorResult: PropTypes.object,
+  reload: PropTypes.func
 };
 
 MonitorOverview.defaultProps = {
-  monitorResult: {}
+  monitorResult: {},
+  reload: () => {}
 };
 
 export default MonitorOverview;
