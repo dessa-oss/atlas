@@ -99,7 +99,7 @@
       }
 
       .monitor-info {
-        height: 38%;
+        height: 40%;
         display: flex;
         border-bottom: 1px solid #D8D8D8;
         .monitor-overview {
@@ -109,12 +109,8 @@
         }
 
         .monitor-details {
-          width: 45%;
+          width: 39%;
         }
-
-        // .monitor-calendar {
-        //   width: 33%;
-        // }
 
         .monitor-overview {
           border-right: 1px solid #D8D8D8;
@@ -182,15 +178,35 @@
           h3 {
             margin-top: 30px;
             padding-left: 40px;
-            font-size: 18px;
+            font-size: 24px;
             color: #5C5C5C;
+            margin-bottom: 0;
+            display: inline-block;
+          }
+          .monitor-details-options {
+            display: inline-flex;
+            margin-left: 115px;
+            button {
+              display: inline-block;
+              float: right;
+              border-radius: 3px;
+              color: #fff;
+              width: 70px;
+              height: 30px;
+              font-size: 14px;
+              font-weight: 400;
+              background: #004A9C;
+              box-shadow: 0px 3px 0px rgba(155, 155, 155, 0.25);
+              border-radius: 4px;
+
+            }
           }
 
           ul {
             li {
-              width: 460px;
+              width: 370px;
               padding-top: 10px;
-              margin-bottom: 30px;
+              margin-bottom: 10px;
               font-size: 14px;
               display: flex;
               .schedule-picker {
@@ -256,31 +272,12 @@
                 padding: 21px;
               }
             }
-            .monitor-details-options {
-              bottom: 69px;
-              position: relative;
-              left: 246px;
-              button {
-                float: right;
-                margin-right: 50px;
-                margin-bottom: 50px;
-                border-radius: 3px;
-                color: #fff;
-                width: 80px;
-                height: 40px;
-                font-size: 16px;
-                font-weight: 400;
-                background: #004A9C;
-                box-shadow: 0px 3px 0px rgba(155, 155, 155, 0.25);
-                border-radius: 4px;
-              }
-            }
           }
         }
       }
 
       .monitor-jobs {
-        height: 55%;
+        height: 52%;
         .monitor-jobs-heading {
           height: 7%;
           padding-left: 40px;
@@ -294,7 +291,7 @@
           }
           h3 {
             color: #5C5C5C;
-            font-size: 18px;
+            font-size: 24px;
             font-weight: 500;
             margin-top: 0;
             margin-bottom: 0;
@@ -308,7 +305,8 @@
 
           .i--icon-refresh {
             margin-top: 10px;
-            margin-left: 10px;
+            margin-left: 20px;
+            margin-right: 20px;
           }
         }
         .monitor-job-listing {

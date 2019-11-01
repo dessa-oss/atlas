@@ -17,6 +17,8 @@ class MonitorOverview extends Component {
     this.updateMonitorSchedule = this.updateMonitorSchedule.bind(this);
     this.reload = this.reload.bind(this);
     this.state = {
+      // job_id: monitorResult.properties.job_id,
+      // monitorResult: monitorResult,
       calDateStart: monitorResult.schedule.start_date || new Date(),
       calDateEnd: monitorResult.schedule.end_date || "",
       clockTimeHour: new Date(monitorResult.schedule.start_date).getHours() || "12",
@@ -60,6 +62,7 @@ class MonitorOverview extends Component {
     if (result) {
       this.setState(() => ({
         scheduleRepeatUnitValue: result.value
+        // job_id: monitorResult
       }));
     }
   }
@@ -118,7 +121,11 @@ class MonitorOverview extends Component {
 
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-    MonitorSchedulesActions.updateMonitorSchedule(projectName, monitorName, scheduleBody);
+    MonitorSchedulesActions.updateMonitorSchedule(projectName, monitorName, scheduleBody).then(() => {
+      this.setState(() => ({
+        scheduleRepeatUnitValue: 3
+      }));
+    });
   }
 
   render() {
@@ -127,6 +134,7 @@ class MonitorOverview extends Component {
       calDateStart,
       calDateEnd,
       scheduleRepeatUnitValue
+      // job_id
     } = this.state;
 
     const nextRun = monitorResult.next_run_time
@@ -202,18 +210,13 @@ class MonitorOverview extends Component {
               <div className="monitor-overview-key">Next Runs:</div>
               <div className="monitor-overview-value">{nextRun}</div>
             </li>
-            <li>
-              <div className="monitor-overview-key">Start Date:</div>
-              <div className="monitor-overview-value">{calStartTime}</div>
-            </li>
-            <li>
-              <div className="monitor-overview-key">End Date:</div>
-              <div className="monitor-overview-value">{calEndTime}</div>
-            </li>
           </ul>
         </div>
         <div className="monitor-details">
           <h3>Schedule Details</h3>
+          <div className="monitor-details-options">
+            <button className="save-schedule-btn" onClick={this.updateMonitorSchedule} type="button">Save</button>
+          </div>
           <ul>
             <li>
               <div className="monitor-overview-key">Repeats every:</div>
@@ -290,9 +293,6 @@ class MonitorOverview extends Component {
                 />
               </div>
             </li>
-            <div className="monitor-details-options">
-              <button className="save-schedule-btn" onClick={this.updateMonitorSchedule} type="button">Save</button>
-            </div>
           </ul>
         </div>
         <div className="monitor-calendar">

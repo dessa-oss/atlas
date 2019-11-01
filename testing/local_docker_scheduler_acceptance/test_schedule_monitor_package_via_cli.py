@@ -33,11 +33,6 @@ class TestScheduleMonitorPackageViaCli(Spec):
     def env(self):
         return 'scheduler'
 
-    @let
-    def foundations_home(self):
-        import os
-        return os.environ['FOUNDATIONS_HOME']
-
     @set_up
     def set_up(self):
         from foundations_contrib.global_state import redis_connection
