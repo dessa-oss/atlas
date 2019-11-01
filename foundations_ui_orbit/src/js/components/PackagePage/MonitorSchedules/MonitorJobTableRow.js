@@ -74,7 +74,7 @@ class MonitorJobTableRow extends Component {
         <div className="monitor-job-launched-cell">{formattedLaunchedTime}</div>
         <div className="monitor-job-duration-cell">{timeDiff}</div>
         <div className="monitor-job-open-cell">
-          <div className="i--icon-open" onClick={this.onOpenLogs} />
+          <div className="i--icon-open" title="View logs" onClick={this.onOpenLogs} />
         </div>
       </div>
     );
