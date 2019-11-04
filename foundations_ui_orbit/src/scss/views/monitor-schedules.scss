@@ -1,20 +1,28 @@
 .monitor-schedules-container {
   padding-left: 40px;
-  height: 100%;
+  height: calc(100% - 50px);
   
-
   .section-title {
-    font-size: 22px;
-    color: #024B9C;
-    font-weight: 900;
+    color: $color-dark-blue;
+    display: inline-block;
+    font-size: 30px;
+    margin: 0px;
+    margin-top: 30px;
   }
   
   .schedule-details {
     width: 100%;
+    height: calc(100% - 102px);
     display: inline-flex;
+    margin-top: 10px;
+
+    .monitor-list-table {
+      width: calc(25% - 30px);
+      margin-right: 30px;
+      height: 100%;
+    }
 
     .monitor-listing, .monitor-summary {
-      height: 800px;
       border-radius: 5px;
       display: inline-block;
       background-color: #fff;
@@ -23,37 +31,45 @@
     }
 
     .monitor-listing {
-      margin-right: 40px;
-      width: 30%;
-      max-width: 450px;
-      min-width: 400px;
+      width: 100%;
       overflow-y: scroll;
+      margin-top: 15px;
+      height: calc(100% - 43px);
   
       .monitor-items {
         width: 100%;
         margin: 0 auto;
         padding: 0;
+        font-size: 12px;
+
         .selected-row {
           background-color: #D9EBFF;
           border-left: 3px solid #024B9C;
           padding-left: 11px !important;
         }
         .monitor-table-row {
-          padding-top: 10px;
-          padding-bottom: 10px;
+          padding: 10px 20px;
+          padding-left: 14px;
           border-bottom: 1px solid #DFDFDF;
           width: 100%;
-          text-align: center;
           width: calc(100% - 14px);
-          padding-left: 14px;
           &:not(:first-child) {
             cursor: pointer;
           }
+          .monitor-table-cell {
+            width: 40%;
+          }
+          .monitor-user-table-cell {
+            width: 40%;
+          }
           .monitor-status-table-cell {
+            width: 20%;
+
             .status-icon {
               border-radius: 25px;
-              width: 25px;
-              height: 25px;
+              width: 20px;
+              height: 20px;
+              text-align: center;
             }
           }
           &:not(:first-child) {
@@ -63,14 +79,13 @@
             }
           }
           &:nth-child(1) {
-            padding-top: 20px;
-            padding-bottom: 20px;
             div {
               font-weight: 900;
+              padding-top: 8px;
+              padding-bottom: 8px;
             }
           }
           div {
-            width: 33%;
             display: inline-block;
           }
         }
@@ -81,6 +96,7 @@
     .monitor-summary {
       width: 100%;
       border: 1px solid #D8D8D8;
+      height: 100%;
 
       .monitor-details-empty-state {
         margin: 0 auto;
