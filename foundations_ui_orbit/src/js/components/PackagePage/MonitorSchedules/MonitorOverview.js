@@ -241,7 +241,7 @@ class MonitorOverview extends Component {
               className={`save-schedule-btn ${saveDisabled}`}
               onClick={this.updateMonitorSchedule}
               type="button"
-              disabled={scheduleValid}
+              disabled={!scheduleValid}
             >
               Save
             </button>
