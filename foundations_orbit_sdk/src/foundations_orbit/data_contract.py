@@ -26,22 +26,17 @@ class DataContract(object):
             self._dataframe = df
 
         self._column_names, self._column_types, self._number_of_rows = dataframe_statistics(self._dataframe)
-
         self._bin_stats = {}
+
         self._categorical_attributes = {}
         self._categorize_attributes()
 
         self.schema_test = SchemaChecker(self._column_names, self._column_types)
         self._remove_object_columns_and_types(self._column_names, self._column_types)
 
-        for column_name in self._column_names:
-            if self._categorical_attributes[column_name]:
-                self._bin_stats[column_name] = create_bin_stats_categorical(self.options.special_values, self._dataframe[column_name])
-            else:
-                self._bin_stats[column_name] = create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name])  
+        self.special_value_test = SpecialValuesChecker(self.options, self._column_names, self._column_types, self._categorical_attributes)
+        self.distribution_test = DistributionChecker(self.options.distribution, self._column_names, self._column_types, self._categorical_attributes)
 
-        self.special_value_test = SpecialValuesChecker(self.options, self._bin_stats, self._column_names, self._column_types, self._categorical_attributes, self._dataframe)
-        self.distribution_test = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names, self._column_types, self._categorical_attributes)
         self.min_max_test = MinMaxChecker(self._column_types)
         self.summary = DataContractSummary(self._dataframe, self._column_names, self._column_types, self._categorical_attributes)
 
@@ -117,6 +112,11 @@ class DataContract(object):
 
 
     def save(self, monitor_package_directory):
+        if not self._bin_stats:
+            self.set_bin_stats_for_checkers()
+
+        del self._dataframe
+
         with open(self._data_contract_file_path(monitor_package_directory), 'wb') as contract_file:
             contract_file.write(self._serialized_contract())
 
@@ -147,6 +147,9 @@ class DataContract(object):
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         from foundations_orbit.report_formatter import ReportFormatter
         from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
+
+        if not self._bin_stats:
+            self.set_bin_stats_for_checkers()
 
         project_name = os.environ.get('PROJECT_NAME', 'default')
         monitor_name = os.environ.get('MONITOR_NAME', os.path.basename(__file__))
@@ -225,6 +228,25 @@ class DataContract(object):
     def _deserialized_contract(serialized_contract):
         import pickle
         return pickle.loads(serialized_contract)
+
+    def set_bin_stats_for_checkers(self):
+        self._calculate_bin_stats()
+
+        self.special_value_test.set_bin_stats(self._bin_stats)
+        self.distribution_test.set_bin_stats(self._bin_stats)
+
+    def _calculate_bin_stats(self):
+        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats, create_bin_stats_categorical
+
+        for column_name in self._column_names:
+            if self.options.distribution['special_value_thresholds'].get(column_name):
+                special_values = list(self.options.distribution['special_value_thresholds'][column_name].keys())
+            else:
+                special_values = self.options.special_values
+            if self._categorical_attributes[column_name]:
+                self._bin_stats[column_name] = create_bin_stats_categorical(special_values, self._dataframe[column_name])
+            else:
+                self._bin_stats[column_name] = create_bin_stats(special_values, self.options.max_bins, self._dataframe[column_name])
 
     def _modify_validation_report_with_schema_failures(self, validation_report, attributes_to_ignore):
         for test_name, test_dictionary in validation_report.items():
