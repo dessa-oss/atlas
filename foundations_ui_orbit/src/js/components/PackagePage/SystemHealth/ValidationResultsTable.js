@@ -42,7 +42,7 @@ class ValidationResultsTable extends Component {
 
     return (
       <div className="validation-results-table-container">
-        <div className="i--icon-refresh" onClick={this.reload} />
+        <div className="i--icon-refresh" title="Refresh validation results" onClick={this.reload} />
         <div className="validation-results-table-row-header">
           <div className="val-time-table-cell">Date</div>
           <div className="val-monitor-table-cell">Monitor Name</div>
