@@ -68,9 +68,26 @@ class TestAuthenticationClient(Spec):
     def test_token_using_username_password(self):
         user = self.faker.word()
         password = self.faker.word()
-        token = self.auth_client.token_using_username_password(user, password)
-        self.mock_keycloak.token.assert_called_once_with(username=user, password=password)
+        self.auth_client.token_using_username_password(user, password)
+        self.mock_keycloak.token.assert_called_once_with(
+            username=user, password=password
+        )
 
-    # def test_token_using_auth_code(self):
-    #     auth_code = self.faker.word()
-    #     self.auth_client.token_using_auth_code(auth_code)
+    def test_token_using_auth_code(self):
+        auth_code = self.faker.word()
+        self.auth_client.token_using_auth_code(auth_code)
+        self.mock_keycloak.token.assert_called_once_with(
+            code=auth_code,
+            grant_type=["authorization_code"],
+            redirect_uri=self.redirect_url,
+        )
+
+    def test_json_web_key_set(self):
+        self.auth_client.json_web_key_set()
+        self.mock_keycloak.certs.assert_called_once()
+
+
+    # def test_issuer(self):
+    #     issuer = self.auth_client.issuer()
+    #     self.mock_keycloak.certs.assert_called_once()
+        
