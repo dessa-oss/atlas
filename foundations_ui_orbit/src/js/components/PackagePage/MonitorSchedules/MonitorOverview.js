@@ -172,7 +172,7 @@ class MonitorOverview extends Component {
     const startTime = moment(calDateStart);
     const endTime = moment(calDateEnd);
 
-    return startTime.isBefore(endTime) && endTime.isAfter(moment());
+    return !calDateEnd || (startTime.isBefore(endTime) && endTime.isAfter(moment()));
   }
 
   render() {
