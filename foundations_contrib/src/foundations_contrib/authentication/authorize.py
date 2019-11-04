@@ -1,4 +1,5 @@
 # /server.py
+# SPIKE FILE
 
 import json
 from six.moves.urllib.request import urlopen
@@ -8,11 +9,19 @@ from flask import Flask, request, jsonify, _request_ctx_stack
 from flask_cors import cross_origin
 from jose import jwt
 
-AUTH0_DOMAIN = "localhost:8080/auth"
+from foundations_contrib.authentication.authentication_client import AuthenticationClient
+
 ALGORITHMS = ["RS256"]
+CLIENT_CONFIG = {
+    "realm": "Atlas",
+    "auth-server-url": "http://localhost:8080/auth",
+    "ssl-required": "external",
+    "resource": "foundations",
+    "confidential-port": 0,
+}
+AUTH_CLIENT = AuthenticationClient(CLIENT_CONFIG, "/api/v2beta/auth")
 
 APP = Flask(__name__)
-
 # Error handler
 class AuthError(Exception):
     def __init__(self, error, status_code):
@@ -51,11 +60,11 @@ def get_token_from_header():
             },
             401,
         )
-    elif len(parts) == 1:
+    if len(parts) == 1:
         raise AuthError(
             {"code": "invalid_header", "description": "Token not found"}, 401
         )
-    elif len(parts) > 2:
+    if len(parts) > 2:
         raise AuthError(
             {
                 "code": "invalid_header",
@@ -68,17 +77,14 @@ def get_token_from_header():
     return token
 
 
-def requires_auth(f):
+def requires_auth(func):
     """Determines if the Access Token is valid
     """
 
-    @wraps(f)
+    @wraps(func)
     def decorated(*args, **kwargs):
         token = get_token_from_header()
-        jsonurl = urlopen(
-            "http://localhost:8080/auth/realms/Atlas/protocol/openid-connect/certs"
-        )
-        jwks = json.loads(jsonurl.read())
+        jwks = AUTH_CLIENT.json_web_key_set()
         unverified_header = jwt.get_unverified_header(token)
         rsa_key = {}
         for key in jwks["keys"]:
@@ -97,7 +103,7 @@ def requires_auth(f):
                     rsa_key,
                     algorithms=ALGORITHMS,
                     audience="account",
-                    issuer=f"http://localhost:8080/auth/realms/Atlas",
+                    issuer=AUTH_CLIENT.issuer(),
                 )
             except jwt.ExpiredSignatureError:
                 raise AuthError(
@@ -108,7 +114,7 @@ def requires_auth(f):
                 raise AuthError(
                     {
                         "code": "invalid_claims",
-                        "description": "incorrect claims,"
+                        "description": "incorrect claims, "
                         "please check the audience and issuer",
                     },
                     401,
@@ -124,7 +130,7 @@ def requires_auth(f):
                 )
 
             _request_ctx_stack.top.current_user = payload
-            return f(*args, **kwargs)
+            return func(*args, **kwargs)
         raise AuthError(
             {"code": "invalid_header", "description": "Unable to find appropriate key"},
             401,

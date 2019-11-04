@@ -45,7 +45,7 @@ class AuthenticationClient:
 
         An authorization code is obtained from the auth server after a successful
         login.
-        
+
         :param code: The authorization code.
         :type code: str
         :return: [description]
@@ -57,6 +57,23 @@ class AuthenticationClient:
             grant_type=["authorization_code"],
             redirect_uri=self._redirect_url,
         )
+
+    def json_web_key_set(self) -> dict:
+        """The JSWKS needed to verify a json web token.
+
+        :return: [description]
+        :rtype: dict
+        """
+        return self.client.certs()
+
+    def issuer(self) -> str:
+        """[summary]
+
+        :return: [description]
+        :rtype: str
+        """
+
+        return self.client.well_know()['issuer']
 
     @staticmethod
     def _get_config_from_file(fname: str) -> dict:
@@ -75,11 +92,12 @@ def keycloak_client(config: dict) -> Type[KeycloakOpenID]:
     )
 
 
-conf = {
+# Here for development purposes
+auth_config = {
     "realm": "Atlas",
     "auth-server-url": "http://localhost:8080/auth",
     "ssl-required": "external",
     "resource": "foundations",
     "confidential-port": 0,
 }
-client = AuthenticationClient(conf, redirect_url="/api/v2beta/auth")
+client = AuthenticationClient(auth_config, redirect_url="/api/v2beta/auth")
