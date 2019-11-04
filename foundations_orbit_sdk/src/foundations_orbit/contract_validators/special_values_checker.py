@@ -27,6 +27,8 @@ class SpecialValuesChecker(object):
 
         self._categorical_attributes = categorical_attributes
 
+    def __str__(self):
+        return str(self._config_options.distribution['special_value_thresholds'])
 
     def _initialize_columns_special_values(self):
         _column_special_values = {}

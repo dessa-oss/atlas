@@ -147,7 +147,7 @@ class TestDistributionChecker(Spec):
             }
         }
 
-        self.assertEqual(json.dumps(expected_information), str(checker))
+        self.assertEqual(str(expected_information), str(checker))
 
     def test_distribution_checker_cannot_validate_if_checking_distribution_if_both_column_whitelist_and_column_blacklist_are_set(self):
         options = self.distribution_options.copy()
