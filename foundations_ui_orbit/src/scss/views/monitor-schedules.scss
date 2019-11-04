@@ -198,6 +198,7 @@
 
               &.disabled {
                 background-color: hsl(0, 63%, 60%);
+                cursor: not-allowed;
               }
             }
           }
