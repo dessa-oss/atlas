@@ -166,7 +166,9 @@ class MonitorOverview extends Component {
     return (
       <div className="monitor-info">
         <div className="monitor-overview">
-          <h3>Overview</h3>
+          <h3>
+            {monitorResult.properties.spec.environment.MONITOR_NAME}
+          </h3>
           <div className="monitor-overview-menu">
             <button className="monitor-btn" type="button" onClick={this.resumeMonitor}>
               <div className="i--icon-start" />
@@ -179,10 +181,6 @@ class MonitorOverview extends Component {
             </button>
           </div>
           <ul>
-            <li>
-              <div className="monitor-overview-key">Monitor Name:</div>
-              <div className="monitor-overview-value">{monitorResult.properties.spec.environment.MONITOR_NAME}</div>
-            </li>
             <li>
               <div className="monitor-overview-key">Status:</div>
               <div className="monitor-overview-value">{status}</div>
