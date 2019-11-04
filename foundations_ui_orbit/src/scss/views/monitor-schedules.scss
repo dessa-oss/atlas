@@ -181,7 +181,8 @@
           .monitor-details-options {
             display: inline-flex;
             margin-left: 25px;
-            button {
+
+            .save-schedule-btn {
               display: inline-block;
               float: right;
               border-radius: 3px;
@@ -195,6 +196,9 @@
               border-radius: 4px;
               cursor: pointer;
 
+              &.disabled {
+                background-color: hsl(0, 63%, 60%);
+              }
             }
           }
 
