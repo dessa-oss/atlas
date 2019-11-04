@@ -237,3 +237,63 @@ class TestDataContractCategorizer(Spec):
         }
 
         self.assertEqual(expected_report, dist_check_report)
+
+
+    def test_data_contract_passes_when_same_dataframe_used_with_datetime(self):
+        import numpy, pandas, datetime
+
+        dataframe = pandas.DataFrame({self.column_name_1: [self.faker.date_time() for _ in range(100)]})
+        current_dataframe = dataframe
+        contract = DataContract(self.contract_name, dataframe)
+
+        validation_report = contract.validate(current_dataframe)
+        dist_check_report = validation_report['dist_check_results']
+
+        expected_report = {
+            self.column_name_1: {
+                'binned_l_infinity':  0.0,
+                'binned_passed': True
+            }
+        }
+
+        self.assertEqual(expected_report, dist_check_report)
+
+
+    def test_data_contract_uses_categorical_logic_for_distribution_check_with_datetime(self):
+        import numpy, pandas
+        a,b,c,d = self.faker.date_time(), self.faker.date_time(), self.faker.date_time(), self.faker.date_time()
+        dataframe = pandas.DataFrame({self.column_name_1: [a]*10 + [b]*10 + [c]*10 + [d]*10})
+        current_dataframe = pandas.DataFrame({self.column_name_1: [a]*5 + [b]*5 + [c]*5 + [d]*5 + [self.faker.date_time()]*20})
+        contract = DataContract(self.contract_name, dataframe)
+
+        validation_report = contract.validate(current_dataframe)
+        dist_check_report = validation_report['dist_check_results']
+
+        expected_report = {
+            self.column_name_1: {
+                'binned_l_infinity':  0.5,
+                'binned_passed': False
+            }
+        }
+
+        self.assertEqual(expected_report, dist_check_report)
+
+    
+    def test_data_contract_uses_non_categorical_logic_for_distribution_check_with_datetime(self):
+        import numpy, pandas, datetime
+        a,b,c,d = self.faker.date_time(), self.faker.date_time(), self.faker.date_time(), self.faker.date_time()
+        dataframe = pandas.DataFrame({self.column_name_1: [a]*3 + [b]*3 + [c]*3 + [d]*3})
+        current_dataframe = pandas.DataFrame({self.column_name_1: [a]*2 + [b]*2 + [c]*2 + [d]*2 + [max(a,b,c,d) + datetime.timedelta(10)]*4})
+        contract = DataContract(self.contract_name, dataframe)
+
+        validation_report = contract.validate(current_dataframe)
+        dist_check_report = validation_report['dist_check_results']
+
+        expected_report = {
+            self.column_name_1: {
+                'binned_l_infinity':  0.333,
+                'binned_passed': False
+            }
+        }
+
+        self.assertEqual(expected_report, dist_check_report)
