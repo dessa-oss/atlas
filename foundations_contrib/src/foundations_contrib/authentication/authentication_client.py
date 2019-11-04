@@ -58,6 +58,9 @@ class AuthenticationClient:
             redirect_uri=self._redirect_url,
         )
 
+    def token_using_username_password(self, username: str, password: str) -> dict:
+        return self.client.token(username=username, password=password)
+
     def json_web_key_set(self) -> dict:
         """The JSWKS needed to verify a json web token.
 

@@ -65,6 +65,12 @@ class TestAuthenticationClient(Spec):
             self.auth_client.browser_login()
             mock_browser.assert_called_once_with(self.auth_client.authentication_url())
 
+    def test_token_using_username_password(self):
+        user = self.faker.word()
+        password = self.faker.word()
+        token = self.auth_client.token_using_username_password(user, password)
+        self.mock_keycloak.token.assert_called_once_with(username=user, password=password)
+
     # def test_token_using_auth_code(self):
     #     auth_code = self.faker.word()
     #     self.auth_client.token_using_auth_code(auth_code)
