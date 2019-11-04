@@ -4,13 +4,11 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
+from .exceptions import AuthError
 
+class AppManager:
+    """A class to manage the initilization of the Flask server."""
 
-class AppManager(object):
-    """A class to manage the initilization of the Flask server.
-        Arguments:
-            
-    """    
     def __init__(self):
         self._app = None
         self._api = None
@@ -18,11 +16,20 @@ class AppManager(object):
     def app(self):
         """Create and instantiate Flask object
         """
-        from flask import Flask
+        from flask import Flask, jsonify
         from flask_cors import CORS
 
         if self._app is None:
-            self._app = Flask(__name__)
+            app = Flask(__name__)
+
+            @app.errorhandler(AuthError)
+            def handle_auth_error(exc):
+                response = jsonify(exc.error)
+                response.status_code = exc.status_code
+                return response
+
+            print('SPEC ======> ', app.error_handler_spec)
+            self._app = app
             CORS(self._app, supports_credentials=True)
 
         return self._app
