@@ -64,6 +64,7 @@ class MonitorSchedules extends Component {
               onClickRow={this.selectRow}
               selectedRow={selectedMonitor}
               allMonitors={allMonitors}
+              reload={this.reload}
             />
             <ScheduleDetails
               location={location}
