@@ -45,6 +45,14 @@ class DataContract(object):
         self.min_max_test = MinMaxChecker(self._column_types)
         self.summary = DataContractSummary(self._dataframe, self._column_names, self._column_types, self._categorical_attributes)
 
+    def __str__(self):
+        x = {}
+        x['special_values_test'] = str(self.special_value_test)
+        x['min_max_test'] = str(self.min_max_test)
+        x['distribution_test'] = str(self.distribution_test)
+        x['schema_test'] = str(self.schema_test)
+        return str(x)
+
     @staticmethod
     def _default_options():
         import numpy

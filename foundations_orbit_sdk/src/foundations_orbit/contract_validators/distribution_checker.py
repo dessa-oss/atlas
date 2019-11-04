@@ -33,7 +33,8 @@ class DistributionChecker(object):
             'reference_column_types': self._reference_column_types
         }
 
-        return json.dumps(information)
+        # return json.dumps(information)
+        return str(information)
 
     def configure(self, attributes, threshold=None, method=None):
         error_dictionary = {}
