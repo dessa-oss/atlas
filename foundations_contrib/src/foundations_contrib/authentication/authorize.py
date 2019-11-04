@@ -8,7 +8,7 @@ from flask import Flask, request, jsonify, _request_ctx_stack
 from flask_cors import cross_origin
 from jose import jwt
 
-AUTH0_DOMAIN = "localhost:8080/auth/realms"
+AUTH0_DOMAIN = "localhost:8080/auth"
 ALGORITHMS = ["RS256"]
 
 APP = Flask(__name__)
@@ -59,7 +59,7 @@ def get_token_from_header():
         raise AuthError(
             {
                 "code": "invalid_header",
-                "description": "Authorization header must be" " Bearer token",
+                "description": "Authorization header must be 'Bearer <token>'",
             },
             401,
         )
@@ -75,7 +75,9 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = get_token_from_header()
-        jsonurl = urlopen("http://" + AUTH0_DOMAIN + "/.well-known/jwks.json")
+        jsonurl = urlopen(
+            "http://localhost:8080/auth/realms/Atlas/protocol/openid-connect/certs"
+        )
         jwks = json.loads(jsonurl.read())
         unverified_header = jwt.get_unverified_header(token)
         rsa_key = {}
@@ -94,13 +96,15 @@ def requires_auth(f):
                     token,
                     rsa_key,
                     algorithms=ALGORITHMS,
-                    issuer=f"http://{AUTH_DOMAIN}/realms/Atlas",
+                    audience="account",
+                    issuer=f"http://localhost:8080/auth/realms/Atlas",
                 )
             except jwt.ExpiredSignatureError:
                 raise AuthError(
                     {"code": "token_expired", "description": "token is expired"}, 401
                 )
-            except jwt.JWTClaimsError:
+            except jwt.JWTClaimsError as exc:
+                print(exc)
                 raise AuthError(
                     {
                         "code": "invalid_claims",
@@ -109,7 +113,8 @@ def requires_auth(f):
                     },
                     401,
                 )
-            except Exception:
+            except Exception as exc:
+                raise exc
                 raise AuthError(
                     {
                         "code": "invalid_header",
@@ -171,7 +176,7 @@ def private():
 @cross_origin(headers=["Content-Type", "Authorization"])
 @requires_auth
 def private_scoped():
-    if requires_scope("read:messages"):
+    if requires_scope("profile"):
         response = "Hello from a private endpoint! You need to be authenticated and have a scope of read:messages to see this."
         return jsonify(message=response)
     raise AuthError(
@@ -181,5 +186,6 @@ def private_scoped():
         },
         403,
     )
+
 
 APP.run()

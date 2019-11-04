@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-docker run -d --name keycloak2 \
+docker run -d --rm --name keycloak \
     -e KEYCLOAK_USER=admin \
     -e KEYCLOAK_PASSWORD=admin \
     -e KEYCLOAK_IMPORT=/keycloak/atlas.json \
