@@ -4,6 +4,7 @@ import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
 import Select from "react-select";
 import moment from "moment";
 import Flatpickr from "react-flatpickr";
+import CommonActions from "../../../actions/CommonActions";
 
 class MonitorOverview extends Component {
   constructor(props) {
@@ -26,7 +27,7 @@ class MonitorOverview extends Component {
       calDateEnd: monitorResult.schedule.end_date || "",
       clockTimeHour: new Date(monitorResult.schedule.start_date).getHours() || "12",
       clockTimeMinute: new Date(monitorResult.schedule.start_date).getMinutes() || "00",
-      scheduleRepeatUnit: { label: "Days" },
+      scheduleRepeatUnit: "Days",
       scheduleRepeatUnitValue: "1",
       scheduleValid: false
     };
@@ -64,12 +65,14 @@ class MonitorOverview extends Component {
     if (result) {
       this.setState({
         scheduleRepeatUnitValue: result.value,
-        nextRunTime: moment.unix(monitorResult.next_run_time).format("YYYY-MM-DD HH:mm:ss") || "None set",
+        nextRunTime: (
+          monitorResult.next_run_time ? moment.unix(monitorResult.next_run_time).format("YYYY-MM-DD HH:mm:ss") : "N/A"
+        ),
         calDateStart: monitorResult.schedule.start_date || new Date(),
         calDateEnd: monitorResult.schedule.end_date || "",
         clockTimeHour: new Date(monitorResult.schedule.start_date).getHours() || "12",
         clockTimeMinute: new Date(monitorResult.schedule.start_date).getMinutes() || "00",
-        scheduleRepeatUnit: result
+        scheduleRepeatUnit: result.label
       }, () => {
         this.setState({ scheduleValid: this.validateMonitorSchedule() }, reload);
       });
@@ -85,10 +88,7 @@ class MonitorOverview extends Component {
   componentDidUpdate(prevProps) {
     const { monitorResult } = this.props;
 
-    const prevMonitorName = prevProps.monitorResult.properties.spec.environment.MONITOR_NAME;
-    const curMonitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-
-    if (prevMonitorName !== curMonitorName) {
+    if (!CommonActions.deepEqual(prevProps.monitorResult, monitorResult)) {
       this.reload();
     }
   }
@@ -139,7 +139,7 @@ class MonitorOverview extends Component {
     if (calDateEnd !== "") {
       scheduleBody.end_date = moment(calDateEnd).format("YYYY-MM-DD");
     }
-    scheduleBody[scheduleRepeatUnit.label.toLocaleLowerCase().slice(0, -1)] = `*/${scheduleRepeatUnitValue}`;
+    scheduleBody[scheduleRepeatUnit.toLocaleLowerCase().slice(0, -1)] = `*/${scheduleRepeatUnitValue}`;
 
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
@@ -198,6 +198,11 @@ class MonitorOverview extends Component {
       { label: "Seconds", value: monitorResult.schedule.second }
     ];
 
+    const scheduleRepeatUnitOption = {
+      label: scheduleRepeatUnit,
+      value: scheduleRepeatUnit
+    };
+
     const clockTimeDateObject = new Date(calDateStart);
     const clockTime = `${clockTimeDateObject.getHours()}:${clockTimeDateObject.getMinutes()}`;
     const saveDisabled = !scheduleValid ? "disabled" : "";
@@ -229,7 +234,7 @@ class MonitorOverview extends Component {
               <div className="monitor-overview-value">{monitorResult.properties.metadata.username}</div>
             </li>
             <li>
-              <div className="monitor-overview-key">Next Runs:</div>
+              <div className="monitor-overview-key">Next Run:</div>
               <div className="monitor-overview-value">{nextRunTime}</div>
             </li>
           </ul>
@@ -266,10 +271,10 @@ class MonitorOverview extends Component {
                 <Select
                   options={scheduleOptions}
                   className="react-select"
-                  value={scheduleRepeatUnit}
+                  value={scheduleRepeatUnitOption}
                   onChange={value => {
                     this.setState({
-                      scheduleRepeatUnit: value
+                      scheduleRepeatUnit: value.label
                     });
                   }}
                 />
