@@ -58,7 +58,7 @@ class MonitorSchedules extends Component {
     return (
       <Layout tab="Schedules" title="Data Health">
         <div className="monitor-schedules-container">
-          <h3 className="section-title">Monitor Schedules</h3>
+          <div className="section-title font-bold">Monitor Schedules</div>
           <div className="schedule-details">
             <MonitorListTable
               onClickRow={this.selectRow}
