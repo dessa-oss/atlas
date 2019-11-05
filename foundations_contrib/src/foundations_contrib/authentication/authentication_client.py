@@ -64,19 +64,19 @@ class AuthenticationClient:
     def json_web_key_set(self) -> dict:
         """The JSWKS needed to verify a json web token.
 
-        :return: [description]
+        :return: The set of public keys issued by the auth server.
         :rtype: dict
         """
         return self.client.certs()
 
-    def issuer(self) -> str:
-        """[summary]
+    def well_known(self) -> dict:
+        """Metadata associated with the auth server
 
-        :return: [description]
-        :rtype: str
+        :return: A dictionary containing useful information about the server.
+        :rtype: dict
         """
 
-        return self.client.well_know()['issuer']
+        return self.client.well_know()
 
     @staticmethod
     def _get_config_from_file(fname: str) -> dict:

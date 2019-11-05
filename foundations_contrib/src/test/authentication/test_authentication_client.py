@@ -65,7 +65,7 @@ class TestAuthenticationClient(Spec):
             self.auth_client.browser_login()
             mock_browser.assert_called_once_with(self.auth_client.authentication_url())
 
-    def test_token_using_username_password(self):
+    def test_token_using_username_password_delegates_to_keycloak_token(self):
         user = self.faker.word()
         password = self.faker.word()
         self.auth_client.token_using_username_password(user, password)
@@ -73,7 +73,7 @@ class TestAuthenticationClient(Spec):
             username=user, password=password
         )
 
-    def test_token_using_auth_code(self):
+    def test_token_using_auth_code_delegates_to_keycloak_token(self):
         auth_code = self.faker.word()
         self.auth_client.token_using_auth_code(auth_code)
         self.mock_keycloak.token.assert_called_once_with(
@@ -87,7 +87,6 @@ class TestAuthenticationClient(Spec):
         self.mock_keycloak.certs.assert_called_once()
 
 
-    # def test_issuer(self):
-    #     issuer = self.auth_client.issuer()
-    #     self.mock_keycloak.certs.assert_called_once()
-        
+    def test_well_known_delegates_to_keycloak_well_know(self):
+        self.auth_client.well_known()
+        self.mock_keycloak.well_know.assert_called_once()

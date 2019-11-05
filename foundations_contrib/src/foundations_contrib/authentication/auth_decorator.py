@@ -75,7 +75,7 @@ def requires_auth(auth_client: AuthenticationClient):
                         rsa_key,
                         algorithms=["RS256"],
                         audience="account",
-                        issuer=auth_client.issuer(),
+                        issuer=auth_client.well_known()['issuer'],
                     )
                 except jwt.ExpiredSignatureError:
                     raise AuthError(
