@@ -399,7 +399,7 @@ class TestDataContract(Spec):
 
         self.patch('foundations_orbit.contract_validators.special_values_checker.SpecialValuesChecker')
         mock_distribution_checker_class = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker', ConditionalReturn())
-        mock_distribution_checker_class.return_when(mock_distribution_checker, contract.options.distribution, self.bin_stats, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types, self.two_column_dataframe_categories)
+        mock_distribution_checker_class.return_when(mock_distribution_checker, contract.options.distribution, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types, self.two_column_dataframe_categories)
 
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         
@@ -914,6 +914,23 @@ class TestDataContract(Spec):
         from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
         _,column_types,_ = dataframe_statistics(self.dataframe_with_strings_and_nans)
         self.assertEqual('str', column_types[self.column_name])
+
+    def test_data_contract_to_string_prints_expected_output(self):
+        import numpy, json
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        contract.min_max_test.configure(attributes=[self.column_name, self.column_name_2], lower_bound = 0, upper_bound = 100)
+        contract.special_value_test.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.5})
+        contract.special_value_test.configure(attributes=[self.column_name_2], thresholds={60: 0.5, numpy.nan: 0.1})
+
+        result = str(contract)
+
+        # import json
+        # print(json.loads(result.replace('\'', '"')))
+
+        tests = ['special_values_test', 'min_max_test', 'distribution_test', 'schema_test']
+        for test in tests:
+            if test not in result:
+                self.fail()
 
     def _test_special_values_checker_for_datatype_input_returns_expected_results(self, data):
         import pandas, numpy

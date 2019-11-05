@@ -42,18 +42,22 @@ class ScheduleDetails extends Component {
     const { location, toggleLogsModal, reload } = this.props;
 
     let mainRender = (
-      <div className="monitor-summary">
-        <MonitorOverview monitorResult={monitorResult} reload={reload} />
-        <MonitorJobsTable location={location} monitorResult={monitorResult} toggleLogsModal={toggleLogsModal} />
+      <div className="right-side">
+        <div className="monitor-summary">
+          <MonitorOverview monitorResult={monitorResult} reload={reload} />
+          <MonitorJobsTable location={location} monitorResult={monitorResult} toggleLogsModal={toggleLogsModal} />
+        </div>
       </div>
     );
     if (!monitorResult || CommonActions.isEmptyObject(monitorResult)) {
       mainRender = (
-        <div className="monitor-summary">
-          <div className="monitor-details-empty-state">
-            <div className="i--icon-clipboard" />
-            <div className="monitor-details-empty-state-text">
-              Click on a monitor to see its details.
+        <div className="right-side">
+          <div className="monitor-summary">
+            <div className="monitor-details-empty-state">
+              <div className="i--icon-clipboard" />
+              <div className="monitor-details-empty-state-text">
+                Click on a monitor to see its details.
+              </div>
             </div>
           </div>
         </div>

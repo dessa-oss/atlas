@@ -15,7 +15,7 @@
   }
 
   .validation-results-overview {
-    height: 40%;
+    height: 310px;
     width: 100%;
     display: inline-flex;
     background-color: white;
@@ -79,6 +79,7 @@
     .overview-graph-stats {
       display: flex;
       justify-content: center;
+      align-items: center;
       flex-direction: column;
       width: 25%;
 
@@ -96,7 +97,6 @@
 
         .attribute-data-label {
           font-size: 18px;
-          margin-bottom: 10px;
 
           .light-blue-box {
             background-color: hsl(204%, 100%, 66%);
@@ -151,7 +151,7 @@
   }
 
   .validation-results-tests {
-    height: 60%;
+    height: calc(100% - 330px);
     border: solid 1px #dcdcdc;
     background-color: white;
     margin-top: 15px;

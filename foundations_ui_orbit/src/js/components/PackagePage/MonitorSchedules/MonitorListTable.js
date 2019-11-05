@@ -30,7 +30,7 @@ class MonitorListTable extends Component {
 
   render() {
     const { rows } = this.state;
-    const { selectedRow } = this.props;
+    const { selectedRow, reload } = this.props;
 
     let rowsWithProps = [];
     if (rows) {
@@ -41,14 +41,14 @@ class MonitorListTable extends Component {
     }
 
     return (
-      <div>
-        {/* <div className="i--icon-refresh" onClick={this.reload} /> */}
+      <div className="monitor-list-table">
+        <div className="i--icon-refresh" onClick={reload} />
         <div className="monitor-listing">
           <div className="monitor-items">
             <div className="monitor-table-row" onClick={this.onClick}>
               <div className="monitor-table-cell">Monitor Name</div>
-              <div className="monitor-status-table-cell">Status</div>
               <div className="monitor-user-table-cell">User</div>
+              <div className="monitor-status-table-cell">Status</div>
             </div>
             {rowsWithProps}
           </div>

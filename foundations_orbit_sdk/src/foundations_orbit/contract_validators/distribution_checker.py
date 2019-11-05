@@ -8,11 +8,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import numpy as np
 class DistributionChecker(object):   
-    def __init__(self, distribution_options, bin_stats, reference_column_names, reference_column_types, categorical_attributes):
+    def __init__(self, distribution_options, reference_column_names, reference_column_types, categorical_attributes):
         from foundations_orbit.contract_validators.checker import Checker
         self._categorical_attributes = categorical_attributes
         self._distribution_options = distribution_options.copy()
-        self._bin_stats = bin_stats
+        self._bin_stats = None
         self._reference_column_names = reference_column_names
         self._reference_column_types = reference_column_types
         self._allowed_types = ['int', 'float', 'str', 'bool', 'datetime']
@@ -33,7 +33,8 @@ class DistributionChecker(object):
             'reference_column_types': self._reference_column_types
         }
 
-        return json.dumps(information)
+        # return json.dumps(information)
+        return str(information)
 
     def configure(self, attributes, threshold=None, method=None):
         error_dictionary = {}
@@ -81,3 +82,6 @@ class DistributionChecker(object):
         for attribute in self._attributes_to_exclude:
             test_data[attribute] = {"binned_passed": False, 'message': "non-categorical strings are not supported"}
         return test_data
+
+    def set_bin_stats(self, bin_stats):
+        self._bin_stats = bin_stats
