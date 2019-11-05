@@ -36,8 +36,8 @@ class DataContract(object):
 
         self.special_value_test = SpecialValuesChecker(self.options, self._column_names, self._column_types, self._categorical_attributes)
         self.distribution_test = DistributionChecker(self.options.distribution, self._column_names, self._column_types, self._categorical_attributes)
-
         self.min_max_test = MinMaxChecker(self._column_types)
+
         self.summary = DataContractSummary(self._dataframe, self._column_names, self._column_types, self._categorical_attributes)
 
     def __str__(self):
@@ -108,7 +108,7 @@ class DataContract(object):
 
         self.special_value_test.temp_exclude(attributes=attributes)
         self.distribution_test.temp_exclude(attributes=attributes)
-        self.min_max_test.temp_exclude(attributes=attributes)
+        self.min_max_test.schema_failure_temp_exclusion(columns=attributes)
 
 
     def save(self, monitor_package_directory):
@@ -155,9 +155,11 @@ class DataContract(object):
         monitor_name = os.environ.get('MONITOR_NAME', os.path.basename(__file__))
         user = os.environ.get('FOUNDATIONS_USER', getuser())
         job_id = os.environ.get('FOUNDATIONS_JOB_ID', str(uuid4()))
-        
+
         if inference_period is None:
             inference_period = str(datetime.datetime.now())
+
+        inference_period = str(inference_period)
 
         columns_to_validate, types_to_validate, row_count_to_check = dataframe_statistics(dataframe_to_validate)
 

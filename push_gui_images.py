@@ -12,8 +12,6 @@ client.login(username=nexus_username, password=nexus_password, registry=nexus_re
 
 
 def push_image_with_tag(image_name, tag):
-    import json
-
     push_logs = client.images.push(repository=nexus_registry + '/' + image_name, tag=tag, stream=True, decode=True)
 
     for log_line in push_logs:

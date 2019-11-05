@@ -39,12 +39,17 @@ class ScheduleDetails extends Component {
 
   render() {
     const { monitorResult } = this.state;
-    const { location, toggleLogsModal, reload } = this.props;
+    const {
+      location,
+      toggleLogsModal,
+      reload,
+      toggleDeleteModal
+    } = this.props;
 
     let mainRender = (
       <div className="right-side">
         <div className="monitor-summary">
-          <MonitorOverview monitorResult={monitorResult} reload={reload} />
+          <MonitorOverview monitorResult={monitorResult} reload={reload} toggleDeleteModal={toggleDeleteModal} />
           <MonitorJobsTable location={location} monitorResult={monitorResult} toggleLogsModal={toggleLogsModal} />
         </div>
       </div>
@@ -72,6 +77,7 @@ ScheduleDetails.propTypes = {
   location: PropTypes.object,
   selectedMonitor: PropTypes.string,
   toggleLogsModal: PropTypes.func,
+  toggleDeleteModal: PropTypes.func,
   allMonitors: PropTypes.object,
   reload: PropTypes.func
 };
@@ -80,6 +86,7 @@ ScheduleDetails.defaultProps = {
   location: {},
   selectedMonitor: "",
   toggleLogsModal: () => {},
+  toggleDeleteModal: () => {},
   allMonitors: {},
   reload: () => {}
 };

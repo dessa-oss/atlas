@@ -5,18 +5,6 @@ import moment from "moment";
 class MonitorJobTableRow extends Component {
   constructor(props) {
     super(props);
-    const {
-      status,
-      launched,
-      duration
-    } = this.props;
-
-    this.state = {
-      status: status,
-      launched: launched,
-      duration: duration
-    };
-
     this.onSelect = this.onSelect.bind(this);
     this.isSelectedRow = this.isSelectedRow.bind(this);
     this.onOpenLogs = this.onOpenLogs.bind(this);
@@ -43,9 +31,9 @@ class MonitorJobTableRow extends Component {
     const {
       status,
       launched,
-      duration
-    } = this.state;
-    const { jobID } = this.props;
+      duration,
+      jobID
+    } = this.props;
 
     const selectedClass = this.isSelectedRow() ? "selected-row" : "";
     const formattedLaunchedTime = launched ? moment.unix(launched).format("YYYY-MM-DD HH:mm:ss") : "Not available";

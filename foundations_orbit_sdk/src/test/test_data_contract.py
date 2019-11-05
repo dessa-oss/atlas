@@ -350,7 +350,7 @@ class TestDataContract(Spec):
 
         contract = DataContract(self.contract_name, df=reference_dataframe)
         contract.special_value_test.configure(attributes=list(current_dataframe.columns)[:-1], thresholds={numpy.nan: 0.1})
-        contract.min_max_test.configure(attributes=[list(current_dataframe.columns)[0]], lower_bound=0, upper_bound=2)
+        contract.min_max_test.configure(columns=[list(current_dataframe.columns)[0]], lower_bound=0, upper_bound=2)
         validation_report = contract.validate(current_dataframe, self.datetime_today)
 
         del validation_report['metadata']
@@ -470,7 +470,7 @@ class TestDataContract(Spec):
         inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         contract.special_value_test.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
-        contract.min_max_test.configure(attributes=[self.column_name, self.column_name_2], lower_bound=0, upper_bound=1)
+        contract.min_max_test.configure(columns=[self.column_name, self.column_name_2], lower_bound=0, upper_bound=1)
         report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
 
         expected_output = {
@@ -581,8 +581,8 @@ class TestDataContract(Spec):
 
         upper_bound = datetime.datetime(2023,5,6)
 
-        contract.min_max_test.configure(attributes=[self.column_name], lower_bound=datetime.datetime(2016,2,6), upper_bound=upper_bound)
-        contract.min_max_test.configure(attributes=[self.column_name_2], lower_bound=datetime.datetime(2020,2,6), upper_bound=upper_bound)
+        contract.min_max_test.configure(columns=[self.column_name], lower_bound=datetime.datetime(2016,2,6), upper_bound=upper_bound)
+        contract.min_max_test.configure(columns=[self.column_name_2], lower_bound=datetime.datetime(2020,2,6), upper_bound=upper_bound)
 
         contract.options.check_distribution = False
         contract.options.check_special_values = False
@@ -760,7 +760,7 @@ class TestDataContract(Spec):
     def test_data_contract_min_max_check_produces_correct_output_for_two_column_df(self):
         inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
-        contract.min_max_test.configure(attributes=[self.column_name], lower_bound=0, upper_bound=100)
+        contract.min_max_test.configure(columns=[self.column_name], lower_bound=0, upper_bound=100)
         report = contract.validate(self.one_column_dataframe_four_rows, inference_period=inference_period)
 
         self.assertIn('min_max_test_results', report)
@@ -794,8 +794,8 @@ class TestDataContract(Spec):
 
         upper_bound = datetime.datetime(2023,5,6)
 
-        contract.min_max_test.configure(attributes=[self.column_name], lower_bound=datetime.datetime(2016,2,6), upper_bound=upper_bound)
-        contract.min_max_test.configure(attributes=[self.column_name_2], lower_bound=datetime.datetime(2020,2,6), upper_bound=upper_bound)
+        contract.min_max_test.configure(columns=[self.column_name], lower_bound=datetime.datetime(2016,2,6), upper_bound=upper_bound)
+        contract.min_max_test.configure(columns=[self.column_name_2], lower_bound=datetime.datetime(2020,2,6), upper_bound=upper_bound)
         contract.options.check_distribution = False
         contract.options.check_special_values = False
 
@@ -918,7 +918,7 @@ class TestDataContract(Spec):
     def test_data_contract_to_string_prints_expected_output(self):
         import numpy, json
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
-        contract.min_max_test.configure(attributes=[self.column_name, self.column_name_2], lower_bound = 0, upper_bound = 100)
+        contract.min_max_test.configure(columns=[self.column_name, self.column_name_2], lower_bound = 0, upper_bound = 100)
         contract.special_value_test.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.5})
         contract.special_value_test.configure(attributes=[self.column_name_2], thresholds={60: 0.5, numpy.nan: 0.1})
 

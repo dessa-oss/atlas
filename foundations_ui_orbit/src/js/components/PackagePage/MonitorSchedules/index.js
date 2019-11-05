@@ -6,6 +6,7 @@ import MonitorListTable from "./MonitorListTable";
 import ScheduleDetails from "./ScheduleDetails";
 import MonitorLogsModal from "./MonitorLogsModal";
 import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
+import DeleteConfirmModal from "./DeleteConfirmModal";
 
 class MonitorSchedules extends Component {
   constructor(props) {
@@ -15,12 +16,15 @@ class MonitorSchedules extends Component {
       selectedMonitor: null,
       logsModalIsOpen: false,
       logsModalJobID: null,
+      deleteModalIsOpen: false,
       allMonitors: {}
     };
 
     this.selectRow = this.selectRow.bind(this);
     this.reload = this.reload.bind(this);
     this.toggleLogsModal = this.toggleLogsModal.bind(this);
+    this.toggleDeleteModal = this.toggleDeleteModal.bind(this);
+    this.deleteCurrentMonitor = this.deleteCurrentMonitor.bind(this);
   }
 
   selectRow(selectedItem) {
@@ -46,12 +50,27 @@ class MonitorSchedules extends Component {
     this.setState({ logsModalIsOpen: !logsModalIsOpen, logsModalJobID: logsModalJobID });
   }
 
+  toggleDeleteModal() {
+    const { deleteModalIsOpen } = this.state;
+    this.setState({ deleteModalIsOpen: !deleteModalIsOpen });
+  }
+
+  deleteCurrentMonitor() {
+    const { allMonitors, selectedMonitor } = this.state;
+    const { location } = this.props;
+
+    const monitorName = allMonitors[selectedMonitor].properties.spec.environment.MONITOR_NAME;
+    const projectName = location.state.project.name;
+    MonitorSchedulesActions.deleteMonitor(projectName, monitorName).then(this.reload);
+  }
+
   render() {
     const {
       selectedMonitor,
       logsModalIsOpen,
       logsModalJobID,
-      allMonitors
+      allMonitors,
+      deleteModalIsOpen
     } = this.state;
     const { location } = this.props;
 
@@ -70,6 +89,7 @@ class MonitorSchedules extends Component {
               location={location}
               selectedMonitor={selectedMonitor}
               toggleLogsModal={this.toggleLogsModal}
+              toggleDeleteModal={this.toggleDeleteModal}
               reload={this.reload}
               allMonitors={allMonitors}
             />
@@ -78,6 +98,11 @@ class MonitorSchedules extends Component {
               toggle={this.toggleLogsModal}
               jobID={logsModalJobID}
               projectName={location.state.project.name}
+            />
+            <DeleteConfirmModal
+              isOpen={deleteModalIsOpen}
+              toggle={this.toggleDeleteModal}
+              onConfirm={this.deleteCurrentMonitor}
             />
           </div>
         </div>

@@ -62,23 +62,20 @@ class MonitorOverview extends Component {
   async reload() {
     const { reload, monitorResult } = this.props;
     const result = this.findScheduleRepeat();
-    if (result) {
-      this.setState({
-        scheduleRepeatUnitValue: result.value,
-        nextRunTime: (
-          monitorResult.next_run_time ? moment.unix(monitorResult.next_run_time).format("YYYY-MM-DD HH:mm:ss") : "N/A"
-        ),
-        calDateStart: monitorResult.schedule.start_date || new Date(),
-        calDateEnd: monitorResult.schedule.end_date || "",
-        clockTimeHour: new Date(monitorResult.schedule.start_date).getHours() || "12",
-        clockTimeMinute: new Date(monitorResult.schedule.start_date).getMinutes() || "00",
-        scheduleRepeatUnit: result.label
-      }, () => {
-        this.setState({ scheduleValid: this.validateMonitorSchedule() }, reload);
-      });
-    } else {
-      reload();
-    }
+
+    this.setState({
+      scheduleRepeatUnitValue: result ? result.value : "1",
+      nextRunTime: (
+        monitorResult.next_run_time ? moment.unix(monitorResult.next_run_time).format("YYYY-MM-DD HH:mm:ss") : "N/A"
+      ),
+      calDateStart: monitorResult.schedule.start_date || new Date(),
+      calDateEnd: monitorResult.schedule.end_date || "",
+      clockTimeHour: new Date(monitorResult.schedule.start_date).getHours() || "12",
+      clockTimeMinute: new Date(monitorResult.schedule.start_date).getMinutes() || "00",
+      scheduleRepeatUnit: result ? result.label : "Days"
+    }, () => {
+      this.setState({ scheduleValid: this.validateMonitorSchedule() }, reload);
+    });
   }
 
   componentDidMount() {
@@ -108,10 +105,8 @@ class MonitorOverview extends Component {
   }
 
   deleteMonitor() {
-    const { monitorResult } = this.props;
-    const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
-    const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-    MonitorSchedulesActions.deleteMonitor(projectName, monitorName).then(this.reload);
+    const { toggleDeleteModal } = this.props;
+    toggleDeleteModal();
   }
 
   updateMonitorSchedule() {
@@ -133,13 +128,17 @@ class MonitorOverview extends Component {
       day: "*",
       hour: "*",
       second: "*",
-      start_date: `${calStartDate} ${clockTimeHour}:${clockTimeMinute}`
+      start_date: `${calStartDate} ${clockTimeHour}:${clockTimeMinute}`,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
     };
 
     if (calDateEnd !== "") {
       scheduleBody.end_date = moment(calDateEnd).format("YYYY-MM-DD");
     }
     scheduleBody[scheduleRepeatUnit.toLocaleLowerCase().slice(0, -1)] = `*/${scheduleRepeatUnitValue}`;
+
+    console.log(scheduleBody.start_date);
+    console.log(scheduleBody.end_date);
 
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
@@ -334,12 +333,14 @@ class MonitorOverview extends Component {
 
 MonitorOverview.propTypes = {
   monitorResult: PropTypes.object,
-  reload: PropTypes.func
+  reload: PropTypes.func,
+  toggleDeleteModal: PropTypes.func
 };
 
 MonitorOverview.defaultProps = {
   monitorResult: {},
-  reload: () => {}
+  reload: () => {},
+  toggleDeleteModal: () => {}
 };
 
 export default MonitorOverview;

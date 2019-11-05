@@ -35,12 +35,12 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     ]
 
     running_tags = {
-        'am_i_running': True,
+        'am_i_running': 'True',
         'num_gpus': 20
     }
 
     completed_tags = {
-        'am_i_running': False,
+        'am_i_running': 'False',
         'num_gpus': 0,
         'cool': 'dude'
     }
