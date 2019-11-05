@@ -12,15 +12,15 @@ class MinMaxChecker(object):
         self.columns_to_bounds = {}
         self._reference_column_types = reference_column_types
         self._allowed_types = ['int', 'float', 'datetime']
-        self._attributes_not_allowed = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
+        self._columns_not_allowed = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
         self._columns_to_bounds_temp = {}
 
-    def configure(self, attributes, lower_bound=None, upper_bound=None):
+    def configure(self, columns, lower_bound=None, upper_bound=None):
         error_dictionary = {}
         if lower_bound is None and upper_bound is None:
             raise ValueError('expected either lower and/or upper bound')
-        for attribute in attributes:
-            if attribute in self._attributes_not_allowed:
+        for attribute in columns:
+            if attribute in self._columns_not_allowed:
                 error_dictionary[attribute] = self._reference_column_types[attribute]
             else:
                 self.columns_to_bounds[attribute] = {
@@ -34,23 +34,23 @@ class MinMaxChecker(object):
     def __str__(self):
         return str(self.columns_to_bounds)
 
-    def exclude(self, attributes=None):
-        if attributes == 'all':
+    def exclude(self, columns=None):
+        if columns == 'all':
             self.columns_to_bounds = {}
             return
 
-        for attribute in attributes:
+        for attribute in columns:
             try:
                 del self.columns_to_bounds[attribute]
             except:
                 continue
 
-    def temp_exclude(self, attributes):
+    def temp_exclude(self, columns):
         self._columns_to_bounds_temp = {}
-        for attr in attributes:
+        for attr in columns:
             self._columns_to_bounds_temp[attr] = self.columns_to_bounds.get(attr, None)
         
-        self.exclude(attributes=attributes)
+        self.exclude(columns=columns)
 
     def validate(self, dataframe_to_validate):
         import datetime
@@ -92,7 +92,7 @@ class MinMaxChecker(object):
 
         for attribute, settings in self._columns_to_bounds_temp.items():
             if settings != None:
-                self.configure(attributes=[attribute], lower_bound=settings['lower_bound'], upper_bound=settings['upper_bound'])
+                self.configure(columns=[attribute], lower_bound=settings['lower_bound'], upper_bound=settings['upper_bound'])
         self._columns_to_bounds_temp = {}
 
         return data_to_return
