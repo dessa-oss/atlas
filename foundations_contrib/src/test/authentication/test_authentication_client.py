@@ -83,11 +83,16 @@ class TestAuthenticationClient(Spec):
 
     def test_metadata_is_set_as_attribute(self):
         with self.assert_does_not_raise():
-            self.auth_client.metadata    
+            self.auth_client.metadata
 
     def test_json_web_key_set_is_set_as_attribute(self):
         with self.assert_does_not_raise():
             self.auth_client.json_web_key_set
+
+    def test_user_info_delegates_to_keycloak_userinfo(self):
+        token = self.faker.word()
+        self.auth_client.user_info(token)
+        self.mock_keycloak.userinfo.assert_called_once_with(token)
 
 
 def load_config(conf_file: str) -> dict:
