@@ -128,13 +128,17 @@ class MonitorOverview extends Component {
       day: "*",
       hour: "*",
       second: "*",
-      start_date: `${calStartDate} ${clockTimeHour}:${clockTimeMinute}`
+      start_date: `${calStartDate} ${clockTimeHour}:${clockTimeMinute}`,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
     };
 
     if (calDateEnd !== "") {
       scheduleBody.end_date = moment(calDateEnd).format("YYYY-MM-DD");
     }
     scheduleBody[scheduleRepeatUnit.toLocaleLowerCase().slice(0, -1)] = `*/${scheduleRepeatUnitValue}`;
+
+    console.log(scheduleBody.start_date);
+    console.log(scheduleBody.end_date);
 
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
