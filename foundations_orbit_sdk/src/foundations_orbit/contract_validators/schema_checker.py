@@ -44,8 +44,9 @@ class SchemaChecker(object):
 
     def validate(self, current_dataframe):
         import pandas
+        from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
 
-        current_df_columns, current_df_types, _ = self._dataframe_statistics(current_dataframe)
+        current_df_columns, current_df_types, _ = dataframe_statistics(current_dataframe)
         columns_to_validate = self._update_column_names_to_be_removed(current_df_columns, self._excluded_columns)
         types_to_validate = self._update_column_types(columns_to_validate, current_df_types)
 
@@ -146,25 +147,3 @@ class SchemaChecker(object):
                 }
 
         return {'cols': mismatched_columns}
-
-    @staticmethod
-    def _dataframe_statistics(dataframe):
-        import numpy, datetime
-        column_names = list(dataframe.columns)
-        column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
-        number_of_rows = len(dataframe)
-
-        for col_name, col_type in column_types.items():
-            if col_type == "object":
-                object_type_column = dataframe[col_name]
-                string_column_mask = ['str' in str(type(value)) or value != value for value in object_type_column]
-                date_column_mask = [type(value) == datetime or value != value for value in object_type_column]
-                bool_column_mask = [type(value) == bool or value != value for value in object_type_column]
-                if all(string_column_mask):
-                    column_types[col_name] = 'str'
-                elif all(date_column_mask):
-                    column_types[col_name] = 'datetime'
-                elif all(bool_column_mask):
-                    column_types[col_name] = 'bool'
-
-        return column_names, column_types, number_of_rows
