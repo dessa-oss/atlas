@@ -51,7 +51,7 @@ tensorflow
 ```
 This will indicate to Foundations to `pip install` these packages in a virtual environment on the remote machine before running the job. If specifc versions are needed, they can be specified as such:
 ```
-numpy==1.15.2
+numpy==1.17.3
 keras==2.2.4
 tensorflow==1.11.0
 ```
