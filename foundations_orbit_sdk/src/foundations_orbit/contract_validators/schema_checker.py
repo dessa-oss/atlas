@@ -54,15 +54,10 @@ class SchemaChecker(object):
         return self._reference_column_names == columns_to_validate
 
     def _data_types_match(self, types_to_validate):
-        bool_result = True
         for column, col_type in types_to_validate.items():
-            try:
-                bool_result = bool_result and self._column_types[column] == col_type
-                if not bool_result:
-                    return bool_result
-            except:
-                pass
-        return bool_result
+            if self._column_types[column] != col_type:
+                return False
+        return True
 
     def _column_sets_not_equal(self, current_column_names):
         return set(self._reference_column_names) != current_column_names
