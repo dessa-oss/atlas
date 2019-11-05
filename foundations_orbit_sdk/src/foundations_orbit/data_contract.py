@@ -9,13 +9,9 @@ class DataContract(object):
 
     def __init__(self, contract_name, df=None):
         import pandas
-        from foundations_orbit.contract_validators.schema_checker import SchemaChecker
-        from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats, create_bin_stats_categorical
-        from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
-        from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
         from foundations_orbit.data_contract_summary import DataContractSummary
-        from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
+        from foundations_orbit.utils.get_column_types import get_column_types
 
         self.options = self._default_options()
         self._contract_name = contract_name
@@ -25,19 +21,14 @@ class DataContract(object):
         else:
             self._dataframe = df
 
-        self._column_names, self._column_types, self._number_of_rows = dataframe_statistics(self._dataframe)
+        self._number_of_rows = len(self._dataframe)
+        self._column_names, self._column_types = get_column_types(self._dataframe)
         self._bin_stats = {}
 
         self._categorical_attributes = {}
         self._categorize_attributes()
 
-        self.schema_test = SchemaChecker(self._column_names, self._column_types)
-        self._remove_object_columns_and_types(self._column_names, self._column_types)
-
-        self.special_value_test = SpecialValuesChecker(self.options, self._column_names, self._column_types, self._categorical_attributes)
-        self.distribution_test = DistributionChecker(self.options.distribution, self._column_names, self._column_types, self._categorical_attributes)
-        self.min_max_test = MinMaxChecker(self._column_types)
-
+        self._initialize_checkers()
         self.summary = DataContractSummary(self._dataframe, self._column_names, self._column_types, self._categorical_attributes)
 
     def __str__(self):
@@ -73,6 +64,17 @@ class DataContract(object):
             distribution=default_distribution
         )
 
+    def _initialize_checkers(self):
+        from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
+        from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
+        from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
+        self._initialize_schema_checker()
+
+        self.special_value_test = SpecialValuesChecker(self.options, self._column_names, self._column_types, self._categorical_attributes)
+        self.distribution_test = DistributionChecker(self.options.distribution, self._column_names, self._column_types, self._categorical_attributes)
+
+        self.min_max_test = MinMaxChecker(self._column_types)
+
     def _categorize_attributes(self):
         for col_name, col_type in self._column_types.items():
             if 'float' in col_type:
@@ -85,6 +87,11 @@ class DataContract(object):
                 self._categorical_attributes[col_name] = True
             elif 'datetime' in col_type:
                 self._categorical_attributes[col_name] = self._check_if_attribute_is_categorical(col_name)
+
+    def _initialize_schema_checker(self):
+        from foundations_orbit.contract_validators.schema_checker import SchemaChecker
+        self.schema_test = SchemaChecker(self._column_names, self._column_types)
+        self._remove_object_columns_and_types(self._column_names, self._column_types)
 
     def _check_if_attribute_is_categorical(self, column_name, threshold=0.1):
         column_values = self._dataframe[column_name]
@@ -102,7 +109,7 @@ class DataContract(object):
         self.distribution_test.exclude(attributes=attributes)
         self.min_max_test.exclude(attributes=attributes)
 
-    def temp_exclude(self, attributes):
+    def _exclude_from_current_validation(self, attributes):
         if type(attributes) == str:
             attributes = [attributes]
 
@@ -113,7 +120,7 @@ class DataContract(object):
 
     def save(self, monitor_package_directory):
         if not self._bin_stats:
-            self.set_bin_stats_for_checkers()
+            self.calculate_and_set_bin_stats()
 
         del self._dataframe
 
@@ -143,13 +150,11 @@ class DataContract(object):
         from uuid import uuid4
         from getpass import getuser
 
-        from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
-        from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         from foundations_orbit.report_formatter import ReportFormatter
-        from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
+        from foundations_orbit.utils.get_column_types import get_column_types
 
         if not self._bin_stats:
-            self.set_bin_stats_for_checkers()
+            self.calculate_and_set_bin_stats()
 
         project_name = os.environ.get('PROJECT_NAME', 'default')
         monitor_name = os.environ.get('MONITOR_NAME', os.path.basename(__file__))
@@ -161,39 +166,12 @@ class DataContract(object):
 
         inference_period = str(inference_period)
 
-        columns_to_validate, types_to_validate, row_count_to_check = dataframe_statistics(dataframe_to_validate)
-
+        row_count_to_check = len(dataframe_to_validate)
+        columns_to_validate, types_to_validate = get_column_types(dataframe_to_validate)
+        
         attributes_to_ignore = []
-        validation_report = {}
-        validation_report['schema_check_results'] = self.schema_test.validate(dataframe_to_validate)
-
-        if not validation_report['schema_check_results']['passed'] and validation_report['schema_check_results'].get('cols', None):
-            for column_to_ignore in validation_report['schema_check_results']['cols'].keys():
-                attributes_to_ignore.append(column_to_ignore)
-            self.temp_exclude(attributes=attributes_to_ignore)
-
-        if self.options.check_row_count:
-            validation_report['row_count'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
-
-        if self.options.check_distribution:
-            validation_report['dist_check_results'] = self.distribution_test.validate(dataframe_to_validate)
-
-        if self.options.check_special_values:
-            validation_report['special_values_check_results'] = self.special_value_test.validate(dataframe_to_validate)
-
-        if self.options.check_min_max:
-            validation_report['min_max_test_results'] = self.min_max_test.validate(dataframe_to_validate)
-
-        validation_report['metadata'] = {
-            'reference_metadata': {
-                'column_names': self._column_names,
-                'type_mapping': self._column_types
-            },
-            'current_metadata': {
-                'column_names': columns_to_validate,
-                'type_mapping': types_to_validate
-            }
-        }
+        validation_report = self._run_checkers_and_get_validation_report(dataframe_to_validate, attributes_to_ignore)
+        self._add_metadata_to_validation_report(validation_report, columns_to_validate, types_to_validate)
 
         report_formatter = ReportFormatter(inference_period=inference_period,
                                     monitor_package=monitor_name,
@@ -211,6 +189,45 @@ class DataContract(object):
         self._modify_validation_report_with_schema_failures(validation_report, attributes_to_ignore)
 
         return validation_report
+
+    def _run_checkers_and_get_validation_report(self, dataframe_to_validate, attributes_to_ignore):
+        from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
+
+        validation_report = {}
+
+        validation_report['schema_check_results'] = self.schema_test.validate(dataframe_to_validate)
+
+        if not validation_report['schema_check_results']['passed'] and validation_report['schema_check_results'].get('cols', None):
+            for column_to_ignore in validation_report['schema_check_results']['cols'].keys():
+                attributes_to_ignore.append(column_to_ignore)
+            self._exclude_from_current_validation(attributes=attributes_to_ignore)
+
+        if self.options.check_row_count:
+            validation_report['row_count'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
+
+        if self.options.check_distribution:
+            validation_report['dist_check_results'] = self.distribution_test.validate(dataframe_to_validate)
+
+        if self.options.check_special_values:
+            validation_report['special_values_check_results'] = self.special_value_test.validate(dataframe_to_validate)
+
+        if self.options.check_min_max:
+            validation_report['min_max_test_results'] = self.min_max_test.validate(dataframe_to_validate)
+
+        return validation_report
+
+    def _add_metadata_to_validation_report(self, validation_report, columns_to_validate, types_to_validate):
+
+        validation_report['metadata'] = {
+            'reference_metadata': {
+                'column_names': self._column_names,
+                'type_mapping': self._column_types
+            },
+            'current_metadata': {
+                'column_names': columns_to_validate,
+                'type_mapping': types_to_validate
+            }
+        }
 
     def __eq__(self, other):
         return self._contract_name == other._contract_name and self.options == other.options
@@ -231,7 +248,7 @@ class DataContract(object):
         import pickle
         return pickle.loads(serialized_contract)
 
-    def set_bin_stats_for_checkers(self):
+    def calculate_and_set_bin_stats(self):
         self._calculate_bin_stats()
 
         self.special_value_test.set_bin_stats(self._bin_stats)

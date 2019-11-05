@@ -6,12 +6,11 @@ Written by Susan Davis <s.davis@dessa.com>, 06 2018
 """
 
 
-def dataframe_statistics(dataframe):
+def get_column_types(dataframe):
         import numpy
         import datetime
         column_names = list(dataframe.columns)
         column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
-        number_of_rows = len(dataframe)
 
         for col_name, col_type in column_types.items():
             if col_type == "object":
@@ -27,4 +26,4 @@ def dataframe_statistics(dataframe):
                     column_types[col_name] = 'bool'
                 
 
-        return column_names, column_types, number_of_rows
+        return column_names, column_types
