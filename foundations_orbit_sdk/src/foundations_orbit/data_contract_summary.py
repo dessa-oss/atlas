@@ -14,13 +14,12 @@ class DataContractSummary(object):
         self._bins_were_cut_off = False
         self._current_column_types = None
         self._tests_to_summarize = ['schema', 'data_quality', 'population_shift', 'min', 'max']
-        self._dataframe = dataframe
         self._attributes = column_names
         self._column_types = column_types
         self._categorical_columns = categorical_columns
         self.data_contract_summary = {'attribute_summaries': {}}
         self._expected_data_bin_by_attribute = {}
-        self._summarize_expected_data()
+        self._summarize_expected_data(dataframe)
 
     def validate(self, dataframe_to_validate, formatted_validation_report):
         from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
@@ -36,9 +35,9 @@ class DataContractSummary(object):
                 self._num_critical_tests += 1
         self.data_contract_summary['num_critical_tests'] = self._num_critical_tests
 
-    def _summarize_expected_data(self):
+    def _summarize_expected_data(self, reference_dataframe):
         for attribute in self._attributes:
-            self.data_contract_summary['attribute_summaries'][attribute] = self._summarize_attribute_expected_data(attribute)
+            self.data_contract_summary['attribute_summaries'][attribute] = self._summarize_attribute_expected_data(attribute, reference_dataframe)
 
     def _summarize_actual_data(self, dataframe_to_validate):
         for attribute in self._attributes:
@@ -51,16 +50,16 @@ class DataContractSummary(object):
     def _is_categorical_column(self, column):
         return self._categorical_columns and column in self._categorical_columns and self._categorical_columns[column]
 
-    def _summarize_attribute_expected_data(self, attribute):
+    def _summarize_attribute_expected_data(self, attribute, reference_dataframe):
         column_type = self._column_types[attribute]
         if not self._is_numeric_column(column_type) and not self._is_categorical_column(attribute):
             return {'expected_data_summary': None, 'binned_data': {'bins': None, 'data': {'expected_data': None}}}
 
         attribute_summaries = {'expected_data_summary': {
-            'percentage_missing': self._calculate_percentage_missing(self._dataframe, attribute),
-            'minimum': self._calculate_minimum(self._dataframe, attribute, column_type),
-            'maximum': self._calculate_maximum(self._dataframe, attribute, column_type)
-        }, 'binned_data': self._bin_data(attribute, column_type)}
+            'percentage_missing': self._calculate_percentage_missing(reference_dataframe, attribute),
+            'minimum': self._calculate_minimum(reference_dataframe, attribute, column_type),
+            'maximum': self._calculate_maximum(reference_dataframe, attribute, column_type)
+        }, 'binned_data': self._bin_data(attribute, column_type, reference_dataframe)}
 
         return attribute_summaries
 
@@ -140,15 +139,15 @@ class DataContractSummary(object):
         
         return counts
 
-    def _bin_data(self, attribute, attribute_type):
+    def _bin_data(self, attribute, attribute_type, reference_dataframe):
         bins = []
         data = []
 
         if self._is_categorical_column(attribute):
-            bins, data = self._get_bins_and_data_for_categorical_attribute(self._dataframe, attribute)
+            bins, data = self._get_bins_and_data_for_categorical_attribute(reference_dataframe, attribute)
             bin_labels = bins
         elif self._is_numeric_column(attribute_type):
-            bins, data = self._get_bins_and_data_for_numerical_attribute(self._dataframe, attribute)
+            bins, data = self._get_bins_and_data_for_numerical_attribute(reference_dataframe, attribute)
             bin_labels = [f'{round(bound1, 2)}-{round(bound2, 2)}' for bound1, bound2 in zip(bins, bins[1:])]
 
         self._expected_data_bin_by_attribute[attribute] = bins
