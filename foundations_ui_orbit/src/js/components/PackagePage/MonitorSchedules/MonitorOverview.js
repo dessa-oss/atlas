@@ -62,23 +62,20 @@ class MonitorOverview extends Component {
   async reload() {
     const { reload, monitorResult } = this.props;
     const result = this.findScheduleRepeat();
-    if (result) {
-      this.setState({
-        scheduleRepeatUnitValue: result.value,
-        nextRunTime: (
-          monitorResult.next_run_time ? moment.unix(monitorResult.next_run_time).format("YYYY-MM-DD HH:mm:ss") : "N/A"
-        ),
-        calDateStart: monitorResult.schedule.start_date || new Date(),
-        calDateEnd: monitorResult.schedule.end_date || "",
-        clockTimeHour: new Date(monitorResult.schedule.start_date).getHours() || "12",
-        clockTimeMinute: new Date(monitorResult.schedule.start_date).getMinutes() || "00",
-        scheduleRepeatUnit: result.label
-      }, () => {
-        this.setState({ scheduleValid: this.validateMonitorSchedule() }, reload);
-      });
-    } else {
-      reload();
-    }
+
+    this.setState({
+      scheduleRepeatUnitValue: result ? result.value : "1",
+      nextRunTime: (
+        monitorResult.next_run_time ? moment.unix(monitorResult.next_run_time).format("YYYY-MM-DD HH:mm:ss") : "N/A"
+      ),
+      calDateStart: monitorResult.schedule.start_date || new Date(),
+      calDateEnd: monitorResult.schedule.end_date || "",
+      clockTimeHour: new Date(monitorResult.schedule.start_date).getHours() || "12",
+      clockTimeMinute: new Date(monitorResult.schedule.start_date).getMinutes() || "00",
+      scheduleRepeatUnit: result ? result.label : "Days"
+    }, () => {
+      this.setState({ scheduleValid: this.validateMonitorSchedule() }, reload);
+    });
   }
 
   componentDidMount() {
