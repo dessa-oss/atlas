@@ -52,6 +52,12 @@ class MinMaxChecker(object):
         
         self.exclude(columns=columns)
 
+    def _undo_temp_exclude(self):
+        for column, settings in self._columns_to_bounds_temp.items():
+            if settings != None:
+                self.configure(columns=[column], lower_bound=settings['lower_bound'], upper_bound=settings['upper_bound'])
+        self._columns_to_bounds_temp = {}
+
     def validate(self, dataframe_to_validate):
         import datetime
 
@@ -62,10 +68,7 @@ class MinMaxChecker(object):
         for column, bounds in self.columns_to_bounds.items():
             data_to_return[column] = self._apply_min_max_test(column, dataframe_to_validate, bounds)
 
-        for column, settings in self._columns_to_bounds_temp.items():
-            if settings != None:
-                self.configure(columns=[column], lower_bound=settings['lower_bound'], upper_bound=settings['upper_bound'])
-        self._columns_to_bounds_temp = {}
+        self._undo_temp_exclude()
 
         return data_to_return
 
