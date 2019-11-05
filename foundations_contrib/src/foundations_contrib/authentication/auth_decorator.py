@@ -56,7 +56,7 @@ def requires_auth(auth_client: AuthenticationClient):
         @wraps(func)
         def verify(*args, **kwargs):
             token = get_token_from_header()
-            jwks = auth_client.json_web_key_set()
+            jwks = auth_client.json_web_key_set
             unverified_header = jwt.get_unverified_header(token)
             rsa_key = {}
             for key in jwks["keys"]:
@@ -75,7 +75,7 @@ def requires_auth(auth_client: AuthenticationClient):
                         rsa_key,
                         algorithms=["RS256"],
                         audience="account",
-                        issuer=auth_client.well_known()['issuer'],
+                        issuer=auth_client.metadata['issuer'],
                     )
                 except jwt.ExpiredSignatureError:
                     raise AuthError(

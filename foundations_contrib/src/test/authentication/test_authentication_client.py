@@ -27,10 +27,9 @@ class TestAuthenticationClient(Spec):
             "foundations_contrib.authentication.authentication_client.KeycloakOpenID",
             Mock(),
         )
-        with open(self.conf_file) as conf:
-            config = json.load(conf)
-            self.auth_client = AuthenticationClient(config, self.redirect_url)
-            self.mock_keycloak = self.auth_client.client
+        config = load_config(self.conf_file)
+        self.auth_client = AuthenticationClient(config, self.redirect_url)
+        self.mock_keycloak = self.auth_client.client
 
     def test_keycloak_client_uses_a_dict_to_create_a_keycloak_open_id_instance(self):
         self.mock_keycloak_class = self.patch(
@@ -82,11 +81,15 @@ class TestAuthenticationClient(Spec):
             redirect_uri=self.redirect_url,
         )
 
-    def test_json_web_key_set(self):
-        self.auth_client.json_web_key_set()
-        self.mock_keycloak.certs.assert_called_once()
+    def test_metadata_is_set_as_attribute(self):
+        with self.assert_does_not_raise():
+            self.auth_client.metadata    
+
+    def test_json_web_key_set_is_set_as_attribute(self):
+        with self.assert_does_not_raise():
+            self.auth_client.json_web_key_set
 
 
-    def test_well_known_delegates_to_keycloak_well_know(self):
-        self.auth_client.well_known()
-        self.mock_keycloak.well_know.assert_called_once()
+def load_config(conf_file: str) -> dict:
+    with open(conf_file) as conf:
+        return json.load(conf)

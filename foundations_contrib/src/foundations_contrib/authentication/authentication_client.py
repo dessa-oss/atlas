@@ -20,8 +20,10 @@ class AuthenticationClient:
         """
 
         config = self._get_config_from_file(conf) if isinstance(conf, str) else conf
-        self.client = keycloak_client(config)
         self._redirect_url = redirect_url
+        self.client = keycloak_client(config)
+        self.metadata = self.client.well_know()
+        self.json_web_key_set = self.client.certs()
 
     def authentication_url(self) -> str:
         """The URL of the authentication server that is used to authenticate.
@@ -48,7 +50,7 @@ class AuthenticationClient:
 
         :param code: The authorization code.
         :type code: str
-        :return: [description]
+        :return: A dictionary containing the token, refresh token, and other info.
         :rtype: dict
         """
 
@@ -61,22 +63,15 @@ class AuthenticationClient:
     def token_using_username_password(self, username: str, password: str) -> dict:
         return self.client.token(username=username, password=password)
 
-    def json_web_key_set(self) -> dict:
-        """The JSWKS needed to verify a json web token.
-
-        :return: The set of public keys issued by the auth server.
+    def user_info(self, token: str) -> dict:
+        """[summary]
+        
+        :param token: [description]
+        :type token: str
+        :return: [description]
         :rtype: dict
         """
-        return self.client.certs()
-
-    def well_known(self) -> dict:
-        """Metadata associated with the auth server
-
-        :return: A dictionary containing useful information about the server.
-        :rtype: dict
-        """
-
-        return self.client.well_know()
+        return self.client.userinfo(token)
 
     @staticmethod
     def _get_config_from_file(fname: str) -> dict:
