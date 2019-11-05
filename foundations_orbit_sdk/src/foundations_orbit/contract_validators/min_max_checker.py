@@ -12,21 +12,23 @@ class MinMaxChecker(object):
         self.columns_to_bounds = {}
         self._reference_column_types = reference_column_types
         self._allowed_types = ['int', 'float', 'datetime']
-        self._columns_not_allowed = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
+        self._columns_excluded_for_type_mismatch = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
         self._columns_to_bounds_temp = {}
 
     def configure(self, columns, lower_bound=None, upper_bound=None):
         error_dictionary = {}
         if lower_bound is None and upper_bound is None:
             raise ValueError('expected either lower and/or upper bound')
+
         for attribute in columns:
-            if attribute in self._columns_not_allowed:
+            if attribute in self._columns_excluded_for_type_mismatch:
                 error_dictionary[attribute] = self._reference_column_types[attribute]
             else:
                 self.columns_to_bounds[attribute] = {
                     'lower_bound': lower_bound,
                     'upper_bound': upper_bound
                 }
+
         if error_dictionary != {}:
             self.columns_to_bounds = {}
             raise ValueError(f'The following columns have invalid types: {error_dictionary}')

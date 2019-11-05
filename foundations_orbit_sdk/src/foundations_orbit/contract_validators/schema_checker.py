@@ -10,8 +10,8 @@ class SchemaChecker(object):
     def __init__(self, column_names, column_types):
         self._reference_column_names = column_names.copy()
         self._column_types = column_types
-        self._excluded_columns = []
         self._configured_columns = column_names.copy()
+        self._excluded_columns = []
 
     def __str__(self):
         import json
@@ -21,33 +21,12 @@ class SchemaChecker(object):
         }
         return json.dumps(test_information)
 
-    def configure(self, attributes):
-        if isinstance(attributes, list):
-            self._configured_columns =  self._union_of_column_names_preserving_order(self._configured_columns, attributes)
-            for column in attributes:
-                try:
-                    self._excluded_columns.remove(column)
-                except:
-                    pass
-        else:
-            raise ValueError('Invalid option specified. Configure requires a list of column names')
-
-    def exclude(self, attributes=None):
-        if attributes == 'all':
-            self._excluded_columns = self._configured_columns
-            self._configured_columns = []
-        elif isinstance(attributes, list):
-            self._configured_columns = self._update_column_names_to_be_removed(self._configured_columns, attributes)
-            self._excluded_columns = list(set(attributes).union(set(self._excluded_columns)))
-        else:
-            raise ValueError('Invalid option specified. Exclude requires a list of column names to be removed or "all" to exclue all columns')
-
     def validate(self, current_dataframe):
         import pandas
         from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
 
         current_df_columns, current_df_types, _ = dataframe_statistics(current_dataframe)
-        columns_to_validate = self._update_column_names_to_be_removed(current_df_columns, self._excluded_columns)
+        columns_to_validate = current_df_columns
         types_to_validate = self._update_column_types(columns_to_validate, current_df_types)
 
         schema_check_results = {}
@@ -83,27 +62,6 @@ class SchemaChecker(object):
         for columns in column_names:
             new_column_types[columns] = column_types[columns]
         return new_column_types
-
-    def _update_column_names_to_be_removed(self, column_names, columns_to_be_removed):
-        """
-            removes the column listed in columns_to_be_removed while preserving the order
-            of the column names in the column_names list.
-            (NB The use of the set operation of list changes the order)
-        """
-        new_column_names = column_names.copy()
-        for column in columns_to_be_removed:
-            try:
-                new_column_names.remove(column)
-            except:
-                pass
-        return new_column_names
-
-    def _union_of_column_names_preserving_order(self, column_names, columns_to_be_added):
-        new_column_names = []
-        for original_column in self._reference_column_names:
-            if original_column in column_names or original_column in columns_to_be_added:
-                new_column_names.append(original_column)
-        return new_column_names
 
     def _reference_column_names_match(self, columns_to_validate):
         return self._configured_columns == columns_to_validate
