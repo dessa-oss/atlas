@@ -155,9 +155,11 @@ class DataContract(object):
         monitor_name = os.environ.get('MONITOR_NAME', os.path.basename(__file__))
         user = os.environ.get('FOUNDATIONS_USER', getuser())
         job_id = os.environ.get('FOUNDATIONS_JOB_ID', str(uuid4()))
-        
+
         if inference_period is None:
             inference_period = str(datetime.datetime.now())
+
+        inference_period = str(inference_period)
 
         columns_to_validate, types_to_validate, row_count_to_check = dataframe_statistics(dataframe_to_validate)
 
