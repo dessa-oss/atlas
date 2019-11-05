@@ -670,7 +670,7 @@ class TestSpecialValuesChecker(Spec):
         self.assertEqual(f'The following columns have invalid types: {expected_error_dictionary}', e.exception.args[0])
     
     def test_special_values_checker_str_returns_expected_output(self):
-        checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
+        checker, dataframe, _ = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
         checker.exclude(attributes='all')
         checker.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.1, numpy.inf: 0.1})
         checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.2})

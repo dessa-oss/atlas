@@ -108,10 +108,8 @@ class MonitorOverview extends Component {
   }
 
   deleteMonitor() {
-    const { monitorResult } = this.props;
-    const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
-    const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-    MonitorSchedulesActions.deleteMonitor(projectName, monitorName).then(this.reload);
+    const { toggleDeleteModal } = this.props;
+    toggleDeleteModal();
   }
 
   updateMonitorSchedule() {
@@ -334,12 +332,14 @@ class MonitorOverview extends Component {
 
 MonitorOverview.propTypes = {
   monitorResult: PropTypes.object,
-  reload: PropTypes.func
+  reload: PropTypes.func,
+  toggleDeleteModal: PropTypes.func
 };
 
 MonitorOverview.defaultProps = {
   monitorResult: {},
-  reload: () => {}
+  reload: () => {},
+  toggleDeleteModal: () => {}
 };
 
 export default MonitorOverview;
