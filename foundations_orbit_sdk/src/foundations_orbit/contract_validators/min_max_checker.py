@@ -9,11 +9,11 @@ from foundations_orbit.contract_validators.checker import Checker
 class MinMaxChecker(object):
 
     def __init__(self, reference_column_types):
-        self._attribute_and_bounds = {}
+        self.columns_to_bounds = {}
         self._reference_column_types = reference_column_types
         self._allowed_types = ['int', 'float', 'datetime']
         self._attributes_not_allowed = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
-        self.attributes_and_bounds_temp = {}
+        self._columns_to_bounds_temp = {}
 
     def configure(self, attributes, lower_bound=None, upper_bound=None):
         error_dictionary = {}
@@ -23,43 +23,43 @@ class MinMaxChecker(object):
             if attribute in self._attributes_not_allowed:
                 error_dictionary[attribute] = self._reference_column_types[attribute]
             else:
-                self._attribute_and_bounds[attribute] = {
+                self.columns_to_bounds[attribute] = {
                     'lower_bound': lower_bound,
                     'upper_bound': upper_bound
                 }
         if error_dictionary != {}:
-            self._attribute_and_bounds = {}
+            self.columns_to_bounds = {}
             raise ValueError(f'The following columns have invalid types: {error_dictionary}')
 
     def __str__(self):
-        return str(self._attribute_and_bounds)
+        return str(self.columns_to_bounds)
 
     def exclude(self, attributes=None):
         if attributes == 'all':
-            self._attribute_and_bounds = {}
+            self.columns_to_bounds = {}
             return
 
         for attribute in attributes:
             try:
-                del self._attribute_and_bounds[attribute]
+                del self.columns_to_bounds[attribute]
             except:
                 continue
 
     def temp_exclude(self, attributes):
-        self.attributes_and_bounds_temp = {}
+        self._columns_to_bounds_temp = {}
         for attr in attributes:
-            self.attributes_and_bounds_temp[attr] = self._attribute_and_bounds.get(attr, None)
+            self._columns_to_bounds_temp[attr] = self.columns_to_bounds.get(attr, None)
         
         self.exclude(attributes=attributes)
 
     def validate(self, dataframe_to_validate):
         import datetime
 
-        if not self._attribute_and_bounds or len(dataframe_to_validate) == 0:
+        if not self.columns_to_bounds or len(dataframe_to_validate) == 0:
             return {}
 
         data_to_return = {}
-        for attribute, bounds in self._attribute_and_bounds.items():
+        for attribute, bounds in self.columns_to_bounds.items():
 
             attribute_data_type = dataframe_to_validate[attribute].dtype.kind
 
@@ -90,10 +90,10 @@ class MinMaxChecker(object):
             if bounds['upper_bound'] and max_value > bounds['upper_bound']:
                 data_to_return[attribute]['max_test']['percentage_out_of_bounds'] = self._max_test_percentage(dataframe_to_validate, attribute, bounds['upper_bound'])
 
-        for attribute, settings in self.attributes_and_bounds_temp.items():
+        for attribute, settings in self._columns_to_bounds_temp.items():
             if settings != None:
                 self.configure(attributes=[attribute], lower_bound=settings['lower_bound'], upper_bound=settings['upper_bound'])
-        self.attributes_and_bounds_temp = {}
+        self._columns_to_bounds_temp = {}
 
         return data_to_return
 
