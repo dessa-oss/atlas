@@ -25,9 +25,7 @@ class SchemaChecker(object):
         import pandas
         from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
 
-        current_df_columns, current_df_types, _ = dataframe_statistics(current_dataframe)
-        columns_to_validate = current_df_columns
-        types_to_validate = self._update_column_types(columns_to_validate, current_df_types)
+        columns_to_validate, types_to_validate, _ = dataframe_statistics(current_dataframe)
 
         schema_check_results = {}
         if self._reference_column_names_match(columns_to_validate):
@@ -56,12 +54,6 @@ class SchemaChecker(object):
 
         schema_check_results.update(self._column_sets_in_wrong_order_information(ref_column_series, current_column_series))
         return schema_check_results
-
-    def _update_column_types(self, column_names, column_types):
-        new_column_types = {}
-        for columns in column_names:
-            new_column_types[columns] = column_types[columns]
-        return new_column_types
 
     def _reference_column_names_match(self, columns_to_validate):
         return self._configured_columns == columns_to_validate
