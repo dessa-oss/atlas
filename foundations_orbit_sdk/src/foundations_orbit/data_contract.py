@@ -108,7 +108,7 @@ class DataContract(object):
 
         self.special_value_test.temp_exclude(attributes=attributes)
         self.distribution_test.temp_exclude(attributes=attributes)
-        self.min_max_test.temp_exclude(columns=attributes)
+        self.min_max_test.schema_failure_temp_exclusion(columns=attributes)
 
 
     def save(self, monitor_package_directory):

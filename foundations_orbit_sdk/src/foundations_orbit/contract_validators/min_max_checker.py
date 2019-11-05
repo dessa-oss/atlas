@@ -45,14 +45,14 @@ class MinMaxChecker(object):
             except:
                 continue
 
-    def temp_exclude(self, columns):
+    def schema_failure_temp_exclusion(self, columns):
         self._columns_to_bounds_temp = {}
         for attr in columns:
             self._columns_to_bounds_temp[attr] = self.columns_to_bounds.get(attr, None)
         
         self.exclude(columns=columns)
 
-    def _undo_temp_exclude(self):
+    def _undo_schema_failure_temp_exclusion(self):
         for column, settings in self._columns_to_bounds_temp.items():
             if settings != None:
                 self.configure(columns=[column], lower_bound=settings['lower_bound'], upper_bound=settings['upper_bound'])
@@ -68,7 +68,7 @@ class MinMaxChecker(object):
         for column, bounds in self.columns_to_bounds.items():
             data_to_return[column] = self._apply_min_max_test(column, dataframe_to_validate, bounds)
 
-        self._undo_temp_exclude()
+        self._undo_schema_failure_temp_exclusion()
 
         return data_to_return
 
