@@ -26,7 +26,8 @@ const MonitorSchedulesActions = {
         <MonitorListTableRow
           key={key}
           onClick={onClickRow}
-          monitorName={results[monitor].properties.job_id}
+          // Should add monitor name (without project prefix) to this payload in REST API later
+          monitorName={results[monitor].properties.spec.environment.MONITOR_NAME}
           status={results[monitor].status}
           user={results[monitor].properties.metadata.username}
         />
