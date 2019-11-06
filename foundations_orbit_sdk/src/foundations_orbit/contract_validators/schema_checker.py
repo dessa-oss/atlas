@@ -5,7 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
 class SchemaChecker(object):
     
     def __init__(self, column_names, column_types):
@@ -22,8 +21,9 @@ class SchemaChecker(object):
 
     def validate(self, current_dataframe):
         import pandas
+        from foundations_orbit.utils.get_column_types import get_column_types
 
-        columns_to_validate, types_to_validate, _ = dataframe_statistics(current_dataframe)
+        columns_to_validate, types_to_validate = get_column_types(current_dataframe)
 
         schema_check_results = {}
         if self._reference_column_names_match(columns_to_validate):
