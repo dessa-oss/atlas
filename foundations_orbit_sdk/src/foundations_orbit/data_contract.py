@@ -70,7 +70,7 @@ class DataContract(object):
         from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
         self._initialize_schema_checker()
 
-        self.special_value_test = SpecialValuesChecker(self.options, self._column_names, self._column_types, self._categorical_attributes)
+        self.special_value_test = SpecialValuesChecker(self._column_names, self._column_types, self._categorical_attributes)
         self.distribution_test = DistributionChecker(self.options.distribution, self._column_names, self._column_types, self._categorical_attributes)
 
         self.min_max_test = MinMaxChecker(self._column_types)
