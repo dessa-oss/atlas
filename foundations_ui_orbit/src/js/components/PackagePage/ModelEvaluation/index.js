@@ -2,9 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import Layout from "../Layout";
 import { withRouter } from "react-router-dom";
-import { getFromApiary } from "../../../actions/BaseActions";
-import Preview from "./Preview";
-import Loading from "../../common/Loading";
 import Schedule from "./Schedule";
 import Charts from "./Charts";
 import ModalTutorial from "../../common/ModalTutorial";
@@ -13,8 +10,7 @@ const ModelEvaluation = props => {
   const [tutorialVisible, setTutorialVisible] = React.useState(false);
 
   const onToggleTutorial = () => {
-    let value = !tutorialVisible;
-    setTutorialVisible(value);
+    setTutorialVisible(!tutorialVisible);
   };
 
   const { tab } = props;

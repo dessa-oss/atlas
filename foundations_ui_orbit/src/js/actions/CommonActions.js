@@ -14,10 +14,7 @@ const CommonActions = {
   },
 
   decimalToPercentage: d => {
-    if (typeof d === "string") {
-      d = parseFloat(d);
-    }
-    return `${Math.round(d * 100 * 10) / 10}%`;
+    return `${Math.round(parseFloat(d) * 100 * 10) / 10}%`;
   },
 
   nullToNA: val => {
