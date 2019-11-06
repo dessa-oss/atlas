@@ -1,4 +1,5 @@
 import React from "react";
+import moment from "moment";
 import {
   get, put, del, patch
 } from "./BaseActions";
@@ -99,6 +100,70 @@ const MonitorSchedulesActions = {
       schedule: scheduleBody
     };
     return patch(url, body);
+  },
+
+  getSchedule: (
+    startDate, endDate, scheduleRepeatUnit, scheduleRepeatUnitValue
+  ) => {
+    const startMoment = moment(startDate);
+    const startHour = startMoment.hours();
+    const startMinute = startMoment.minutes();
+
+    const schedule = {
+      start_date: startMoment,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      month: "*",
+      day: "*",
+      hour: "*",
+      minute: "*",
+      second: "*"
+    };
+
+    if (scheduleRepeatUnit === "week") {
+      schedule.week = `*/${scheduleRepeatUnitValue}`;
+      schedule.hour = startHour;
+      schedule.minute = startMinute;
+      schedule.second = "0";
+      schedule.day_of_week = startMoment.isoWeekday() - 1;
+      delete schedule.day;
+    } else {
+      switch (scheduleRepeatUnit) {
+        case "month":
+          schedule.month = `*/${scheduleRepeatUnitValue}`;
+          schedule.day = startMoment.date();
+          schedule.hour = startHour;
+          schedule.minute = startMinute;
+          schedule.second = "0";
+          break;
+        case "day":
+          schedule.day = `*/${scheduleRepeatUnitValue}`;
+          schedule.hour = startHour;
+          schedule.minute = startMinute;
+          schedule.second = "0";
+          break;
+        case "hour":
+          schedule.hour = `*/${scheduleRepeatUnitValue}`;
+          schedule.minute = startMinute;
+          schedule.second = "0";
+          break;
+        case "minute":
+          schedule.minute = `*/${scheduleRepeatUnitValue}`;
+          schedule.second = "0";
+          break;
+        case "second":
+          schedule.second = `*/${scheduleRepeatUnitValue}`;
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (endDate) {
+      const endMoment = moment(endDate);
+      schedule.end_date = endMoment;
+    }
+
+    return schedule;
   }
 
 };
