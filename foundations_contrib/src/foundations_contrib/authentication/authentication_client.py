@@ -40,6 +40,15 @@ class AuthenticationClient:
 
         webbrowser.open(self.authentication_url())
 
+    def logout(self, refresh_token: str) -> None:
+        """[summary]
+        
+        :param refresh_token: [description]
+        :type refresh_token: str
+        """
+
+        self.client.logout(refresh_token)
+
     def token_using_auth_code(self, code: str) -> dict:
         """Obtain a token using an authorization code from the auth server.
 
@@ -90,5 +99,5 @@ def keycloak_client(config: dict) -> Type[KeycloakOpenID]:
 
 # Here for development purposes
 
-# from .configs import ATLAS
-# client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth")
+from foundations_contrib.authentication.configs import ATLAS
+client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth")
