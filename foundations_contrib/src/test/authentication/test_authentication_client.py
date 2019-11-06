@@ -80,9 +80,9 @@ class TestAuthenticationClient(Spec):
             redirect_uri=self.redirect_url,
         )
 
-    def test_metadata_is_set_as_attribute(self):
+    def test_issuer_is_set_as_attribute(self):
         with self.assert_does_not_raise():
-            self.auth_client.metadata
+            self.auth_client.issuer
 
     def test_json_web_key_set_is_set_as_attribute(self):
         with self.assert_does_not_raise():
