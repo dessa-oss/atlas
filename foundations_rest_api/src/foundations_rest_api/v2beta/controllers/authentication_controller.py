@@ -46,6 +46,5 @@ class AuthenticationController(Resource):
         jwks = self.client.json_web_key_set
         issuer = self.client.issuer
         return verify_token(token, jwks, issuer)
-        # return 200
 
 API.add_resource(AuthenticationController, "/api/v2beta/auth/<string:action>")
