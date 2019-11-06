@@ -16,6 +16,7 @@ from foundations_core_rest_api_components.lazy_result import LazyResult
 class TensorboardController:
 
     def post(self):
+        from foundations_contrib.global_state import user_token
         import requests
         job_ids = self.params.get('job_ids', None)
         if job_ids is None:
@@ -23,7 +24,7 @@ class TensorboardController:
         
         tb_locations = self._transform_request(job_ids)
 
-        response = requests.post(f'{self._tensorboard_api_host()}/create_sym_links', json=tb_locations)
+        response = requests.post(f'{self._tensorboard_api_host()}/create_sym_links', json=tb_locations, headers={"Token": user_token()})
         if response.status_code == 400:
             return Response('Bad Request', LazyResult(lambda: response.text), status=400)
         elif response.status_code == 500:
