@@ -22,10 +22,10 @@ class DataContractSummary(object):
         self._summarize_expected_data(dataframe)
 
     def validate(self, dataframe_to_validate, formatted_validation_report):
-        from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
+        from foundations_orbit.utils.get_column_types import get_column_types
         self._num_critical_tests = 0
         self._report = formatted_validation_report
-        _, self._current_column_types, _ = dataframe_statistics(dataframe_to_validate)
+        _, self._current_column_types = get_column_types(dataframe_to_validate)
         self._summarize_num_critical()
         self._summarize_actual_data(dataframe_to_validate)
 

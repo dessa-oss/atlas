@@ -39,7 +39,7 @@ def bin_current_values_categorical(column_values, ref_column_bin_stats):
     return current_category_percentages, special_values_percentages
 
 
-def distribution_and_special_values_check(config_dict, column_names, bin_stats, current_df, categorical_attributes, is_special_value_check=False):
+def distribution_and_special_values_check(distribution_check_config, column_names, bin_stats, current_df, categorical_attributes, is_special_value_check=False):
     '''
         Expected format of dist_check_results
         {'col1': {'binned_passed': False,
@@ -55,7 +55,7 @@ def distribution_and_special_values_check(config_dict, column_names, bin_stats, 
     '''
     dist_check_results = {}
     # get the list of columns to check
-    dist_check_config = config_dict
+    dist_check_config = distribution_check_config
     cols_to_check = set(current_df.columns).intersection(set(column_names))
     # only one of cols_to_check and cols_to_ignore can be non-None
     assert nand(dist_check_config['cols_to_include'] is not None, dist_check_config['cols_to_ignore'] is not None)

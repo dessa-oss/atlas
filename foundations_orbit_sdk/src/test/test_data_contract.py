@@ -910,9 +910,9 @@ class TestDataContract(Spec):
         with self.assertRaises(ValueError) as exception:
             contract = DataContract(self.contract_name)
 
-    def test_dataframe_statistics_returns_string_column_type_when_column_contains_strings_and_nans_only(self):
-        from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
-        _,column_types,_ = dataframe_statistics(self.dataframe_with_strings_and_nans)
+    def test_get_column_types_returns_string_column_type_when_column_contains_strings_and_nans_only(self):
+        from foundations_orbit.utils.get_column_types import get_column_types
+        _, column_types = get_column_types(self.dataframe_with_strings_and_nans)
         self.assertEqual('str', column_types[self.column_name])
 
     def test_data_contract_to_string_prints_expected_output(self):
@@ -923,9 +923,6 @@ class TestDataContract(Spec):
         contract.special_value_test.configure(attributes=[self.column_name_2], thresholds={60: 0.5, numpy.nan: 0.1})
 
         result = str(contract)
-
-        # import json
-        # print(json.loads(result.replace('\'', '"')))
 
         tests = ['special_values_test', 'min_max_test', 'distribution_test', 'schema_test']
         for test in tests:
