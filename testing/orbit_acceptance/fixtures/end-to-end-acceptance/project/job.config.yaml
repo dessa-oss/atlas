@@ -1,0 +1,3 @@
+schedule: {
+  'second': '*/5'
+}

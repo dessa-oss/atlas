@@ -4,7 +4,7 @@ import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
 import Select from "react-select";
 import moment from "moment";
 import Flatpickr from "react-flatpickr";
-// import Calendar from "react-calendar";
+import CommonActions from "../../../actions/CommonActions";
 
 class MonitorOverview extends Component {
   constructor(props) {
@@ -16,17 +16,20 @@ class MonitorOverview extends Component {
     this.pauseMonitor = this.pauseMonitor.bind(this);
     this.deleteMonitor = this.deleteMonitor.bind(this);
     this.updateMonitorSchedule = this.updateMonitorSchedule.bind(this);
-    // this.changeEditMode = this.changeEditMode.bind(this);
     this.reload = this.reload.bind(this);
+    this.onChangeDateStart = this.onChangeDateStart.bind(this);
+    this.onChangeTimeStart = this.onChangeTimeStart.bind(this);
+    this.onChangeDateEnd = this.onChangeDateEnd.bind(this);
+
     this.state = {
+      nextRunTime: monitorResult.next_run_time || "None set",
       calDateStart: monitorResult.schedule.start_date || new Date(),
       calDateEnd: monitorResult.schedule.end_date || "",
-      clockTimeHour: monitorResult.schedule.hour.replace(/\D/g, "") !== "" ? monitorResult.schedule.hour : "12",
-      clockTimeMinute: monitorResult.schedule.minute.replace(/\D/g, "") !== ""
-        ? monitorResult.schedule.minute.replace(/\D/g, "")
-        : "00",
-      scheduleRepeatUnit: { label: "Days" },
-      scheduleRepeatUnitValue: "1"
+      clockTimeHour: new Date(monitorResult.schedule.start_date).getHours() || "12",
+      clockTimeMinute: new Date(monitorResult.schedule.start_date).getMinutes() || "00",
+      scheduleRepeatUnit: "Days",
+      scheduleRepeatUnitValue: "1",
+      scheduleValid: false
     };
   }
 
@@ -56,13 +59,25 @@ class MonitorOverview extends Component {
     }
   }
 
-  reload() {
-    const { scheduleRepeatUnitValue } = this.state;
+  async reload() {
+    const { reload, monitorResult } = this.props;
     const result = this.findScheduleRepeat();
     if (result) {
-      this.setState(() => ({
-        scheduleRepeatUnitValue: result.value
-      }));
+      this.setState({
+        scheduleRepeatUnitValue: result.value,
+        nextRunTime: (
+          monitorResult.next_run_time ? moment.unix(monitorResult.next_run_time).format("YYYY-MM-DD HH:mm:ss") : "N/A"
+        ),
+        calDateStart: monitorResult.schedule.start_date || new Date(),
+        calDateEnd: monitorResult.schedule.end_date || "",
+        clockTimeHour: new Date(monitorResult.schedule.start_date).getHours() || "12",
+        clockTimeMinute: new Date(monitorResult.schedule.start_date).getMinutes() || "00",
+        scheduleRepeatUnit: result.label
+      }, () => {
+        this.setState({ scheduleValid: this.validateMonitorSchedule() }, reload);
+      });
+    } else {
+      reload();
     }
   }
 
@@ -70,25 +85,33 @@ class MonitorOverview extends Component {
     this.reload();
   }
 
+  componentDidUpdate(prevProps) {
+    const { monitorResult } = this.props;
+
+    if (!CommonActions.deepEqual(prevProps.monitorResult, monitorResult)) {
+      this.reload();
+    }
+  }
+
   resumeMonitor() {
     const { monitorResult } = this.props;
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-    MonitorSchedulesActions.resumeMonitor(projectName, monitorName);
+    MonitorSchedulesActions.resumeMonitor(projectName, monitorName).then(this.reload);
   }
 
   pauseMonitor() {
     const { monitorResult } = this.props;
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-    MonitorSchedulesActions.pauseMonitor(projectName, monitorName);
+    MonitorSchedulesActions.pauseMonitor(projectName, monitorName).then(this.reload);
   }
 
   deleteMonitor() {
     const { monitorResult } = this.props;
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-    MonitorSchedulesActions.deleteMonitor(projectName, monitorName);
+    MonitorSchedulesActions.deleteMonitor(projectName, monitorName).then(this.reload);
   }
 
   updateMonitorSchedule() {
@@ -109,19 +132,47 @@ class MonitorOverview extends Component {
       week: "*",
       day: "*",
       hour: "*",
-      minute: "*",
       second: "*",
-      start_date: calStartDate
+      start_date: `${calStartDate} ${clockTimeHour}:${clockTimeMinute}`
     };
 
     if (calDateEnd !== "") {
       scheduleBody.end_date = moment(calDateEnd).format("YYYY-MM-DD");
     }
-    scheduleBody[scheduleRepeatUnit.label.toLocaleLowerCase().slice(0, -1)] = `*/${scheduleRepeatUnitValue}`;
+    scheduleBody[scheduleRepeatUnit.toLocaleLowerCase().slice(0, -1)] = `*/${scheduleRepeatUnitValue}`;
 
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-    MonitorSchedulesActions.updateMonitorSchedule(projectName, monitorName, scheduleBody);
+    MonitorSchedulesActions.updateMonitorSchedule(projectName, monitorName, scheduleBody).then(this.reload);
+  }
+
+  onChangeDateStart(date) {
+    this.setState({ calDateStart: date[0] }, () => {
+      this.setState({ scheduleValid: this.validateMonitorSchedule() });
+    });
+  }
+
+  onChangeTimeStart(time) {
+    this.setState({
+      clockTimeHour: time[0].getHours(),
+      clockTimeMinute: time[0].getMinutes()
+    }, () => {
+      this.setState({ scheduleValid: this.validateMonitorSchedule() });
+    });
+  }
+
+  onChangeDateEnd(date) {
+    this.setState({ calDateEnd: date[0] }, () => {
+      this.setState({ scheduleValid: this.validateMonitorSchedule() });
+    });
+  }
+
+  validateMonitorSchedule() {
+    const { calDateStart, calDateEnd } = this.state;
+    const startTime = moment(calDateStart);
+    const endTime = moment(calDateEnd);
+
+    return !calDateEnd || (startTime.isBefore(endTime) && endTime.isAfter(moment()));
   }
 
   render() {
@@ -129,20 +180,13 @@ class MonitorOverview extends Component {
     const {
       calDateStart,
       calDateEnd,
-      clockTimeHour,
-      clockTimeMinute,
+      scheduleRepeatUnit,
       scheduleRepeatUnitValue,
-      scheduleRepeatUnit
+      nextRunTime,
+      scheduleValid
     } = this.state;
 
-    const nextRun = monitorResult.next_run_time
-      ? moment.unix(monitorResult.next_run_time).format("YYYY-MM-DD HH:mm:ss")
-      : "None scheduled";
-
     const status = monitorResult.status.split("")[0].toUpperCase() + monitorResult.status.slice(1);
-
-    const startTime = monitorResult.schedule.start_date ? monitorResult.schedule.start_date : "Not specified";
-    const endTime = monitorResult.schedule.end_date ? monitorResult.schedule.end_date : "Not specified";
 
     const scheduleOptions = [
       { label: "Years", value: monitorResult.schedule.year },
@@ -154,32 +198,21 @@ class MonitorOverview extends Component {
       { label: "Seconds", value: monitorResult.schedule.second }
     ];
 
-    function findScheduleRepeat(schedule) {
-      for (let i = 0; i < schedule.length; i += 1) {
-        if (schedule[i].value !== "*") {
-          if (schedule[i].value.includes("/")) {
-            return {
-              label: schedule[i].label,
-              value: schedule[i].value.split("/")[1]
-            };
-          }
-          return schedule[i];
-        }
-      }
-    }
+    const scheduleRepeatUnitOption = {
+      label: scheduleRepeatUnit,
+      value: scheduleRepeatUnit
+    };
 
-    const defaultScheduleValue = findScheduleRepeat(scheduleOptions);
-
-    const calStartTime = startTime.split(" ").slice(0, 4).join(" ");
-    const calEndTime = endTime.split(" ").slice(0, 4).join(" ");
-
-    const calStartTime2 = startTime.split(" ")[4];
-    const clockTime = `${clockTimeHour}:${clockTimeMinute}`;
+    const clockTimeDateObject = new Date(calDateStart);
+    const clockTime = `${clockTimeDateObject.getHours()}:${clockTimeDateObject.getMinutes()}`;
+    const saveDisabled = !scheduleValid ? "disabled" : "";
 
     return (
       <div className="monitor-info">
         <div className="monitor-overview">
-          <h3>Overview</h3>
+          <h3>
+            {monitorResult.properties.spec.environment.MONITOR_NAME}
+          </h3>
           <div className="monitor-overview-menu">
             <button className="monitor-btn" type="button" onClick={this.resumeMonitor}>
               <div className="i--icon-start" />
@@ -193,10 +226,6 @@ class MonitorOverview extends Component {
           </div>
           <ul>
             <li>
-              <div className="monitor-overview-key">Monitor Name:</div>
-              <div className="monitor-overview-value">{monitorResult.properties.job_id}</div>
-            </li>
-            <li>
               <div className="monitor-overview-key">Status:</div>
               <div className="monitor-overview-value">{status}</div>
             </li>
@@ -205,21 +234,23 @@ class MonitorOverview extends Component {
               <div className="monitor-overview-value">{monitorResult.properties.metadata.username}</div>
             </li>
             <li>
-              <div className="monitor-overview-key">Next Runs:</div>
-              <div className="monitor-overview-value">{nextRun}</div>
-            </li>
-            <li>
-              <div className="monitor-overview-key">Start Date:</div>
-              <div className="monitor-overview-value">{calStartTime}</div>
-            </li>
-            <li>
-              <div className="monitor-overview-key">End Date:</div>
-              <div className="monitor-overview-value">{calEndTime}</div>
+              <div className="monitor-overview-key">Next Run:</div>
+              <div className="monitor-overview-value">{nextRunTime}</div>
             </li>
           </ul>
         </div>
         <div className="monitor-details">
           <h3>Schedule Details</h3>
+          <div className="monitor-details-options">
+            <button
+              className={`save-schedule-btn ${saveDisabled}`}
+              onClick={this.updateMonitorSchedule}
+              type="button"
+              disabled={!scheduleValid}
+            >
+              Save
+            </button>
+          </div>
           <ul>
             <li>
               <div className="monitor-overview-key">Repeats every:</div>
@@ -240,29 +271,11 @@ class MonitorOverview extends Component {
                 <Select
                   options={scheduleOptions}
                   className="react-select"
-                  defaultValue={defaultScheduleValue}
+                  value={scheduleRepeatUnitOption}
                   onChange={value => {
                     this.setState({
-                      scheduleRepeatUnit: value
+                      scheduleRepeatUnit: value.label
                     });
-                  }}
-                />
-                <p> at </p>
-                <Flatpickr
-                  value={clockTime}
-                  className="schedule-flatpickr"
-                  onChange={time => {
-                    this.setState({
-                      clockTimeHour: time[0].getHours(),
-                      clockTimeMinute: time[0].getMinutes()
-                    });
-                  }}
-                  options={{
-                    enableTime: true,
-                    noCalendar: true,
-                    dateFormat: "H:i",
-                    defaultDate: calStartTime2,
-                    time_24hr: true
                   }}
                 />
               </div>
@@ -273,11 +286,24 @@ class MonitorOverview extends Component {
                 <Flatpickr
                   className="cal-picker"
                   value={calDateStart}
-                  onChange={date => { this.setState({ calDateStart: date[0] }); }}
+                  onChange={this.onChangeDateStart}
                   options={{
                     altFormat: "F j, Y",
                     dateFormat: "Y-m-d",
                     defaultDate: new Date()
+                  }}
+                />
+                <p> at </p>
+                <Flatpickr
+                  value={clockTime}
+                  className="schedule-flatpickr"
+                  onChange={this.onChangeTimeStart}
+                  options={{
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i",
+                    defaultDate: clockTime,
+                    time_24hr: true
                   }}
                 />
               </div>
@@ -288,7 +314,7 @@ class MonitorOverview extends Component {
                 <Flatpickr
                   className="cal-picker"
                   value={calDateEnd}
-                  onChange={date => { this.setState({ calDateEnd: date[0] }); }}
+                  onChange={this.onChangeDateEnd}
                   options={{
                     altFormat: "F j, Y",
                     dateFormat: "Y-m-d"
@@ -296,9 +322,6 @@ class MonitorOverview extends Component {
                 />
               </div>
             </li>
-            <div className="monitor-details-options">
-              <button className="save-schedule-btn" onClick={this.updateMonitorSchedule} type="button">Save</button>
-            </div>
           </ul>
         </div>
         <div className="monitor-calendar">
@@ -310,11 +333,13 @@ class MonitorOverview extends Component {
 }
 
 MonitorOverview.propTypes = {
-  monitorResult: PropTypes.object
+  monitorResult: PropTypes.object,
+  reload: PropTypes.func
 };
 
 MonitorOverview.defaultProps = {
-  monitorResult: {}
+  monitorResult: {},
+  reload: () => {}
 };
 
 export default MonitorOverview;

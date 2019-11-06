@@ -45,6 +45,8 @@ def start(job_directory, command, project_name, name, env):
     if f'{project_name}-{name}'in monitors_list:
         raise ValueError('Monitor already exists')
 
+    logger.info('Creating monitor ...')
+
     bundle = job_bundle(monitor_package)
 
     job_resource_args = {}

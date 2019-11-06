@@ -1,10 +1,8 @@
-import json
-import os
 import webbrowser
+import json
 
+from typing import Type, Union
 from keycloak import KeycloakOpenID
-
-from typing import Callable, Dict, Type, Union, Any
 
 
 class AuthenticationClient:
@@ -20,12 +18,14 @@ class AuthenticationClient:
         """
 
         config = self._get_config_from_file(conf) if isinstance(conf, str) else conf
-        self.client = keycloak_client(config)
         self._redirect_url = redirect_url
+        self.client = keycloak_client(config)
+        self.issuer = self.client.well_know()['issuer']
+        self.json_web_key_set = self.client.certs()
 
     def authentication_url(self) -> str:
         """The URL of the authentication server that is used to authenticate.
-        
+
         :return: The request url including params.
         :rtype: str
         """
@@ -40,6 +40,15 @@ class AuthenticationClient:
 
         webbrowser.open(self.authentication_url())
 
+    def logout(self, refresh_token: str) -> None:
+        """[summary]
+        
+        :param refresh_token: [description]
+        :type refresh_token: str
+        """
+
+        self.client.logout(refresh_token)
+
     def token_using_auth_code(self, code: str) -> dict:
         """Obtain a token using an authorization code from the auth server.
 
@@ -48,7 +57,7 @@ class AuthenticationClient:
 
         :param code: The authorization code.
         :type code: str
-        :return: [description]
+        :return: A dictionary containing the token, refresh token, and other info.
         :rtype: dict
         """
 
@@ -58,22 +67,18 @@ class AuthenticationClient:
             redirect_uri=self._redirect_url,
         )
 
-    def json_web_key_set(self) -> dict:
-        """The JSWKS needed to verify a json web token.
+    def token_using_username_password(self, username: str, password: str) -> dict:
+        return self.client.token(username=username, password=password)
 
+    def user_info(self, token: str) -> dict:
+        """[summary]
+
+        :param token: [description]
+        :type token: str
         :return: [description]
         :rtype: dict
         """
-        return self.client.certs()
-
-    def issuer(self) -> str:
-        """[summary]
-
-        :return: [description]
-        :rtype: str
-        """
-
-        return self.client.well_know()['issuer']
+        return self.client.userinfo(token)
 
     @staticmethod
     def _get_config_from_file(fname: str) -> dict:
@@ -93,11 +98,6 @@ def keycloak_client(config: dict) -> Type[KeycloakOpenID]:
 
 
 # Here for development purposes
-auth_config = {
-    "realm": "Atlas",
-    "auth-server-url": "http://localhost:8080/auth",
-    "ssl-required": "external",
-    "resource": "foundations",
-    "confidential-port": 0,
-}
-client = AuthenticationClient(auth_config, redirect_url="/api/v2beta/auth")
+
+from foundations_contrib.authentication.configs import ATLAS
+client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth")

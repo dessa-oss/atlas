@@ -51,7 +51,7 @@ class MonitorJobTableRow extends Component {
     const formattedLaunchedTime = launched ? moment.unix(launched).format("YYYY-MM-DD HH:mm:ss") : "Not available";
     const launchTime = moment(launched);
     const endTime = moment(duration);
-    const timeDiff = duration ? `${moment.duration(endTime.diff(launchTime)).asSeconds()} seconds` : "Not available";
+    const timeDiff = duration ? `${endTime.diff(launchTime)}s` : "Not available";
 
     function addStatus(rowStatus) {
       if (rowStatus === "completed") {
@@ -74,7 +74,7 @@ class MonitorJobTableRow extends Component {
         <div className="monitor-job-launched-cell">{formattedLaunchedTime}</div>
         <div className="monitor-job-duration-cell">{timeDiff}</div>
         <div className="monitor-job-open-cell">
-          <div className="i--icon-open" onClick={this.onOpenLogs} />
+          <div className="i--icon-open" title="View logs" onClick={this.onOpenLogs} />
         </div>
       </div>
     );

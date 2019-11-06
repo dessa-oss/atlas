@@ -1,36 +1,36 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
+import CommonActions from "../../../actions/CommonActions";
 
 class MonitorListTable extends Component {
   constructor(props) {
     super(props);
-    const { location } = this.props;
 
     this.state = {
-      rows: null,
-      projectName: location.state.project.name
+      rows: null
     };
     this.reload = this.reload.bind(this);
   }
 
-  componentDidMount() {
-    this.reload();
+  componentDidUpdate(prevProps) {
+    const { allMonitors } = this.props;
+
+    if (!CommonActions.deepEqual(prevProps.allMonitors, allMonitors)) {
+      this.reload();
+    }
   }
 
   async reload() {
-    const { projectName } = this.state;
-    const { onClickRow, reload } = this.props;
+    const { onClickRow, allMonitors } = this.props;
 
-    const result = await MonitorSchedulesActions.getMonitorList(projectName);
-    const rows = MonitorSchedulesActions.getRows(result, onClickRow);
+    const rows = MonitorSchedulesActions.getRows(allMonitors, onClickRow);
     this.setState({ rows: rows });
-    reload();
   }
 
   render() {
     const { rows } = this.state;
-    const { selectedRow } = this.props;
+    const { selectedRow, reload } = this.props;
 
     let rowsWithProps = [];
     if (rows) {
@@ -41,14 +41,14 @@ class MonitorListTable extends Component {
     }
 
     return (
-      <div>
-        {/* <div className="i--icon-refresh" onClick={this.reload} /> */}
+      <div className="monitor-list-table">
+        <div className="i--icon-refresh" onClick={reload} />
         <div className="monitor-listing">
           <div className="monitor-items">
             <div className="monitor-table-row" onClick={this.onClick}>
               <div className="monitor-table-cell">Monitor Name</div>
-              <div className="monitor-status-table-cell">Status</div>
               <div className="monitor-user-table-cell">User</div>
+              <div className="monitor-status-table-cell">Status</div>
             </div>
             {rowsWithProps}
           </div>
@@ -59,17 +59,17 @@ class MonitorListTable extends Component {
 }
 
 MonitorListTable.propTypes = {
-  location: PropTypes.object,
   onClickRow: PropTypes.func,
-  selectedRow: PropTypes.object,
-  reload: PropTypes.func
+  selectedRow: PropTypes.string,
+  reload: PropTypes.func,
+  allMonitors: PropTypes.object
 };
 
 MonitorListTable.defaultProps = {
-  location: { state: {} },
   onClickRow: () => {},
-  selectedRow: {},
-  reload: () => {}
+  selectedRow: "",
+  reload: () => {},
+  allMonitors: {}
 };
 
 export default MonitorListTable;

@@ -30,13 +30,12 @@ class TestScheduleMonitorPackageViaCli(Spec):
         return '.'
 
     @let
-    def env(self):
-        return 'scheduler'
+    def monitor_package_id_2(self):
+        return 'this_cool_monitor-main-py'
 
     @let
-    def foundations_home(self):
-        import os
-        return os.environ['FOUNDATIONS_HOME']
+    def env(self):
+        return 'scheduler'
 
     @set_up
     def set_up(self):
@@ -46,6 +45,7 @@ class TestScheduleMonitorPackageViaCli(Spec):
     @tear_down
     def tear_down(self):
         self._delete_scheduled_job(self.monitor_package_id)
+        self._delete_scheduled_job(self.monitor_package_id_2)
 
     @staticmethod
     def _delete_scheduled_job(job_name):

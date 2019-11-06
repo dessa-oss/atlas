@@ -4,38 +4,49 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 06 2018
 """
-import os.path
-import subprocess as sp
-import webbrowser
 
 from foundations_rest_api.utils.api_resource import api_resource
-from foundations_core_rest_api_components.response import Response
 from foundations_core_rest_api_components.lazy_result import LazyResult
 
 from foundations_contrib.authentication.authentication_client import (
     AuthenticationClient,
 )
+from foundations_contrib.authentication.configs import ATLAS
+from foundations_core_rest_api_components.global_state import app_manager
 
-from flask import redirect, jsonify
+API = app_manager.api()
 
-conf = {
-    "realm": "Atlas",
-    "auth-server-url": "http://localhost:8080/auth",
-    "ssl-required": "external",
-    "resource": "foundations",
-    "confidential-port": 0,
-}
-client = AuthenticationClient(conf, redirect_url="/api/v2beta/auth")
+from flask import abort, redirect, request
+from flask_restful import Resource, reqparse
+
+from foundations_contrib.authentication.utils import get_token_from_header, verify_token
 
 
-@api_resource("/api/v2beta/auth")
-class AuthenticationController:
-    def index(self):
-        code = self.params.get("code", None)
+class AuthenticationController(Resource):
+    client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth/login")
+
+    def get(self, action):
+        result = getattr(self, '_' + action, lambda: abort(404))()
+        return result
+
+    def _login(self):
+        code = request.args.get("code", None)
         if code:
-            token = client.token_using_auth_code(code=code)
-            return Response("Authentication", LazyResult(lambda: token))
-        else:
-            # TODO: Fix our custom Response class to handle redirects.
-            client.browser_login()
-            return Response("Authentication", LazyResult(lambda: ""))
+            token_response = self.client.token_using_auth_code(code=code)
+            print(token_response)
+            return redirect('http://localhost:3000/', 302, token_response)
+        
+        return redirect(self.client.authentication_url())
+
+    def _logout(self):
+        refresh_token = get_token_from_header()
+        self.client.logout(refresh_token)
+        return redirect(self.client.authentication_url())
+
+    def _verify(self):
+        token = get_token_from_header()
+        jwks = self.client.json_web_key_set
+        issuer = self.client.issuer
+        return verify_token(token, jwks, issuer)
+
+API.add_resource(AuthenticationController, "/api/v2beta/auth/<string:action>")

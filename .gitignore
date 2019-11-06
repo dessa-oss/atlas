@@ -93,6 +93,8 @@ dist
 !foundations_contrib/src/foundations_contrib/resources/template/*.config.yaml
 !**/fixtures/**/*.config.yaml
 !**/fixtures/**/*.json
+!**/authentication/*.json
+!**/authentication/keycloak/*.json
 testing/test-cli-init
 test_pod.yaml
 
