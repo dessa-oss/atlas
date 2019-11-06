@@ -2,51 +2,12 @@
 
 from functools import wraps
 
-from flask import request, _request_ctx_stack
+from flask import _request_ctx_stack
 from jose import jwt
 
 from foundations_core_rest_api_components.exceptions import AuthError
 from .authentication_client import AuthenticationClient
-
-
-def get_token_from_header():
-    """Obtains the Access Token from the Authorization Header
-    """
-    auth = request.headers.get("Authorization", None)
-    if not auth:
-        raise AuthError(
-            {
-                "code": "authorization_header_missing",
-                "description": "Authorization header is expected",
-            },
-            401,
-        )
-
-    parts = auth.split()
-
-    if parts[0].lower() != "bearer":
-        raise AuthError(
-            {
-                "code": "invalid_header",
-                "description": "Authorization header must start with" " Bearer",
-            },
-            401,
-        )
-    if len(parts) == 1:
-        raise AuthError(
-            {"code": "invalid_header", "description": "Token not found"}, 401
-        )
-    if len(parts) > 2:
-        raise AuthError(
-            {
-                "code": "invalid_header",
-                "description": "Authorization header must be 'Bearer <token>'",
-            },
-            401,
-        )
-
-    token = parts[1]
-    return token
+from .utils import get_token_from_header
 
 
 def requires_auth(auth_client: AuthenticationClient):
@@ -75,14 +36,14 @@ def requires_auth(auth_client: AuthenticationClient):
                         rsa_key,
                         algorithms=["RS256"],
                         audience="account",
-                        issuer=auth_client.metadata['issuer'],
+                        issuer=auth_client.metadata["issuer"],
                     )
                 except jwt.ExpiredSignatureError:
                     raise AuthError(
                         {"code": "token_expired", "description": "Token is expired."},
                         401,
                     )
-                except jwt.JWTClaimsError as exc:
+                except jwt.JWTClaimsError:
                     raise AuthError(
                         {
                             "code": "invalid_claims",
@@ -90,7 +51,7 @@ def requires_auth(auth_client: AuthenticationClient):
                         },
                         401,
                     )
-                except Exception as exc:
+                except Exception:
                     raise AuthError(
                         {
                             "code": "invalid_header",

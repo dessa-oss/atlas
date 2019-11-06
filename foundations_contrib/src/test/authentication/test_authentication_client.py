@@ -1,12 +1,5 @@
 import json
-from foundations_spec import (
-    Spec,
-    let_mock,
-    let,
-    let_patch_mock,
-    set_up,
-    ConditionalReturn,
-)
+from foundations_spec import Spec, set_up, ConditionalReturn
 
 from foundations_contrib.authentication.authentication_client import (
     AuthenticationClient,
@@ -25,7 +18,8 @@ class TestAuthenticationClient(Spec):
     def set_up(self):
         self.patch(
             "foundations_contrib.authentication.authentication_client.KeycloakOpenID",
-            Mock(),
+            autospec=True,
+            spec_set=True,
         )
         config = load_config(self.conf_file)
         self.auth_client = AuthenticationClient(config, self.redirect_url)
@@ -49,7 +43,7 @@ class TestAuthenticationClient(Spec):
         client = keycloak_client(config)
         self.assertEqual(client, "KeycloakInstance")
 
-    def test_can_initalize_auth_client_with_file_path(self):
+    def test_can_initialize_auth_client_with_file_path(self):
         with open(self.conf_file) as conf:
             with patch("builtins.open", mock_open(read_data=conf.read())):
                 client = AuthenticationClient(self.conf_file, self.redirect_url)

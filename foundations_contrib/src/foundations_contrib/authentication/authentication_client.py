@@ -1,10 +1,8 @@
-import json
-import os
 import webbrowser
+import json
 
+from typing import Type, Union
 from keycloak import KeycloakOpenID
-
-from typing import Callable, Dict, Type, Union, Any
 
 
 class AuthenticationClient:
@@ -27,7 +25,7 @@ class AuthenticationClient:
 
     def authentication_url(self) -> str:
         """The URL of the authentication server that is used to authenticate.
-        
+
         :return: The request url including params.
         :rtype: str
         """
@@ -65,7 +63,7 @@ class AuthenticationClient:
 
     def user_info(self, token: str) -> dict:
         """[summary]
-        
+
         :param token: [description]
         :type token: str
         :return: [description]
@@ -91,11 +89,6 @@ def keycloak_client(config: dict) -> Type[KeycloakOpenID]:
 
 
 # Here for development purposes
-auth_config = {
-    "realm": "Atlas",
-    "auth-server-url": "http://localhost:8080/auth",
-    "ssl-required": "external",
-    "resource": "foundations",
-    "confidential-port": 0,
-}
-client = AuthenticationClient(auth_config, redirect_url="/api/v2beta/auth")
+
+# from .configs import ATLAS
+# client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth")
