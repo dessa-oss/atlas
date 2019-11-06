@@ -177,10 +177,11 @@ class CommandLineInterface(object):
         sys.exit(1)
 
     def _deploy_model_package(self):
+        from foundations_contrib.global_state import user_token
         import requests
         import sys
 
-        response = requests.post('http://{}/v1/{}/'.format(self._arguments.domain, self._arguments.slug), json = {'model_id': self._arguments.model_id})
+        response = requests.post('http://{}/v1/{}/'.format(self._arguments.domain, self._arguments.slug), json={'model_id': self._arguments.model_id}, headers={"Token": user_token()})
         if response.status_code == 201:
             print('Model package was deployed successfully to model server.')
         else:
