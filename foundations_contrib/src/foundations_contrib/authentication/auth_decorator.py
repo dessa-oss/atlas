@@ -16,7 +16,7 @@ def requires_auth(auth_client: AuthenticationClient):
         def verify(*args, **kwargs):
             token = get_token_from_header()
             jwks = auth_client.json_web_key_set
-            issuer = auth_client.metadata["issuer"]
+            issuer = auth_client.issuer
             verify_token(token, jwks, issuer)
             return func(*args, **kwargs)
 

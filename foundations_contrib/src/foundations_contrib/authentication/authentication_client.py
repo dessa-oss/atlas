@@ -20,7 +20,7 @@ class AuthenticationClient:
         config = self._get_config_from_file(conf) if isinstance(conf, str) else conf
         self._redirect_url = redirect_url
         self.client = keycloak_client(config)
-        self.metadata = self.client.well_know()
+        self.issuer = self.client.well_know()['issuer']
         self.json_web_key_set = self.client.certs()
 
     def authentication_url(self) -> str:
