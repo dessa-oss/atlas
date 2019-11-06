@@ -28,7 +28,6 @@ class AppManager:
                 response.status_code = exc.status_code
                 return response
 
-            print('SPEC ======> ', app.error_handler_spec)
             self._app = app
             CORS(self._app, supports_credentials=True)
 
