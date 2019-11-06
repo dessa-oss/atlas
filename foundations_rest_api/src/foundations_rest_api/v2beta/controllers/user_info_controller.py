@@ -16,7 +16,7 @@ from foundations_contrib.authentication.utils import get_token_from_header
 from foundations_contrib.authentication.configs import ATLAS
 
 
-@api_resource("/api/v2beta/auth/userinfo")
+@api_resource("/api/v2beta/userinfo")
 class UserInfoController:
     client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth")
 

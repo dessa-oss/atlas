@@ -4,32 +4,40 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 06 2018
 """
-import os.path
-import subprocess as sp
-import webbrowser
 
 from foundations_rest_api.utils.api_resource import api_resource
-from foundations_core_rest_api_components.response import Response
 from foundations_core_rest_api_components.lazy_result import LazyResult
 
 from foundations_contrib.authentication.authentication_client import (
     AuthenticationClient,
 )
 from foundations_contrib.authentication.configs import ATLAS
+from foundations_core_rest_api_components.global_state import app_manager
 
-# from flask import redirect, jsonify
+API = app_manager.api()
+
+from flask import abort, redirect, request
+from flask_restful import Resource, reqparse
+
+from foundations_contrib.authentication.utils import get_token_from_header
 
 
-@api_resource("/api/v2beta/auth")
-class AuthenticationController:
-    client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth")
+class AuthenticationController(Resource):
+    client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth/login")
 
-    def index(self):
-        code = self.params.get("code", None)
+    def get(self, action):
+        result = getattr(self, '_' + action, lambda: abort(404))()
+        return result
+
+    def _login(self):
+        code = request.args.get("code", None)
         if code:
-            token = self.client.token_using_auth_code(code=code)
-            return Response("Authentication", LazyResult(lambda: token))
+            return self.client.token_using_auth_code(code=code)
         
-        # TODO: Fix our custom Response class to handle redirects.
-        self.client.browser_login()
-        return Response("Authentication", LazyResult(lambda: ""))
+        return redirect(self.client.authentication_url())
+
+    def _logout(self):
+        refresh_token = get_token_from_header()
+        self.client.logout(refresh_token)
+
+API.add_resource(AuthenticationController, "/api/v2beta/auth/<string:action>")
