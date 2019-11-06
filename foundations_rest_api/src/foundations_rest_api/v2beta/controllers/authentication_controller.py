@@ -15,27 +15,21 @@ from foundations_core_rest_api_components.lazy_result import LazyResult
 from foundations_contrib.authentication.authentication_client import (
     AuthenticationClient,
 )
+from foundations_contrib.authentication.configs import ATLAS
 
-from flask import redirect, jsonify
-
-conf = {
-    "realm": "Atlas",
-    "auth-server-url": "http://localhost:8080/auth",
-    "ssl-required": "external",
-    "resource": "foundations",
-    "confidential-port": 0,
-}
-client = AuthenticationClient(conf, redirect_url="/api/v2beta/auth")
+# from flask import redirect, jsonify
 
 
 @api_resource("/api/v2beta/auth")
 class AuthenticationController:
+    client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth")
+
     def index(self):
         code = self.params.get("code", None)
         if code:
-            token = client.token_using_auth_code(code=code)
+            token = self.client.token_using_auth_code(code=code)
             return Response("Authentication", LazyResult(lambda: token))
         else:
             # TODO: Fix our custom Response class to handle redirects.
-            client.browser_login()
+            self.client.browser_login()
             return Response("Authentication", LazyResult(lambda: ""))
