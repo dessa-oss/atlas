@@ -7,3 +7,4 @@ fix_lint.sh
 orbit_gui_Dockerfile
 README.md
 yarn.lock
+package-lock.json
