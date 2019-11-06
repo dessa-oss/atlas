@@ -215,9 +215,6 @@ class MonitorOverview extends Component {
 
     const saveDisabled = !scheduleValid ? "disabled" : "";
 
-    // let nextRunTimes = <div className="monitor-overview-value" />
-
-    // if (monitorResult.next_runTime)
     const nextRunTimes = (
       <div className="monitor-overview-value">
         {monitorResult.next_run_time.map((runTime, index) => (
