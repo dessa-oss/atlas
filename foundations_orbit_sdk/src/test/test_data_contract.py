@@ -436,6 +436,7 @@ class TestDataContract(Spec):
 
     def test_data_contract_validation_report_has_metadata_for_reference_and_current_dataframe(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        contract.options.check_special_values = False
         report = contract.validate(self.two_column_dataframe_different_types)
 
         expected_metadata = {
@@ -483,12 +484,19 @@ class TestDataContract(Spec):
                         'pct_in_current_data': 0.0,
                         'pct_in_reference_data': 0.0,
                         'validation_outcome': 'healthy',
+                        'value': 'nan',
+                    },{
+                        'attribute_name': f'{self.column_name_2}',
+                        'difference_in_pct': 0.0,
+                        'pct_in_current_data': 0.0,
+                        'pct_in_reference_data': 0.0,
+                        'validation_outcome': 'healthy',
                         'value': 'nan'
                     }
                 ],
                 'summary': {
                     'critical': 0,
-                    'healthy': 1,
+                    'healthy': 2,
                     'warning': 0
                 }
             },
@@ -553,6 +561,7 @@ class TestDataContract(Spec):
             }
         }
 
+
         key = f'projects:{self.project_name}:monitors:{self.model_name}:validation:{self.contract_name}'
         serialized_report = self._redis.hget(key, inference_period)
         validation_counter = self._redis.get(f'{key}:counter')
@@ -566,6 +575,9 @@ class TestDataContract(Spec):
         del deserialized_report['user']
         self.assertIn('job_id', deserialized_report)
         del deserialized_report['job_id']
+
+        expected_output['data_quality']['details_by_attribute'] = sorted(expected_output['data_quality']['details_by_attribute'], key=lambda data: data['attribute_name'])
+        deserialized_report['data_quality']['details_by_attribute'] = sorted(deserialized_report['data_quality']['details_by_attribute'], key=lambda data: data['attribute_name'])
 
         self.assertEqual(expected_output, deserialized_report)
 
@@ -702,6 +714,7 @@ class TestDataContract(Spec):
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_different_types(self):
         inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        contract.options.check_special_values = False
         report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
         dist_check_results = report['dist_check_results']
         import numpy as np

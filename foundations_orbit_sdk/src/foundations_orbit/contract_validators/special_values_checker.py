@@ -39,7 +39,10 @@ class SpecialValuesChecker(object):
         dataframe_to_validate_special_value_percentages = self._create_special_value_percentages_for_dataframe(dataframe_to_validate)
         results = {}
 
-        for column in self._config_columns:
+        # columns_to_check = set(self._special_value_thresholds.keys()) - set()
+        columns_to_check = set(self._special_value_thresholds.keys()).intersection(set(self._config_columns))
+
+        for column in columns_to_check:
             results[column] = self._special_values_check_for_column(dataframe_to_validate_special_value_percentages, column)
 
         return results

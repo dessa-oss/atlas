@@ -251,7 +251,7 @@ class DataContract(object):
     def calculate_and_set_bin_stats(self):
         self._calculate_bin_stats()
 
-        self.special_value_test.set_bin_stats(self._bin_stats)
+        self.special_value_test.create_and_set_special_value_percentages(self._dataframe)
         self.distribution_test.set_bin_stats(self._bin_stats)
 
     def _calculate_bin_stats(self):
