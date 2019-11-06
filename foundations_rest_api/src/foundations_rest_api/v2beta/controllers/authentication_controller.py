@@ -19,7 +19,7 @@ API = app_manager.api()
 from flask import abort, redirect, request
 from flask_restful import Resource, reqparse
 
-from foundations_contrib.authentication.utils import get_token_from_header
+from foundations_contrib.authentication.utils import get_token_from_header, verify_token
 
 
 class AuthenticationController(Resource):
@@ -39,5 +39,13 @@ class AuthenticationController(Resource):
     def _logout(self):
         refresh_token = get_token_from_header()
         self.client.logout(refresh_token)
+        return redirect(self.client.authentication_url())
+
+    def _verify(self):
+        token = get_token_from_header()
+        jwks = self.client.json_web_key_set
+        issuer = self.client.issuer
+        return verify_token(token, jwks, issuer)
+        # return 200
 
 API.add_resource(AuthenticationController, "/api/v2beta/auth/<string:action>")
