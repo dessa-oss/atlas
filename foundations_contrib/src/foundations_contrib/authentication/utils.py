@@ -43,8 +43,19 @@ def get_token_from_header():
     token = parts[1]
     return token
 
+
 def verify_token(token: str, jwks: dict, issuer: str) -> None:
-    unverified_header = jwt.get_unverified_header(token)
+    try:
+        unverified_header = jwt.get_unverified_header(token)
+    except jwt.JWTError:
+        raise AuthError(
+            {
+                "code": "invalid_header",
+                "description": "Unable to parse authentication token.",
+            },
+            401,
+        )
+
     rsa_key = {}
     for key in jwks["keys"]:
         if key["kid"] == unverified_header["kid"]:
@@ -58,16 +69,11 @@ def verify_token(token: str, jwks: dict, issuer: str) -> None:
     if rsa_key:
         try:
             payload = jwt.decode(
-                token,
-                rsa_key,
-                algorithms=["RS256"],
-                audience="account",
-                issuer=issuer,
+                token, rsa_key, algorithms=["RS256"], audience="account", issuer=issuer,
             )
         except jwt.ExpiredSignatureError:
             raise AuthError(
-                {"code": "token_expired", "description": "Token is expired."},
-                401,
+                {"code": "token_expired", "description": "Token is expired."}, 401,
             )
         except jwt.JWTClaimsError:
             raise AuthError(
@@ -88,14 +94,12 @@ def verify_token(token: str, jwks: dict, issuer: str) -> None:
 
         _request_ctx_stack.top.current_user = payload
         return
- 
+
     raise AuthError(
-        {
-            "code": "invalid_header",
-            "description": "Unable to find appropriate key.",
-        },
+        {"code": "invalid_header", "description": "Unable to find appropriate key.",},
         401,
     )
+
 
 def requires_scope(required_scope):
     """Determines if the required scope is present in the Access Token
