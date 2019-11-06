@@ -33,7 +33,6 @@ class MonitorOverview extends Component {
     }
 
     this.state = {
-      nextRunTime: monitorResult.next_run_time || "None set",
       calDateStart: calDateStart,
       calDateEnd: calDateEnd,
       scheduleRepeatUnit: "Days",
@@ -83,9 +82,6 @@ class MonitorOverview extends Component {
 
     this.setState({
       scheduleRepeatUnitValue: result ? result.value : "1",
-      nextRunTime: (
-        monitorResult.next_run_time ? moment.unix(monitorResult.next_run_time).format("YYYY-MM-DD HH:mm:ss") : "N/A"
-      ),
       calDateStart: calDateStart,
       calDateEnd: calDateEnd,
       scheduleRepeatUnit: result ? result.label : "Days"
@@ -195,7 +191,6 @@ class MonitorOverview extends Component {
       calDateEnd,
       scheduleRepeatUnit,
       scheduleRepeatUnitValue,
-      nextRunTime,
       scheduleValid
     } = this.state;
 
@@ -219,6 +214,20 @@ class MonitorOverview extends Component {
     const clockTimeEnd = `${calDateEnd.getHours()}:${calDateEnd.getMinutes()}`;
 
     const saveDisabled = !scheduleValid ? "disabled" : "";
+
+    // let nextRunTimes = <div className="monitor-overview-value" />
+
+    // if (monitorResult.next_runTime)
+    const nextRunTimes = (
+      <div className="monitor-overview-value">
+        {monitorResult.next_run_time.map((runTime, index) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <div key={index} className="monitor-overview-runtime">
+            {runTime ? moment.unix(runTime).format("YYYY-MM-DD HH:mm:ss") : "N/A"}
+          </div>
+        ))}
+      </div>
+    );
 
     return (
       <div className="monitor-info">
@@ -248,7 +257,7 @@ class MonitorOverview extends Component {
             </li>
             <li>
               <div className="monitor-overview-key">Next Run:</div>
-              <div className="monitor-overview-value">{nextRunTime}</div>
+              {nextRunTimes}
             </li>
           </ul>
         </div>

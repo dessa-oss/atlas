@@ -175,6 +175,13 @@
               .monitor-overview-value {
                 color: #828282;
                 font-weight: 100;
+                vertical-align: top;
+
+                .monitor-overview-runtime {
+                  display: block;
+                  color: #828282;
+                  width: 100%;
+                }
               }
 
               .monitor-overview-key {
