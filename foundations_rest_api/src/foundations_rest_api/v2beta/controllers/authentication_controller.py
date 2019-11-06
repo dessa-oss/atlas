@@ -32,7 +32,9 @@ class AuthenticationController(Resource):
     def _login(self):
         code = request.args.get("code", None)
         if code:
-            return redirect('http://localhost:3000/', 302, self.client.token_using_auth_code(code=code))
+            token_response = self.client.token_using_auth_code(code=code)
+            print(token_response)
+            return redirect('http://localhost:3000/', 302, token_response)
         
         return redirect(self.client.authentication_url())
 
