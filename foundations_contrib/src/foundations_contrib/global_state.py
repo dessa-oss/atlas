@@ -31,6 +31,9 @@ message_router = MessageRouter()
 redis_connection = LazyRedis(RedisConnector(
     config_manager, redis.Redis.from_url, os.environ))
 
+def user_token():
+    return "test-token"
+
 def push_state():
     config_manager.push_config()
     _clear_state()
