@@ -4,9 +4,6 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 06 2018
 """
-import os.path
-import subprocess as sp
-import webbrowser
 
 from foundations_rest_api.utils.api_resource import api_resource
 from foundations_core_rest_api_components.response import Response
@@ -27,4 +24,3 @@ class UserInfoController:
         token = get_token_from_header()
         info = self.client.user_info(token)
         return Response("UserInfo", LazyResult(lambda: info))
-

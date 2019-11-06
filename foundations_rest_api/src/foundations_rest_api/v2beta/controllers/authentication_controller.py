@@ -29,7 +29,7 @@ class AuthenticationController:
         if code:
             token = self.client.token_using_auth_code(code=code)
             return Response("Authentication", LazyResult(lambda: token))
-        else:
-            # TODO: Fix our custom Response class to handle redirects.
-            self.client.browser_login()
-            return Response("Authentication", LazyResult(lambda: ""))
+        
+        # TODO: Fix our custom Response class to handle redirects.
+        self.client.browser_login()
+        return Response("Authentication", LazyResult(lambda: ""))
