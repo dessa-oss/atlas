@@ -3,7 +3,7 @@
 # Proprietary and confidential
 # Written by Susan Davis <s.davis@dessa.com>, 10 2019
 
-FROM node:10.16-alpine
+FROM node:12.13-alpine
 
 RUN apk add --no-cache gettext libintl nginx openssl && \
     mkdir /run/nginx/ && \
