@@ -9,7 +9,6 @@ from foundations_spec import *
 
 from foundations_orbit import DataContract
 
-@quarantine
 class TestDataValidation(Spec):
 
     @let
