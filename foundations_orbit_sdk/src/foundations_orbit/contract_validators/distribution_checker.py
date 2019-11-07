@@ -9,9 +9,29 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import numpy as np
 class DistributionChecker(object):   
     def __init__(self, reference_column_names, reference_column_types, categorical_attributes):
-        from foundations_orbit.contract_validators.checker import Checker
-        self._categorical_attributes = categorical_attributes
 
+        self._initialize_default_options()
+
+        self._categorical_attributes = categorical_attributes
+        self._reference_column_names = reference_column_names
+        self._reference_column_types = reference_column_types
+
+        self._bin_stats = {}
+        self._allowed_types = ['int', 'float', 'str', 'bool', 'datetime']
+
+        self._initialize_exclusions()
+
+        self._exclude_non_categorical_strings()
+
+    def _initialize_exclusions(self):
+        from foundations_orbit.contract_validators.checker import Checker
+
+        self._column_names_to_exclude = set()
+        self._invalid_attributes = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
+        self.temp_attributes_to_exclude = []
+        self._attributes_to_exclude_permanently = []
+
+    def _initialize_default_options(self):
         self._distribution_options = {
             'distance_metric': 'l_infinity',
             'default_threshold': 0.1,
@@ -20,19 +40,9 @@ class DistributionChecker(object):
             'max_bins': 50
         }
 
-        self._bin_stats = {}
-        self._reference_column_names = reference_column_names
-        self._reference_column_types = reference_column_types
-
-        self._column_names_to_exclude = set()
-
-        self._allowed_types = ['int', 'float', 'str', 'bool', 'datetime']
-        self._invalid_attributes = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
-        self.temp_attributes_to_exclude = []
-        self._attributes_to_exclude_permanently = []
-
-        for column in reference_column_names:
-            non_categorical_string = not categorical_attributes[column] and 'str' in reference_column_types[column]
+    def _exclude_non_categorical_strings(self):
+        for column in self._reference_column_names:
+            non_categorical_string = not self._categorical_attributes[column] and 'str' in self._reference_column_types[column]
             if non_categorical_string:
                 self._attributes_to_exclude_permanently.append(column)
 
