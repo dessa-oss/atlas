@@ -9,9 +9,6 @@ ARG main_file
 
 ENV SERVER_NAME=localhost
 
-RUN mkdir -p /var/foundations ~/.ssh
-WORKDIR /var/foundations
-
 RUN apk add --update --no-cache \ 
     musl \
     linux-headers \
@@ -22,9 +19,14 @@ RUN apk add --update --no-cache \
     gcc \
     g++ \
     openblas-dev \
+    cython \
+    && export CFLAGS="-Os -g0 -Wl,--strip-all" \
     && pip install -U pip setuptools wheel \
+    && pip install --global-option=build_ext --compile pandas==0.23.3\
     && rm -rf ~/.cache
 
+RUN mkdir -p /var/foundations ~/.ssh
+WORKDIR /var/foundations
 COPY ./tmp/pip_wheels /var/foundations/
 
 RUN find -iname "foundations_internal-*.whl" | xargs pip install \
@@ -32,9 +34,8 @@ RUN find -iname "foundations_internal-*.whl" | xargs pip install \
     && find -iname "foundations_contrib-*.whl" | xargs pip install \
     && find -iname "dessa_foundations-*.whl" | xargs pip install \
     && find -iname "foundations_local_docker_scheduler_plugin-*.whl" | xargs pip install \
-    && find -iname "foundations_core_rest_api_components-*.whl" | xargs pip install
-
-RUN find -iname "foundations_orbit*.whl" | xargs pip install \
+    && find -iname "foundations_core_rest_api_components-*.whl" | xargs pip install \
+    && find -iname "foundations_orbit-*.whl" | xargs pip install \
     && find -iname "foundations_orbit_rest_api-*.whl" | xargs pip install \
     && echo "Completed foundations package installation"
 

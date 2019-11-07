@@ -1,9 +1,7 @@
 import React from "react";
-import Flatpickr from "react-flatpickr";
 import PropTypes from "prop-types";
 import { Modal, ModalBody } from "reactstrap";
-import moment from "moment";
-import { post, postMaster } from "../../../actions/BaseActions";
+import { postMaster } from "../../../actions/BaseActions";
 
 const NewModelRecalibrationModal = props => {
   const [startDate, setStartDate] = React.useState("");
@@ -42,18 +40,15 @@ const NewModelRecalibrationModal = props => {
   const [updated, setUpdated] = React.useState(false);
 
   const clickSchedule = () => {
-    let value = !scheduleMessageVisible;
-    setScheduleMessageVisible(value);
+    setScheduleMessageVisible(!scheduleMessageVisible);
   };
 
   const clickSwap = () => {
-    let value = !swapMessageVisible;
-    setSwapMessageVisible(value);
+    setSwapMessageVisible(!swapMessageVisible);
   };
 
   const clickTriggered = () => {
-    let value = !triggeredMessageVisible;
-    setTriggeredMessageVisible(value);
+    setTriggeredMessageVisible(!triggeredMessageVisible);
   };
 
   const onChangeStartDate = e => {
@@ -119,7 +114,7 @@ const NewModelRecalibrationModal = props => {
   };
 
   const onClickRemoveParameter = () => {
-    let newParameters = [];
+    const newParameters = [];
     parameters.forEach((element, i) => {
       if (i !== parameters.length - 1) {
         newParameters.push(element);
@@ -153,7 +148,7 @@ const NewModelRecalibrationModal = props => {
       setError("Please fill the form to run the recalibration");
       setMissingFieldsVisible(true);
     } else {
-      let body = {
+      const body = {
         "model-name": modelName
       };
 
@@ -169,7 +164,7 @@ const NewModelRecalibrationModal = props => {
           props.onClose();
           props.reload();
         })
-        .catch(err => {
+        .catch(() => {
           setRecalibrationLoading(false);
           setMissingFieldsVisible(false);
         });

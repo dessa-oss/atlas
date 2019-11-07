@@ -2,11 +2,11 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 import Flatpickr from "react-flatpickr";
 import Select from "react-select";
-import { getFromApiary, putApiary } from "../../../actions/BaseActions";
+import { getFromApiary } from "../../../actions/BaseActions";
 import PropTypes from "prop-types";
 
 const Schedule = props => {
-  const [scheduleData, setScheduleData] = React.useState({
+  const [scheduleData] = React.useState({
     start_datetime: new Date().toString(),
     end_datetime: new Date("2025-01-02").toString(),
     frequency: "Monthly"

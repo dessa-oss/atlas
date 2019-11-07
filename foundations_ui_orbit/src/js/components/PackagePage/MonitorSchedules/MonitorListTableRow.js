@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import CommonActions from "../../../actions/CommonActions";
-
 
 class MonitorListTableRow extends Component {
   constructor(props) {

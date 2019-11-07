@@ -243,9 +243,6 @@ class TestDataContract(Spec):
             DataContract(self.contract_name, df=self.empty_dataframe)
         except TypeError as ex:
             raise AssertionError('data contract class takes contract name as argument') from ex
-
-    def test_data_contract_has_options_with_default_max_bins_50(self):
-        self._test_data_contract_has_default_option('max_bins', 50)
     
     def test_data_contract_has_options_with_default_check_min_max_True(self):
         self._test_data_contract_has_default_option('check_min_max', True)
@@ -253,27 +250,9 @@ class TestDataContract(Spec):
     def test_data_contract_has_options_with_default_check_row_count_True(self):
         self._test_data_contract_has_default_option('check_row_count', True)
 
-    def test_data_contract_has_options_with_default_special_values_numpy_nan(self):
-        import numpy
-        self._test_data_contract_has_default_option('special_values', [numpy.nan])
 
     def test_data_contract_has_options_with_default_check_distribution_True(self):
         self._test_data_contract_has_default_option('check_distribution', True)
-
-    def test_data_contract_has_distribution_option_distance_metric_with_default_value_l_infinity(self):
-        self._test_distribution_check_has_default_option('distance_metric', 'l_infinity')
-
-    def test_data_contract_has_distribution_option_default_threshold_0_1(self):
-        self._test_distribution_check_has_default_option('default_threshold', 0.1)
-
-    def test_data_contract_has_distribution_option_default_cols_to_include(self):
-        self._test_distribution_check_has_default_option('cols_to_include', None)
-
-    def test_data_contract_has_distribution_option_default_cols_to_ignore(self):
-        self._test_distribution_check_has_default_option('cols_to_ignore', None)
-
-    def test_data_contract_has_distribution_option_default_custom_thresholds(self):
-        self._test_distribution_check_has_default_option('custom_thresholds', {})
 
     def test_data_contract_can_save_to_file(self):
         import pickle
@@ -399,7 +378,7 @@ class TestDataContract(Spec):
 
         self.patch('foundations_orbit.contract_validators.special_values_checker.SpecialValuesChecker')
         mock_distribution_checker_class = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker', ConditionalReturn())
-        mock_distribution_checker_class.return_when(mock_distribution_checker, contract.options.distribution, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types, self.two_column_dataframe_categories)
+        mock_distribution_checker_class.return_when(mock_distribution_checker, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types, self.two_column_dataframe_categories)
 
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         
@@ -436,6 +415,7 @@ class TestDataContract(Spec):
 
     def test_data_contract_validation_report_has_metadata_for_reference_and_current_dataframe(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        contract.options.check_special_values = False
         report = contract.validate(self.two_column_dataframe_different_types)
 
         expected_metadata = {
@@ -483,12 +463,19 @@ class TestDataContract(Spec):
                         'pct_in_current_data': 0.0,
                         'pct_in_reference_data': 0.0,
                         'validation_outcome': 'healthy',
+                        'value': 'nan',
+                    },{
+                        'attribute_name': f'{self.column_name_2}',
+                        'difference_in_pct': 0.0,
+                        'pct_in_current_data': 0.0,
+                        'pct_in_reference_data': 0.0,
+                        'validation_outcome': 'healthy',
                         'value': 'nan'
                     }
                 ],
                 'summary': {
                     'critical': 0,
-                    'healthy': 1,
+                    'healthy': 2,
                     'warning': 0
                 }
             },
@@ -553,6 +540,7 @@ class TestDataContract(Spec):
             }
         }
 
+
         key = f'projects:{self.project_name}:monitors:{self.model_name}:validation:{self.contract_name}'
         serialized_report = self._redis.hget(key, inference_period)
         validation_counter = self._redis.get(f'{key}:counter')
@@ -566,6 +554,9 @@ class TestDataContract(Spec):
         del deserialized_report['user']
         self.assertIn('job_id', deserialized_report)
         del deserialized_report['job_id']
+
+        expected_output['data_quality']['details_by_attribute'] = sorted(expected_output['data_quality']['details_by_attribute'], key=lambda data: data['attribute_name'])
+        deserialized_report['data_quality']['details_by_attribute'] = sorted(deserialized_report['data_quality']['details_by_attribute'], key=lambda data: data['attribute_name'])
 
         self.assertEqual(expected_output, deserialized_report)
 
@@ -702,6 +693,7 @@ class TestDataContract(Spec):
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_different_types(self):
         inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        contract.options.check_special_values = False
         report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
         dist_check_results = report['dist_check_results']
         import numpy as np
@@ -970,10 +962,6 @@ class TestDataContract(Spec):
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name, df=self.empty_dataframe)
         self.assertEqual(default_value, getattr(contract.options, option_name))
-
-    def _test_distribution_check_has_default_option(self, option_name, default_value):
-        contract = DataContract(self.contract_name, df=self.empty_dataframe)
-        self.assertEqual(default_value, contract.options.distribution[option_name])
 
     def _contract_from_dataframe_for_row_checking(self, dataframe):
         contract = DataContract(self.contract_name, df=dataframe)

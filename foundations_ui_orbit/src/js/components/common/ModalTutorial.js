@@ -26,7 +26,7 @@ class ModalTutorial extends React.Component {
 
     if (imageIndex < 5) {
       this.setState(prevState => {
-        let value = prevState.imageIndex + 1;
+        const value = prevState.imageIndex + 1;
         return {
           ...prevState,
           imageIndex: value
@@ -40,7 +40,7 @@ class ModalTutorial extends React.Component {
 
     if (imageIndex > 1) {
       this.setState(prevState => {
-        let value = prevState.imageIndex - 1;
+        const value = prevState.imageIndex - 1;
         return {
           ...prevState,
           imageIndex: value

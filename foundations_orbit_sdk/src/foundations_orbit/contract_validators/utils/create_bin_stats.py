@@ -9,7 +9,7 @@ import numpy as np
 from foundations_orbit.contract_validators.prototype.utils import spread_counts_over_identical_edges
 
 
-def create_bin_stats(special_values, max_bins, col_values):
+def create_bin_stats(max_bins, col_values):
     bin_dicts = []
     n_vals = len(col_values)
     if n_vals < 1:
@@ -20,17 +20,6 @@ def create_bin_stats(special_values, max_bins, col_values):
 
     if max_bins < 1:
         raise ValueError('Invalid Max Bin: Cannot create bin stats with bins less than 1.')
-    # for every special value, make a bin for it
-    for sv in special_values:
-        if sv is np.nan:
-            sv_count = col_values.isna().sum()
-        else:
-            sv_count = len(col_values[col_values == sv])
-
-        sv_dict = {'value': sv, "percentage": sv_count/n_vals}
-        # drop current special value
-        col_values = col_values[col_values != sv]
-        bin_dicts.append(sv_dict)
 
     if len(col_values) > 0:
         # make bins for all non-special values
@@ -57,22 +46,12 @@ def create_bin_stats(special_values, max_bins, col_values):
     return bin_dicts
 
 
-def create_bin_stats_categorical(special_values, col_values, min_category_threshold=0.01):
+def create_bin_stats_categorical(col_values, min_category_threshold=0.01):
     bin_dicts = []
     if len(col_values) == 0:
         return bin_dicts
 
     n_vals = len(col_values)
-
-    for special_value in special_values:
-        if special_value is np.nan:
-            sv_count = col_values.isna().sum()
-        else:
-            sv_count = len(col_values[col_values == special_value])
-
-        sv_dict = {'value': special_value, "percentage": sv_count/n_vals}
-        col_values = col_values[col_values != special_value]
-        bin_dicts.append(sv_dict)
 
     col_values.dropna(inplace=True)
 

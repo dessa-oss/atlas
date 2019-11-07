@@ -53,7 +53,7 @@ const getFromApiary = url => {
     });
 };
 
-const getMaster = (url, body) => {
+const getMaster = url => {
   const fullURL = baseMasterURL.concat(url);
   return fetch(fullURL).then(res => {
     return res.json();
