@@ -20,7 +20,7 @@ class AuthenticationClient:
         config = self._get_config_from_file(conf) if isinstance(conf, str) else conf
         self._redirect_url = redirect_url
         self._client = keycloak_client(config)
-        self.issuer = self._client.well_know()['issuer']
+        self.issuer = self._client.well_know()["issuer"]
         self.json_web_key_set = self._client.certs()
 
     def authentication_url(self) -> str:
@@ -41,9 +41,10 @@ class AuthenticationClient:
         webbrowser.open(self.authentication_url())
 
     def logout(self, refresh_token: str) -> None:
-        """[summary]
+        """Logout the user.
         
-        :param refresh_token: [description]
+        :param refresh_token: The refresh token provided by the last authentication
+            payload.
         :type refresh_token: str
         """
 
@@ -71,13 +72,14 @@ class AuthenticationClient:
         return self._client.token(username=username, password=password)
 
     def user_info(self, token: str) -> dict:
-        """[summary]
+        """Obtain the user info in the auth server associated with some token.
 
-        :param token: [description]
+        :param token: The identity token.
         :type token: str
-        :return: [description]
+        :return: JSON formatted payload containing user info.
         :rtype: dict
         """
+
         return self._client.userinfo(token)
 
     @staticmethod
@@ -99,5 +101,6 @@ def keycloak_client(config: dict) -> Type[KeycloakOpenID]:
 
 # Here for development purposes
 
-from foundations_contrib.authentication.configs import ATLAS
-client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth")
+# from foundations_contrib.authentication.configs import ATLAS
+
+# client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth")
