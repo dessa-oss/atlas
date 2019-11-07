@@ -8,11 +8,18 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import numpy as np
 class DistributionChecker(object):   
-    def __init__(self, distribution_options, reference_column_names, reference_column_types, categorical_attributes):
+    def __init__(self, reference_column_names, reference_column_types, categorical_attributes):
         from foundations_orbit.contract_validators.checker import Checker
         self._categorical_attributes = categorical_attributes
-        self._distribution_options = distribution_options.copy()
-        self._distribution_options.update({'max_bins': 50})
+
+        self._distribution_options = {
+            'distance_metric': 'l_infinity',
+            'default_threshold': 0.1,
+            'custom_thresholds': {},
+            'custom_methods': {},
+            'max_bins': 50
+        }
+
         self._bin_stats = {}
         self._reference_column_names = reference_column_names
         self._reference_column_types = reference_column_types
@@ -68,9 +75,6 @@ class DistributionChecker(object):
     def validate(self, dataframe_to_validate):
         if dataframe_to_validate is None or len(dataframe_to_validate) == 0:
             raise ValueError('Invalid Dataframe provided')
-        
-        if self._distribution_options['cols_to_include'] is not None and self._distribution_options['cols_to_ignore'] is not None:
-            raise ValueError('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes')
         
         self.temp_exclude(self._attributes_to_exclude)
         ##### PROTOTYPE CODE - rebuild distribution checker using TDD or Black-box based approach asap

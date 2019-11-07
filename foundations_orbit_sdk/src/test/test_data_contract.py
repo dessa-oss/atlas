@@ -399,7 +399,7 @@ class TestDataContract(Spec):
 
         self.patch('foundations_orbit.contract_validators.special_values_checker.SpecialValuesChecker')
         mock_distribution_checker_class = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker', ConditionalReturn())
-        mock_distribution_checker_class.return_when(mock_distribution_checker, contract.options.distribution, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types, self.two_column_dataframe_categories)
+        mock_distribution_checker_class.return_when(mock_distribution_checker, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types, self.two_column_dataframe_categories)
 
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         

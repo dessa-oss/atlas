@@ -50,14 +50,6 @@ def distribution_check(distribution_check_config, column_names, bin_stats, curre
     # get the list of columns to check
     dist_check_config = distribution_check_config
     cols_to_check = set(current_df.columns).intersection(set(column_names))
-    assert nand(dist_check_config['cols_to_include'] is not None, dist_check_config['cols_to_ignore'] is not None)
-    
-    if dist_check_config['cols_to_include'] is not None:
-    # only one of cols_to_check and cols_to_ignore can be non-None
-        cols_to_check = set(dist_check_config['cols_to_include']).intersection(cols_to_check)
-    elif dist_check_config['cols_to_ignore'] is not None:
-        cols_to_check = cols_to_check - set(dist_check_config['cols_to_ignore'])
-
     # apply check to each col in cols_to_check
     cols_to_check = [col for col in current_df.columns if col in cols_to_check] # use same order as current_df
 
