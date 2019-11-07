@@ -7,32 +7,21 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class DataContractOptions(object):
     
-    def __init__(self, max_bins=None, check_row_count=None, check_special_values=None, special_values=None, check_distribution=None, distribution=None, check_min_max=None):
-        self.max_bins = max_bins
+    def __init__(self, check_row_count=None, check_special_values=None, check_distribution=None, check_min_max=None):
         self.check_row_count = check_row_count
-        self.special_values = special_values
         self.check_special_values = check_special_values
         self.check_distribution = check_distribution
-        self.distribution = distribution
         self.check_min_max = check_min_max
 
     def __eq__(self, other):
         return isinstance(other, DataContractOptions) \
-            and self._special_values_equal(other) \
             and self._other_attributes_equal(other)
 
     def _other_attributes_equal(self, other):
-        return self.max_bins == other.max_bins \
-            and self.check_row_count == other.check_row_count \
-            and self.check_distribution == other.check_distribution \
+        return self.check_row_count == other.check_row_count \
             and self.check_special_values == other.check_special_values \
-            and self.distribution == other.distribution
-
-    def _special_values_equal(self, other):
-        if self.special_values is None:
-            return other.special_values is None
-
-        return len(self.special_values) == len(other.special_values) and _zipped_elements_equal(self.special_values, other.special_values)
+            and self.check_distribution == other.check_distribution \
+            and self.check_min_max == other.check_min_max
 
 def _equality_check(value, other_value):
     import math

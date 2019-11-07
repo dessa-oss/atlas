@@ -46,24 +46,11 @@ class DataContract(object):
         import numpy
         from foundations_orbit.data_contract_options import DataContractOptions
 
-        default_distribution = {
-            'distance_metric': 'l_infinity',
-            'default_threshold': 0.1,
-            'cols_to_include': None,
-            'cols_to_ignore': None,
-            'custom_thresholds': {},
-            'custom_methods': {},
-            'special_value_thresholds': {}
-        }
-
         return DataContractOptions(
-            max_bins=50,
             check_row_count=True,
-            special_values=[numpy.nan],
             check_distribution=True,
             check_special_values=True,
             check_min_max=True,
-            distribution=default_distribution
         )
 
     def _initialize_checkers(self):

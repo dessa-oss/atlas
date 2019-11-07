@@ -185,7 +185,6 @@ class TestSpecialValuesChecker(Spec):
 
         dataframe = pandas.DataFrame(data)
         special_values = [-1]
-        self.contract_options.special_values = special_values
 
         expected_check_results = {
             self.column_name:{

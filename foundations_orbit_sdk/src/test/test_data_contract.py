@@ -243,9 +243,6 @@ class TestDataContract(Spec):
             DataContract(self.contract_name, df=self.empty_dataframe)
         except TypeError as ex:
             raise AssertionError('data contract class takes contract name as argument') from ex
-
-    def test_data_contract_has_options_with_default_max_bins_50(self):
-        self._test_data_contract_has_default_option('max_bins', 50)
     
     def test_data_contract_has_options_with_default_check_min_max_True(self):
         self._test_data_contract_has_default_option('check_min_max', True)
@@ -253,27 +250,9 @@ class TestDataContract(Spec):
     def test_data_contract_has_options_with_default_check_row_count_True(self):
         self._test_data_contract_has_default_option('check_row_count', True)
 
-    def test_data_contract_has_options_with_default_special_values_numpy_nan(self):
-        import numpy
-        self._test_data_contract_has_default_option('special_values', [numpy.nan])
 
     def test_data_contract_has_options_with_default_check_distribution_True(self):
         self._test_data_contract_has_default_option('check_distribution', True)
-
-    def test_data_contract_has_distribution_option_distance_metric_with_default_value_l_infinity(self):
-        self._test_distribution_check_has_default_option('distance_metric', 'l_infinity')
-
-    def test_data_contract_has_distribution_option_default_threshold_0_1(self):
-        self._test_distribution_check_has_default_option('default_threshold', 0.1)
-
-    def test_data_contract_has_distribution_option_default_cols_to_include(self):
-        self._test_distribution_check_has_default_option('cols_to_include', None)
-
-    def test_data_contract_has_distribution_option_default_cols_to_ignore(self):
-        self._test_distribution_check_has_default_option('cols_to_ignore', None)
-
-    def test_data_contract_has_distribution_option_default_custom_thresholds(self):
-        self._test_distribution_check_has_default_option('custom_thresholds', {})
 
     def test_data_contract_can_save_to_file(self):
         import pickle
@@ -983,10 +962,6 @@ class TestDataContract(Spec):
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name, df=self.empty_dataframe)
         self.assertEqual(default_value, getattr(contract.options, option_name))
-
-    def _test_distribution_check_has_default_option(self, option_name, default_value):
-        contract = DataContract(self.contract_name, df=self.empty_dataframe)
-        self.assertEqual(default_value, contract.options.distribution[option_name])
 
     def _contract_from_dataframe_for_row_checking(self, dataframe):
         contract = DataContract(self.contract_name, df=dataframe)
