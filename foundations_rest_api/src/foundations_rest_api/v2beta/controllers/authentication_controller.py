@@ -51,7 +51,7 @@ class AuthenticationController(Resource):
             return Response(
                 response=token,
                 status=303,
-                headers={"Location": "/projects"},
+                headers={"Location": "http://localhost:3000/projects"},
             )
 
         return redirect(self.client.authentication_url())
