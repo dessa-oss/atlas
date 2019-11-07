@@ -46,8 +46,10 @@ class AuthenticationController(Resource):
         """
         code = request.args.get("code", None)
         if code:
+            token = self.client.token_using_auth_code(code=code)
+            print(token)
             return Response(
-                response=self.client.token_using_auth_code(code=code),
+                response=token,
                 status=303,
                 headers={"Location": "/projects"},
             )
