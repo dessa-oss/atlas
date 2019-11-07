@@ -39,7 +39,6 @@ class SpecialValuesChecker(object):
         dataframe_to_validate_special_value_percentages = self._create_special_value_percentages_for_dataframe(dataframe_to_validate)
         results = {}
 
-        # columns_to_check = set(self._special_value_thresholds.keys()) - set()
         columns_to_check = set(self._special_value_thresholds.keys()).intersection(set(self._config_columns))
 
         for column in columns_to_check:
@@ -56,11 +55,17 @@ class SpecialValuesChecker(object):
         return column_results
 
     def _special_values_check_for_special_value_in_column(self, dataframe_to_validate_special_value_percentages, column, special_value, reference_threshold):
-        import math
+        import numpy
 
         special_value_results = {}
 
-        reference_percentage = self._special_value_percentages[column][special_value]
+        if numpy.isnan(special_value):
+            for key, value in self._special_value_percentages[column].items():
+                if numpy.isnan(key):
+                    reference_percentage = value
+        else:
+            reference_percentage = self._special_value_percentages[column][special_value]
+
         current_percentage = dataframe_to_validate_special_value_percentages[column][special_value]
         absolute_difference = abs(current_percentage - reference_percentage)
 

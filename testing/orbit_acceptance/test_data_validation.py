@@ -434,6 +434,9 @@ class TestDataValidation(Spec):
         self.assertIn('job_id', api_validation_report)
         del api_validation_report['job_id']
 
+        expected_validation_report['data_quality']['details_by_attribute'] = sorted(expected_validation_report['data_quality']['details_by_attribute'], key=lambda data: data['attribute_name'])
+        api_validation_report['data_quality']['details_by_attribute'] = sorted(api_validation_report['data_quality']['details_by_attribute'], key=lambda data: data['attribute_name'])
+
         self.assertEqual(expected_validation_report, api_validation_report)
 
     def test_dataframe_with_nans_for_configuring_and_excluding_method_on_special_values_test(self):
