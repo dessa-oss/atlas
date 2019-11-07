@@ -47,6 +47,7 @@ def distribution_check(distribution_check_config, column_names, bin_stats, curre
     :return:
     '''
     dist_check_results = {}
+    
     # get the list of columns to check
     dist_check_config = distribution_check_config
     cols_to_check = set(current_df.columns).intersection(set(column_names))

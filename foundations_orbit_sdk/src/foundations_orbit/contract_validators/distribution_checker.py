@@ -23,13 +23,18 @@ class DistributionChecker(object):
         self._bin_stats = {}
         self._reference_column_names = reference_column_names
         self._reference_column_types = reference_column_types
+
+        self._column_names_to_exclude = set()
+
         self._allowed_types = ['int', 'float', 'str', 'bool', 'datetime']
         self._invalid_attributes = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
         self.temp_attributes_to_exclude = []
-        self._attributes_to_exclude = []
+        self._attributes_to_exclude_permanently = []
+
         for column in reference_column_names:
-            if not categorical_attributes[column] and 'str' in reference_column_types[column]:
-                self._attributes_to_exclude.append(column)
+            non_categorical_string = not categorical_attributes[column] and 'str' in reference_column_types[column]
+            if non_categorical_string:
+                self._attributes_to_exclude_permanently.append(column)
 
     def __str__(self):
         import json
@@ -47,11 +52,13 @@ class DistributionChecker(object):
     def configure(self, attributes, threshold=None, method=None):
         error_dictionary = {}
         for column in attributes:
-            if column in self._invalid_attributes:
-                error_dictionary[column] = self._reference_column_types[column]
-
+            if column not in self._reference_column_names:
+                error_dictionary[column] = 'Invalid Column Name: Does not exist in reference'
+            elif column in self._invalid_attributes:
+                error_dictionary[column] = f'Invalid Type: {self._reference_column_types[column]}'
+        
         if error_dictionary != {}:
-            raise ValueError(f'The following columns have invalid types: {error_dictionary}')
+            raise ValueError(f'The following columns have errors: {error_dictionary}')
 
         if threshold is not None:
             for column_name in attributes:
@@ -60,31 +67,35 @@ class DistributionChecker(object):
             for column_name in attributes:
                 self._distribution_options['custom_methods'][column_name] = method
 
-        self._reference_column_names = set(self._reference_column_names).union(set(attributes))
+        self._column_names_to_exclude = self._column_names_to_exclude.difference(set(attributes))
+        
 
     def exclude(self, attributes):
         if attributes == 'all':
-            self._reference_column_names = set()
+            self._column_names_to_exclude = set(self._reference_column_names)
         else:
-            self._reference_column_names = set(self._reference_column_names) - set(attributes)
+            self._column_names_to_exclude = self._column_names_to_exclude.union(set(attributes))
 
     def temp_exclude(self, attributes):
         self.temp_attributes_to_exclude = attributes
         self.exclude(attributes=attributes)
 
     def validate(self, dataframe_to_validate):
+        from foundations_orbit.contract_validators.prototype import distribution_check
+        
         if dataframe_to_validate is None or len(dataframe_to_validate) == 0:
             raise ValueError('Invalid Dataframe provided')
         
-        self.temp_exclude(self._attributes_to_exclude)
-        ##### PROTOTYPE CODE - rebuild distribution checker using TDD or Black-box based approach asap
-        from foundations_orbit.contract_validators.prototype import distribution_check
-        test_data = distribution_check(self._distribution_options, self._reference_column_names, self._bin_stats, dataframe_to_validate, categorical_attributes = self._categorical_attributes)
+        self.temp_exclude(self._attributes_to_exclude_permanently)
+
+        column_names_to_validate = set(self._reference_column_names) - set(self._column_names_to_exclude)
+
+        test_data = distribution_check(self._distribution_options, column_names_to_validate , self._bin_stats, dataframe_to_validate, categorical_attributes = self._categorical_attributes)
         
         self._reference_column_names = set(self._reference_column_names).union(set(self.temp_attributes_to_exclude))
         self.temp_attributes_to_exclude = []
         
-        for attribute in self._attributes_to_exclude:
+        for attribute in self._attributes_to_exclude_permanently:
             test_data[attribute] = {"binned_passed": False, 'message': "non-categorical strings are not supported"}
         return test_data
 
