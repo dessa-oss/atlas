@@ -178,7 +178,6 @@ class TestSpecialValuesChecker(Spec):
         self.assertIsNotNone(getattr(checker, "exclude", None))
 
     def test_special_values_check_for_mulitple_column_df_against_itself_returns_all_passed_using_not_previously_defined_special_value(self):
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
         data = {
             self.column_name: [5, 10, 15, -1],
             self.column_name_2: [6, 32, 40, -1]
@@ -187,11 +186,6 @@ class TestSpecialValuesChecker(Spec):
         dataframe = pandas.DataFrame(data)
         special_values = [-1]
         self.contract_options.special_values = special_values
-
-        bin_stats = {
-            self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name])),
-            self.column_name_2: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name_2]))
-        }
 
         expected_check_results = {
             self.column_name:{
@@ -226,16 +220,11 @@ class TestSpecialValuesChecker(Spec):
         }
 
         dataframe = pandas.DataFrame(data)
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
 
         special_values = [special_character]
 
-        bin_stats = {
-            self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name])),
-            self.column_name_2: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name_2]))
-        }
         return SpecialValuesChecker([self.column_name, self.column_name_2], {self.column_name: str(pandas.Series(data[self.column_name]).dtype),
-            self.column_name_2: str(pandas.Series(data[self.column_name_2]).dtype)}, self.reference_categorical_attributes_two_columns), dataframe, bin_stats
+            self.column_name_2: str(pandas.Series(data[self.column_name_2]).dtype)}, self.reference_categorical_attributes_two_columns), dataframe, None
 
     def create_special_values_checker_and_dataframe_with_two_special_characters(self):
         data = {
@@ -244,16 +233,11 @@ class TestSpecialValuesChecker(Spec):
         }
 
         dataframe = pandas.DataFrame(data)
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
 
         special_values = [numpy.nan, numpy.inf]
 
-        bin_stats = {
-            self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name])),
-            self.column_name_2: create_bin_stats([numpy.nan], 10, pandas.Series(data[self.column_name_2]))
-        }
         return SpecialValuesChecker([self.column_name, self.column_name_2], {self.column_name: str(pandas.Series(data[self.column_name]).dtype),
-            self.column_name_2: str(pandas.Series(data[self.column_name_2]).dtype)}, self.reference_categorical_attributes_two_columns), dataframe, bin_stats
+            self.column_name_2: str(pandas.Series(data[self.column_name_2]).dtype)}, self.reference_categorical_attributes_two_columns), dataframe, None
     
     def test_special_values_checker_for_datetime_input_returns_expected_result(self):
         data = {
@@ -262,7 +246,6 @@ class TestSpecialValuesChecker(Spec):
         }
 
         dataframe = pandas.DataFrame(data)
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
 
         special_values = [numpy.nan]
 
@@ -302,14 +285,8 @@ class TestSpecialValuesChecker(Spec):
         }
 
         dataframe = pandas.DataFrame(data)
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
 
         special_values = [numpy.nan]
-
-        bin_stats = {
-            self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name])),
-            self.column_name_2: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name_2]))
-        }
 
         checker = SpecialValuesChecker([self.column_name, self.column_name_2], {self.column_name: 'bool',
          self.column_name_2: 'bool'}, self.reference_categorical_attributes_two_columns)
@@ -347,14 +324,8 @@ class TestSpecialValuesChecker(Spec):
         }
 
         dataframe = pandas.DataFrame(data)
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
 
         special_values = [numpy.nan]
-
-        bin_stats = {
-            self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name])),
-            self.column_name_2: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name_2]))
-        }
 
         checker = SpecialValuesChecker([self.column_name, self.column_name_2], {self.column_name: 'str',
          self.column_name_2: 'str'}, self.reference_categorical_attributes_two_columns)
@@ -611,16 +582,13 @@ class TestSpecialValuesChecker(Spec):
         self.assertEqual(expected_check_results, results)
 
     def test_single_column_with_two_special_characters_produce_two_special_value_results(self):
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
         special_values = [numpy.nan, -1]
         data = {
             self.column_name: [5, 10, 15, 7, 7, 6, 8, numpy.nan]
         }
 
         dataframe = pandas.DataFrame(data)
-        bin_stats = {
-            self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name]))
-        }
+        
         checker = SpecialValuesChecker([self.column_name, self.column_name_2], {self.column_name: 'float'}, self.reference_categorical_attributes_two_columns)
         checker.exclude(attributes='all')
         checker.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.1, -1: 0.1})

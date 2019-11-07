@@ -21,6 +21,8 @@ class DataContract(object):
         else:
             self._dataframe = df
 
+        self.bin_stats_calculated = False
+
         self._number_of_rows = len(self._dataframe)
         self._column_names, self._column_types = get_column_types(self._dataframe)
         self._bin_stats = {}
@@ -120,7 +122,7 @@ class DataContract(object):
 
     def save(self, monitor_package_directory):
         if not self._bin_stats:
-            self.calculate_and_set_bin_stats()
+            self.set_bin_stats()
 
         del self._dataframe
 
@@ -154,7 +156,7 @@ class DataContract(object):
         from foundations_orbit.utils.get_column_types import get_column_types
 
         if not self._bin_stats:
-            self.calculate_and_set_bin_stats()
+            self.set_bin_stats()
 
         project_name = os.environ.get('PROJECT_NAME', 'default')
         monitor_name = os.environ.get('MONITOR_NAME', os.path.basename(__file__))
@@ -248,24 +250,11 @@ class DataContract(object):
         import pickle
         return pickle.loads(serialized_contract)
 
-    def calculate_and_set_bin_stats(self):
-        self._calculate_bin_stats()
-
-        self.special_value_test.create_and_set_special_value_percentages(self._dataframe)
-        self.distribution_test.set_bin_stats(self._bin_stats)
-
-    def _calculate_bin_stats(self):
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats, create_bin_stats_categorical
-
-        for column_name in self._column_names:
-            if self.options.distribution['special_value_thresholds'].get(column_name):
-                special_values = list(self.options.distribution['special_value_thresholds'][column_name].keys())
-            else:
-                special_values = self.options.special_values
-            if self._categorical_attributes[column_name]:
-                self._bin_stats[column_name] = create_bin_stats_categorical(special_values, self._dataframe[column_name])
-            else:
-                self._bin_stats[column_name] = create_bin_stats(special_values, self.options.max_bins, self._dataframe[column_name])
+    def set_bin_stats(self):
+        if not self.bin_stats_calculated:
+            self.special_value_test.create_and_set_special_value_percentages(self._dataframe)
+            self.distribution_test.create_and_set_bin_stats(self._dataframe)
+            self.bin_stats_calculated = True
 
     def _modify_validation_report_with_schema_failures(self, validation_report, attributes_to_ignore):
         for test_name, test_dictionary in validation_report.items():

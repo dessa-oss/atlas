@@ -12,7 +12,8 @@ class DistributionChecker(object):
         from foundations_orbit.contract_validators.checker import Checker
         self._categorical_attributes = categorical_attributes
         self._distribution_options = distribution_options.copy()
-        self._bin_stats = None
+        self._distribution_options.update({'max_bins': 50})
+        self._bin_stats = {}
         self._reference_column_names = reference_column_names
         self._reference_column_types = reference_column_types
         self._allowed_types = ['int', 'float', 'str', 'bool', 'datetime']
@@ -83,5 +84,14 @@ class DistributionChecker(object):
             test_data[attribute] = {"binned_passed": False, 'message': "non-categorical strings are not supported"}
         return test_data
 
-    def set_bin_stats(self, bin_stats):
-        self._bin_stats = bin_stats
+    def create_and_set_bin_stats(self, reference_dataframe):
+        self._calculate_bin_stats(reference_dataframe)
+
+    def _calculate_bin_stats(self, reference_dataframe):
+        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats, create_bin_stats_categorical
+
+        for column_name in self._reference_column_names:
+            if self._categorical_attributes[column_name]:
+                self._bin_stats[column_name] = create_bin_stats_categorical(reference_dataframe[column_name])
+            else:
+                self._bin_stats[column_name] = create_bin_stats(self._distribution_options['max_bins'], reference_dataframe[column_name])
