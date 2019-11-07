@@ -23,7 +23,7 @@ class TestAuthenticationClient(Spec):
         )
         config = load_config(self.conf_file)
         self.auth_client = AuthenticationClient(config, self.redirect_url)
-        self.mock_auth_backend = self.auth_client.client
+        self.mock_auth_backend = self.auth_client._client
 
     def test_keycloak_client_uses_a_dict_to_create_a_keycloak_open_id_instance(self):
         self.mock_auth_backend_class = self.patch(

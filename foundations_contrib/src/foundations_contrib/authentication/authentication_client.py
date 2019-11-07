@@ -19,9 +19,9 @@ class AuthenticationClient:
 
         config = self._get_config_from_file(conf) if isinstance(conf, str) else conf
         self._redirect_url = redirect_url
-        self.client = keycloak_client(config)
-        self.issuer = self.client.well_know()['issuer']
-        self.json_web_key_set = self.client.certs()
+        self._client = keycloak_client(config)
+        self.issuer = self._client.well_know()['issuer']
+        self.json_web_key_set = self._client.certs()
 
     def authentication_url(self) -> str:
         """The URL of the authentication server that is used to authenticate.
@@ -30,7 +30,7 @@ class AuthenticationClient:
         :rtype: str
         """
 
-        return self.client.auth_url(self._redirect_url)
+        return self._client.auth_url(self._redirect_url)
 
     def browser_login(self) -> None:
         """Open a browser window to login.
@@ -47,7 +47,7 @@ class AuthenticationClient:
         :type refresh_token: str
         """
 
-        self.client.logout(refresh_token)
+        self._client.logout(refresh_token)
 
     def token_using_auth_code(self, code: str) -> dict:
         """Obtain a token using an authorization code from the auth server.
@@ -61,14 +61,14 @@ class AuthenticationClient:
         :rtype: dict
         """
 
-        return self.client.token(
+        return self._client.token(
             code=code,
             grant_type=["authorization_code"],
             redirect_uri=self._redirect_url,
         )
 
     def token_using_username_password(self, username: str, password: str) -> dict:
-        return self.client.token(username=username, password=password)
+        return self._client.token(username=username, password=password)
 
     def user_info(self, token: str) -> dict:
         """[summary]
@@ -78,7 +78,7 @@ class AuthenticationClient:
         :return: [description]
         :rtype: dict
         """
-        return self.client.userinfo(token)
+        return self._client.userinfo(token)
 
     @staticmethod
     def _get_config_from_file(fname: str) -> dict:
