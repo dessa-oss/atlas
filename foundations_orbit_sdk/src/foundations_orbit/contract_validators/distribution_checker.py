@@ -20,7 +20,6 @@ class DistributionChecker(object):
         self._allowed_types = ['int', 'float', 'str', 'bool', 'datetime']
 
         self._initialize_exclusions()
-
         self._exclude_non_categorical_strings()
 
     def _initialize_exclusions(self):
@@ -60,7 +59,15 @@ class DistributionChecker(object):
         return str(information)
 
     def configure(self, attributes, threshold=None, method=None):
+        self._check_configure_attributes(attributes)
+
+        self._configure_thresholds(attributes, threshold)
+        self._configure_methods(attributes, method)
+        self._column_names_to_exclude = self._column_names_to_exclude.difference(set(attributes))
+
+    def _check_configure_attributes(self, attributes):
         error_dictionary = {}
+
         for column in attributes:
             if column not in self._reference_column_names:
                 error_dictionary[column] = 'Invalid Column Name: Does not exist in reference'
@@ -70,15 +77,15 @@ class DistributionChecker(object):
         if error_dictionary != {}:
             raise ValueError(f'The following columns have errors: {error_dictionary}')
 
+    def _configure_thresholds(self, attributes, threshold):
         if threshold is not None:
             for column_name in attributes:
                 self._distribution_options['custom_thresholds'][column_name] = threshold
+
+    def _configure_methods(self, attributes, method):
         if method is not None:
             for column_name in attributes:
                 self._distribution_options['custom_methods'][column_name] = method
-
-        self._column_names_to_exclude = self._column_names_to_exclude.difference(set(attributes))
-        
 
     def exclude(self, attributes):
         if attributes == 'all':
