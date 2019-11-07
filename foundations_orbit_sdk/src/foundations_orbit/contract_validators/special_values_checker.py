@@ -26,8 +26,6 @@ class SpecialValuesChecker(object):
         return str(self._special_value_thresholds)
 
     def validate(self, dataframe_to_validate):
-        from foundations_orbit.contract_validators.prototype import distribution_and_special_values_check
-
         self._config_columns = set(self._config_columns).union(set(self.temp_attributes_to_exclude))
         self.temp_attributes_to_exclude = []
 

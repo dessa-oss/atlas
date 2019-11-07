@@ -32,7 +32,7 @@ def bin_current_values_categorical(column_values, ref_column_bin_stats):
     return current_category_percentages
 
 
-def distribution_and_special_values_check(distribution_check_config, column_names, bin_stats, current_df, categorical_attributes, is_special_value_check=False):
+def distribution_check(distribution_check_config, column_names, bin_stats, current_df, categorical_attributes, is_special_value_check=False):
     '''
         Expected format of dist_check_results
         {'col1': {'binned_passed': False,

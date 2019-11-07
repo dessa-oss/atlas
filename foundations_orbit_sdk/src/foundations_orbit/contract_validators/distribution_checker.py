@@ -74,8 +74,8 @@ class DistributionChecker(object):
         
         self.temp_exclude(self._attributes_to_exclude)
         ##### PROTOTYPE CODE - rebuild distribution checker using TDD or Black-box based approach asap
-        from foundations_orbit.contract_validators.prototype import distribution_and_special_values_check
-        test_data = distribution_and_special_values_check(self._distribution_options, self._reference_column_names, self._bin_stats, dataframe_to_validate, categorical_attributes = self._categorical_attributes)
+        from foundations_orbit.contract_validators.prototype import distribution_check
+        test_data = distribution_check(self._distribution_options, self._reference_column_names, self._bin_stats, dataframe_to_validate, categorical_attributes = self._categorical_attributes)
         
         self._reference_column_names = set(self._reference_column_names).union(set(self.temp_attributes_to_exclude))
         self.temp_attributes_to_exclude = []
