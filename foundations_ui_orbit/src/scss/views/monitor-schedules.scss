@@ -220,7 +220,7 @@
               cursor: pointer;
 
               &.disabled {
-                background-color: hsl(0, 63%, 60%);
+                background-color: hsl(0, 0%, 57%);
                 cursor: not-allowed;
               }
             }
@@ -228,7 +228,6 @@
 
           ul {
             li {
-              width: 370px;
               padding-top: 10px;
               margin-bottom: 10px;
               font-size: 14px;
@@ -242,12 +241,18 @@
                 width: 110px;
               }
               .monitor-overview-key {
-                padding-top: 10px;
+                display: flex;
+                vertical-align: top;
+                justify-content: center;
+                align-content: center;
+                flex-direction: column;
               }
               .monitor-overview-value {
                 display: inline-flex;
                 p {
                   margin-left: 15px;
+                  font-size: 14px;
+                  color: #828282;
                 }
                 input {
                   width: 100px;
@@ -269,16 +274,21 @@
                 }
                 .cal-picker {
                   height: 40px;
-                  weight: 100px;
                 }
               }
               div {
+                .flatpickr-input {
+                  margin-left: 15px;
+                }
+
                 .react-select {
                   display: block;
+                  width: 125px;
                 }
-                // display: inline-block;
+                .react-select-multi {
+                  width: 250px;
+                }
                 &:nth-child(1) {
-                  width: 120px;
                   font-weight: 900;
                   color: #828282;
                 }
@@ -294,6 +304,16 @@
                 font-weight: 900;
                 text-align: center;
                 padding: 21px;
+              }
+            }
+
+            .monitor-overview-schedule {
+              .monitor-overview-value {
+                margin-left: 15px;
+
+                p {
+                  margin-right: 15px;
+                }
               }
             }
           }
