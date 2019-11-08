@@ -62,10 +62,7 @@ class AuthenticationController(Resource):
 
     def _cli_login(self) -> Response:
         creds = get_creds_from_header()
-        print('CREDS ====> ', creds.encode())
         username, password = base64.b64decode(creds.encode()).decode().split(':')
-        print('USER ===> ',username)
-        print('PASS ====> ', password)
         return self.client.token_using_username_password(username, password)
 
 
