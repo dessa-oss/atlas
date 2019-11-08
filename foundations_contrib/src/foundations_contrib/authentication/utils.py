@@ -7,7 +7,7 @@ from typing import Dict
 from foundations_core_rest_api_components.exceptions import AuthError
 
 
-def get_token_from_header():
+def get_token_from_header() -> str:
     """Obtains the Access Token from the Authorization Header
     """
     auth = request.headers.get("Authorization", None)
@@ -46,7 +46,7 @@ def get_token_from_header():
     token = parts[1]
     return token
 
-def get_creds_from_header():
+def get_creds_from_header() -> str:
     auth = request.headers.get("Authorization", None)
     if not auth:
         raise AuthError(

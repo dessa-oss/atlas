@@ -148,10 +148,12 @@ class CommandLineInterface(object):
 
     def _login(self):
         import getpass
+        import requests
         username = input("Username: ")
         password = getpass.getpass(prompt="Passowrd: ", stream=False)
         print(f"{username}:{password}")
         print(self._arguments.host)
+        #TODO Make request
 
     def _print_configs(self, config_list_name, config_list):
         config_list = self._create_environment_list(config_list)
