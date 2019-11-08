@@ -3,7 +3,7 @@ dill==0.2.8.2
 google-api-python-client==1.7.3
 google-auth-httplib2==0.0.3
 google-cloud-storage==1.10.0
-PyYAML==3.13
+PyYAML==5.1.2
 pysftp==0.2.8
 paramiko==2.4.1
 freezegun==0.3.12
