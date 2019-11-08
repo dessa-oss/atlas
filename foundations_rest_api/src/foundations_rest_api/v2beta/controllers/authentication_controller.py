@@ -6,6 +6,7 @@ Written by Susan Davis <s.davis@dessa.com>, 06 2018
 """
 from flask import abort, redirect, request
 from flask_restful import Resource
+
 from werkzeug.wrappers import Response
 
 from foundations_contrib.authentication.authentication_client import (
@@ -56,6 +57,10 @@ class AuthenticationController(Resource):
 
         return redirect(self.client.authentication_url())
 
+    def _cli_login(self, username: str, password: str) -> Response:
+        return self.client.token_using_username_password(username, password)
+
+
     def _logout(self) -> Response:
         """Logout of Atlas/Orbit.
         
@@ -63,8 +68,7 @@ class AuthenticationController(Resource):
         :rtype: Response
 
         """
-        refresh_token = get_token_from_header()
-        self.client.logout(refresh_token)
+        self.client.logout(get_token_from_header())
         return redirect(self.client.authentication_url())
 
     def _verify(self) -> None:
