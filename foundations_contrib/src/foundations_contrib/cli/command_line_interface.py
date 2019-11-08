@@ -41,6 +41,7 @@ class CommandLineInterface(object):
 
         self._initialize_init_parser()
         self._initialize_info_parser()
+        self._initialize_login_parser()
 
 
     def add_sub_parser(self, name, help=None):
@@ -69,6 +70,11 @@ class CommandLineInterface(object):
         info_parser = self.add_sub_parser('info', help='Provides information about your Foundations project')
         info_parser.add_argument('--env', action='store_true')
         info_parser.set_defaults(function=self._info)
+
+    def _initialize_login_parser(self):
+        login_parser = self.add_sub_parser('login', help='Login to either an Atlas or Orbit cluster')
+        login_parser.add_argument('host', help="The address of the instance to login to (e.g. http://0.0.0.0:3333)")
+        login_parser.set_defaults(function=self._login)
 
     def _initialize_model_serve_parser(self):
         serving_parser = self.add_sub_parser('serve', help='Used to serve models in Atlas')
@@ -139,6 +145,13 @@ class CommandLineInterface(object):
             self._print_configs('submission', global_environment)
             if project_environment != None:
                 self._print_configs('execution', project_environment)
+
+    def _login(self):
+        import getpass
+        username = input("Username: ")
+        password = getpass.getpass(prompt="Passowrd: ", stream=False)
+        print(f"{username}:{password}")
+        print(self._arguments.host)
 
     def _print_configs(self, config_list_name, config_list):
         config_list = self._create_environment_list(config_list)
