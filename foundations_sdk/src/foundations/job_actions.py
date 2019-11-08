@@ -18,6 +18,7 @@ def cancel_queued_jobs(list_of_job_ids):
     Raises:
         - This method doesn't raise any exceptions.
 
+    # TODO is this still a relevant example
     Example:
         ```python
         import foundations

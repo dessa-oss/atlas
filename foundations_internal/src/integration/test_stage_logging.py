@@ -1,7 +1,8 @@
 import unittest
-
+from foundations_spec import *
 import foundations
 
+@quarantine
 class TestStageLogging(unittest.TestCase):
     def test_second_stage_logs_metric_of_invalid_type(self):
         class MyCoolClass():
@@ -11,17 +12,14 @@ class TestStageLogging(unittest.TestCase):
                 self._num = num
                 MyCoolClass.instance = self
 
-        @foundations.create_stage
         def stage0(num):
             foundations.log_metric("num", num)
             return MyCoolClass(num)
 
-        @foundations.create_stage
         def stage1(invalid_metric):
             foundations.log_metric("invalid", invalid_metric)
             return invalid_metric
 
-        @foundations.create_stage
         def stage2(invalid_metric):
             print(invalid_metric)
             foundations.log_metric("confused", "should have exploded before reaching here")
