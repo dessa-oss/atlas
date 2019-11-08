@@ -5,6 +5,7 @@ import Select from "react-select";
 import moment from "moment";
 import Flatpickr from "react-flatpickr";
 import CommonActions from "../../../actions/CommonActions";
+import OverflowTooltip from "../../common/OverflowTooltip";
 
 class MonitorOverview extends Component {
   constructor(props) {
@@ -225,7 +226,7 @@ class MonitorOverview extends Component {
       <div className="monitor-info">
         <div className="monitor-overview">
           <h3>
-            {monitorResult.properties.spec.environment.MONITOR_NAME}
+            <OverflowTooltip text={monitorResult.properties.spec.environment.MONITOR_NAME} />
           </h3>
           <div className="monitor-overview-menu">
             <button className="monitor-btn" type="button" onClick={this.resumeMonitor}>
@@ -245,7 +246,9 @@ class MonitorOverview extends Component {
             </li>
             <li>
               <div className="monitor-overview-key">User:</div>
-              <div className="monitor-overview-value">{monitorResult.properties.metadata.username}</div>
+              <div className="monitor-overview-value">
+                <OverflowTooltip text={monitorResult.properties.metadata.username} />
+              </div>
             </li>
             <li>
               <div className="monitor-overview-key">Next Run:</div>
