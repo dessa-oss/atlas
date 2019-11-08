@@ -99,7 +99,7 @@ class MonitorOverview extends Component {
   }
 
   updateMonitorSchedule() {
-    const { monitorResult } = this.props;
+    const { monitorResult, reload } = this.props;
     const {
       calDateStart,
       calDateEnd,
@@ -114,7 +114,7 @@ class MonitorOverview extends Component {
 
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-    MonitorSchedulesActions.updateMonitorSchedule(projectName, monitorName, scheduleBody).then(this.reload);
+    MonitorSchedulesActions.updateMonitorSchedule(projectName, monitorName, scheduleBody).then(reload);
   }
 
   onChangeDateStart(date) {
