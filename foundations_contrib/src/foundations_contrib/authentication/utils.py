@@ -1,5 +1,6 @@
 from flask import request, _request_ctx_stack
 from jose import jwt
+from typing import Dict
 
 from foundations_core_rest_api_components.exceptions import AuthError
 
@@ -56,7 +57,7 @@ def verify_token(token: str, jwks: dict, issuer: str) -> None:
             401,
         )
 
-    rsa_key = {}
+    rsa_key: Dict[str, str] = {}
     for key in jwks["keys"]:
         if key["kid"] == unverified_header["kid"]:
             rsa_key = {
