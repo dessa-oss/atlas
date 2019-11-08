@@ -48,7 +48,7 @@ class ValidationReportListing(PropertyModel):
         import pickle
 
         for key in keys:
-            if not (key.endswith(b'counter') or key.endswith(b'summary')):
+            if not (key.endswith(b'counter') or key.endswith(b'summary') or key.endswith(b'id')):
                 dates = redis_connection.hkeys(key)
                 summaries = redis_connection.hgetall(f'{key.decode()}:summary')
                 if len(dates) == len(summaries):
