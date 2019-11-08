@@ -428,6 +428,8 @@ class TestDataValidation(Spec):
             }
         }
 
+        del api_validation_report['uuid']
+
         self.assertIn('user', api_validation_report)
         del api_validation_report['user']
         self.assertIn('job_id', api_validation_report)

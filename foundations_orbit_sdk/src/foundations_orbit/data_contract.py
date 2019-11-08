@@ -12,6 +12,7 @@ class DataContract(object):
         from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats, create_bin_stats_categorical
         from foundations_orbit.data_contract_summary import DataContractSummary
         from foundations_orbit.utils.get_column_types import get_column_types
+        import uuid
 
         self.options = self._default_options()
         self._contract_name = contract_name
@@ -26,6 +27,7 @@ class DataContract(object):
         self._number_of_rows = len(self._dataframe)
         self._column_names, self._column_types = get_column_types(self._dataframe)
         self._bin_stats = {}
+        self._uuid = uuid.uuid4()
 
         self._categorical_attributes = {}
         self._categorize_attributes()
@@ -129,12 +131,34 @@ class DataContract(object):
 
     def _save_to_redis(self, project_name, monitor_name, contract_name, inference_period, serialized_output, summary):
         from foundations_contrib.global_state import redis_connection
+
         key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}'
         counter_key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}:counter'
         summary_key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}:summary'
+        id_key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}:id'
+
         redis_connection.hset(key, inference_period, serialized_output)
         redis_connection.hset(summary_key, inference_period, summary)
+        redis_connection.set(id_key, str(self._uuid))
         redis_connection.incr(counter_key)
+
+        self._save_all_contract_info_to_redis(project_name, monitor_name, contract_name)
+
+    def _save_all_contract_info_to_redis(self, project_name, monitor_name, contract_name):
+        from foundations_contrib.global_state import redis_connection
+
+        info_key = f'contracts:{self._uuid}:info'
+        redis_connection.set(info_key, str(self))
+
+        self._set_contract_info_to_redis('project_name', project_name)
+        self._set_contract_info_to_redis('monitor_name', monitor_name)
+        self._set_contract_info_to_redis('contract_name', contract_name)
+
+    def _set_contract_info_to_redis(self, key, value):
+        from foundations_contrib.global_state import redis_connection
+        
+        key = f'contracts:{self._uuid}:{key}'
+        redis_connection.set(key, value)
 
     def validate(self, dataframe_to_validate, inference_period=None):
         import datetime

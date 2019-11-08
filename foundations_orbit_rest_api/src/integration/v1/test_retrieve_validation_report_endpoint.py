@@ -66,10 +66,12 @@ class TestRetrieveValidationReportEndpoint(Spec):
             'schema_check': True,
             'schema_information': {
                 'rows': 10
-            }
+            },
+            'uuid': 'abcd-efgh'
         }
 
         self.redis.hset(f'projects:test_project:monitors:model_abcdefg:validation:data_contract_1', '2019-05-01', pickle.dumps(expected_response_data))
+        self.redis.set('projects:test_project:monitors:model_abcdefg:validation:data_contract_1:id', 'abcd-efgh')
 
         response = self._post_response_from_route(data=post_data)
 

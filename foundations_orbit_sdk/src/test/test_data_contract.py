@@ -254,6 +254,60 @@ class TestDataContract(Spec):
     def test_data_contract_has_options_with_default_check_distribution_True(self):
         self._test_data_contract_has_default_option('check_distribution', True)
 
+    def test_data_contract_has_uuid(self):
+        import uuid
+
+        data_contract = DataContract(self.contract_name, self.reference_dataframe_with_one_numerical_column)
+        self.assertIsInstance(data_contract._uuid, type(uuid.uuid4()))
+    
+    def test_multiple_data_contracts_dont_have_same_uuids(self):
+        import uuid
+
+        data_contract = DataContract(self.contract_name, self.reference_dataframe_with_one_numerical_column)
+        data_contract_2 = DataContract(self.contract_name, self.reference_dataframe_with_one_numerical_column)
+
+        self.assertNotEqual(data_contract._uuid, data_contract_2._uuid)
+
+    def test_validate_saves_uuid_to_redis(self):
+        data_contract = DataContract(self.contract_name, self.dataframe_to_validate_with_one_numerical_column)
+        data_contract.validate(self.dataframe_to_validate_with_one_numerical_column)
+
+        redis_key = f'projects:{self.project_name}:monitors:{self.model_name}:validation:{self.contract_name}:id'
+        id_from_redis = self._redis.get(redis_key).decode()
+        self.assertEqual(str(data_contract._uuid), id_from_redis)
+
+    def test_validate_saves_info_to_redis(self):
+        data_contract = DataContract(self.contract_name, self.dataframe_to_validate_with_one_numerical_column)
+        data_contract.validate(self.dataframe_to_validate_with_one_numerical_column)
+
+        redis_key = f'contracts:{data_contract._uuid}:info'
+        info_from_redis = self._redis.get(redis_key).decode()
+        self.assertEqual(str(data_contract), info_from_redis)
+
+    def test_validate_saves_project_name_to_redis(self):
+        data_contract = DataContract(self.contract_name, self.dataframe_to_validate_with_one_numerical_column)
+        data_contract.validate(self.dataframe_to_validate_with_one_numerical_column)
+
+        redis_key = f'contracts:{data_contract._uuid}:project_name'
+        project_name_from_redis = self._redis.get(redis_key).decode()
+        self.assertEqual(self.project_name, project_name_from_redis)
+
+    def test_validate_saves_monitor_name_to_redis(self):
+        data_contract = DataContract(self.contract_name, self.dataframe_to_validate_with_one_numerical_column)
+        data_contract.validate(self.dataframe_to_validate_with_one_numerical_column)
+
+        redis_key = f'contracts:{data_contract._uuid}:monitor_name'
+        monitor_name_from_redis = self._redis.get(redis_key).decode()
+        self.assertEqual(self.model_name, monitor_name_from_redis)
+
+    def test_validate_saves_monitor_name_to_redis(self):
+        data_contract = DataContract(self.contract_name, self.dataframe_to_validate_with_one_numerical_column)
+        data_contract.validate(self.dataframe_to_validate_with_one_numerical_column)
+
+        redis_key = f'contracts:{data_contract._uuid}:contract_name'
+        contract_name_from_redis = self._redis.get(redis_key).decode()
+        self.assertEqual(self.contract_name, contract_name_from_redis)
+
     def test_data_contract_can_save_to_file(self):
         import pickle
 

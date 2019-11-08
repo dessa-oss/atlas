@@ -21,6 +21,7 @@ def set_environment(environment_name):
     Notes:
         Primarily used when using Jupyter to specify deployment environment without the Foundations CLI
 
+    # TODO is this still a relevant example
     Example:
         ```python
         #Jupyter Cell

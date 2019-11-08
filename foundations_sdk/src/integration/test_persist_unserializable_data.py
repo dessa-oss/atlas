@@ -11,10 +11,9 @@ from foundations_spec import *
 from mock import patch
 
 import integration.fixtures.stages as stages
+from integration.fixtures.stages import create_stage
 
-from foundations import config_manager, create_stage, JobPersister, ResultReader
-from foundations.job import Job
-
+@quarantine
 class TestPersistUnserializableData(Spec):
 
     @set_up
@@ -30,6 +29,8 @@ class TestPersistUnserializableData(Spec):
         self._context.pipeline_context().file_name = None
 
     def test_try_persist_generator(self):
+        from foundations.job import Job
+        from foundations import JobPersister
         returns_generator = create_stage(stages.returns_generator)
         stage_output = returns_generator().persist()
 
@@ -121,11 +122,14 @@ class TestPersistUnserializableData(Spec):
 
     @staticmethod
     def _create_result_reader():
+        from foundations import JobPersister, ResultReader
         with JobPersister.load_archiver_fetch() as fetch:
             return ResultReader(fetch)
 
     @staticmethod
     def _run_and_persist_job(stage_to_run):
+        from foundations.job import Job
+        from foundations import JobPersister
         job = Job(stage_to_run)
         job.run()
 

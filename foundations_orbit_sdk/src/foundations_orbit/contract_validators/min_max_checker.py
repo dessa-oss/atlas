@@ -35,7 +35,7 @@ class MinMaxChecker(object):
 
     def __str__(self):
         import json
-        return json.dumps(self.columns_to_bounds)
+        return str(self.columns_to_bounds)
 
     def exclude(self, columns=None):
         if columns == 'all':

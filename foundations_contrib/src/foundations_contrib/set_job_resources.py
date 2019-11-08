@@ -26,6 +26,7 @@ def set_job_resources(num_gpus=0, ram=None):
         Setting the resources for a job from a given notebook or driver file will cause any additional jobs (ex: hyperparameter search) deployed from the same file and using the same process to use the same resources, unless specified otherwise.
         To clear specifying resources and use the default, you can pass in set_job_resources(1, None).  Set num_gpus=0 to use CPU instead.
 
+     TODO Is this still a valid example
     Example:
         ```python
         import foundations
