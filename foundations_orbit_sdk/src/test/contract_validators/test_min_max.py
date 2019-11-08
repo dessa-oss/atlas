@@ -407,6 +407,8 @@ class TestMinMax(Spec):
         self.assertEqual(expected_result, result)
 
     def test_min_max_checker_has_to_string(self):
+        import json
+
         min_max_checker = MinMaxChecker(self.dataframe_two_column_reference_column_types)
         min_max_checker.configure(columns=[self.column_name], lower_bound=0, upper_bound=50)
         min_max_checker.configure(columns=[self.column_name_two], lower_bound=20, upper_bound=70)
@@ -422,7 +424,7 @@ class TestMinMax(Spec):
                 'upper_bound': 70
             },
         }
-        self.assertEqual(str(expected_output), str(min_max_checker))
+        self.assertEqual(json.dumps(expected_output), str(min_max_checker))
 
     def test_min_max_checker_configure_fails_when_reference_dataframe_with_bool_types_used(self):
 
