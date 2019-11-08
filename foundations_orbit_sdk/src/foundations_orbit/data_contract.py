@@ -139,7 +139,7 @@ class DataContract(object):
 
         redis_connection.hset(key, inference_period, serialized_output)
         redis_connection.hset(summary_key, inference_period, summary)
-        redis_connection.set(id_key, self._uuid)
+        redis_connection.set(id_key, str(self._uuid))
         redis_connection.incr(counter_key)
 
         self._save_all_contract_info_to_redis(project_name, monitor_name, contract_name)
