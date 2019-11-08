@@ -4,6 +4,9 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 06 2018
 """
+
+import base64
+
 from flask import abort, redirect, request
 from flask_restful import Resource
 
@@ -13,7 +16,7 @@ from foundations_contrib.authentication.authentication_client import (
     AuthenticationClient,
 )
 from foundations_contrib.authentication.configs import ATLAS
-from foundations_contrib.authentication.utils import get_token_from_header, verify_token
+from foundations_contrib.authentication.utils import get_token_from_header, verify_token, get_creds_from_header
 from foundations_core_rest_api_components.global_state import app_manager
 
 API = app_manager.api()
@@ -57,7 +60,9 @@ class AuthenticationController(Resource):
 
         return redirect(self.client.authentication_url())
 
-    def _cli_login(self, username: str, password: str) -> Response:
+    def _cli_login(self) -> Response:
+        creds = get_creds_from_header()
+        username, password = base64.b64decode(creds).split(':')
         return self.client.token_using_username_password(username, password)
 
 

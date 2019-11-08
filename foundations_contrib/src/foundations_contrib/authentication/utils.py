@@ -1,3 +1,5 @@
+import base64
+
 from flask import request, _request_ctx_stack
 from jose import jwt
 from typing import Dict
@@ -43,6 +45,43 @@ def get_token_from_header():
 
     token = parts[1]
     return token
+
+def get_creds_from_header():
+    auth = request.headers.get("Authorization", None)
+    if not auth:
+        raise AuthError(
+            {
+                "code": "authorization_header_missing",
+                "description": "Authorization header is expected",
+            },
+            401,
+        )
+
+    parts = auth.split()
+
+    if parts[0].lower() != "basic":
+        raise AuthError(
+            {
+                "code": "invalid_header",
+                "description": "Authorization header must start with Basic",
+            },
+            401,
+        )
+    if len(parts) == 1:
+        raise AuthError(
+            {"code": "invalid_header", "description": "Credentials not found"}, 401
+        )
+    if len(parts) > 2:
+        raise AuthError(
+            {
+                "code": "invalid_header",
+                "description": "Authorization header must be 'Basic <creds>'",
+            },
+            401,
+        )
+    
+    creds = parts[1]
+    return creds
 
 
 def verify_token(token: str, jwks: dict, issuer: str) -> None:
