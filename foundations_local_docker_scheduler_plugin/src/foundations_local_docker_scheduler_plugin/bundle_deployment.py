@@ -28,7 +28,7 @@ def _post_job_archive(bundle, scheduler_url):
     import requests
 
     with _request_payload(bundle) as request_payload:
-        return requests.post(f'{scheduler_url}/job_bundle', files=request_payload, headers={"Token": user_token()})
+        return requests.post(f'{scheduler_url}/job_bundle', files=request_payload, headers={"Authorization": f"bearer {user_token()}"})
 
 @contextmanager
 def _request_payload(bundle):

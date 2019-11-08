@@ -107,7 +107,7 @@ class JobDeployment(object):
                 'gpu_spec': gpu_spec
             }
 
-            response = requests.post(queue_job_url, json=payload, headers={"Token": user_token()})
+            response = requests.post(queue_job_url, json=payload, headers={"Authorization": f"bearer {user_token()}"})
             if response.status_code != 201:
                  raise RuntimeError(f'Unable to add job to the queue. {response.text}')
 
@@ -136,7 +136,7 @@ class JobDeployment(object):
             "pending": "queued"
         }
         try:
-            r = requests.get(f"{self._config['scheduler_url']}/jobs/{job_id}", headers={"Token": user_token()})
+            r = requests.get(f"{self._config['scheduler_url']}/jobs/{job_id}", headers={"Authorization": f"bearer {user_token()}"})
             if r.status_code == requests.codes.ok:
                 return responses[r.json()['status']]
             else:
@@ -148,7 +148,7 @@ class JobDeployment(object):
         import requests
 
         try:
-            r = requests.get(f"{self._config['scheduler_url']}/jobs/{self._job_id}", headers={"Token": user_token()})
+            r = requests.get(f"{self._config['scheduler_url']}/jobs/{self._job_id}", headers={"Authorization": f"bearer {user_token()}"})
             if r.status_code == requests.codes.ok:
                 return r.json()['status']
             else:
@@ -159,7 +159,7 @@ class JobDeployment(object):
     def get_job_logs(self):
         import requests
 
-        r = requests.get(f"{self._config['scheduler_url']}/jobs/{self._job_id}", headers={"Token": user_token()})
+        r = requests.get(f"{self._config['scheduler_url']}/jobs/{self._job_id}", headers={"Authorization": f"bearer {user_token()}"})
         if r.status_code == requests.codes.ok:
             return r.json()['logs']
         else:
@@ -182,7 +182,7 @@ class JobDeployment(object):
             status = self.get_job_status()
 
         if status == "running":
-            r = requests.get(f"{self._config['scheduler_url']}/running_jobs/{self._job_id}/container_id", headers={"Token": user_token()})
+            r = requests.get(f"{self._config['scheduler_url']}/running_jobs/{self._job_id}/container_id", headers={"Authorization": f"bearer {user_token()}"})
             if r.status_code == requests.codes.ok:
                 import docker
                 from docker.errors import APIError
@@ -233,7 +233,7 @@ class JobDeployment(object):
         import requests
 
         try:
-            requests.delete(f"{scheduler_url}/completed_jobs/{job_id}", headers={"Token": user_token()}).raise_for_status()
+            requests.delete(f"{scheduler_url}/completed_jobs/{job_id}", headers={"Authorization": f"bearer {user_token()}"}).raise_for_status()
             return True
 
         except Exception as ex:
@@ -340,14 +340,14 @@ class JobDeployment(object):
     def stop_running_job(self):
         import requests
 
-        r = requests.delete(f"{self._config['scheduler_url']}/running_jobs/{self._job_id}", headers={"Token": user_token()})
+        r = requests.delete(f"{self._config['scheduler_url']}/running_jobs/{self._job_id}", headers={"Authorization": f"bearer {user_token()}"})
         return 200 <= r.status_code < 300
 
     def get_job_archive(self):
         import requests
         import os
 
-        res = requests.get(f"{self._config['scheduler_url']}/job_bundle/{self._job_id}", headers={"Token": user_token()})
+        res = requests.get(f"{self._config['scheduler_url']}/job_bundle/{self._job_id}", headers={"Authorization": f"bearer {user_token()}"})
 
         if res.status_code in [401, 404]:
             return False
@@ -363,10 +363,10 @@ class JobDeployment(object):
         config = JobDeployment._get_config()
 
         num_removed = 0
-        status_code = requests.delete(f"{config['scheduler_url']}/queued_jobs/0", headers={"Token": user_token()}).status_code
+        status_code = requests.delete(f"{config['scheduler_url']}/queued_jobs/0", headers={"Authorization": f"bearer {user_token()}"}).status_code
 
         while status_code == 204:
-            status_code = requests.delete(f"{config['scheduler_url']}/queued_jobs/0", headers={"Token": user_token()}).status_code
+            status_code = requests.delete(f"{config['scheduler_url']}/queued_jobs/0", headers={"Authorization": f"bearer {user_token()}"}).status_code
             num_removed += 1
 
         return num_removed

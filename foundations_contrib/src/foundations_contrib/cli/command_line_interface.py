@@ -181,7 +181,7 @@ class CommandLineInterface(object):
         import requests
         import sys
 
-        response = requests.post('http://{}/v1/{}/'.format(self._arguments.domain, self._arguments.slug), json={'model_id': self._arguments.model_id}, headers={"Token": user_token()})
+        response = requests.post('http://{}/v1/{}/'.format(self._arguments.domain, self._arguments.slug), json={'model_id': self._arguments.model_id}, headers={"Authorization": f"bearer {user_token()}"})
         if response.status_code == 201:
             print('Model package was deployed successfully to model server.')
         else:

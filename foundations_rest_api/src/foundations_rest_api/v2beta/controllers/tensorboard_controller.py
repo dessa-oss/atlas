@@ -24,7 +24,7 @@ class TensorboardController:
         
         tb_locations = self._transform_request(job_ids)
 
-        response = requests.post(f'{self._tensorboard_api_host()}/create_sym_links', json=tb_locations, headers={"Token": user_token()})
+        response = requests.post(f'{self._tensorboard_api_host()}/create_sym_links', json=tb_locations, headers={"Authorization": f"bearer {user_token()}"})
         if response.status_code == 400:
             return Response('Bad Request', LazyResult(lambda: response.text), status=400)
         elif response.status_code == 500:
