@@ -424,7 +424,7 @@ class TestMinMax(Spec):
                 'upper_bound': 70
             },
         }
-        self.assertEqual(json.dumps(expected_output), str(min_max_checker))
+        self.assertEqual(str(expected_output), str(min_max_checker))
 
     def test_min_max_checker_configure_fails_when_reference_dataframe_with_bool_types_used(self):
 
