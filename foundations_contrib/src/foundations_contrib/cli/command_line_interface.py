@@ -149,13 +149,19 @@ class CommandLineInterface(object):
     def _login(self):
         import getpass
         import requests
+        from os.path import expanduser, join
+        import yaml
+        
+        from foundations_contrib.utils import foundations_home
 
         username = input("Username: ")
         password = getpass.getpass(prompt="Passowrd: ", stream=False)
-        print(f"{username}:{password}")
-        # print(self._arguments.host)
         resp = requests.get('http://localhost:37722/api/v2beta/auth/cli_login', auth=(username, password))
-        print(resp.json())
+        credential_filepath = expanduser(join(foundations_home(), "credentials.yaml"))
+        
+        with open(credential_filepath, 'w') as creds_file:
+            creds = {'default': {'token': resp.json()['access_token']}}
+            yaml.dump(creds, creds_file, default_flow_style=False)
 
     def _print_configs(self, config_list_name, config_list):
         config_list = self._create_environment_list(config_list)

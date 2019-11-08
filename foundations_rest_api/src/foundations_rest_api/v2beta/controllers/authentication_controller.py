@@ -16,7 +16,11 @@ from foundations_contrib.authentication.authentication_client import (
     AuthenticationClient,
 )
 from foundations_contrib.authentication.configs import ATLAS
-from foundations_contrib.authentication.utils import get_token_from_header, verify_token, get_creds_from_header
+from foundations_contrib.authentication.utils import (
+    get_token_from_header,
+    verify_token,
+    get_creds_from_header,
+)
 from foundations_core_rest_api_components.global_state import app_manager
 
 API = app_manager.api()
@@ -62,9 +66,8 @@ class AuthenticationController(Resource):
 
     def _cli_login(self) -> Response:
         creds = get_creds_from_header()
-        username, password = base64.b64decode(creds.encode()).decode().split(':')
+        username, password = base64.b64decode(creds.encode()).decode().split(":")
         return self.client.token_using_username_password(username, password)
-
 
     def _logout(self) -> Response:
         """Logout of Atlas/Orbit.
