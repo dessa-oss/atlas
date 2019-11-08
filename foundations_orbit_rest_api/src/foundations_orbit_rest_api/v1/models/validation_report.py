@@ -29,4 +29,9 @@ class ValidationReport(object):
 
         if report is None:
             return None
-        return pickle.loads(report)
+
+        data_contract_uuid = redis_connection.get(f'{redis_key}:id').decode()
+        result = pickle.loads(report)
+        result['uuid'] = data_contract_uuid
+
+        return result

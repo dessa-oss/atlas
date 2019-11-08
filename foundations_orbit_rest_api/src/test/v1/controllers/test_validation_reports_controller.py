@@ -88,6 +88,8 @@ class TestValidationReportsController(Spec):
         self._register_report(self.project_name, self.monitor_package, self.data_contract, self.inference_period, expected_response_data)
         response = self.controller.post()
 
+        expected_response_data['uuid'] = 'abcd-efgh'
+
         self.assertEqual(expected_response_data, response.as_json())
 
     @staticmethod
@@ -98,4 +100,6 @@ class TestValidationReportsController(Spec):
         import pickle
 
         key_to_write = self._key_to_write(project_name, monitor_package, data_contract)
+        
+        self.redis_connection.set(f'{key_to_write}:id', 'abcd-efgh')
         self.redis_connection.hset(key_to_write, inference_period, pickle.dumps(validation_report))
