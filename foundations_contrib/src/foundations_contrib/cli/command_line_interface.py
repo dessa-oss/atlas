@@ -155,10 +155,9 @@ class CommandLineInterface(object):
         from foundations_contrib.utils import foundations_home
 
         username = input("Username: ")
-        password = getpass.getpass(prompt="Passowrd: ", stream=False)
-        resp = requests.get('http://localhost:37722/api/v2beta/auth/cli_login', auth=(username, password))
+        password = getpass.getpass(prompt="Password: ", stream=False)
+        resp = requests.get(f'{self._arguments.host}/api/v2beta/auth/cli_login', auth=(username, password))
         credential_filepath = expanduser(join(foundations_home(), "credentials.yaml"))
-        
         with open(credential_filepath, 'w') as creds_file:
             creds = {'default': {'token': resp.json()['access_token']}}
             yaml.dump(creds, creds_file, default_flow_style=False)
