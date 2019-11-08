@@ -119,7 +119,10 @@ const ValidationResultsActions = {
 
     const rows = validationTestResult.population_shift.details_by_attribute.map((test, ind) => {
       const measureType = "L-infinity" in test ? "L-infinity" : "PSI";
-      const distShift = measureType === "L-infinity" ? test["L-infinity"] : test.PSI;
+      let distShift = measureType === "L-infinity" ? test["L-infinity"] : test.PSI;
+      if (distShift === null) {
+        distShift = "N/A";
+      }
       return (
         // eslint-disable-next-line react/no-array-index-key
         <tr key={ind} className="validation-results-test-pane-table-row">
