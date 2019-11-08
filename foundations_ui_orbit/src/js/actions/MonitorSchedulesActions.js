@@ -1,7 +1,7 @@
 import React from "react";
 import moment from "moment";
 import {
-  get, put, del, patch
+  get, put, del, delAtlas, patch
 } from "./BaseActions";
 import MonitorListTableRow from "../components/PackagePage/MonitorSchedules/MonitorListTableRow";
 import MonitorJobTableRow from "../components/PackagePage/MonitorSchedules/MonitorJobTableRow";
@@ -293,6 +293,18 @@ const MonitorSchedulesActions = {
       );
     }
     return { repeatUnit: scheduleRepeatUnit, repeatValue: scheduleRepeatValue };
+  },
+
+  deleteMonitorJobs: async (jobs, projectName, monitorName) => {
+    const atlasPromises = Array.from(jobs).map(jobID => {
+      const URL = `projects/${projectName}/job_listing/${jobID}`;
+      return delAtlas(URL);
+    });
+    const orbitPromises = Array.from(jobs).map(jobID => {
+      const URL = `projects/${projectName}/monitors/${monitorName}/jobs?job_id=${jobID}`;
+      return del(URL);
+    });
+    await Promise.all(atlasPromises.concat(orbitPromises));
   }
 };
 

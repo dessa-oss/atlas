@@ -2,6 +2,13 @@
     p {
         text-align: center;
     }
+  
+    &.floating {
+      position: absolute;
+      left: 50%;
+      top: 40%;
+      z-index: 99;
+    }
 }
 
 #circle-orbit-container {

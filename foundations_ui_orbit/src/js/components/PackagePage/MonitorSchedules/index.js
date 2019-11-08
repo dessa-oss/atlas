@@ -7,6 +7,7 @@ import ScheduleDetails from "./ScheduleDetails";
 import MonitorLogsModal from "./MonitorLogsModal";
 import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
 import DeleteConfirmModal from "./DeleteConfirmModal";
+import Loading from "../../common/Loading";
 
 class MonitorSchedules extends Component {
   constructor(props) {
@@ -17,7 +18,8 @@ class MonitorSchedules extends Component {
       logsModalIsOpen: false,
       logsModalJobID: null,
       deleteModalIsOpen: false,
-      allMonitors: {}
+      allMonitors: {},
+      isLoading: false
     };
 
     this.selectRow = this.selectRow.bind(this);
@@ -59,9 +61,19 @@ class MonitorSchedules extends Component {
     const { allMonitors, selectedMonitor } = this.state;
     const { location } = this.props;
 
-    const monitorName = allMonitors[selectedMonitor].properties.spec.environment.MONITOR_NAME;
-    const projectName = location.state.project.name;
-    MonitorSchedulesActions.deleteMonitor(projectName, monitorName).then(this.reload);
+    this.setState({ isLoading: true }, async () => {
+      const monitorName = allMonitors[selectedMonitor].properties.spec.environment.MONITOR_NAME;
+      const projectName = location.state.project.name;
+      await MonitorSchedulesActions.deleteMonitor(projectName, monitorName);
+      const jobsObjects = await MonitorSchedulesActions.getMonitorJobs(projectName, monitorName);
+
+      if (!("error" in jobsObjects)) {
+        const jobs = jobsObjects.map(obj => obj.job_id);
+        await MonitorSchedulesActions.deleteMonitorJobs(jobs, projectName, monitorName);
+      }
+
+      this.setState({ isLoading: false }, this.reload);
+    });
   }
 
   render() {
@@ -70,15 +82,23 @@ class MonitorSchedules extends Component {
       logsModalIsOpen,
       logsModalJobID,
       allMonitors,
-      deleteModalIsOpen
+      deleteModalIsOpen,
+      isLoading
     } = this.state;
     const { location } = this.props;
+
+    const loading = (
+      isLoading
+        ? <Loading loadingMessage="" floating />
+        : null
+    );
 
     return (
       <Layout tab="Schedules" title="Data Health">
         <div className="monitor-schedules-container">
           <div className="section-title font-bold">Monitor Schedules</div>
           <div className="schedule-details">
+            {loading}
             <MonitorListTable
               onClickRow={this.selectRow}
               selectedRow={selectedMonitor}
