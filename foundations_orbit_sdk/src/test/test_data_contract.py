@@ -250,7 +250,6 @@ class TestDataContract(Spec):
     def test_data_contract_has_options_with_default_check_row_count_True(self):
         self._test_data_contract_has_default_option('check_row_count', True)
 
-
     def test_data_contract_has_options_with_default_check_distribution_True(self):
         self._test_data_contract_has_default_option('check_distribution', True)
 
@@ -261,8 +260,6 @@ class TestDataContract(Spec):
         self.assertIsInstance(data_contract._uuid, type(uuid.uuid4()))
     
     def test_multiple_data_contracts_dont_have_same_uuids(self):
-        import uuid
-
         data_contract = DataContract(self.contract_name, self.reference_dataframe_with_one_numerical_column)
         data_contract_2 = DataContract(self.contract_name, self.reference_dataframe_with_one_numerical_column)
 
@@ -505,7 +502,7 @@ class TestDataContract(Spec):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         contract.special_value_test.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
         contract.min_max_test.configure(columns=[self.column_name, self.column_name_2], lower_bound=0, upper_bound=1)
-        report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
+        contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
 
         expected_output = {
             'attribute_names': list(self.two_column_dataframe.columns),
@@ -593,7 +590,6 @@ class TestDataContract(Spec):
                 }
             }
         }
-
 
         key = f'projects:{self.project_name}:monitors:{self.model_name}:validation:{self.contract_name}'
         serialized_report = self._redis.hget(key, inference_period)
@@ -750,7 +746,6 @@ class TestDataContract(Spec):
         contract.options.check_special_values = False
         report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
         dist_check_results = report['dist_check_results']
-        import numpy as np
 
         expected_results = {
             self.column_name: {
@@ -812,8 +807,6 @@ class TestDataContract(Spec):
         self.assertIn('min_max_test_results', report)
 
         min_max_test_results = report['min_max_test_results']
-
-        import numpy as np
 
         expected_results = {
             self.column_name: {
@@ -887,7 +880,7 @@ class TestDataContract(Spec):
 
         self.assertNotIn('min_max_test_results', contract.validate(self.two_column_dataframe))
 
-    @skip# @quarantine
+    @skip('Not Sure why its skipped')
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_no_rows_different_second_column(self):
         inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)

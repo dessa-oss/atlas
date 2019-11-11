@@ -5,11 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class DataContract(object):
 
     def __init__(self, contract_name, df=None):
-        import pandas
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats, create_bin_stats_categorical
         from foundations_orbit.data_contract_summary import DataContractSummary
         from foundations_orbit.utils.get_column_types import get_column_types
         import uuid
@@ -38,17 +37,16 @@ class DataContract(object):
     def __str__(self):
         import json
 
-        data_contract_info = {}
-        data_contract_info['special_values_test'] = str(self.special_value_test)
-        data_contract_info['min_max_test'] = str(self.min_max_test)
-        data_contract_info['distribution_test'] = str(self.distribution_test)
-        data_contract_info['schema_test'] = str(self.schema_test)
+        data_contract_info = {
+            'special_values_test': str(self.special_value_test),
+            'min_max_test': str(self.min_max_test), 'distribution_test': str(self.distribution_test),
+            'schema_test': str(self.schema_test)
+        }
 
         return json.dumps(data_contract_info)
 
     @staticmethod
     def _default_options():
-        import numpy
         from foundations_orbit.data_contract_options import DataContractOptions
 
         return DataContractOptions(
@@ -101,7 +99,7 @@ class DataContract(object):
 
         self.special_value_test.exclude(attributes=attributes)
         self.distribution_test.exclude(attributes=attributes)
-        self.min_max_test.exclude(attributes=attributes)
+        self.min_max_test.exclude(columns=attributes)   # TODO change this to attributes for consistency
 
     def _exclude_from_current_validation(self, attributes):
         if type(attributes) == str:
@@ -109,8 +107,7 @@ class DataContract(object):
 
         self.special_value_test.temp_exclude(attributes=attributes)
         self.distribution_test.temp_exclude(attributes=attributes)
-        self.min_max_test.schema_failure_temp_exclusion(columns=attributes)
-
+        self.min_max_test.schema_failure_temp_exclusion(columns=attributes)   # TODO change this to attributes for consistency
 
     def save(self, monitor_package_directory):
         if not self._bin_stats:
@@ -123,8 +120,6 @@ class DataContract(object):
 
     @staticmethod
     def load(monitor_package_directory, contract_name):
-        import pickle
-
         data_contract_file_name = DataContract._data_contract_file_path_with_contract_name(monitor_package_directory, contract_name)
         with open(data_contract_file_name, 'rb') as contract_file:
             return DataContract._deserialized_contract(contract_file.read())
@@ -165,6 +160,7 @@ class DataContract(object):
         import os
         from uuid import uuid4
         from getpass import getuser
+        from redis import ConnectionError
 
         from foundations_orbit.report_formatter import ReportFormatter
         from foundations_orbit.utils.get_column_types import get_column_types
@@ -182,7 +178,6 @@ class DataContract(object):
 
         inference_period = str(inference_period)
 
-        row_count_to_check = len(dataframe_to_validate)
         columns_to_validate, types_to_validate = get_column_types(dataframe_to_validate)
         
         attributes_to_ignore = []
@@ -200,7 +195,10 @@ class DataContract(object):
 
         self.summary.validate(dataframe_to_validate, report_formatter.formatted_report())
 
-        self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, self.summary.serialized_output())
+        try:
+            self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, self.summary.serialized_output())
+        except ConnectionError as e:
+            print('WARNING: Unable to connect to redis. Data contract results will not be saved')  # TODO use debugger
 
         self._modify_validation_report_with_schema_failures(validation_report, attributes_to_ignore)
 
