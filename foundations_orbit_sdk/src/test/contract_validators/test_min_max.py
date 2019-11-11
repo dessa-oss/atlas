@@ -8,6 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
 
+
 class TestMinMax(Spec):
 
     @let

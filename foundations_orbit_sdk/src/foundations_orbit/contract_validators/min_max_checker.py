@@ -6,6 +6,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_orbit.contract_validators.checker import Checker
+
+
 class MinMaxChecker(object):
 
     def __init__(self, reference_column_types):
@@ -34,7 +36,6 @@ class MinMaxChecker(object):
             raise ValueError(f'The following columns have invalid types: {error_dictionary}')
 
     def __str__(self):
-        import json
         return str(self.columns_to_bounds)
 
     def exclude(self, columns=None):
@@ -62,7 +63,6 @@ class MinMaxChecker(object):
         self._columns_to_bounds_temp = {}
 
     def validate(self, dataframe_to_validate):
-        import datetime
 
         if not self.columns_to_bounds or len(dataframe_to_validate) == 0:
             return {}
@@ -115,4 +115,3 @@ class MinMaxChecker(object):
     @staticmethod
     def _max_test_percentage(dataframe_to_validate, column_name, upper_bound):
         return round(len(dataframe_to_validate[dataframe_to_validate[column_name] > upper_bound]) / len(dataframe_to_validate), 3)
-    

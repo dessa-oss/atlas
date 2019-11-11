@@ -10,7 +10,6 @@ class SpecialValuesChecker(object):
 
     def __init__(self, reference_column_names, reference_column_types, categorical_attributes):
         from foundations_orbit.contract_validators.checker import Checker
-        import numpy
         self._special_value_thresholds = {}
         self._special_value_percentages = None
         self._reference_column_names = reference_column_names.copy() if reference_column_names else []
@@ -115,10 +114,6 @@ class SpecialValuesChecker(object):
             raise ValueError(f'The following columns have invalid types: {error_dictionary}')
 
         for column in attributes:
-
-            # if mode == 'overwrite':
-            #     self._special_value_thresholds[column] = thresholds
-            # elif mode == 'update':
             for special_value, threshold in thresholds.items():
                 if not self._special_value_thresholds.get(column, False):
                     self._special_value_thresholds[column] = {}

@@ -6,8 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
-import numpy as np
-class DistributionChecker(object):   
+class DistributionChecker(object):
     def __init__(self, reference_column_names, reference_column_types, categorical_attributes):
 
         self._initialize_default_options()
@@ -46,7 +45,6 @@ class DistributionChecker(object):
                 self._attributes_to_exclude_permanently.append(column)
 
     def __str__(self):
-        import json
 
         information =  {
             'distribution_options': self._distribution_options,
