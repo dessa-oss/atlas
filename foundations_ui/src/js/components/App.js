@@ -14,6 +14,7 @@ import ProjectOverview from './JobOverviewPage/ProjectOverview';
 import JobDetails from './JobOverviewPage/JobDetails';
 import SupportPage from './SupportPage/SupportPage';
 import Loading from './common/Loading';
+import BaseActions from '../actions/BaseActions';
 
 toast.configure(); // single instance to improve rendering of toast
 
@@ -24,10 +25,12 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const keycloak = Keycloak('/keycloak.json');
-    keycloak.init({ onLoad: 'login-required' }).then((authenticated) => {
-      this.setState({ keycloak, authenticated });
-    });
+    const resp = BaseActions.getFromStaging('auth/login');
+    console.log(resp);
+  //   const keycloak = Keycloak('/keycloak.json');
+  //   keycloak.init({ onLoad: 'login-required' }).then((authenticated) => {
+  //     this.setState({ keycloak, authenticated });
+  //   });
   }
 
   render() {
@@ -54,8 +57,8 @@ class App extends Component {
       </div>
     );
     const { keycloak, authenticated } = this.state;
-    if (keycloak) {
-      return authenticated ? app : <div> not authenticated </div>;
+    if (true) {
+      return true ? app : <div> not authenticated </div>;
     }
     return <Loading loadingMessage="Authenticating..." />;
   }

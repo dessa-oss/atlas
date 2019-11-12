@@ -221,5 +221,3 @@ class CommandLineInterface(object):
         from foundations_contrib.cli.model_package_server import destroy
         destroy(self._arguments.project_name, self._arguments.model_name)
 
-
-a = CommandLineInterface(['login'])
