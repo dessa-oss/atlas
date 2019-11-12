@@ -110,4 +110,3 @@ class TestAuthenticationController(Spec):
             verify.assert_called_once_with(
                 "token", self.auth_client.json_web_key_set, self.auth_client.issuer
             )
-
