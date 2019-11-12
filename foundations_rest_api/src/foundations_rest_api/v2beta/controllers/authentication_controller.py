@@ -85,7 +85,7 @@ class AuthenticationController(Resource):
 
         """
         self.client.logout(get_token_from_header())
-        return redirect(self.client.authentication_url())
+        return redirect('http://localhost:3000/login')
 
     def _verify(self) -> None:
         """Verify a JSON web token.
