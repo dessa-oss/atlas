@@ -89,7 +89,7 @@ class TestAuthenticationController(Spec):
         with app_manager.app().test_request_context(headers=headers):
             resp = self.auth_controller.get("logout")
             self.assertIn(
-                "AuthenticationClient().authentication_url()", resp.headers["Location"]
+                "http://localhost:3000/login", resp.headers["Location"]
             )
 
     @patch(
