@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie';
+
 const BaseActions = {
   baseURL: process.env.REACT_APP_API_URL,
   baseStagingURL: process.env.REACT_APP_API_STAGING_URL,
@@ -5,7 +7,12 @@ const BaseActions = {
 
   get(url) {
     const fullURL = this.baseURL.concat(url);
-    return fetch(fullURL)
+    const accessToken = Cookies.get('atlas_access_token');
+    return fetch(fullURL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
       .then(res => res.json())
       .then((result) => {
         return result;
@@ -18,14 +25,59 @@ const BaseActions = {
 
   getFromStaging(url) {
     const fullURL = this.baseStagingURL.concat(url);
-    return fetch(fullURL)
-      .then(res => res.json())
+    const accessToken = Cookies.get('atlas_access_token');
+    return fetch(fullURL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then((result) => {
+        return result;
+      })
+      .then((result) => {
+        return result.json();
+      })
+      .catch((error) => {
+        return null;
+      });
+  },
+
+  getFromStagingAuth(url, userpass) {
+    const fullURL = this.baseStagingURL.concat(url);
+    return fetch(fullURL, {
+      headers: {
+        Authorization: `Basic ${userpass}`,
+      },
+    })
+      .then((result) => {
+        result.json().then((res) => {
+          // only set cookies if valid user/pass
+          if (res.access_token) {
+            Cookies.set('atlas_access_token', res.access_token);
+            Cookies.set('atlas_refresh_token', res.refresh_token);
+          }
+        });
+        return result;
+      })
+      .catch((error) => {
+        console.log('getFromStagingAuth error: ', error);
+        return error;
+      });
+  },
+
+  getFromStagingAuthLogout(url, token) {
+    const fullURL = this.baseStagingURL.concat(url);
+    return fetch(fullURL, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((result) => {
         return result;
       })
       .catch((error) => {
-        console.log('getFromStaging error: ', error);
-        return null;
+        console.log('getFromStagingAuthLogout error: ', error);
+        return error;
       });
   },
 

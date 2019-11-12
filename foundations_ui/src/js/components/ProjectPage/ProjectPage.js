@@ -85,7 +85,7 @@ const ProjectPage = (props) => {
 
   return (
     <div>
-      <CommonHeader isProject />
+      <CommonHeader isProject history={props.history} />
       <div className="project-page-container">
         <h1>Project Directory</h1>
         <div className="projects-body-container">{renderProjects()}</div>
@@ -99,11 +99,13 @@ const ProjectPage = (props) => {
 ProjectPage.propTypes = {
   selectProject: PropTypes.func,
   changePage: PropTypes.func,
+  history: PropTypes.object,
 };
 
 ProjectPage.defaultProps = {
   selectProject: () => null,
   changePage: () => null,
+  history: {},
 };
 
 export default ProjectPage;

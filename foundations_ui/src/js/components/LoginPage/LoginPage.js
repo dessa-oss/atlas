@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import Toolbar from '../common/Toolbar';
 import LoginActions from '../../actions/LoginActions';
 import Header from '../common/Header';
@@ -11,60 +13,90 @@ class LoginPage extends Component {
     this.state = {
       isLoggedIn: null,
       loginResponse: [],
-      value: '',
+      username: '',
+      password: '',
     };
-    this.login = this.login.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handleUsernameChange = this.handleUsernameChange.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event) {
-    this.setState({ value: event.target.value });
-  }
-
-  handleSubmit(event) {
-    const data = new FormData(event.target);
-    this.login(data);
+  handleUsernameChange(event) {
+    this.setState({
+      username: event.target.value,
+    });
     event.preventDefault();
   }
 
-  async login(data) {
-    const response = await LoginActions.postLogin(data);
+  handlePasswordChange(event) {
     this.setState({
-      loginResponse: response,
-      isLoggedIn: response[0] === 200,
+      password: event.target.value,
     });
+    event.preventDefault();
+  }
+
+  handleSubmit(event) {
+    const { username, password, loginResponse } = this.state;
+    LoginActions.getLogin(username, password).then((res) => {
+      if (res.status === 200) {
+        this.setState({
+          loginResponse: res,
+          isLoggedIn: true,
+        });
+      } else {
+        this.setState({
+          loginResponse: res,
+          isLoggedIn: false,
+        });
+      }
+    });
+    event.preventDefault();
   }
 
   render() {
-    const { isLoggedIn, loginResponse } = this.state;
+    const {
+      isLoggedIn,
+      loginResponse,
+      username,
+      password,
+    } = this.state;
 
     let passwordError;
+
     if (isLoggedIn) {
-      return LoginActions.redirect('/projects');
+      this.props.history.push('/projects');
     }
 
-    if (loginResponse[0] === 401) {
+    if (loginResponse.status === 401) {
       passwordError = 'Incorrect password.';
     }
 
-    if (loginResponse[0] === 400) {
+    if (loginResponse.status === 400) {
       return <ErrorMessage errorCode={loginResponse[0]} />;
     }
 
     return (
       <div className="login-page-container">
         <div className="header">
-          <Toolbar />
           <Header pageTitle="Login" />
         </div>
         <div className="login-body-container">
           <form onSubmit={this.handleSubmit}>
-            <label>
-              Password:
-              <input type="password" name="password" value={this.state.value} onChange={this.handleChange} />
-            </label>
-            <input type="submit" value="Submit" />
+            <ul>
+              <li>
+                <label>
+                  Username:
+                  <input type="username" name="username" value={username} onChange={this.handleUsernameChange} />
+                </label>
+              </li>
+              <li>
+                <label>
+                  Password:
+                  <input type="password" name="password" value={password} onChange={this.handlePasswordChange} />
+                </label>
+              </li>
+              <input type="submit" value="Submit" />
+            </ul>
           </form>
           <p className="auth-error">{passwordError}</p>
         </div>
@@ -78,6 +110,7 @@ LoginPage.propTypes = {
   isLoggedIn: PropTypes.bool,
   isLoaded: PropTypes.bool,
   loginResponse: PropTypes.array,
+  history: PropTypes.object,
 };
 
 LoginPage.defaultProps = {
@@ -85,6 +118,7 @@ LoginPage.defaultProps = {
   isLoaded: false,
   isLoggedIn: false,
   loginResponse: [],
+  history: {},
 };
 
 export default LoginPage;

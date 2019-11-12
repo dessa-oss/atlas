@@ -75,17 +75,17 @@ class AuthenticationController(Resource):
         try:
             return self.client.token_using_username_password(username, password)
         except Exception as error:
-            raise AuthError(dict(error), 401)
+            raise AuthError(str(error), 401)
 
     def _logout(self) -> Response:
         """Logout of Atlas/Orbit.
-        
+
         :return: The login page of the authentication server.
         :rtype: Response
 
         """
         self.client.logout(get_token_from_header())
-        return redirect('http://localhost:3000/login')
+        return Response(status=200)
 
     def _verify(self) -> None:
         """Verify a JSON web token.
