@@ -65,9 +65,13 @@ class AuthenticationController(Resource):
         return redirect(self.client.authentication_url())
 
     def _cli_login(self) -> Response:
+        from foundations_core_rest_api_components.exceptions import AuthError
         creds = get_creds_from_header()
         username, password = base64.b64decode(creds.encode()).decode().split(":")
-        return self.client.token_using_username_password(username, password)
+        try:
+            return self.client.token_using_username_password(username, password)
+        except Exception as error:
+            raise AuthError(str(error), 401)
 
     def _logout(self) -> Response:
         """Logout of Atlas/Orbit.
