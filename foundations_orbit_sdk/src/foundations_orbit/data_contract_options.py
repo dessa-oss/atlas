@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class DataContractOptions(object):
     
     def __init__(self, check_row_count=None, check_special_values=None, check_distribution=None, check_min_max=None):
@@ -22,6 +23,7 @@ class DataContractOptions(object):
             and self.check_special_values == other.check_special_values \
             and self.check_distribution == other.check_distribution \
             and self.check_min_max == other.check_min_max
+
 
 def _equality_check(value, other_value):
     import math

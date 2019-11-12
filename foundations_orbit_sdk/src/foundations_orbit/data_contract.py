@@ -198,7 +198,7 @@ class DataContract(object):
         try:
             self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, self.summary.serialized_output())
         except ConnectionError as e:
-            print('WARNING: Unable to connect to redis. Data contract results will not be saved')  # TODO use debugger
+            self._log().warn('WARNING: Unable to connect to redis. Data contract results will not be saved')
 
         self._modify_validation_report_with_schema_failures(validation_report, attributes_to_ignore)
 
@@ -207,9 +207,9 @@ class DataContract(object):
     def _run_checkers_and_get_validation_report(self, dataframe_to_validate, attributes_to_ignore):
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
 
-        validation_report = {}
-
-        validation_report['schema_check_results'] = self.schema_test.validate(dataframe_to_validate)
+        validation_report = {
+            'schema_check_results': self.schema_test.validate(dataframe_to_validate)
+        }
 
         if not validation_report['schema_check_results']['passed'] and validation_report['schema_check_results'].get('cols', None):
             for column_to_ignore in validation_report['schema_check_results']['cols'].keys():
@@ -280,6 +280,11 @@ class DataContract(object):
                 for attribute in attributes_to_ignore:
                     test_dictionary[attribute]['min_test'] = {"passed": False, "message": "Schema Test Failed"}
                     test_dictionary[attribute]['max_test'] = {"passed": False, "message": "Schema Test Failed"}
+
+    @staticmethod
+    def _log():
+        from foundations.global_state import log_manager
+        return log_manager.get_logger(__name__)
 
     @staticmethod
     def _remove_object_columns_and_types(column_names, column_types):
