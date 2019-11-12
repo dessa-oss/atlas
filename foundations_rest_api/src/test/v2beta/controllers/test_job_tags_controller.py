@@ -6,17 +6,18 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
-from foundations_spec.extensions import let_fake_redis
 from foundations_spec import *
 
-from foundations_rest_api.v2beta.controllers.job_tags_controller import JobTagsController
-
 class TestJobTagsController(Spec):
-
-    mock_redis = let_fake_redis()
+    
     mock_tag_set_klass = let_patch_mock_with_conditional_return('foundations_contrib.producers.tag_set.TagSet')
     mock_tag_set = let_mock()
     mock_message_router = let_patch_mock('foundations_contrib.global_state.message_router')
+    
+    @let_now
+    def redis(self):
+        import fakeredis
+        return self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
 
     @let
     def job_id(self):
@@ -32,6 +33,7 @@ class TestJobTagsController(Spec):
 
     @let
     def controller(self):
+        from foundations_rest_api.v2beta.controllers.job_tags_controller import JobTagsController
         return JobTagsController()
 
     @let
@@ -42,7 +44,6 @@ class TestJobTagsController(Spec):
 
     @set_up
     def set_up(self):
-        self.patch('foundations_contrib.global_state.redis_connection', self.mock_redis)
         self.controller.params = {'job_id': self.job_id, 'tag': {'key': self.key, 'value': self.value}}
         self.mock_tag_set_klass.return_when(self.mock_tag_set, self.mock_message_router, self.job_id, self.key, self.value)
 
