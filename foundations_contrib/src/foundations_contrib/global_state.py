@@ -15,6 +15,7 @@ from foundations_internal.cache_manager import CacheManager
 from foundations_contrib.config_manager import ConfigManager
 
 from foundations_internal.global_state import module_manager
+from foundations_contrib.authentication.user_token import user_token
 
 import concurrent.futures
 import redis
@@ -31,22 +32,7 @@ message_router = MessageRouter()
 redis_connection = LazyRedis(RedisConnector(
     config_manager, redis.Redis.from_url, os.environ))
 
-def user_token():
-    from foundations_contrib.utils import foundations_home
-    from os.path import expanduser, join
-    import yaml
-    import os
 
-    credential_filepath = expanduser(join(foundations_home(), "credentials.yaml"))
-    if not os.path.isfile(credential_filepath):
-        return None
-    with open(credential_filepath, "r") as file:
-        credential_dict = yaml.load(file)
-    if "default" not in credential_dict:
-        return None
-    if "token" not in credential_dict["default"]:
-        return None
-    return credential_dict["default"]["token"]
 
 def push_state():
     config_manager.push_config()
