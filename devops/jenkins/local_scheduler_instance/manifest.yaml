@@ -1,0 +1,18 @@
+scheduler:
+  name: docker.shehanigans.net/orbit-team-dev/scheduler
+  tag: latest
+tracker:
+  name: docker.shehanigans.net/orbit-team-dev/tracker
+  tag: latest
+worker:
+  name: docker.shehanigans.net/orbit-team-dev/worker
+  tag: latest
+orbit_rest_api:
+  name: docker.shehanigans.net/orbit-team-dev/orbit-rest-api
+  tag: latest
+gui:
+  name: docker.shehanigans.net/orbit-team-dev/orbit-gui
+  tag: latest
+atlas_rest_api:
+  name: docker.shehanigans.net/orbit-team-dev/rest-api
+  tag: latest

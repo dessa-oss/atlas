@@ -9,3 +9,5 @@ echo Creating instance $instance_name
 
 ansible-playbook -e instance_name=$instance_name deploy_docker_local_scheduler_instance.yaml && \
     ansible-playbook --private-key ~/.ssh/jenkins.pem -i ec2.py -e instance_name=$instance_name -e NEXUS_USER=$NEXUS_USER -e NEXUS_PASSWORD=$NEXUS_PASSWORD -u ubuntu install_scheduler_to_instance.yaml
+
+    ansible-playbook --private-key ~/.aws/aws_local.pem -i ec2.py -e instance_name=orbt-team -e NEXUS_USER=$NEXUS_USER -e NEXUS_PASSWORD=$NEXUS_PASSWORD -u ubuntu install_scheduler_to_instance.yaml
