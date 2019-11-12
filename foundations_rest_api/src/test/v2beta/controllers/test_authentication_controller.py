@@ -65,8 +65,18 @@ class TestAuthenticationController(Spec):
             AuthenticationController,
         )
         from foundations_rest_api.global_state import app_manager
+        import base64
 
-        with app_manager.app().test_request_context(query_string="code=code"):
+        username = self.faker.word()
+        password = self.faker.word()
+        code = base64.b64encode(f'{username}:{password}'.encode())
+
+        headers={"Authorization": f"Basic {code}"}
+
+        with app_manager.app().test_request_context(headers=headers):
+            auth_client = mock_constructor("conf", "redirecT_url")
+            AuthenticationController().get('cli_login')
+            auth_client.token_using_username_password.assert_called_once_with(username, password)
 
 
     @patch(
@@ -104,10 +114,6 @@ class TestAuthenticationController(Spec):
                 "AuthenticationClient().authentication_url()", resp.headers["Location"]
             )
 
-    # @patch(
-    #     "foundations_rest_api.v2beta.controllers.authentication_controller.verify_token",
-    #     autospec=True
-    # )
     @patch(
         "foundations_contrib.authentication.authentication_client.AuthenticationClient",
         autospec=True,

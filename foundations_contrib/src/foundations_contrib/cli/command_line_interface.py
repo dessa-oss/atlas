@@ -5,7 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from tabulate import tabulate
 
 class CommandLineInterface(object):
 
@@ -171,6 +170,7 @@ class CommandLineInterface(object):
             print(self._format_environment_printout(config_list))
 
     def _format_environment_printout(self, environment_array):
+        from tabulate import tabulate
         return tabulate(environment_array, headers = ['env_name', 'env_path'])
 
     def _create_environment_list(self, available_environments):
