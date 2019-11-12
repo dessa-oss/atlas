@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
 
-
+# TODO: Refactor this whole thing to be cleaner
 class TestMinMax(Spec):
 
     @let
@@ -17,6 +17,14 @@ class TestMinMax(Spec):
 
     @let
     def column_name_two(self):
+        return self.faker.word()
+
+    @let
+    def column_name_three(self):
+        return self.faker.word()
+
+    @let
+    def column_name_four(self):
         return self.faker.word()
 
     @let_now
@@ -28,7 +36,13 @@ class TestMinMax(Spec):
     def dataframe_two_columns(self):
         import pandas
         return pandas.DataFrame(columns=[self.column_name, self.column_name_two], data=[[20, 0], [40, 4], [50, 10], [100, 40], [110, 99]])
-    
+
+    @let_now
+    def dataframe_four_columns(self):
+        import pandas
+        return pandas.DataFrame(columns=[self.column_name, self.column_name_two, self.column_name_three, self.column_name_four],
+                                data=[[1, 5, 3, -1], [-1, 4, 2, -2], [-5, -1, 1, -4]])
+
     @let_now
     def dataframe_one_column_with_datetime(self):
         import datetime
@@ -43,6 +57,13 @@ class TestMinMax(Spec):
     @let
     def dataframe_two_column_reference_column_types(self):
         return {self.column_name: str(self.dataframe_two_columns.iloc[:,0].dtype), self.column_name_two: str(self.dataframe_two_columns.iloc[:,1].dtype)}
+
+    @let
+    def dataframe_four_columns_column_types(self):
+        return {self.column_name: str(self.dataframe_four_columns.iloc[:, 0].dtype),
+                self.column_name_two: str(self.dataframe_four_columns.iloc[:, 1].dtype),
+                self.column_name_three: str(self.dataframe_four_columns.iloc[:, 2].dtype),
+                self.column_name_four: str(self.dataframe_four_columns.iloc[:, 3].dtype)}
 
     @let
     def dataframe_one_column_with_datetime_reference_column_types(self):
@@ -466,3 +487,90 @@ class TestMinMax(Spec):
             min_max_checker.configure(columns=[self.column_name, self.column_name_two], lower_bound=0)
 
         self.assertEqual(f'The following columns have invalid types: {expected_error_dictionary}', e.exception.args[0])
+
+    def test_min_max_checker_with_zero_lower_bound_and_zero_upper_bound(self):
+        max_val_one = self.dataframe_four_columns[self.column_name].max()
+        max_val_two = self.dataframe_four_columns[self.column_name_two].max()
+        max_val_three = self.dataframe_four_columns[self.column_name_three].max()
+        max_val_four = self.dataframe_four_columns[self.column_name_four].max()
+        min_val_one = self.dataframe_four_columns[self.column_name].min()
+        min_val_two = self.dataframe_four_columns[self.column_name_two].min()
+        min_val_three = self.dataframe_four_columns[self.column_name_three].min()
+        min_val_four = self.dataframe_four_columns[self.column_name_four].min()
+
+        upper_bound_one = 0
+        lower_bound_one = -6
+        upper_bound_two = 4
+        lower_bound_two = 0
+        upper_bound_three = 7
+        lower_bound_three = 0
+        upper_bound_four = 0
+        lower_bound_four = -3
+
+        min_max_checker = MinMaxChecker(self.dataframe_four_columns_column_types)
+        min_max_checker.configure(columns=[self.column_name], lower_bound=lower_bound_one, upper_bound=upper_bound_one)
+        min_max_checker.configure(columns=[self.column_name_two], lower_bound=lower_bound_two,
+                                  upper_bound=upper_bound_two)
+        min_max_checker.configure(columns=[self.column_name_three], lower_bound=lower_bound_three,
+                                  upper_bound=upper_bound_three)
+        min_max_checker.configure(columns=[self.column_name_four], lower_bound=lower_bound_four,
+                                  upper_bound=upper_bound_four)
+
+        result = min_max_checker.validate(self.dataframe_four_columns)
+
+        expected_result = {
+            self.column_name: {
+                'min_test': {
+                    'lower_bound': lower_bound_one,
+                    'passed': True,
+                    'min_value': min_val_one,
+                },
+                'max_test': {
+                    'upper_bound': upper_bound_one,
+                    'passed': False,
+                    'max_value': max_val_one,
+                    'percentage_out_of_bounds': 0.333
+                },
+            },
+            self.column_name_two: {
+                'min_test': {
+                    'lower_bound': lower_bound_two,
+                    'passed': False,
+                    'min_value': min_val_two,
+                    'percentage_out_of_bounds': 0.333
+                },
+                'max_test': {
+                    'upper_bound': upper_bound_two,
+                    'passed': False,
+                    'max_value': max_val_two,
+                    'percentage_out_of_bounds': 0.333
+                },
+            },
+            self.column_name_three: {
+                'min_test': {
+                    'lower_bound': lower_bound_three,
+                    'passed': True,
+                    'min_value': min_val_three,
+                },
+                'max_test': {
+                    'upper_bound': upper_bound_three,
+                    'passed': True,
+                    'max_value': max_val_three,
+                },
+            },
+            self.column_name_four: {
+                'min_test': {
+                    'lower_bound': lower_bound_four,
+                    'passed': False,
+                    'min_value': min_val_four,
+                    'percentage_out_of_bounds': 0.333
+                },
+                'max_test': {
+                    'upper_bound': upper_bound_four,
+                    'passed': True,
+                    'max_value': max_val_four,
+                },
+            }
+        }
+
+        self.assertEqual(expected_result, result)
