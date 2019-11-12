@@ -74,7 +74,7 @@ class AuthenticationController(Resource):
         try:
             return self.client.token_using_username_password(username, password)
         except Exception as error:
-            raise AuthError(str(error), 401)
+            raise AuthError(dict(error), 401)
 
     def _logout(self) -> Response:
         """Logout of Atlas/Orbit.
