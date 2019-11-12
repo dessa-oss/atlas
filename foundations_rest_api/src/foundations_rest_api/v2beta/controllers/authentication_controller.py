@@ -12,9 +12,7 @@ from flask_restful import Resource
 
 from werkzeug.wrappers import Response
 
-from foundations_contrib.authentication.authentication_client import (
-    AuthenticationClient,
-)
+
 from foundations_contrib.authentication.configs import ATLAS
 from foundations_contrib.authentication.utils import (
     get_token_from_header,
@@ -38,6 +36,9 @@ class AuthenticationController(Resource):
     client = None
 
     def __init__(self):
+        from foundations_contrib.authentication.authentication_client import (
+            AuthenticationClient,
+        )
         self.client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth/login")
 
     def get(self, action: str) -> Response:

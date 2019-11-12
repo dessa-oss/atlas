@@ -9,7 +9,7 @@ configuration["redis_url"] = os.environ["REDIS_URL"]
 root_logger = logging.getLogger()
 root_logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-file_handler = logging.FileHandler('/tmp/foundations/rest_api.log')
+file_handler = logging.FileHandler('/var/foundations/rest_api.log')
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
 root_logger.addHandler(file_handler)
