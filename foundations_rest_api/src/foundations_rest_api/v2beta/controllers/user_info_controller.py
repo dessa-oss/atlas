@@ -9,16 +9,19 @@ from foundations_rest_api.utils.api_resource import api_resource
 from foundations_core_rest_api_components.response import Response
 from foundations_core_rest_api_components.lazy_result import LazyResult
 
-from foundations_contrib.authentication.authentication_client import (
-    AuthenticationClient,
-)
+
 from foundations_contrib.authentication.utils import get_token_from_header
 from foundations_contrib.authentication.configs import ATLAS
 
 
 @api_resource("/api/v2beta/userinfo")
 class UserInfoController:
-    client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth")
+    
+    client = None
+
+    def __init__(self):
+        from foundations_contrib.authentication.authentication_client import AuthenticationClient
+        self.client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth")
 
     def index(self):
         token = get_token_from_header()

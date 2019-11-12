@@ -35,7 +35,10 @@ class AuthenticationController(Resource):
     that method.
     """
 
-    client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth/login")
+    client = None
+
+    def __init__(self):
+        self.client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth/login")
 
     def get(self, action: str) -> Response:
         return getattr(self, "_" + action, lambda: abort(404))()
