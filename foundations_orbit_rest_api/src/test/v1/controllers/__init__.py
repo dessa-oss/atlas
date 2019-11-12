@@ -13,3 +13,4 @@ from test.v1.controllers.test_validation_reports_controller import TestValidatio
 from test.v1.controllers.test_scheduled_monitor_controller import TestScheduledMonitorController
 from test.v1.controllers.test_monitor_jobs_controller import TestMonitorJobsController
 from test.v1.controllers.test_data_contract_summary_controller import TestDataContractSummaryController
+from test.v1.controllers.test_data_contracts_details_controller import DataContractDetailsController
