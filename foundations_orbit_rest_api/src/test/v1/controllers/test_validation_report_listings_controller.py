@@ -107,6 +107,7 @@ class TestValidationReportListingsController(Spec):
 
         self.assertEqual(expected_result, result.as_json())
 
+    # TODO: This test randomly failed at one point
     def test_index_returns_list_with_all_listings_is_sorted_by_inference_period_followed_by_monitor_package(self):
         self._register_report(self.project_name, 'dog_bark', self.data_contract_2, '2019-10-13', self.num_critical_tests2)
         self._register_report(self.project_name, 'cat_meow', self.data_contract, '2019-10-13', self.num_critical_tests)

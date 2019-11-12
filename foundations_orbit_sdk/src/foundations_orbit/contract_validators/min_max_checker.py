@@ -101,9 +101,9 @@ class MinMaxChecker(object):
                 }
             })
 
-        if bounds['lower_bound'] and min_value < bounds['lower_bound']:
+        if bounds['lower_bound'] is not None and min_value < bounds['lower_bound']:
             min_max_test_result['min_test']['percentage_out_of_bounds'] = self._min_test_percentage(dataframe_to_validate, column, bounds['lower_bound'])
-        if bounds['upper_bound'] and max_value > bounds['upper_bound']:
+        if bounds['upper_bound'] is not None and max_value > bounds['upper_bound']:
             min_max_test_result['max_test']['percentage_out_of_bounds'] = self._max_test_percentage(dataframe_to_validate, column, bounds['upper_bound'])
 
         return min_max_test_result
