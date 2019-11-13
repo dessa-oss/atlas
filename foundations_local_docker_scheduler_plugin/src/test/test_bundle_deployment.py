@@ -13,6 +13,10 @@ class TestBundleDeployment(Spec):
     def job_name(self):
         return self.faker.uuid4()
 
+    @let
+    def user_token(self):
+        return self.patch('foundations_contrib.global_state.user_token')
+
     @let_now
     def config_manager(self):
         from foundations_contrib.config_manager import ConfigManager
@@ -54,9 +58,16 @@ class TestBundleDeployment(Spec):
         mock_file.__enter__ = lambda *_: mock_file
         mock_file.__exit__ = Mock()
 
+        self.user_token.return_value = "user-token"
+
         mock_post = self.patch('requests.post', ConditionalReturn())
         mock_response = Mock()
-        mock_post.return_when(mock_response, 'http://localhost:5000/job_bundle', files={'job_bundle': mock_file})
+        mock_post.return_when(
+            mock_response, 
+            'http://localhost:5000/job_bundle', 
+            files={'job_bundle': mock_file},
+            headers={"Authorization": f"bearer user-token"}
+        )
 
         response = submit_job_bundle(folder_job_bundle)
 

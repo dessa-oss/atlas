@@ -8,7 +8,6 @@ Written by Susan Davis <s.davis@dessa.com>, 11 2019
 from foundations_spec import Spec, let_now, set_up, Mock, let
 from mock import patch
 
-
 class TestAuthenticationController(Spec):
     @let_now
     def auth_client(self):
@@ -79,18 +78,6 @@ class TestAuthenticationController(Spec):
         with app_manager.app().test_request_context(headers=headers):
             self.auth_controller.get("logout")
             self.auth_client.logout.assert_called_once_with("token")
-
-    def test_logout_redirect_to_login_page(self,):
-
-        from foundations_rest_api.global_state import app_manager
-
-        headers = {"Authorization": "bearer token"}
-
-        with app_manager.app().test_request_context(headers=headers):
-            resp = self.auth_controller.get("logout")
-            self.assertIn(
-                "http://localhost:3000/login", resp.headers["Location"]
-            )
 
     @patch(
         "foundations_rest_api.v2beta.controllers.authentication_controller.verify_token"
