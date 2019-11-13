@@ -95,7 +95,7 @@ class AuthenticationClient:
             return json.load(config_file)
 
 
-def keycloak_client(config: dict) -> Type[KeycloakOpenID]:
+def keycloak_client(config: dict) -> KeycloakOpenID:
     creds = config.get("credentials", None)
     secret_key = creds["secret"] if creds else None
     return KeycloakOpenID(
@@ -110,4 +110,4 @@ def keycloak_client(config: dict) -> Type[KeycloakOpenID]:
 
 # from foundations_contrib.authentication.configs import ATLAS
 
-# client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth")
+# user_client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth/login")

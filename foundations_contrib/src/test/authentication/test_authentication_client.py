@@ -93,6 +93,9 @@ class TestAuthenticationClient(Spec):
         self.auth_client.user_info(token)
         self.mock_auth_backend.userinfo.assert_called_once_with(token)
 
+    def test_user_map(self):
+        
+
 
 def load_config(conf_file: str) -> dict:
     with open(conf_file) as conf:
