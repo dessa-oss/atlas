@@ -1,8 +1,8 @@
 ---
-name: 'Atlas feature request '
-about: "Suggest an \U0001F4A1 for Atlas"
+name: 'Foundations feature request'
+about: "Suggest an \U0001F4A1 for Foundations"
 title: "[Request] Title"
-labels: Atlas, request
+labels: Foundations, request
 assignees: ''
 
 ---
