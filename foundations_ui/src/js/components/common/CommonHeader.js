@@ -16,8 +16,7 @@ class CommonHeader extends React.Component {
   }
 
   onLogout() {
-    const refreshToken = Cookies.get('atlas_refresh_token');
-    LogoutActions.getLogout(refreshToken).then((response) => {
+    LogoutActions.getLogout().then((response) => {
       if (response.status === 200) {
         Cookies.remove('atlas_access_token');
         Cookies.remove('atlas_refresh_token');

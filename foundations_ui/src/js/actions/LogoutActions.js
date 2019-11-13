@@ -1,9 +1,9 @@
 import BaseActions from './BaseActions';
 
 class LogoutActions {
-  static getLogout(refreshToken) {
+  static getLogout() {
     const url = 'auth/logout';
-    return BaseActions.getFromStagingAuthLogout(url, refreshToken);
+    return BaseActions.getFromStagingAuthLogout(url);
   }
 }
 export default LogoutActions;

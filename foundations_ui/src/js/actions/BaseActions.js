@@ -65,11 +65,12 @@ const BaseActions = {
       });
   },
 
-  getFromStagingAuthLogout(url, token) {
+  getFromStagingAuthLogout(url) {
     const fullURL = this.baseStagingURL.concat(url);
+    const refreshToken = Cookies.get('atlas_refresh_token');
     return fetch(fullURL, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${refreshToken}`,
       },
     })
       .then((result) => {
@@ -116,12 +117,14 @@ const BaseActions = {
 
   postStaging(url, body) {
     const fullURL = this.baseStagingURL.concat(url);
+    const accessToken = Cookies.get('atlas_access_token');
     return fetch(fullURL, {
       method: 'post',
       body: JSON.stringify(body),
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
       },
     })
       .then(res => res.json())
@@ -176,12 +179,14 @@ const BaseActions = {
 
   putStaging(url, body) {
     const fullURL = this.baseStagingURL.concat(url);
+    const accessToken = Cookies.get('atlas_access_token');
     return fetch(fullURL, {
       method: 'put',
       body: JSON.stringify(body),
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
       },
     })
       .then(res => res.json())
@@ -236,11 +241,13 @@ const BaseActions = {
 
   delStaging(url) {
     const fullURL = this.baseStagingURL.concat(url);
+    const accessToken = Cookies.get('atlas_access_token');
     return fetch(fullURL, {
       method: 'delete',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
       },
     })
       .then(res => res.json())
