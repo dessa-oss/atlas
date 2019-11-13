@@ -8,6 +8,7 @@ class ErrorMessage extends Component {
     this.setInternalServerError = this.setInternalServerError.bind(this);
     this.setNotFoundError = this.setNotFoundError.bind(this);
     this.setBadRequestError = this.setBadRequestError.bind(this);
+    this.setUnauthorizedError = this.setUnauthorizedError.bind(this);
     this.state = {
       errorCode: this.props.errorCode,
     };
@@ -23,6 +24,9 @@ class ErrorMessage extends Component {
     }
     if (errorCode === 400) {
       return this.setBadRequestError();
+    }
+    if (errorCode === 401) {
+      return this.setUnauthorizedError();
     }
 
     return {
@@ -58,6 +62,15 @@ class ErrorMessage extends Component {
     return {
       errorBanner: errorBanner400,
       errorSubtext: errorSubtext400,
+    };
+  }
+
+  setUnauthorizedError() {
+    const errorBanner401 = '401 Unauthorized';
+    const errorSubtext401 = <a href="/login">Please Login here</a>;
+    return {
+      errorBanner: errorBanner401,
+      errorSubtext: errorSubtext401,
     };
   }
 

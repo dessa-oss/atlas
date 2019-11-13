@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import CommonActions from './CommonActions';
 
 const BaseActions = {
   baseURL: process.env.REACT_APP_API_URL,
@@ -7,37 +8,42 @@ const BaseActions = {
 
   get(url) {
     const fullURL = this.baseURL.concat(url);
-    const accessToken = Cookies.get('atlas_access_token');
+    const accessToken = CommonActions.getAccessCookie();
     return fetch(fullURL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      .then(res => res.json())
+      .then((res) => {
+        CommonActions.checkStatusResponse(res);
+        return res.json();
+      })
       .then((result) => {
         return result;
       })
       .catch((error) => {
-        console.log(error);
+        console.log('baseURL get error: ', error);
         return null;
       });
   },
 
   getFromStaging(url) {
     const fullURL = this.baseStagingURL.concat(url);
-    const accessToken = Cookies.get('atlas_access_token');
+    const accessToken = CommonActions.getAccessCookie();
     return fetch(fullURL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      .then((result) => {
-        return result;
+      .then((res) => {
+        CommonActions.checkStatusResponse(res);
+        return res;
       })
-      .then((result) => {
-        return result.json();
+      .then((res) => {
+        return res.json();
       })
       .catch((error) => {
+        console.log('getFromStaging error: ', error);
         return null;
       });
   },
@@ -117,7 +123,7 @@ const BaseActions = {
 
   postStaging(url, body) {
     const fullURL = this.baseStagingURL.concat(url);
-    const accessToken = Cookies.get('atlas_access_token');
+    const accessToken = CommonActions.getAccessCookie();
     return fetch(fullURL, {
       method: 'post',
       body: JSON.stringify(body),
@@ -127,7 +133,10 @@ const BaseActions = {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      .then(res => res.json())
+      .then((res) => {
+        CommonActions.checkStatusResponse(res);
+        return res.json();
+      })
       .then((result) => {
         return result;
       })
@@ -179,7 +188,7 @@ const BaseActions = {
 
   putStaging(url, body) {
     const fullURL = this.baseStagingURL.concat(url);
-    const accessToken = Cookies.get('atlas_access_token');
+    const accessToken = CommonActions.getAccessCookie();
     return fetch(fullURL, {
       method: 'put',
       body: JSON.stringify(body),
@@ -189,7 +198,10 @@ const BaseActions = {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      .then(res => res.json())
+      .then((res) => {
+        CommonActions.checkStatusResponse(res);
+        return res.json();
+      })
       .then((result) => {
         return result;
       })
@@ -241,7 +253,7 @@ const BaseActions = {
 
   delStaging(url) {
     const fullURL = this.baseStagingURL.concat(url);
-    const accessToken = Cookies.get('atlas_access_token');
+    const accessToken = CommonActions.getAccessCookie();
     return fetch(fullURL, {
       method: 'delete',
       headers: {
@@ -250,7 +262,10 @@ const BaseActions = {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      .then(res => res.json())
+      .then((res) => {
+        CommonActions.checkStatusResponse(res);
+        return res.json();
+      })
       .then((result) => {
         return result;
       })
