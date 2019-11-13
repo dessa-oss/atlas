@@ -8,8 +8,8 @@ Written by Susan Davis <s.davis@dessa.com>, 11 2018
 import webbrowser
 import json
 
-from typing import Type, Union
-from keycloak import KeycloakOpenID
+from typing import Type, Union, Dict
+from keycloak import KeycloakOpenID, KeycloakAdmin
 
 
 class AuthenticationClient:
@@ -75,17 +75,25 @@ class AuthenticationClient:
             redirect_uri=self._redirect_url,
         )
 
-    def users_info(self, auth_token: str) -> dict:
-        import requests
+    def token_using_username_password(self, username: str, password: str) -> dict:
+        """[summary]
+        
+        :param username: [description]
+        :type username: str
+        :param password: [description]
+        :type password: str
+        :return: [description]
+        :rtype: dict
+        """
+        return self._client.token(username=username, password=password)
 
+    def users_info(self, auth_token: str) -> Dict[str, str]:
+        import requests
         users_response = requests.get(
             "http://localhost:8080/auth/admin/realms/Atlas/users",
             headers={"Authorization": f"Bearer {auth_token}"},
         ).json()
         return {info["id"]: info["username"] for info in users_response}
-
-    def token_using_username_password(self, username: str, password: str) -> dict:
-        return self._client.token(username=username, password=password)
 
     @staticmethod
     def _get_config_from_file(fname: str) -> dict:
