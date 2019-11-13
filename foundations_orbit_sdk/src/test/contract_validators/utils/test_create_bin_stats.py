@@ -13,14 +13,12 @@ import numpy as np
 class TestCreateBinStats(Spec):
 
     def test_creates_bin_for_empty_series(self):
-        special_values = []
         max_bins = 10
         col_values = pd.Series([])
         with self.assertRaises(ValueError) as value_error:
-            create_bin_stats(special_values, max_bins, col_values)
+            create_bin_stats(max_bins, col_values)
 
     def test_creates_bin_ignores_nan_in_column(self):
-        special_values = []
         max_bins = 10
         col_values = pd.Series([1, np.nan])
 
@@ -30,11 +28,10 @@ class TestCreateBinStats(Spec):
             'upper_edge': None
         }]
 
-        output = create_bin_stats(special_values, max_bins, col_values)
+        output = create_bin_stats(max_bins, col_values)
         self.assertEqual(expected_output, output)
 
     def test_creates_has_mulitple_of_the_same_unique_value(self):
-        special_values = []
         max_bins = 10
         col_values = pd.Series([1,1,1,1,1])
 
@@ -44,11 +41,10 @@ class TestCreateBinStats(Spec):
             'upper_edge': None
         }]
 
-        output = create_bin_stats(special_values, max_bins, col_values)
+        output = create_bin_stats(max_bins, col_values)
         self.assertEqual(expected_output, output)
 
     def test_creates_bin_ignores_infinite_value(self):
-        special_values = []
         max_bins = 10
         col_values = pd.Series([1, np.inf])
 
@@ -58,14 +54,13 @@ class TestCreateBinStats(Spec):
             'upper_edge': None
         }]
 
-        output = create_bin_stats(special_values, max_bins, col_values)
+        output = create_bin_stats(max_bins, col_values)
         self.assertEqual(expected_output, output)
 
-        output = create_bin_stats(special_values, max_bins, col_values)
+        output = create_bin_stats(max_bins, col_values)
         self.assertEqual(expected_output, output)
 
     def test_creates_bin_for_column_with_no_special_values(self):
-        special_values = []
         max_bins = 10
         col_values = pd.Series([1, 2])
 
@@ -77,81 +72,15 @@ class TestCreateBinStats(Spec):
             'upper_edge': np.inf
         }]
 
-        output = create_bin_stats(special_values, max_bins, col_values)
-        self.assertEqual(expected_output, output)
-
-    def test_creates_bin_for_column_with_special_values_defined_but_none_in_column(self):
-        special_values = [np.nan]
-        max_bins = 10
-        col_values = pd.Series([1, 2])
-
-        expected_output = [{
-            'value': np.nan,
-            'percentage': 0.0
-        }, {
-            'percentage': 1.0,
-            'upper_edge': 2
-        }, {
-            'percentage': 0.0,
-            'upper_edge': np.inf
-        }]
-
-        output = create_bin_stats(special_values, max_bins, col_values)
-        # print(output)
-        self.assertEqual(expected_output, output)
-
-    def test_creates_bin_for_column_with_special_values_defined_and_in_column(self):
-        special_values = [np.nan]
-        max_bins = 10
-        col_values = pd.Series([1, 2, np.nan])
-
-        expected_output = [{
-            'value': np.nan,
-            'percentage': 0.3333333333333333
-        }, {
-            'percentage': 0.6666666666666666,
-            'upper_edge': 2.0
-        }, {
-            'percentage': 0.0, 
-            'upper_edge': np.inf
-        }]
-
-        output = create_bin_stats(special_values, max_bins, col_values)
-        self.assertEqual(expected_output, output)
-
-    def test_creates_bin_for_column_with_special_values_defined_and_only_special_values_in_column(self):
-        special_values = [-1]
-        max_bins = 10
-        col_values = pd.Series([-1, -1])
-
-        expected_output = [{
-            'value': -1, 
-            'percentage': 1.0
-        }]
-
-        output = create_bin_stats(special_values, max_bins, col_values)
-        self.assertEqual(expected_output, output)
-
-    def test_creates_bin_for_column_with_special_values_defined_and_only_special_values_in_column(self):
-        special_values = [-1]
-        max_bins = 10
-        col_values = pd.Series([-1, -1])
-
-        expected_output = [{
-            'value': -1, 
-            'percentage': 1.0
-        }]
-
-        output = create_bin_stats(special_values, max_bins, col_values)
+        output = create_bin_stats(max_bins, col_values)
         self.assertEqual(expected_output, output)
 
     def test_create_bin_for_columns_with_negative_max_bin(self):
-        special_values = []
         max_bins = -1
         col_values = pd.Series([1, 21])
 
         with self.assertRaises(ValueError) as value_error:
-            create_bin_stats(special_values, max_bins, col_values)
+            create_bin_stats(max_bins, col_values)
 
 
     def test_create_bin_for_columns_with_max_bin_as_float(self):
@@ -160,7 +89,7 @@ class TestCreateBinStats(Spec):
         col_values = pd.Series([1, 21])
 
         try:
-            create_bin_stats(special_values, max_bins, col_values)
+            create_bin_stats(max_bins, col_values)
         except ValueError as value_error:
             self.assertTrue('must be defined as an integer' in str(value_error).lower())
 
@@ -177,51 +106,19 @@ class TestCreateBinStats(Spec):
             'upper_edge': np.inf
         }]
 
-        output = create_bin_stats(special_values, max_bins, col_values)
+        output = create_bin_stats(max_bins, col_values)
         self.assertEqual(expected_output, output)
-
-    def test_create_bin_for_columns_with_singel_nan_generate_expected_bins(self):
-        import numpy
-        special_values = [numpy.nan]
-        max_bins = 10
-        col_values = pd.Series([numpy.nan])
-
-        expected_output = [
-            {
-                'value': str(numpy.nan), 
-                'percentage': 1.0,
-            }, 
-            {
-                'value': str(numpy.nan),
-                'percentage': 1.0, 
-                'upper_edge': None
-            }
-        ]
-
-        # converted nan to string for actual comparison
-        output = create_bin_stats(special_values, max_bins, col_values)
-        temp_output = []
-        for out in output:
-            temp = {}
-            for key, value in out.items():
-                if key == 'value':
-                    temp[key] = str(value)
-                else:
-                    temp[key] = value
-            temp_output.append(temp)
-
-        self.assertEqual(expected_output, temp_output)
 
     def test_create_bin_stats_categorical_returns_empty_dict_when_empty_arguments_passed(self):
         import numpy, pandas
-        result = create_bin_stats_categorical(special_values=[], col_values=pandas.Series([]), min_category_threshold=0)
+        result = create_bin_stats_categorical(col_values=pandas.Series([]), min_category_threshold=0)
 
         self.assertEqual(result, [])
     
     def test_create_bin_stats_categorical_returns_expected_output_with_single_value_input(self):
         import numpy, pandas
         single_value_series = pandas.Series([1]*100)
-        result = create_bin_stats_categorical(special_values=[], col_values=single_value_series, min_category_threshold=0)
+        result = create_bin_stats_categorical(col_values=single_value_series, min_category_threshold=0)
 
         expected_result = [
             {
@@ -235,39 +132,13 @@ class TestCreateBinStats(Spec):
         ]
         self.assertEqual(result, expected_result)
 
-
-    def test_create_bin_stats_categorical_returns_expected_output_with_single_value_input_and_nan_special_value(self):
-        import pandas
-        single_value_series = pandas.Series([1]*90 + [np.nan]*10)
-        result = create_bin_stats_categorical(special_values=[np.nan], col_values=single_value_series, min_category_threshold=0)
-
-        expected_result = [
-            {
-                'value': np.nan,
-                'percentage': 0.1
-            },
-            {
-                'category_value':1,
-                'percentage':0.90
-            },
-            {
-                'other_bins':True,
-                'percentage':0
-            }
-        ]
-
-        self.assertEqual(result, expected_result)
-
     def test_create_bin_stats_categorical_returns_expected_output_with_multiple_cateogry_input(self):
         import pandas
-        single_value_series = pandas.Series([1]*20 +  [2]*30 + [3]*30 + [4]*10 + [np.nan]*10)
-        result = create_bin_stats_categorical(special_values=[np.nan], col_values=single_value_series, min_category_threshold=0)
+        single_value_series = pandas.Series([1]*20 +  [2]*30 + [3]*30 + [4]*20)
+        result = create_bin_stats_categorical(col_values=single_value_series, min_category_threshold=0)
 
         expected_result = [
-            {
-                'value': np.nan,
-                'percentage': 0.1
-            },
+
             {
                 'category_value':1,
                 'percentage':0.2
@@ -282,7 +153,7 @@ class TestCreateBinStats(Spec):
             },
             {
                 'category_value':4,
-                'percentage':0.1
+                'percentage':0.2
             },
             {
                 'other_bins':True,
@@ -294,29 +165,17 @@ class TestCreateBinStats(Spec):
 
     def test_create_bin_stats_categorical_returns_expected_output_with_multiple_cateogry_input_and_multiple_special_values(self):
         import pandas
-        single_value_series = pandas.Series([1]*20 +  [2]*30 + [np.nan]*10 + [np.inf]*20 + [7]*20)
-        result = create_bin_stats_categorical(special_values=[np.nan, np.inf, 7], col_values=single_value_series, min_category_threshold=0)
+        single_value_series = pandas.Series([1]*20 +  [2]*30)
+        result = create_bin_stats_categorical(col_values=single_value_series, min_category_threshold=0)
 
         expected_result = [
             {
-                'value': np.nan,
-                'percentage': 0.1
-            },
-            {
-                'value': np.inf,
-                'percentage': 0.2
-            },
-            {
-                'value': 7,
-                'percentage': 0.2
-            },
-            {
                 'category_value':1,
-                'percentage':0.2
+                'percentage':0.4
             },
             {
                 'category_value':2,
-                'percentage':0.3
+                'percentage':0.6
             },
             {
                 'other_bins':True,
@@ -328,14 +187,10 @@ class TestCreateBinStats(Spec):
 
     def test_create_bin_stats_categorical_returns_expected_output_with_multiple_cateogry_input_and_min_treshold(self):
         import pandas
-        single_value_series = pandas.Series([1]*50 +  [2]*30 + [4]*5 + [5]*5 + [np.nan]*10)
-        result = create_bin_stats_categorical(special_values=[np.nan], col_values=single_value_series, min_category_threshold=0.1)
+        single_value_series = pandas.Series([1]*50 +  [2]*30 + [4]*10 + [5]*10)
+        result = create_bin_stats_categorical(col_values=single_value_series, min_category_threshold=0.12)
 
         expected_result = [
-            {
-                'value': np.nan,
-                'percentage': 0.1
-            },
             {
                 'category_value':1,
                 'percentage':0.5
@@ -346,7 +201,7 @@ class TestCreateBinStats(Spec):
             },
             {
                 'other_bins':True,
-                'percentage':0.1
+                'percentage':0.2
             }
         ]
 

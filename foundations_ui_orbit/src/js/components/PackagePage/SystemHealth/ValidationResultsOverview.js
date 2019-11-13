@@ -24,6 +24,7 @@ class ValidationResultsOverview extends Component {
     this.reload = this.reload.bind(this);
     this.onChangeAttribute = this.onChangeAttribute.bind(this);
     this.defaultSelectedOverview = this.defaultSelectedOverview.bind(this);
+    this.onClickOpenInfo = this.onClickOpenInfo.bind(this);
   }
 
   update() {
@@ -34,6 +35,11 @@ class ValidationResultsOverview extends Component {
     } else {
       this.reload();
     }
+  }
+
+  onClickOpenInfo() {
+    const { toggleInfo, uuid } = this.props;
+    toggleInfo(uuid);
   }
 
   componentDidUpdate(prevProps) {
@@ -208,7 +214,7 @@ class ValidationResultsOverview extends Component {
             <div className="overview-heading font-bold">Overview</div>
             <div className="overview-contract-container">
               <div className="overview-contract-name">{validationResult.data_contract}</div>
-              <div className="i--icon-open" />
+              <div className="i--icon-open" onClick={this.onClickOpenInfo} />
             </div>
             <div className="overview-labels-values-container">
               <div className="overview-labels font-bold">
@@ -284,12 +290,16 @@ class ValidationResultsOverview extends Component {
 
 ValidationResultsOverview.propTypes = {
   location: PropTypes.object,
-  validationResult: PropTypes.object
+  validationResult: PropTypes.object,
+  toggleInfo: PropTypes.func,
+  uuid: PropTypes.string
 };
 
 ValidationResultsOverview.defaultProps = {
   location: {},
-  validationResult: {}
+  validationResult: {},
+  toggleInfo: () => {},
+  uuid: ""
 };
 
 export default ValidationResultsOverview;

@@ -5,17 +5,13 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class DataContract(object):
 
     def __init__(self, contract_name, df=None):
-        import pandas
-        from foundations_orbit.contract_validators.schema_checker import SchemaChecker
-        from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats, create_bin_stats_categorical
-        from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
-        from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
         from foundations_orbit.data_contract_summary import DataContractSummary
-        from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
+        from foundations_orbit.utils.get_column_types import get_column_types
+        import uuid
 
         self.options = self._default_options()
         self._contract_name = contract_name
@@ -25,53 +21,51 @@ class DataContract(object):
         else:
             self._dataframe = df
 
-        self._column_names, self._column_types, self._number_of_rows = dataframe_statistics(self._dataframe)
+        self.bin_stats_calculated = False
+
+        self._number_of_rows = len(self._dataframe)
+        self._column_names, self._column_types = get_column_types(self._dataframe)
         self._bin_stats = {}
+        self._uuid = uuid.uuid4()
 
         self._categorical_attributes = {}
         self._categorize_attributes()
 
-        self.schema_test = SchemaChecker(self._column_names, self._column_types)
-        self._remove_object_columns_and_types(self._column_names, self._column_types)
-
-        self.special_value_test = SpecialValuesChecker(self.options, self._column_names, self._column_types, self._categorical_attributes)
-        self.distribution_test = DistributionChecker(self.options.distribution, self._column_names, self._column_types, self._categorical_attributes)
-
-        self.min_max_test = MinMaxChecker(self._column_types)
+        self._initialize_checkers()
         self.summary = DataContractSummary(self._dataframe, self._column_names, self._column_types, self._categorical_attributes)
 
     def __str__(self):
-        x = {}
-        x['special_values_test'] = str(self.special_value_test)
-        x['min_max_test'] = str(self.min_max_test)
-        x['distribution_test'] = str(self.distribution_test)
-        x['schema_test'] = str(self.schema_test)
-        return str(x)
+        return str(self.info())
+
+    def info(self):
+        return {
+            'special_values_test': self.special_value_test.info(),
+            'min_max_test': self.min_max_test.info(),
+            'distribution_test': self.distribution_test.info(),
+            'schema_test': self.schema_test.info()
+        }
 
     @staticmethod
     def _default_options():
-        import numpy
         from foundations_orbit.data_contract_options import DataContractOptions
 
-        default_distribution = {
-            'distance_metric': 'l_infinity',
-            'default_threshold': 0.1,
-            'cols_to_include': None,
-            'cols_to_ignore': None,
-            'custom_thresholds': {},
-            'custom_methods': {},
-            'special_value_thresholds': {}
-        }
-
         return DataContractOptions(
-            max_bins=50,
             check_row_count=True,
-            special_values=[numpy.nan],
             check_distribution=True,
             check_special_values=True,
             check_min_max=True,
-            distribution=default_distribution
         )
+
+    def _initialize_checkers(self):
+        from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
+        from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
+        from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
+        self._initialize_schema_checker()
+
+        self.special_value_test = SpecialValuesChecker(self._column_names, self._column_types, self._categorical_attributes)
+        self.distribution_test = DistributionChecker(self._column_names, self._column_types, self._categorical_attributes)
+
+        self.min_max_test = MinMaxChecker(self._column_types)
 
     def _categorize_attributes(self):
         for col_name, col_type in self._column_types.items():
@@ -85,6 +79,11 @@ class DataContract(object):
                 self._categorical_attributes[col_name] = True
             elif 'datetime' in col_type:
                 self._categorical_attributes[col_name] = self._check_if_attribute_is_categorical(col_name)
+
+    def _initialize_schema_checker(self):
+        from foundations_orbit.contract_validators.schema_checker import SchemaChecker
+        self.schema_test = SchemaChecker(self._column_names, self._column_types)
+        self._remove_object_columns_and_types(self._column_names, self._column_types)
 
     def _check_if_attribute_is_categorical(self, column_name, threshold=0.1):
         column_values = self._dataframe[column_name]
@@ -100,20 +99,19 @@ class DataContract(object):
 
         self.special_value_test.exclude(attributes=attributes)
         self.distribution_test.exclude(attributes=attributes)
-        self.min_max_test.exclude(attributes=attributes)
+        self.min_max_test.exclude(columns=attributes)   # TODO change this to attributes for consistency
 
-    def temp_exclude(self, attributes):
+    def _exclude_from_current_validation(self, attributes):
         if type(attributes) == str:
             attributes = [attributes]
 
         self.special_value_test.temp_exclude(attributes=attributes)
         self.distribution_test.temp_exclude(attributes=attributes)
-        self.min_max_test.temp_exclude(attributes=attributes)
-
+        self.min_max_test.schema_failure_temp_exclusion(columns=attributes)   # TODO change this to attributes for consistency
 
     def save(self, monitor_package_directory):
         if not self._bin_stats:
-            self.set_bin_stats_for_checkers()
+            self.set_bin_stats()
 
         del self._dataframe
 
@@ -122,53 +120,102 @@ class DataContract(object):
 
     @staticmethod
     def load(monitor_package_directory, contract_name):
-        import pickle
-
         data_contract_file_name = DataContract._data_contract_file_path_with_contract_name(monitor_package_directory, contract_name)
         with open(data_contract_file_name, 'rb') as contract_file:
             return DataContract._deserialized_contract(contract_file.read())
 
     def _save_to_redis(self, project_name, monitor_name, contract_name, inference_period, serialized_output, summary):
         from foundations_contrib.global_state import redis_connection
+
         key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}'
         counter_key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}:counter'
         summary_key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}:summary'
+        id_key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}:id'
+
         redis_connection.hset(key, inference_period, serialized_output)
         redis_connection.hset(summary_key, inference_period, summary)
+        redis_connection.set(id_key, str(self._uuid))
         redis_connection.incr(counter_key)
+
+        self._save_all_contract_info_to_redis(project_name, monitor_name, contract_name)
+
+    def _save_all_contract_info_to_redis(self, project_name, monitor_name, contract_name):
+        from foundations_contrib.global_state import redis_connection
+        import json
+
+        info_key = f'contracts:{self._uuid}:info'
+        redis_connection.set(info_key, json.dumps(self.info(), default=str, indent=4))
+
+        self._set_contract_info_to_redis('project_name', project_name)
+        self._set_contract_info_to_redis('monitor_name', monitor_name)
+        self._set_contract_info_to_redis('contract_name', contract_name)
+
+    def _set_contract_info_to_redis(self, key, value):
+        from foundations_contrib.global_state import redis_connection
+        
+        key = f'contracts:{self._uuid}:{key}'
+        redis_connection.set(key, value)
 
     def validate(self, dataframe_to_validate, inference_period=None):
         import datetime
         import os
         from uuid import uuid4
         from getpass import getuser
+        from redis import ConnectionError
 
-        from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
-        from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         from foundations_orbit.report_formatter import ReportFormatter
-        from foundations_orbit.utils.dataframe_statistics import dataframe_statistics
+        from foundations_orbit.utils.get_column_types import get_column_types
 
         if not self._bin_stats:
-            self.set_bin_stats_for_checkers()
+            self.set_bin_stats()
 
         project_name = os.environ.get('PROJECT_NAME', 'default')
         monitor_name = os.environ.get('MONITOR_NAME', os.path.basename(__file__))
         user = os.environ.get('FOUNDATIONS_USER', getuser())
         job_id = os.environ.get('FOUNDATIONS_JOB_ID', str(uuid4()))
-        
+
         if inference_period is None:
             inference_period = str(datetime.datetime.now())
 
-        columns_to_validate, types_to_validate, row_count_to_check = dataframe_statistics(dataframe_to_validate)
+        inference_period = str(inference_period)
 
+        columns_to_validate, types_to_validate = get_column_types(dataframe_to_validate)
+        
         attributes_to_ignore = []
-        validation_report = {}
-        validation_report['schema_check_results'] = self.schema_test.validate(dataframe_to_validate)
+        validation_report = self._run_checkers_and_get_validation_report(dataframe_to_validate, attributes_to_ignore)
+        self._add_metadata_to_validation_report(validation_report, columns_to_validate, types_to_validate)
+
+        report_formatter = ReportFormatter(inference_period=inference_period,
+                                    monitor_package=monitor_name,
+                                    contract_name=self._contract_name,
+                                    job_id=job_id,
+                                    user=user,
+                                    validation_report=validation_report,
+                                    options=self.options)
+        serialized_output = report_formatter.serialized_output()
+
+        self.summary.validate(dataframe_to_validate, report_formatter.formatted_report())
+
+        try:
+            self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, self.summary.serialized_output())
+        except ConnectionError as e:
+            self._log().warn('WARNING: Unable to connect to redis. Data contract results will not be saved')
+
+        self._modify_validation_report_with_schema_failures(validation_report, attributes_to_ignore)
+
+        return validation_report
+
+    def _run_checkers_and_get_validation_report(self, dataframe_to_validate, attributes_to_ignore):
+        from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
+
+        validation_report = {
+            'schema_check_results': self.schema_test.validate(dataframe_to_validate)
+        }
 
         if not validation_report['schema_check_results']['passed'] and validation_report['schema_check_results'].get('cols', None):
             for column_to_ignore in validation_report['schema_check_results']['cols'].keys():
                 attributes_to_ignore.append(column_to_ignore)
-            self.temp_exclude(attributes=attributes_to_ignore)
+            self._exclude_from_current_validation(attributes=attributes_to_ignore)
 
         if self.options.check_row_count:
             validation_report['row_count'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
@@ -182,6 +229,10 @@ class DataContract(object):
         if self.options.check_min_max:
             validation_report['min_max_test_results'] = self.min_max_test.validate(dataframe_to_validate)
 
+        return validation_report
+
+    def _add_metadata_to_validation_report(self, validation_report, columns_to_validate, types_to_validate):
+
         validation_report['metadata'] = {
             'reference_metadata': {
                 'column_names': self._column_names,
@@ -192,23 +243,6 @@ class DataContract(object):
                 'type_mapping': types_to_validate
             }
         }
-
-        report_formatter = ReportFormatter(inference_period=inference_period,
-                                    monitor_package=monitor_name,
-                                    contract_name=self._contract_name,
-                                    job_id=job_id,
-                                    user=user,
-                                    validation_report=validation_report,
-                                    options=self.options)
-        serialized_output = report_formatter.serialized_output()
-
-        self.summary.validate(dataframe_to_validate, report_formatter.formatted_report())
-
-        self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, self.summary.serialized_output())
-
-        self._modify_validation_report_with_schema_failures(validation_report, attributes_to_ignore)
-
-        return validation_report
 
     def __eq__(self, other):
         return self._contract_name == other._contract_name and self.options == other.options
@@ -229,30 +263,17 @@ class DataContract(object):
         import pickle
         return pickle.loads(serialized_contract)
 
-    def set_bin_stats_for_checkers(self):
-        self._calculate_bin_stats()
-
-        self.special_value_test.set_bin_stats(self._bin_stats)
-        self.distribution_test.set_bin_stats(self._bin_stats)
-
-    def _calculate_bin_stats(self):
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats, create_bin_stats_categorical
-
-        for column_name in self._column_names:
-            if self.options.distribution['special_value_thresholds'].get(column_name):
-                special_values = list(self.options.distribution['special_value_thresholds'][column_name].keys())
-            else:
-                special_values = self.options.special_values
-            if self._categorical_attributes[column_name]:
-                self._bin_stats[column_name] = create_bin_stats_categorical(special_values, self._dataframe[column_name])
-            else:
-                self._bin_stats[column_name] = create_bin_stats(special_values, self.options.max_bins, self._dataframe[column_name])
+    def set_bin_stats(self):
+        if not self.bin_stats_calculated:
+            self.special_value_test.create_and_set_special_value_percentages(self._dataframe)
+            self.distribution_test.create_and_set_bin_stats(self._dataframe)
+            self.bin_stats_calculated = True
 
     def _modify_validation_report_with_schema_failures(self, validation_report, attributes_to_ignore):
         for test_name, test_dictionary in validation_report.items():
             if test_name == 'dist_check_results':
                 for attribute in attributes_to_ignore:
-                    test_dictionary[attribute] = {"bin_passed": False, "message": "Schema Test Failed"}
+                    test_dictionary[attribute] = {"binned_passed": False, "message": "Schema Test Failed"}
             elif test_name == 'special_values_check_results':
                 for attribute in attributes_to_ignore:
                     test_dictionary[attribute] = {"passed": False, "message": "Schema Test Failed"}
@@ -262,28 +283,9 @@ class DataContract(object):
                     test_dictionary[attribute]['max_test'] = {"passed": False, "message": "Schema Test Failed"}
 
     @staticmethod
-    def _dataframe_statistics(dataframe):
-        import numpy
-        import datetime
-        column_names = list(dataframe.columns)
-        column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
-        number_of_rows = len(dataframe)
-
-        for col_name, col_type in column_types.items():
-            if col_type == "object":
-                object_type_column = dataframe[col_name]
-                string_column_mask = [type(value) == str or numpy.isnan(value) for value in object_type_column]
-                date_column_mask = [type(value) == datetime or value != value for value in object_type_column]
-                bool_column_mask = [type(value) == bool or value != value for value in object_type_column]
-                if all(string_column_mask):
-                    column_types[col_name] = 'str'
-                elif all(date_column_mask):
-                    column_types[col_name] = 'datetime'
-                elif all(bool_column_mask):
-                    column_types[col_name] = 'bool'
-                
-
-        return column_names, column_types, number_of_rows
+    def _log():
+        from foundations.global_state import log_manager
+        return log_manager.get_logger(__name__)
 
     @staticmethod
     def _remove_object_columns_and_types(column_names, column_types):

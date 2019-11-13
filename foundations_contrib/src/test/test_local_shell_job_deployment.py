@@ -91,9 +91,7 @@ class TestLocalShellJobDeployment(Spec):
 
     def _create_deployment(self):
         from foundations.job import Job
-        from foundations import create_stage
 
-        @create_stage
         def callback():
             pass
 

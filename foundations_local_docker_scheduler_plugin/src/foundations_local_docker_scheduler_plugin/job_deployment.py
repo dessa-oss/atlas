@@ -186,6 +186,7 @@ class JobDeployment(object):
             if r.status_code == requests.codes.ok:
                 import docker
                 from docker.errors import APIError
+                from requests.exceptions import ConnectionError
 
                 try:
                     client = docker.from_env()
@@ -203,6 +204,12 @@ class JobDeployment(object):
                     from foundations_contrib.global_state import log_manager
                     logger = log_manager.get_logger(__name__)
                     logger.warn(f"Could not find local container for job {self._job_id}. The job may have already completed or was submitted to a remote machine. Please see the GUI for full job logs and status.")
+
+                except ConnectionError as e:
+                    from foundations_contrib.global_state import log_manager
+                    logger = log_manager.get_logger(__name__)
+                    logger.warn(f"Could not connect to local Docker engine for job {self._job_id}. You can ignore this warning if the job was submitted to a remote machine. Please see the GUI for full job logs and status.")
+
 
             else:
                 # try and see if it completed in between requests

@@ -177,3 +177,10 @@ See assets/svgs/README.md for further information on SVG conversion process
     opacity: 1;
   }
 }
+
+.i--icon-alert {
+  background-image: url('../assets/svgs/icon-alert.svg');
+  @include icon-helper;
+  width: 100px;
+  height: 100px;
+}

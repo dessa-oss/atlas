@@ -246,9 +246,6 @@ class TestSchemaChecker(Spec):
         self._assert_schema_check_results_for_dataframe(reference_dataframe, current_dataframe, expected_schema_check_results)
 
     def test_string_cast_for_schema_check_returns_expected_information(self):
-        import json
-        import numpy
-
         schema_checker = self._schema_checker_from_dataframe(self.one_column_dataframe)
 
         expected_information = {
@@ -256,93 +253,17 @@ class TestSchemaChecker(Spec):
             'column_types': {self.column_name: 'int8'}
         }
 
-        self.assertEqual(json.dumps(expected_information), str(schema_checker))
-    
-    def test_schema_checker_can_accept_configurations(self):
-        schema_checker = self._schema_checker_from_dataframe(self.two_column_dataframe)
-        self.assertIsNotNone(getattr(schema_checker, "configure", None))
-        
-    def test_schema_checker_can_accept_exclusions(self):
-        schema_checker = self._schema_checker_from_dataframe(self.two_column_dataframe)
-        self.assertIsNotNone(getattr(schema_checker, "exclude", None))
+        self.assertEqual(str(expected_information), str(schema_checker))
 
-    def test_check_schema_configuration_passes_on_specified_column_with_mismatched_reference_and_current_dataframes(self):
-        import pandas, numpy
-        reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[1, 2]])
-        current_dataframe = pandas.DataFrame(columns=[self.column_name], data=[[10]])
+    def test_dictionary_info_for_schema_check_returns_expected_information(self):
+        schema_checker = self._schema_checker_from_dataframe(self.one_column_dataframe)
 
-        schema_checker = self._schema_checker_from_dataframe(reference_dataframe)
-        schema_checker.exclude(attributes='all')
-        schema_checker.configure(attributes=[self.column_name])
-        validation_result = schema_checker.validate(current_dataframe)
-        self.assertEqual({'passed': True}, validation_result)
+        expected_information = {
+            'column_names': [self.column_name],
+            'column_types': {self.column_name: 'int8'}
+        }
 
-    def test_check_schema_excludes_columns_passes_on_mismatched_reference_and_current_dataframes(self):
-        import pandas, numpy
-        reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[1, 2]])
-        current_dataframe = pandas.DataFrame(columns=[self.column_name_2], data=[[10]])
-
-        schema_checker = self._schema_checker_from_dataframe(reference_dataframe)
-        schema_checker.exclude(attributes=[self.column_name])
-        validation_result = schema_checker.validate(current_dataframe)
-        self.assertEqual({'passed': True}, validation_result)
-
-    def test_check_schema_with_multiple_calls_to_configuration_appends_to_previous_configurations(self):
-        import pandas
-        num_rows_columns = 4
-        records = []
-        
-        for row in range(num_rows_columns):
-            records.append([])
-            for col in range(num_rows_columns):
-                records[row].append(col)
-        
-        reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2, self.column_name_3, self.column_name_4], data=records)
-        current_dataframe = reference_dataframe.copy()
-        schema_checker = self._schema_checker_from_dataframe(reference_dataframe)
-        
-        schema_checker.exclude(attributes='all')
-
-        schema_checker.configure(attributes=[self.column_name, self.column_name_2])
-        schema_checker.configure(attributes=[self.column_name_3, self.column_name_4])
-
-        validation_result = schema_checker.validate(current_dataframe)
-
-        self.assertEqual({'passed': True}, validation_result)
-
-    def test_schema_checker_excludes_all_columns_by_default_and_tests_passed(self):
-        import pandas, numpy
-        reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[1, 2]])
-        current_dataframe = pandas.DataFrame(columns=[self.column_name_2], data=[[10]])
-
-        schema_checker = self._schema_checker_from_dataframe(reference_dataframe)
-        schema_checker.exclude(attributes='all')
-        validation_result = schema_checker.validate(current_dataframe)
-        self.assertEqual({'passed': True}, validation_result)
-
-    def test_schema_checker_exclude_throws_value_error_if_non_list_parameter_which_is_not_all(self):
-        import pandas, numpy
-        reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[1, 2]])
-        current_dataframe = pandas.DataFrame(columns=[self.column_name_2], data=[[10]])
-
-        schema_checker = self._schema_checker_from_dataframe(reference_dataframe)
-        try:
-            schema_checker.exclude('random_column')
-            self.fail('Failed to throw exception for invalid option')
-        except ValueError as ve:
-            self.assertTrue('invalid option' in str(ve).lower())
-
-    def test_schema_checker_configure_throws_error_if_non_list_parameter_used_for_attributes(self):
-        import pandas, numpy
-        reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[1, 2]])
-        current_dataframe = pandas.DataFrame(columns=[self.column_name_2], data=[[10]])
-
-        schema_checker = self._schema_checker_from_dataframe(reference_dataframe)
-        try:
-            schema_checker.configure('random_column')
-            self.fail('Failed to throw exception for invalid option')
-        except ValueError as ve:
-            self.assertTrue('invalid option' in str(ve).lower())
+        self.assertEqual(expected_information, schema_checker.info())
 
     def _dataframe_statistics(self, dataframe):
         import numpy

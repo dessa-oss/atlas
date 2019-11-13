@@ -7,7 +7,7 @@ const ProjectSummary = props => {
     const { history, project } = props;
 
     history.push(
-      `/projects/${project.name}/management`,
+      `/projects/${project.name}/schedules`,
       {
         project: project
       }

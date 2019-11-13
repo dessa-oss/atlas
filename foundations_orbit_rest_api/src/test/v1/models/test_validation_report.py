@@ -49,14 +49,38 @@ class TestValidationReport(Spec):
     def test_validation_report_get_returns_report_if_report_in_redis(self):
         import pickle
 
-        expected_result = {
+        validation_report = {
             'schema_check': True,
             'schema_information': {
                 'rows': self.num_rows
             }
         }
 
-        self._register_report(self.project_name, self.monitor_package, self.data_contract, self.inference_period, expected_result)
+        self._register_report(self.project_name, self.monitor_package, self.data_contract, self.inference_period, validation_report)
+
+        expected_result = validation_report
+        expected_result['uuid'] = 'abcd-efgh'
+
+        listing_object = ValidationReportListing(inference_period=self.inference_period, monitor_package=self.monitor_package, data_contract=self.data_contract)
+        promise = ValidationReport.get(project_name=self.project_name, listing_object=listing_object)
+
+        self.assertEqual(expected_result, promise.evaluate())
+
+
+    def test_validation_report_get_returns_uuid_from_redis(self):
+        import pickle
+
+        validation_report = {
+            'schema_check': True,
+            'schema_information': {
+                'rows': self.num_rows
+            }
+        }
+
+        self._register_report(self.project_name, self.monitor_package, self.data_contract, self.inference_period, validation_report)
+
+        expected_result = validation_report
+        expected_result['uuid'] = 'abcd-efgh'
 
         listing_object = ValidationReportListing(inference_period=self.inference_period, monitor_package=self.monitor_package, data_contract=self.data_contract)
         promise = ValidationReport.get(project_name=self.project_name, listing_object=listing_object)
@@ -71,5 +95,7 @@ class TestValidationReport(Spec):
         import pickle
 
         key_to_write = self._key_to_write(project_name, monitor_package, data_contract)
+        
+        self.redis_connection.set(f'{key_to_write}:id', 'abcd-efgh')
         self.redis_connection.hset(key_to_write, inference_period, pickle.dumps(validation_report))
     

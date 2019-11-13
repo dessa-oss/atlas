@@ -6,6 +6,8 @@ import MonitorListTable from "./MonitorListTable";
 import ScheduleDetails from "./ScheduleDetails";
 import MonitorLogsModal from "./MonitorLogsModal";
 import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
+import DeleteConfirmModal from "./DeleteConfirmModal";
+import Loading from "../../common/Loading";
 
 class MonitorSchedules extends Component {
   constructor(props) {
@@ -15,12 +17,16 @@ class MonitorSchedules extends Component {
       selectedMonitor: null,
       logsModalIsOpen: false,
       logsModalJobID: null,
-      allMonitors: {}
+      deleteModalIsOpen: false,
+      allMonitors: {},
+      isLoading: false
     };
 
     this.selectRow = this.selectRow.bind(this);
     this.reload = this.reload.bind(this);
     this.toggleLogsModal = this.toggleLogsModal.bind(this);
+    this.toggleDeleteModal = this.toggleDeleteModal.bind(this);
+    this.deleteCurrentMonitor = this.deleteCurrentMonitor.bind(this);
   }
 
   selectRow(selectedItem) {
@@ -46,20 +52,53 @@ class MonitorSchedules extends Component {
     this.setState({ logsModalIsOpen: !logsModalIsOpen, logsModalJobID: logsModalJobID });
   }
 
+  toggleDeleteModal() {
+    const { deleteModalIsOpen } = this.state;
+    this.setState({ deleteModalIsOpen: !deleteModalIsOpen });
+  }
+
+  deleteCurrentMonitor() {
+    const { allMonitors, selectedMonitor } = this.state;
+    const { location } = this.props;
+
+    this.setState({ isLoading: true }, async () => {
+      const monitorName = allMonitors[selectedMonitor].properties.spec.environment.MONITOR_NAME;
+      const projectName = location.state.project.name;
+      await MonitorSchedulesActions.deleteMonitor(projectName, monitorName);
+      const jobsObjects = await MonitorSchedulesActions.getMonitorJobs(projectName, monitorName);
+
+      if (!("error" in jobsObjects)) {
+        const jobs = jobsObjects.map(obj => obj.job_id);
+        await MonitorSchedulesActions.deleteMonitorJobs(jobs, projectName, monitorName);
+      }
+
+      this.setState({ isLoading: false }, this.reload);
+    });
+  }
+
   render() {
     const {
       selectedMonitor,
       logsModalIsOpen,
       logsModalJobID,
-      allMonitors
+      allMonitors,
+      deleteModalIsOpen,
+      isLoading
     } = this.state;
     const { location } = this.props;
+
+    const loading = (
+      isLoading
+        ? <Loading loadingMessage="" floating />
+        : null
+    );
 
     return (
       <Layout tab="Schedules" title="Data Health">
         <div className="monitor-schedules-container">
           <div className="section-title font-bold">Monitor Schedules</div>
           <div className="schedule-details">
+            {loading}
             <MonitorListTable
               onClickRow={this.selectRow}
               selectedRow={selectedMonitor}
@@ -70,6 +109,7 @@ class MonitorSchedules extends Component {
               location={location}
               selectedMonitor={selectedMonitor}
               toggleLogsModal={this.toggleLogsModal}
+              toggleDeleteModal={this.toggleDeleteModal}
               reload={this.reload}
               allMonitors={allMonitors}
             />
@@ -78,6 +118,11 @@ class MonitorSchedules extends Component {
               toggle={this.toggleLogsModal}
               jobID={logsModalJobID}
               projectName={location.state.project.name}
+            />
+            <DeleteConfirmModal
+              isOpen={deleteModalIsOpen}
+              toggle={this.toggleDeleteModal}
+              onConfirm={this.deleteCurrentMonitor}
             />
           </div>
         </div>

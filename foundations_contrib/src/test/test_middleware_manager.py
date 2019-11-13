@@ -91,13 +91,6 @@ class TestMiddlewareManager(unittest.TestCase):
     def test_has_context_aware_middleware_configured(self):
         self._test_constructor_attributes('ContextAware')
 
-    def test_has_time_stage_middleware(self):
-        from foundations_contrib.middleware.time_stage_middleware import TimeStageMiddleware
-        self._test_has_middleware('TimeStage', TimeStageMiddleware)
-
-    def test_has_time_stage_middleware_configured(self):
-        self._test_constructor_attributes('TimeStage')
-
     def test_has_stage_logging_middleware(self):
         from foundations_contrib.middleware.stage_logging_middleware import StageLoggingMiddleware
         self._test_has_middleware('StageLogging', StageLoggingMiddleware)

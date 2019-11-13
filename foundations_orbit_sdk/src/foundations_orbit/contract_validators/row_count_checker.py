@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class RowCountChecker(object):
 
     def __init__(self, reference_row_count):
@@ -22,9 +23,11 @@ class RowCountChecker(object):
             'row_count_diff': (row_count_to_check - self._number_of_rows) / self._number_of_rows
         }
 
-    def configure(self, attributes = None, row_count = None):
+    def configure(self, attributes=None, row_count=None):
         if row_count:
             self._number_of_rows = row_count
+        # TODO display warning if attributes is not none (unexpected behaviour) - attributes kept for conformance if super-class type structure to be created
 
-    def exclude(self):
+    def exclude(self, attributes=None):
+        # TODO display warning if attributes is not none (unexpected behaviour) - attributes kept for conformance if super-class type structure to be created
         pass

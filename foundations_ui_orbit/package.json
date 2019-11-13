@@ -1,5 +1,5 @@
 {
-  "name": "foundations-ui",
+  "name": "foundations-orbit-ui",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -17,6 +17,7 @@
     "case-sensitive-paths-webpack-plugin": "2.1.2",
     "chalk": "2.4.1",
     "css-loader": "1.0.0",
+    "cypress": "^3.6.1",
     "dotenv": "6.0.0",
     "dotenv-expand": "4.2.0",
     "eslint-config-react-app": "^3.0.5",
@@ -69,7 +70,7 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
+    "build": "node scripts/build.js --max_old_space_size=4096",
     "test": "node scripts/test.js",
     "prune": "node scripts/yarn-prune.js",
     "testLint": "node node_modules/.bin/eslint ."

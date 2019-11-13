@@ -20,7 +20,7 @@ class DataContractSummary(object):
 
         redis_key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}:summary'
 
-        summary_pickle = redis_connection.hget(redis_key, date)
+        summary_pickle = redis_connection.hget(redis_key, str(date))
 
         if summary_pickle is None:
             return None

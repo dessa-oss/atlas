@@ -53,7 +53,7 @@ const getFromApiary = url => {
     });
 };
 
-const getMaster = (url, body) => {
+const getMaster = url => {
   const fullURL = baseMasterURL.concat(url);
   return fetch(fullURL).then(res => {
     return res.json();
@@ -182,6 +182,7 @@ const del = url => {
     headers: {
       Accept: "application/json"
     }
+    method: "DELETE"
   })
     .then(res => res.json())
     .then(result => {

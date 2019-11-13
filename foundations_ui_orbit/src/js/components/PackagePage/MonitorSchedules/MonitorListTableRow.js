@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import CommonActions from "../../../actions/CommonActions";
-
+import OverflowTooltip from "../../common/OverflowTooltip";
 
 class MonitorListTableRow extends Component {
   constructor(props) {
@@ -23,7 +22,7 @@ class MonitorListTableRow extends Component {
 
   render() {
     const {
-      monitorName,
+      monitorNameLabel,
       status,
       user
     } = this.props;
@@ -44,8 +43,8 @@ class MonitorListTableRow extends Component {
 
     return (
       <div className={`monitor-table-row ${selectedClass}`} onClick={this.onClick}>
-        <div className="monitor-table-cell">{monitorName}</div>
-        <div className="monitor-user-table-cell">{user}</div>
+        <div className="monitor-table-cell"><OverflowTooltip text={monitorNameLabel} /></div>
+        <div className="monitor-user-table-cell"><OverflowTooltip text={user} /></div>
         <div className="monitor-status-table-cell">{statusIcon}</div>
       </div>
     );
@@ -54,6 +53,7 @@ class MonitorListTableRow extends Component {
 
 MonitorListTableRow.propTypes = {
   monitorName: PropTypes.string,
+  monitorNameLabel: PropTypes.string,
   status: PropTypes.string,
   user: PropTypes.string,
   onClick: PropTypes.func,
@@ -62,6 +62,7 @@ MonitorListTableRow.propTypes = {
 
 MonitorListTableRow.defaultProps = {
   monitorName: "Invalid monitor name",
+  monitorNameLabel: "Invalid monitor name",
   status: "Invalid contract name",
   user: "",
   onClick: () => {},

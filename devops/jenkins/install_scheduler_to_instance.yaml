@@ -2,14 +2,26 @@
   
 - name: Install ansible dependencies
   gather_facts: False
-  hosts: "tag_Name_{{ instance_name }}"
+  hosts: "{{ instance_name }}"
   become: yes  
   tasks:
-  - name: Wait 600 seconds for target connection to become reachable/usable
-    wait_for_connection:
+    - name: install python-apt
+      shell: apt-get install -y python-apt
+      retries: 10
+      delay: 30
+      register: result
+      until: result is success
+
+- name: Upload files needed for the installation
+  copy:
+    src: /srv/myfiles/foo.conf
+    dest: /etc/foo.conf
+    owner: foo
+    group: foo
+    mode: '0644'
 
 - name: Login and Pull Docker Images
-  hosts: "tag_Name_{{ instance_name }}"
+  hosts: "{{ instance_name }}"
   become: yes
   tasks:
     - name : Load All Docker Images needed

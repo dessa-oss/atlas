@@ -8,17 +8,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class SpecialValuesChecker(object):
 
-    def __init__(self, config_options, reference_column_names, reference_column_types, categorical_attributes):
+    def __init__(self, reference_column_names, reference_column_types, categorical_attributes):
         from foundations_orbit.contract_validators.checker import Checker
-
-        self._config_options = config_options
-        self._bin_stats = None
+        self._special_value_thresholds = {}
+        self._special_value_percentages = None
         self._reference_column_names = reference_column_names.copy() if reference_column_names else []
         self._config_columns = []
-        self._config_options.distribution['special_value_thresholds'] = {}
-        self._default_special_values = self._config_options.special_values
-        self._column_special_values = self._initialize_columns_special_values()
-
         self._allowed_types = ['int', 'float', 'str', 'bool', 'datetime']
         self._reference_column_types = reference_column_types
         self._invalid_attributes = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
@@ -27,29 +22,82 @@ class SpecialValuesChecker(object):
         self._categorical_attributes = categorical_attributes
 
     def __str__(self):
-        return str(self._config_options.distribution['special_value_thresholds'])
+        return str(self.info())
 
-    def _initialize_columns_special_values(self):
-        _column_special_values = {}
-        for column in self._reference_column_names:
-            _column_special_values[column] = []
-            for special_value in self._default_special_values:
-                _column_special_values[column].append(special_value)
-        return _column_special_values
+    def info(self):
+        return self._special_value_thresholds
 
     def validate(self, dataframe_to_validate):
-        from foundations_orbit.contract_validators.prototype import distribution_and_special_values_check
-        full_distribution_check_results = distribution_and_special_values_check(self._config_options.distribution, self._config_columns, self._bin_stats, dataframe_to_validate, self._categorical_attributes, True)
-        special_values_results = {}
-        for column, column_results in full_distribution_check_results.items():
-            special_values_results[column] = {}
-            for special_value, sv_details in column_results['special_values'].items():
-                special_values_results[column][special_value] = sv_details
-        
         self._config_columns = set(self._config_columns).union(set(self.temp_attributes_to_exclude))
         self.temp_attributes_to_exclude = []
 
+        special_values_results = self._special_values_check(dataframe_to_validate)
+
         return special_values_results
+
+    def _special_values_check(self, dataframe_to_validate):
+        dataframe_to_validate_special_value_percentages = self._create_special_value_percentages_for_dataframe(dataframe_to_validate)
+        results = {}
+
+        columns_to_check = set(self._special_value_thresholds.keys()).intersection(set(self._config_columns))
+
+        for column in columns_to_check:
+            results[column] = self._special_values_check_for_column(dataframe_to_validate_special_value_percentages, column)
+
+        return results
+
+    def _special_values_check_for_column(self, dataframe_to_validate_special_value_percentages, column):
+        column_results = {}
+
+        for special_value, reference_threshold in self._special_value_thresholds[column].items():
+            column_results[special_value] = self._special_values_check_for_special_value_in_column(dataframe_to_validate_special_value_percentages, column, special_value, reference_threshold)
+
+        return column_results
+
+    def _special_values_check_for_special_value_in_column(self, dataframe_to_validate_special_value_percentages, column, special_value, reference_threshold):
+        import numpy
+
+        special_value_results = {}
+
+        if numpy.isnan(special_value):
+            for key, value in self._special_value_percentages[column].items():
+                if numpy.isnan(key):
+                    reference_percentage = value
+        else:
+            reference_percentage = self._special_value_percentages[column][special_value]
+
+        current_percentage = dataframe_to_validate_special_value_percentages[column][special_value]
+        absolute_difference = abs(current_percentage - reference_percentage)
+
+        if absolute_difference > reference_threshold:
+            special_value_results['passed'] = False
+        else:
+            special_value_results['passed'] = True
+
+        special_value_results['percentage_diff'] = absolute_difference
+        special_value_results['ref_percentage'] = reference_percentage
+        special_value_results['current_percentage'] = current_percentage
+
+        return special_value_results
+
+    def _create_special_value_percentages_for_dataframe(self, dataframe):
+        import math
+
+        special_value_percentages = {}
+        num_rows_in_df = len(dataframe)
+
+        for column, threshold_dictionary in self._special_value_thresholds.items():
+            special_value_percentages[column] = {}
+            series_to_validate = dataframe[column]
+            for special_value, _ in threshold_dictionary.items():
+                if math.isnan(special_value):
+                    num_special_values = series_to_validate.isna().sum()
+                else:
+                    num_special_values = len(series_to_validate[series_to_validate == special_value])
+                special_value_percentage = num_special_values/num_rows_in_df
+                special_value_percentages[column][special_value] = special_value_percentage
+
+        return special_value_percentages
 
     def configure(self, attributes=None, thresholds=None, mode='overwrite'):
         if attributes is None:
@@ -68,14 +116,10 @@ class SpecialValuesChecker(object):
             raise ValueError(f'The following columns have invalid types: {error_dictionary}')
 
         for column in attributes:
-
-            # if mode == 'overwrite':
-            #     self._config_options.distribution['special_value_thresholds'][column] = thresholds
-            # elif mode == 'update':
             for special_value, threshold in thresholds.items():
-                if not self._config_options.distribution['special_value_thresholds'].get(column, False):
-                    self._config_options.distribution['special_value_thresholds'][column] = {}
-                self._config_options.distribution['special_value_thresholds'][column][special_value] = threshold
+                if not self._special_value_thresholds.get(column, False):
+                    self._special_value_thresholds[column] = {}
+                self._special_value_thresholds[column][special_value] = threshold
 
         self._config_columns = list(set(self._config_columns).union(set(attributes)))
 
@@ -89,5 +133,5 @@ class SpecialValuesChecker(object):
         self.temp_attributes_to_exclude = attributes
         self.exclude(attributes=attributes)
 
-    def set_bin_stats(self, bin_stats):
-        self._bin_stats = bin_stats
+    def create_and_set_special_value_percentages(self, reference_dataframe):
+        self._special_value_percentages = self._create_special_value_percentages_for_dataframe(reference_dataframe)

@@ -31,8 +31,8 @@ setup(
     ],
     install_requires=[
         'dill==0.2.8.2',
-        'redis==2.10.6',
-        'PyYAML==3.13',
+        'redis==3.3.11',
+        'PyYAML==5.1.2',
         'promise==2.2.1'
     ],
     packages=find_packages(package_source),

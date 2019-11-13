@@ -47,20 +47,6 @@ def psi_score(ref_percentages, current_percentages):
     current_percentages_array = np.array(current_percentages)
     return entropy(ref_percentages_array, current_percentages_array) + entropy(current_percentages_array, ref_percentages_array)
 
-def count_and_remove_special_values(ref_special_values, current_values):
-    n_current_vals = len(current_values)
-    # count and remove special values
-    current_special_value_percentages = list()
-    for sv in ref_special_values:
-        if np.isnan(sv):
-            sv_count = len(list(filter(lambda val: val!=val, current_values)))  # counts the number of nans in current_values
-        else:
-            sv_count = len(current_values[current_values == sv])
-        current_special_value_percentages.append(sv_count / n_current_vals)
-        # drop current special value
-        current_values = current_values[current_values != sv]
-    return current_values, current_special_value_percentages
-
 def bin_current_values(current_values, ref_edges, n_current_vals, unique_ref_value):
     # typical case where there was more than 1 unique-valued bin in the reference
     if len(ref_edges) > 0:

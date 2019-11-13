@@ -103,7 +103,7 @@ def get_docker_images(dir):
 
 
 def load_docker_images(use_specified_version):
-    install_requirements(['PyYAML==3.13', 'requests==2.19.1'])
+    install_requirements(['PyYAML==5.1.2', 'requests==2.19.1'])
     from requests.exceptions import ConnectionError, ReadTimeout
     import yaml
 
@@ -185,7 +185,7 @@ def install_whl_files(update=False):
 
 
 def dump_dict_to_yaml_file(data, filepath):
-    install_requirements(['PyYAML==3.13'])
+    install_requirements(['PyYAML==5.1.2'])
     import yaml
     logger.info("Creating {}".format(filepath))
     dirname = os.path.dirname(filepath)
@@ -210,7 +210,7 @@ def ask_if_advanced(advanced, prompt, default):
 
 
 def dump_all_config_files(advanced, use_specified_version):
-    install_requirements(['PyYAML==3.13'])
+    install_requirements(['PyYAML==5.1.2'])
     import yaml
 
     # ======== Configuration Start

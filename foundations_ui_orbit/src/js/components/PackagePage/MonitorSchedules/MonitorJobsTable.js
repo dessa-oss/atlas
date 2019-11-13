@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
-import { del, delAtlas } from "../../../actions/BaseActions";
 
 class MonitorJobsTable extends Component {
   constructor(props) {
@@ -62,16 +61,7 @@ class MonitorJobsTable extends Component {
     const { monitorResult } = this.props;
 
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-    const atlasPromises = Array.from(selectedRows).map(jobID => {
-      const URL = `projects/${projectName}/job_listing/${jobID}`;
-      return delAtlas(URL);
-    });
-    const orbitPromises = Array.from(selectedRows).map(jobID => {
-      const URL = `projects/${projectName}/monitors/${monitorName}/jobs?job_id=${jobID}`;
-      return del(URL);
-    });
-    await Promise.all(atlasPromises.concat(orbitPromises));
-
+    await MonitorSchedulesActions.deleteMonitorJobs(selectedRows, projectName, monitorName);
     this.setState({ selectedRows: new Set() });
     this.reload();
   }

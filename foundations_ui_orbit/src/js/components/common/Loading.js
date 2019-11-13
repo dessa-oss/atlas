@@ -2,10 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const Loading = props => {
-  const { loadingMessage } = props;
+  const { loadingMessage, floating } = props;
+  const floatingClass = floating ? "floating" : "";
 
   return (
-    <div className="loading-container">
+    <div className={`loading-container ${floatingClass}`}>
       <div id="circle-orbit-container">
         <div id="sun" />
         <div id="first-orbit">
@@ -24,11 +25,13 @@ const Loading = props => {
 };
 
 Loading.propTypes = {
-  loadingMessage: PropTypes.string
+  loadingMessage: PropTypes.string,
+  floating: PropTypes.bool
 };
 
 Loading.defaultProps = {
-  loadingMessage: ""
+  loadingMessage: "",
+  floating: false
 };
 
 export default Loading;

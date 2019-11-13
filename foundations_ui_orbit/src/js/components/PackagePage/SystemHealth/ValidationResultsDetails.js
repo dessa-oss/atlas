@@ -45,11 +45,16 @@ class ValidationResultsDetails extends Component {
 
   render() {
     const { validationResult } = this.state;
-    const { location } = this.props;
+    const { location, toggleInfo } = this.props;
 
     let mainRender = (
       <div className="validation-results-details">
-        <ValidationResultsOverview location={location} validationResult={validationResult} />
+        <ValidationResultsOverview
+          location={location}
+          validationResult={validationResult}
+          toggleInfo={toggleInfo}
+          uuid={validationResult.uuid}
+        />
         <ValidationResultsTests validationResult={validationResult} />
       </div>
     );
@@ -72,12 +77,14 @@ class ValidationResultsDetails extends Component {
 
 ValidationResultsDetails.propTypes = {
   location: PropTypes.object,
-  selectedValidationResult: PropTypes.object
+  selectedValidationResult: PropTypes.object,
+  toggleInfo: PropTypes.func
 };
 
 ValidationResultsDetails.defaultProps = {
   location: {},
-  selectedValidationResult: {}
+  selectedValidationResult: {},
+  toggleInfo: () => {}
 };
 
 export default ValidationResultsDetails;

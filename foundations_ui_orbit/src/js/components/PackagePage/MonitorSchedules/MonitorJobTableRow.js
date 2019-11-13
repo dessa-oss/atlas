@@ -1,22 +1,11 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
+import OverflowTooltip from "../../common/OverflowTooltip";
 
 class MonitorJobTableRow extends Component {
   constructor(props) {
     super(props);
-    const {
-      status,
-      launched,
-      duration
-    } = this.props;
-
-    this.state = {
-      status: status,
-      launched: launched,
-      duration: duration
-    };
-
     this.onSelect = this.onSelect.bind(this);
     this.isSelectedRow = this.isSelectedRow.bind(this);
     this.onOpenLogs = this.onOpenLogs.bind(this);
@@ -43,9 +32,9 @@ class MonitorJobTableRow extends Component {
     const {
       status,
       launched,
-      duration
-    } = this.state;
-    const { jobID } = this.props;
+      duration,
+      jobID
+    } = this.props;
 
     const selectedClass = this.isSelectedRow() ? "selected-row" : "";
     const formattedLaunchedTime = launched ? moment.unix(launched).format("YYYY-MM-DD HH:mm:ss") : "Not available";
@@ -69,10 +58,10 @@ class MonitorJobTableRow extends Component {
     return (
       <div className={`monitor-job-table-row ${selectedClass}`}>
         <div className="monitor-job-checkbox"><input type="checkbox" onClick={this.onSelect} /></div>
-        <div className="monitor-job-name-cell">{jobID}</div>
+        <div className="monitor-job-name-cell"><OverflowTooltip text={jobID} /></div>
         <div className="monitor-job-status-cell">{statusIcon}</div>
-        <div className="monitor-job-launched-cell">{formattedLaunchedTime}</div>
-        <div className="monitor-job-duration-cell">{timeDiff}</div>
+        <div className="monitor-job-launched-cell"><OverflowTooltip text={formattedLaunchedTime} /></div>
+        <div className="monitor-job-duration-cell"><OverflowTooltip text={timeDiff} /></div>
         <div className="monitor-job-open-cell">
           <div className="i--icon-open" title="View logs" onClick={this.onOpenLogs} />
         </div>

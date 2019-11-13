@@ -54,13 +54,7 @@ PAGES = [
         'functions': [
             foundations.stage_logging.log_metric,
         ]
-    },
-    {
-        'page': 'stage_creation.md',
-        'all_module_classes': [foundations.staging],
-        'functions': [
-            foundations.staging.create_stage,
-        ]
+    }, ]
     },
     {
         'page': 'set_resources.md',

@@ -3,6 +3,7 @@
 # authentication handled in the push_gui_images.py
 from push_gui_images import push_image_to_repository
 
+
 def retag_to_alias_for_installer(image_name=None, new_tag_name=None):
     from push_gui_images import docker, client, nexus_registry
     low_level_client = docker.APIClient(base_url='unix://var/run/docker.sock')
@@ -14,6 +15,7 @@ def retag_to_alias_for_installer(image_name=None, new_tag_name=None):
         new_tag = f'{nexus_registry}/{new_tag_name}:{tag}'
         low_level_client.tag(gui_tag, new_tag)
         print(f'Retagged {full_image_name} to {new_tag}')
+
 
 if __name__ == '__main__':
     retag_to_alias_for_installer('foundations-orbit-rest-api', 'orbit-rest-api')
