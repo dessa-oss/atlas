@@ -12,7 +12,7 @@ class DistributionChecker(object):
         self._initialize_default_options()
 
         self._categorical_attributes = categorical_attributes
-        self._reference_column_names = reference_column_names
+        self._reference_column_names = set(reference_column_names)
         self._reference_column_types = reference_column_types
 
         self._bin_stats = {}

@@ -274,12 +274,14 @@ class TestDataContract(Spec):
         self.assertEqual(str(data_contract._uuid), id_from_redis)
 
     def test_validate_saves_info_to_redis(self):
+        import json
+
         data_contract = DataContract(self.contract_name, self.dataframe_to_validate_with_one_numerical_column)
         data_contract.validate(self.dataframe_to_validate_with_one_numerical_column)
 
         redis_key = f'contracts:{data_contract._uuid}:info'
         info_from_redis = self._redis.get(redis_key).decode()
-        self.assertEqual(str(data_contract), info_from_redis)
+        self.assertEqual(json.dumps(data_contract.info(), default=str, indent=4), info_from_redis)
 
     def test_validate_saves_project_name_to_redis(self):
         data_contract = DataContract(self.contract_name, self.dataframe_to_validate_with_one_numerical_column)

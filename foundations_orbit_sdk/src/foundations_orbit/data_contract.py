@@ -35,14 +35,15 @@ class DataContract(object):
         self.summary = DataContractSummary(self._dataframe, self._column_names, self._column_types, self._categorical_attributes)
 
     def __str__(self):
-        data_contract_info = {
+        return str(self.info())
+
+    def info(self):
+        return {
             'special_values_test': self.special_value_test.info(),
             'min_max_test': self.min_max_test.info(),
             'distribution_test': self.distribution_test.info(),
             'schema_test': self.schema_test.info()
         }
-
-        return str(data_contract_info)
 
     @staticmethod
     def _default_options():
@@ -140,9 +141,10 @@ class DataContract(object):
 
     def _save_all_contract_info_to_redis(self, project_name, monitor_name, contract_name):
         from foundations_contrib.global_state import redis_connection
+        import json
 
         info_key = f'contracts:{self._uuid}:info'
-        redis_connection.set(info_key, str(self))
+        redis_connection.set(info_key, json.dumps(self.info(), default=str, indent=4))
 
         self._set_contract_info_to_redis('project_name', project_name)
         self._set_contract_info_to_redis('monitor_name', monitor_name)

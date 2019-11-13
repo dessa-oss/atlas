@@ -96,7 +96,7 @@ class TestDistributionChecker(Spec):
         expected_information = {
             'distribution_options': checker._distribution_options,
             'bin_stats': self.bin_stats_two_column_no_special_value_no_zeros,
-            'reference_column_names': [self.column_name],
+            'reference_column_names': {self.column_name},
             'reference_column_types': {
                 self.column_name: 'int'
             }
@@ -113,7 +113,7 @@ class TestDistributionChecker(Spec):
         expected_information = {
             'distribution_options': checker._distribution_options,
             'bin_stats': self.bin_stats_two_column_no_special_value_no_zeros,
-            'reference_column_names': [self.column_name],
+            'reference_column_names': {self.column_name},
             'reference_column_types': {
                 self.column_name: 'int'
             }
