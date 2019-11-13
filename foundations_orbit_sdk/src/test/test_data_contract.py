@@ -988,6 +988,13 @@ class TestDataContract(Spec):
         for test in tests:
             if test not in result:
                 self.fail()
+    
+    def test_data_contract_returns_expected_result_when_column_type_is_category(self):
+        reference_dataframe = self.two_column_dataframe
+        reference_dataframe[self.column_name] = reference_dataframe[self.column_name].astype('category')
+        contract = DataContract(self.contract_name, df=reference_dataframe)
+
+        self.assertIsInstance(contract, DataContract)
 
     def _test_special_values_checker_for_datatype_input_returns_expected_results(self, data):
         import pandas, numpy
