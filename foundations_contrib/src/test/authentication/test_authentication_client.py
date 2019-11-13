@@ -1,5 +1,5 @@
 import json
-from foundations_spec import Spec, set_up, ConditionalReturn
+from foundations_spec import Spec, set_up, ConditionalReturn, let_now
 
 from foundations_contrib.authentication.authentication_client import (
     AuthenticationClient,
@@ -13,6 +13,10 @@ class TestAuthenticationClient(Spec):
 
     redirect_url = "http://some_outher_url:0000"
     conf_file = "test/authentication/fixtures/auth_config.json"
+
+    @let_now
+    def requests_get(self):
+        return self.patch("requests.get")
 
     @set_up
     def set_up(self):
@@ -88,13 +92,26 @@ class TestAuthenticationClient(Spec):
         with self.assert_does_not_raise():
             self.auth_client.json_web_key_set
 
-    def test_user_info_delegates_to_keycloak_userinfo(self):
-        token = self.faker.word()
-        self.auth_client.user_info(token)
-        self.mock_auth_backend.userinfo.assert_called_once_with(token)
+    def test_users_info_triggers_get_request(self):
+        auth_token = self.faker.word()
+        users = self.auth_client.users_info(auth_token)
+        url = "http://localhost:8080/auth/admin/realms/Atlas/users"
+        headers = {"Authorization": f"Bearer {auth_token}"}
+        self.requests_get.assert_called_once_with(url, headers=headers)
 
-    def test_user_map(self):
+    def test_users_info_transforms_user_list_to_map_of_users_based_on_id(self):
+        response = [
+            {"id": "some_id", "username": "some_username"},
+            {"id": "another_id", "username": "another_username"},
+        ]
+        mock_json = Mock()
+        mock_json.json.return_value = response
+        self.requests_get.return_value = mock_json
         
+        auth_token = self.faker.word()
+        users = self.auth_client.users_info(auth_token)
+        expected = {"some_id": "some_username", "another_id": "another_username"}
+        self.assertEqual(expected, users)
 
 
 def load_config(conf_file: str) -> dict:

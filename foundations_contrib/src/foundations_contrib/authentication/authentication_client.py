@@ -75,19 +75,17 @@ class AuthenticationClient:
             redirect_uri=self._redirect_url,
         )
 
+    def users_info(self, auth_token: str) -> dict:
+        import requests
+
+        users_response = requests.get(
+            "http://localhost:8080/auth/admin/realms/Atlas/users",
+            headers={"Authorization": f"Bearer {auth_token}"},
+        ).json()
+        return {info["id"]: info["username"] for info in users_response}
+
     def token_using_username_password(self, username: str, password: str) -> dict:
         return self._client.token(username=username, password=password)
-
-    def user_info(self, token: str) -> dict:
-        """Obtain the user info in the auth server associated with some token.
-
-        :param token: The identity token.
-        :type token: str
-        :return: JSON formatted payload containing user info.
-        :rtype: dict
-        """
-
-        return self._client.userinfo(token)
 
     @staticmethod
     def _get_config_from_file(fname: str) -> dict:
