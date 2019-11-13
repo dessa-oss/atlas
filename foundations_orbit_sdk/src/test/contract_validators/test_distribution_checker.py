@@ -49,9 +49,18 @@ class TestDistributionChecker(Spec):
                 'upper_edge': 10
             },  {'percentage': 0.0, 'upper_edge': numpy.inf}],
             self.column_name_2: [{
-		        'percentage': 1.0,
+                'percentage': 1.0,
                 'upper_edge': 32
             },  {'percentage': 0.0, 'upper_edge': numpy.inf}]
+        }
+
+    @let
+    def bin_stats_two_column_no_special_value_no_zeros(self):
+        return {
+            self.column_name: [{
+                'percentage': 0.6,
+                'upper_edge': 4
+            }, {'percentage': 0.4, 'upper_edge': numpy.inf}]
         }
 
     @let
@@ -78,17 +87,14 @@ class TestDistributionChecker(Spec):
         candidate_value = generating_callback()
         return candidate_value if candidate_value not in reference_values else self._generate_distinct(reference_values, generating_callback)
 
-    @skip('not implemented yet')
     def test_string_cast_for_distribution_checker_returns_expected_information(self):
-        import json
-
         self.maxDiff = None
         checker = DistributionChecker([self.column_name], reference_column_types={self.column_name: 'int'}, categorical_attributes=self.categorical_attributes_one_numerical_column)
         checker._distribution_options['max_bins'] = 2
         checker.create_and_set_bin_stats(self.two_column_dataframe_no_special_values_no_zeros)
 
         expected_information = {
-            'distribution_options': self.distribution_options,
+            'distribution_options': checker._distribution_options,
             'bin_stats': self.bin_stats_two_column_no_special_value_no_zeros,
             'reference_column_names': [self.column_name],
             'reference_column_types': {
@@ -97,6 +103,23 @@ class TestDistributionChecker(Spec):
         }
 
         self.assertEqual(str(expected_information), str(checker))
+
+    def test_info_dict_for_distribution_checker_returns_expected_information(self):
+        self.maxDiff = None
+        checker = DistributionChecker([self.column_name], reference_column_types={self.column_name: 'int'}, categorical_attributes=self.categorical_attributes_one_numerical_column)
+        checker._distribution_options['max_bins'] = 2
+        checker.create_and_set_bin_stats(self.two_column_dataframe_no_special_values_no_zeros)
+
+        expected_information = {
+            'distribution_options': checker._distribution_options,
+            'bin_stats': self.bin_stats_two_column_no_special_value_no_zeros,
+            'reference_column_names': [self.column_name],
+            'reference_column_types': {
+                self.column_name: 'int'
+            }
+        }
+
+        self.assertEqual(expected_information, checker.info())
 
     def test_distribution_check_throws_error_if_dataframe_is_none_when_validate_called(self):
         with self.assertRaises(ValueError) as ex:

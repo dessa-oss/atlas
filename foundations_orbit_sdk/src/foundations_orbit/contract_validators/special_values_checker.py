@@ -22,8 +22,10 @@ class SpecialValuesChecker(object):
         self._categorical_attributes = categorical_attributes
 
     def __str__(self):
-        import json
-        return str(json.dumps(self._special_value_thresholds))
+        return str(self.info())
+
+    def info(self):
+        return self._special_value_thresholds
 
     def validate(self, dataframe_to_validate):
         self._config_columns = set(self._config_columns).union(set(self.temp_attributes_to_exclude))

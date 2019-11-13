@@ -36,7 +36,10 @@ class MinMaxChecker(object):
             raise ValueError(f'The following columns have invalid types: {error_dictionary}')
 
     def __str__(self):
-        return str(self.columns_to_bounds)
+        return str(self.info())
+
+    def info(self):
+        return self.columns_to_bounds
 
     def exclude(self, columns=None):
         if columns == 'all':

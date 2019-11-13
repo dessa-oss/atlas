@@ -13,12 +13,13 @@ class SchemaChecker(object):
         self._column_types = column_types
 
     def __str__(self):
-        import json
-        test_information = {
+        return str(self.info())
+
+    def info(self):
+        return {
             'column_names': self._reference_column_names,
             'column_types': self._column_types
         }
-        return json.dumps(test_information)
 
     def validate(self, current_dataframe):
         import pandas

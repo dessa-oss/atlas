@@ -45,15 +45,15 @@ class DistributionChecker(object):
                 self._attributes_to_exclude_permanently.append(column)
 
     def __str__(self):
+        return str(self.info())
 
-        information =  {
+    def info(self):
+        return {
             'distribution_options': self._distribution_options,
             'bin_stats': self._bin_stats,
             'reference_column_names': self._reference_column_names,
             'reference_column_types': self._reference_column_types
         }
-
-        return str(information)
 
     def configure(self, attributes, threshold=None, method=None):
         self._check_configure_attributes(attributes)

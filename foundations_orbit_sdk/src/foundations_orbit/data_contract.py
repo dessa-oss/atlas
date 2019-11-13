@@ -35,15 +35,14 @@ class DataContract(object):
         self.summary = DataContractSummary(self._dataframe, self._column_names, self._column_types, self._categorical_attributes)
 
     def __str__(self):
-        import json
-
         data_contract_info = {
-            'special_values_test': str(self.special_value_test),
-            'min_max_test': str(self.min_max_test), 'distribution_test': str(self.distribution_test),
-            'schema_test': str(self.schema_test)
+            'special_values_test': self.special_value_test.info(),
+            'min_max_test': self.min_max_test.info(),
+            'distribution_test': self.distribution_test.info(),
+            'schema_test': self.schema_test.info()
         }
 
-        return json.dumps(data_contract_info)
+        return str(data_contract_info)
 
     @staticmethod
     def _default_options():

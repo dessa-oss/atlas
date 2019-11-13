@@ -246,9 +246,6 @@ class TestSchemaChecker(Spec):
         self._assert_schema_check_results_for_dataframe(reference_dataframe, current_dataframe, expected_schema_check_results)
 
     def test_string_cast_for_schema_check_returns_expected_information(self):
-        import json
-        import numpy
-
         schema_checker = self._schema_checker_from_dataframe(self.one_column_dataframe)
 
         expected_information = {
@@ -256,7 +253,17 @@ class TestSchemaChecker(Spec):
             'column_types': {self.column_name: 'int8'}
         }
 
-        self.assertEqual(json.dumps(expected_information), str(schema_checker))
+        self.assertEqual(str(expected_information), str(schema_checker))
+
+    def test_dictionary_info_for_schema_check_returns_expected_information(self):
+        schema_checker = self._schema_checker_from_dataframe(self.one_column_dataframe)
+
+        expected_information = {
+            'column_names': [self.column_name],
+            'column_types': {self.column_name: 'int8'}
+        }
+
+        self.assertEqual(expected_information, schema_checker.info())
 
     def _dataframe_statistics(self, dataframe):
         import numpy
