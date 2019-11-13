@@ -85,13 +85,13 @@ class DataContractSummary(object):
 
     @staticmethod
     def _calculate_minimum(dataframe, attribute, column_type):
-        if 'str' in column_type or 'bool' in column_type:
+        if 'str' in column_type or 'bool' in column_type or 'category' in column_type:
             return None
         return DataContractSummary._numpy_type_to_python(dataframe[attribute].min())
 
     @staticmethod
     def _calculate_maximum(dataframe, attribute, column_type):
-        if 'str' in column_type or 'bool' in column_type:
+        if 'str' in column_type or 'bool' in column_type or 'category' in column_type:
             return None
         return DataContractSummary._numpy_type_to_python(dataframe[attribute].max())
 

@@ -79,6 +79,8 @@ class DataContract(object):
                 self._categorical_attributes[col_name] = True
             elif 'datetime' in col_type:
                 self._categorical_attributes[col_name] = self._check_if_attribute_is_categorical(col_name)
+            elif 'category' in col_type:
+                self._categorical_attributes[col_name] = True
 
     def _initialize_schema_checker(self):
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
