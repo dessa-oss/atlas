@@ -295,7 +295,8 @@ class JobDeployment(object):
                     "FOUNDATIONS_JOB_ID": job_id,
                     "FOUNDATIONS_PROJECT_NAME": project_name,
                     "PYTHONPATH": "/job/",
-                    "FOUNDATIONS_HOME": "/root/.foundations/"  # TODO: Add user token
+                    "FOUNDATIONS_HOME": "/root/.foundations/",
+                    "FOUNDATIONS_TOKEN": user_token()
                 },
             "network": "foundations-atlas"
         }

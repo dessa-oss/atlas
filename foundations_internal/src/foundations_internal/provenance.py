@@ -17,6 +17,9 @@ class Provenance(object):
     def __init__(self):
         import os
         from getpass import getuser
+        from foundations_contrib.authentication.authentication_client import AuthenticationClient
+        from foundations_contrib.authentication.configs import ATLAS
+        from foundations_contrib.global_state import user_token
 
         self.job_source_bundle = None
         self.environment = {}
@@ -30,12 +33,21 @@ class Provenance(object):
         self.job_run_data = {}
         self.project_name = 'default'
         self.monitor_name = os.getenv('MONITOR_NAME', None)
-        self.user_name = os.getenv("FOUNDATIONS_USER", None)  # TODO: Get username
-        if self.user_name is None:
-            try:
-                self.user_name = getuser()
-            except KeyError:
-                self.user_name = ""
+
+        token = user_token()
+
+        if token:
+            auth_client = AuthenticationClient(ATLAS, '/api/v2beta/auth/login')
+            decoded_token = auth_client.decode_jwt(token)
+            self.user_name = decoded_token['preferred_username']
+        else:
+            self.user_name = os.getenv("FOUNDATIONS_USER", None)  # TODO: Get username
+            if self.user_name is None:
+                try:
+                    self.user_name = getuser()
+                except KeyError:
+                    self.user_name = ""
+
         self.annotations = {}
 
     def fill_python_version(self):

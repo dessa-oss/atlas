@@ -11,14 +11,18 @@ def user_token():
     import yaml
     import os
 
-    # TODO: Get from environment variable
-    credential_filepath = expanduser(join(foundations_home(), "credentials.yaml"))
-    if not os.path.isfile(credential_filepath):
-        return None
-    with open(credential_filepath, "r") as file:
-        credential_dict = yaml.load(file)
-    if "default" not in credential_dict:
-        return None
-    if "token" not in credential_dict["default"]:
-        return None
-    return credential_dict["default"]["token"]
+    token = os.getenv('FOUNDATIONS_TOKEN', None)
+
+    if not token:
+        credential_filepath = expanduser(join(foundations_home(), "credentials.yaml"))
+        if not os.path.isfile(credential_filepath):
+            return None
+        with open(credential_filepath, "r") as file:
+            credential_dict = yaml.load(file)
+        if "default" not in credential_dict:
+            return None
+        if "token" not in credential_dict["default"]:
+            return None
+        token = credential_dict["default"]["token"]
+
+    return token
