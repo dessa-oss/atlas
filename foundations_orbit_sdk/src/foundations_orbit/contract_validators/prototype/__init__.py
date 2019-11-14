@@ -78,7 +78,6 @@ def distribution_check(distribution_check_config, column_names, bin_stats, curre
                 ref_value_percentage = value_to_percentage_map[str(value_bin)]
                 ref_bin_percentages.append(ref_value_percentage)
                 current_bin_percentages.append(current_value_percentage)
-        
         else:
             current_values = current_df[col].copy()
             n_current_vals = len(current_values)
@@ -88,21 +87,23 @@ def distribution_check(distribution_check_config, column_names, bin_stats, curre
             ref_edges = []
             unique_ref_value = None
             ref_bin_stats = bin_stats[col]
-            for bin in ref_bin_stats:
-                # special value
-                if 'upper_edge' in bin and bin['upper_edge'] is None:
-                    unique_ref_value = bin['value']
-                    ref_bin_percentages.append(bin['percentage'])
-                    ref_bin_percentages.append(0)  # to compare with current_other_value_counts percentage
-                # normal bins
-                else:
-                    ref_bin_percentages.append(bin['percentage'])
-                    # the upper_edge of the bin with the largest values is np.inf, ref_edges shouldn't include this
-                    if bin['upper_edge'] != np.inf:
-                        ref_edges.append(bin['upper_edge'])
-
-            # binning current_values
-            current_bin_percentages = bin_current_values(current_values, ref_edges, n_current_vals, unique_ref_value)
+            if ref_bin_stats:
+                for bin in ref_bin_stats:
+                    # special value
+                    if 'upper_edge' in bin and bin['upper_edge'] is None:
+                        unique_ref_value = bin['value']
+                        ref_bin_percentages.append(bin['percentage'])
+                        ref_bin_percentages.append(0)  # to compare with current_other_value_counts percentage
+                    # normal bins
+                    else:
+                        ref_bin_percentages.append(bin['percentage'])
+                        # the upper_edge of the bin with the largest values is np.inf, ref_edges shouldn't include this
+                        if bin['upper_edge'] != np.inf:
+                            ref_edges.append(bin['upper_edge'])
+                # binning current_values
+                current_bin_percentages = bin_current_values(current_values, ref_edges, n_current_vals, unique_ref_value)
+            else:  # There is no reference bin stats
+                current_bin_percentages = None
 
         # define threshold for l_infinity tests
         custom_threshold = dist_check_config['custom_thresholds'].get(col, None)
@@ -113,4 +114,4 @@ def distribution_check(distribution_check_config, column_names, bin_stats, curre
         add_binned_metric(col, threshold, dist_check_results, ref_bin_percentages, current_bin_percentages, method)
 
     return dist_check_results
-        
+

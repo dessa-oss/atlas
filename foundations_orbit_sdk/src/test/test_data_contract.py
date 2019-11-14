@@ -5,9 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_spec import *
 import fakeredis
 from foundations_orbit.data_contract import DataContract
+from foundations_spec import *
+
 
 class TestDataContract(Spec):
 
@@ -172,7 +173,6 @@ class TestDataContract(Spec):
     @let_now
     def multiple_types_dataframe(self):
         import pandas
-        import datetime
         return pandas.DataFrame(columns=[self.column_name, self.column_name_2, self.column_name_3, self.column_name_4], data=[[self.faker.word(), True, self.faker.date_time(), self.faker.pyint()], [self.faker.word(), False, self.faker.date_time(), self.faker.word()]])
 
     @let_now
@@ -310,7 +310,7 @@ class TestDataContract(Spec):
         monitor_name_from_redis = self._redis.get(redis_key).decode()
         self.assertEqual(self.model_name, monitor_name_from_redis)
 
-    def test_validate_saves_monitor_name_to_redis(self):
+    def test_validate_saves_contract_name_to_redis(self):
         data_contract = DataContract(self.contract_name, self.dataframe_to_validate_with_one_numerical_column)
         data_contract.validate(self.dataframe_to_validate_with_one_numerical_column)
 
@@ -387,6 +387,7 @@ class TestDataContract(Spec):
         reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2, self.column_name_3, self.column_name_4, self.column_name_5], 
                                                data=[[1, "string", True, self.faker.date_time(), 1],
                                                      [1, "string", False, self.faker.date_time(), "string"]])
+
         current_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2, self.column_name_3, self.column_name_4, self.column_name_5],
                                                data=[[1, self.faker.pyfloat(), self.faker.word(), self.faker.pyint(), self.faker.word()],
                                                      [1, self.faker.pyfloat(), self.faker.word(), self.faker.pyint(), self.faker.word()]])
@@ -406,29 +407,26 @@ class TestDataContract(Spec):
             for ignored_col in cols_to_ignore:
                 self.assertEqual("Schema Test Failed", test_dict[ignored_col]['message'])
 
-    def test_data_contract_exclude_calls_exclude_of_all_tests_for_single_column(self):
-        distribution_checker_exclude = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker.exclude')
-        min_max_checker_exclude = self.patch('foundations_orbit.contract_validators.min_max_checker.MinMaxChecker.exclude')
-        special_values_checker_exclude = self.patch('foundations_orbit.contract_validators.special_values_checker.SpecialValuesChecker.exclude')
+    def _test_exclusion_of_columns(self, columns_excluded):
+        distribution_checker_exclude = self.patch(
+            'foundations_orbit.contract_validators.distribution_checker.DistributionChecker.exclude')
+        min_max_checker_exclude = self.patch(
+            'foundations_orbit.contract_validators.min_max_checker.MinMaxChecker.exclude')
+        special_values_checker_exclude = self.patch(
+            'foundations_orbit.contract_validators.special_values_checker.SpecialValuesChecker.exclude')
 
         contract = DataContract(self.contract_name, df=self.one_column_dataframe)
-        contract.exclude(self.column_name)
+        contract.exclude(columns_excluded)
 
         distribution_checker_exclude.assert_called_once()
         min_max_checker_exclude.assert_called_once()
         special_values_checker_exclude.assert_called_once()
+
+    def test_data_contract_exclude_calls_exclude_of_all_tests_for_single_column(self):
+        self._test_exclusion_of_columns(self.column_name)
     
     def test_data_contract_exclude_calls_exclude_of_all_tests_for_one_of_multiple_columns(self):
-        distribution_checker_exclude = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker.exclude')
-        min_max_checker_exclude = self.patch('foundations_orbit.contract_validators.min_max_checker.MinMaxChecker.exclude')
-        special_values_checker_exclude = self.patch('foundations_orbit.contract_validators.special_values_checker.SpecialValuesChecker.exclude')
-
-        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
-        contract.exclude([self.column_name, self.column_name_2])
-
-        distribution_checker_exclude.assert_called_once()
-        min_max_checker_exclude.assert_called_once()
-        special_values_checker_exclude.assert_called_once()
+        self._test_exclusion_of_columns([self.column_name, self.column_name_2])
 
     def test_data_contract_validate_check_distributions_by_default(self):
 
@@ -757,6 +755,7 @@ class TestDataContract(Spec):
         inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         contract.options.check_special_values = False
+
         report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
         dist_check_results = report['dist_check_results']
 
@@ -968,7 +967,7 @@ class TestDataContract(Spec):
         self.assertEqual('str', column_types[self.column_name])
 
     def test_data_contract_to_string_prints_expected_output(self):
-        import numpy, json
+        import numpy
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         contract.min_max_test.configure(columns=[self.column_name, self.column_name_2], lower_bound = 0, upper_bound = 100)
         contract.special_value_test.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.5})

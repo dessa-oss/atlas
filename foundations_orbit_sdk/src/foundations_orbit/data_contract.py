@@ -81,11 +81,12 @@ class DataContract(object):
                 self._categorical_attributes[col_name] = self._check_if_attribute_is_categorical(col_name)
             elif 'category' in col_type:
                 self._categorical_attributes[col_name] = True
+            elif 'object' in col_type:
+                self._categorical_attributes[col_name] = False
 
     def _initialize_schema_checker(self):
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         self.schema_test = SchemaChecker(self._column_names, self._column_types)
-        self._remove_object_columns_and_types(self._column_names, self._column_types)
 
     def _check_if_attribute_is_categorical(self, column_name, threshold=0.1):
         column_values = self._dataframe[column_name]
@@ -294,10 +295,3 @@ class DataContract(object):
         from foundations.global_state import log_manager
         return log_manager.get_logger(__name__)
 
-    @staticmethod
-    def _remove_object_columns_and_types(column_names, column_types):
-        column_names_to_delete = []
-        for column_name, column_type in column_types.items():
-            if column_type == 'object':
-                column_names.remove(column_name)
-                column_names_to_delete.append(column_name)
