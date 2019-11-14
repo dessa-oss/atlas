@@ -30,7 +30,7 @@ class Provenance(object):
         self.job_run_data = {}
         self.project_name = 'default'
         self.monitor_name = os.getenv('MONITOR_NAME', None)
-        self.user_name = os.getenv("FOUNDATIONS_USER", None)
+        self.user_name = os.getenv("FOUNDATIONS_USER", None)  # TODO: Get username
         if self.user_name is None:
             try:
                 self.user_name = getuser()

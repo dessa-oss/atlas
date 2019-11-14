@@ -11,6 +11,7 @@ def user_token():
     import yaml
     import os
 
+    # TODO: Get from environment variable
     credential_filepath = expanduser(join(foundations_home(), "credentials.yaml"))
     if not os.path.isfile(credential_filepath):
         return None
