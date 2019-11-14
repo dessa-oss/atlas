@@ -7,6 +7,7 @@ Written by Susan Davis <s.davis@dessa.com>, 11 2018
 
 from foundations_core_rest_api_components.utils.api_resource import api_resource
 
+
 @api_resource('/api/v1/projects/<string:project_name>/validation_results')
 class ValidationReportsController(object):
     
