@@ -602,7 +602,7 @@ class TestDataValidation(Spec):
         controller = ValidationReportsController()
         controller.params = {
             'project_name': self.project_name,
-            'inference_period': inference_period,
+            'inference_period': str(inference_period),
             'monitor_package': self.monitor_name,
             'data_contract': self.contract_name
         }
