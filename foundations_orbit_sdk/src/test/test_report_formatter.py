@@ -953,7 +953,7 @@ class TestReportFormatter(Spec):
         self.assertEqual(expected_min_report, formatted_report['min'])
         self.assertEqual(expected_max_report, formatted_report['max'])
 
-    def _test_unsupported_data_types_for_distribution_checker(self, results, expected_summary):
+    def _test_summary_in_unsupported_data_types_for_distribution_checker(self, results, expected_summary):
         self.validation_report['schema_check_results'] = {'passed': True}
         self.validation_report['dist_check_results'] = results
 
@@ -967,7 +967,7 @@ class TestReportFormatter(Spec):
             'warning': 0
         }
         results = self.distribution_checks_with_unsupported_datatype
-        self._test_unsupported_data_types_for_distribution_checker(results, expected_distribution_check_summary)
+        self._test_summary_in_unsupported_data_types_for_distribution_checker(results, expected_distribution_check_summary)
 
     def test_distribution_check_with_both_supported_and_unsupported_datatypes_updates_healthy_but_not_critical_counts(self):
         expected_distribution_check_summary = {
@@ -976,7 +976,44 @@ class TestReportFormatter(Spec):
             'warning': 0
         }
         results = self.distribution_checks_with_both_supported_and_unsupported_datatype
-        self._test_unsupported_data_types_for_distribution_checker(results, expected_distribution_check_summary)
+        self._test_summary_in_unsupported_data_types_for_distribution_checker(results, expected_distribution_check_summary)
+
+    def _test_details_in_unsupported_data_types_for_distribution_checker(self, results, expected_details):
+        self.validation_report['schema_check_results'] = {'passed': True}
+
+        self.validation_report['dist_check_results'] = results
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_details, formatted_report['population_shift']['details_by_attribute'])
+
+    def test_distribution_check_with_unsupported_datatype_sets_validation_outcome_to_none(self):
+        results = self.distribution_checks_with_unsupported_datatype
+        population_shift_attribute_details = []
+
+        for column, details in self.distribution_checks_with_unsupported_datatype.items():
+            population_shift_attribute_details.append({
+                'attribute_name': column,
+                'validation_outcome': None
+            })
+
+        self._test_details_in_unsupported_data_types_for_distribution_checker(
+            results, population_shift_attribute_details)
+
+    def test_distribution_check_with_both_supported_and_unsupported_datatypes_sets_healthy_to_only_supported_column_and_none_for_unsupported_columns(self):
+        results = self.distribution_checks_with_both_supported_and_unsupported_datatype
+        population_shift_attribute_details = []
+
+        for column, details in self.distribution_checks_with_unsupported_datatype.items():
+            detail = {
+                'attribute_name': column,
+                'validation_outcome': None
+            }
+            if column == self.column_name:
+                detail['validation_outcome'] = 'healthy'
+                detail['L-infinity'] = 0.2
+            population_shift_attribute_details.append(detail)
+
+        self._test_details_in_unsupported_data_types_for_distribution_checker(
+            results, population_shift_attribute_details)
 
     def _sort_check_for_details_by_activity(self, expected_detail_for_attribute):
         expected_detail_for_attribute.sort(key=lambda detail: (detail['validation_outcome'], detail['attribute_name']))
