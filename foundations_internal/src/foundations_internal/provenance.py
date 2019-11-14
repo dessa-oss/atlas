@@ -41,7 +41,7 @@ class Provenance(object):
             decoded_token = auth_client.decode_jwt(token)
             self.user_name = decoded_token['preferred_username']
         else:
-            self.user_name = os.getenv("FOUNDATIONS_USER", None)  # TODO: Get username
+            self.user_name = os.getenv("FOUNDATIONS_USER", None)
             if self.user_name is None:
                 try:
                     self.user_name = getuser()
