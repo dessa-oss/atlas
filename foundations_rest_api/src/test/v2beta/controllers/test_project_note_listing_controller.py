@@ -16,11 +16,15 @@ class TestProjectNoteListingController(Spec):
     mock_redis = let_fake_redis()
 
     @let
-    def _mock_message(self):
+    def message(self):
         return self.faker.sentence()
 
     @let
-    def _mock_author(self):
+    def userid(self):
+        return self.faker.word()
+
+    @let
+    def username(self):
         return self.faker.word()
 
     @let
@@ -28,16 +32,16 @@ class TestProjectNoteListingController(Spec):
         return ProjectNoteListingController()
     
     @let
-    def _mock_project_name(self):
+    def project_name(self):
         return self.faker.word()
 
     @set_up
     def set_up(self):
         self.patch('foundations_contrib.global_state.redis_connection', self.mock_redis)
-        self.controller.params = {'author': self._mock_author, 'message': self._mock_message, 'project_name': self._mock_project_name}
+        self.controller.params = {'author': self.userid, 'message': self.message, 'project_name': self.project_name}
 
     def test_post_returns_a_confirmation_message(self):
-        expected_result = f'Note with author: {self.controller._author()} created with message: {self._mock_message}'
+        expected_result = f'Note with author: {self.userid} created with message: {self.message}'
         self.assertEqual(expected_result, self.controller.post().as_json())
     
     def test_index_returns_empty(self):
@@ -48,4 +52,4 @@ class TestProjectNoteListingController(Spec):
         self.controller.post()
         index_result = self.controller.index().as_json()
         self.assertEqual(1, len(index_result))
-        self.assertEqual(self._mock_message, index_result[0]['message'])
+        self.assertEqual(self.message, index_result[0]['message'])

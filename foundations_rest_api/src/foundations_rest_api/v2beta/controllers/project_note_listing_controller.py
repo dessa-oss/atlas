@@ -26,7 +26,7 @@ class ProjectNoteListingController(object):
         return self.params['project_name']
 
     def _author(self):
-        return 'Atlas Trial User'  # Hardcoded for now as users are not implemented
+        return self.params['author']
 
     def _message(self):
         return self.params['message']
