@@ -92,7 +92,6 @@ class TestAuthenticationController(Spec):
         headers = {"Authorization": "bearer token"}
 
         with app_manager.app().test_request_context(headers=headers):
-            # auth_client = mock_constructor("conf", "redirect")
             self.auth_controller.get("verify")
             verify.assert_called_once_with(
                 "token", self.auth_client.json_web_key_set, self.auth_client.issuer
