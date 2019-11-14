@@ -5,15 +5,20 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 11 2018
 """
 
-import webbrowser
 import json
-
 from typing import Type, Union, Dict
+import webbrowser
+
+from jose import jwt
+
 from keycloak import KeycloakOpenID, KeycloakAdmin
 
 
 class AuthenticationClient:
     """A facade for the some authentication implementation, currently keycloak."""
+
+    issuer = None
+    json_web_key_set = None
 
     def __init__(self, conf: Union[str, dict], redirect_url: str):
         """
@@ -41,7 +46,6 @@ class AuthenticationClient:
 
     def browser_login(self) -> None:
         """Open a browser window to login.
-
         :rtype: None
         """
 
@@ -94,6 +98,27 @@ class AuthenticationClient:
             headers={"Authorization": f"Bearer {auth_token}"},
         ).json()
         return {info["id"]: info["username"] for info in users_response}
+
+    def decode_jwt(self, auth_token: str) -> dict:
+        unverified_header = jwt.get_unverified_header(auth_token)
+        rsa_key = self._jwt_rsa_key()
+        payload = jwt.decode(
+            auth_token, rsa_key, algorithms=["RS256"], audience="account", issuer=self.issuer,
+        )
+        return payload
+
+    def _jwt_rsa_key(self) -> Dict[str, str]:
+        rsa_key: Dict[str, str] = {}
+        for key in self.json_web_key_set["keys"]:
+            if key["kid"] == unverified_header["kid"]:
+                rsa_key = {
+                    "kty": key["kty"],
+                    "kid": key["kid"],
+                    "use": key["use"],
+                    "n": key["n"],
+                    "e": key["e"],
+                }
+        return rsa_key
 
     @staticmethod
     def _get_config_from_file(fname: str) -> dict:
