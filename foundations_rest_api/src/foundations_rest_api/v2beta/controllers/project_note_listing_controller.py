@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from foundations_contrib.authentication.utils import get_token_from_header
 from foundations_rest_api.utils.api_resource import api_resource
 
 from foundations_core_rest_api_components.lazy_result import LazyResult
@@ -12,6 +13,11 @@ from foundations_core_rest_api_components.response import Response
 
 @api_resource('/api/v2beta/projects/<string:project_name>/note_listing')
 class ProjectNoteListingController(object):
+
+    def __init__(self):
+        from foundations_contrib.authentication.authentication_client import AuthenticationClient
+        from foundations_contrib.authentication.configs import ATLAS
+        self.client = AuthenticationClient(ATLAS, '/api/v2beta/auth/login')
 
     def post(self):
         from foundations_contrib.global_state import redis_connection
@@ -26,7 +32,7 @@ class ProjectNoteListingController(object):
         return self.params['project_name']
 
     def _author(self):
-        return 'Atlas Trial User'  # Hardcoded for now as users are not implemented
+        return self.params['author']
 
     def _message(self):
         return self.params['message']
@@ -43,5 +49,12 @@ class ProjectNoteListingController(object):
 
     def _format_redis_data(self, redis_data):
         from foundations_internal.fast_serializer import deserialize
+        
         deserialized_data = deserialize(redis_data)
-        return {'date': str(deserialized_data['date']), 'message': deserialized_data['message'], 'author': deserialized_data['author']}
+        author_id = deserialized_data['author']
+
+        return {'date': str(deserialized_data['date']), 'message': deserialized_data['message'], 'author': self._author_name_from_id(author_id)}
+
+    def _author_name_from_id(self, author_id):
+        token = get_token_from_header()
+        return self.client.users_info(token)[author_id]

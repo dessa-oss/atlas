@@ -113,6 +113,16 @@ class TestAuthenticationClient(Spec):
         expected = {"some_id": "some_username", "another_id": "another_username"}
         self.assertEqual(expected, users)
 
+    @patch('foundations_contrib.authentication.authentication_client.jwt')
+    def test_decode_jwt(self, jwt):
+        auth_token = self.faker.word()
+        issuer = self.faker.word()
+        self.auth_client.issuer = issuer
+        self.auth_client.decode_jwt(auth_token)
+        jwt.get_unverified_header.assert_called_once_with(auth_token)
+        jwt.decode.assert_called_once_with(auth_token, {}, algorithms=['RS256'], audience='account',issuer=issuer)
+        
+        
 
 def load_config(conf_file: str) -> dict:
     with open(conf_file) as conf:
