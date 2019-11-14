@@ -164,6 +164,7 @@ class DataContract(object):
         from uuid import uuid4
         from getpass import getuser
         from redis import ConnectionError
+        import inspect
 
         from foundations_orbit.report_formatter import ReportFormatter
         from foundations_orbit.utils.get_column_types import get_column_types
@@ -171,8 +172,12 @@ class DataContract(object):
         if not self._bin_stats:
             self.set_bin_stats()
 
+        caller_stackframe = inspect.stack()[1]
+        caller_module_name = inspect.getmodule(caller_stackframe[0])
+        default_filename = os.path.basename(caller_module_name.__file__)
+
         project_name = os.environ.get('PROJECT_NAME', 'default')
-        monitor_name = os.environ.get('MONITOR_NAME', os.path.basename(__file__))
+        monitor_name = os.environ.get('MONITOR_NAME', default_filename)
         user = os.environ.get('FOUNDATIONS_USER', getuser())
         job_id = os.environ.get('FOUNDATIONS_JOB_ID', str(uuid4()))
 

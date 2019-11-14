@@ -273,6 +273,17 @@ class TestDataContract(Spec):
         id_from_redis = self._redis.get(redis_key).decode()
         self.assertEqual(str(data_contract._uuid), id_from_redis)
 
+    def test_data_contract_uses_correct_default_monitor_name(self):
+        import os
+        del os.environ['MONITOR_NAME']
+        data_contract = DataContract(self.contract_name, self.dataframe_to_validate_with_one_numerical_column)
+        data_contract.validate(self.dataframe_to_validate_with_one_numerical_column)
+
+        default_monitor_name = 'test_data_contract.py'
+
+        redis_key = f'projects:{self.project_name}:monitors:{default_monitor_name}:validation:{self.contract_name}:id'
+        self.assertTrue(self._redis.exists(redis_key))
+
     def test_validate_saves_info_to_redis(self):
         import json
 
