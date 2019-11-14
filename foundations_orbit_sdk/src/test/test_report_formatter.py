@@ -47,10 +47,20 @@ class TestReportFormatter(Spec):
     @let
     def distribution_checks(self):
         return {column: self._gen_dist_check_result() for column in self.column_list}
-    
+
     @let
     def distribution_checks_with_psi(self):
         return {column: self._gen_dist_check_result(psi=True) for column in self.column_list}
+
+    @let
+    def distribution_checks_with_unsupported_datatype(self):
+        return {column: self._gen_dist_check_result_with_unsupported_datatype() for column in self.column_list}
+
+    @let
+    def distribution_checks_with_both_supported_and_unsupported_datatype(self):
+        dist_checks = self.distribution_checks_with_unsupported_datatype
+        dist_checks[self.column_name] = self._gen_dist_check_result()
+        return dist_checks
 
     @let
     def special_values_check(self):
@@ -94,51 +104,6 @@ class TestReportFormatter(Spec):
         }
 
     @let
-    def validation_report_with_min_max_failed_test(self):
-        return {
-            'schema_check_results': {
-                'passed': False,
-                'error_message': ''
-            },
-            'metadata': {
-                'reference_metadata': {
-                    'column_names': self.column_list,
-                    'type_mapping': self.type_mapping
-                },
-                'current_metadata': {
-                    'column_names': self.column_list,
-                    'type_mapping': self.type_mapping
-                }
-            },
-            'dist_check_results': self.distribution_checks,
-            'special_values_check_results': self.special_values_check,
-            'min_max_test_results': self.min_max_failed_test,
-        }
-
-    @let
-    def validation_report_with_psi(self):
-        return {
-            'schema_check_results': {
-                'passed': False,
-                'error_message': ''
-            },
-            'metadata': {
-                'reference_metadata': {
-                    'column_names': self.column_list,
-                    'type_mapping': self.type_mapping
-                },
-                'current_metadata': {
-                    'column_names': self.column_list,
-                    'type_mapping': self.type_mapping
-                }
-            },
-            'dist_check_results': self.distribution_checks_with_psi,
-            'special_values_check_results': self.special_values_check,
-            'min_max_test_results': self.min_max_test,
-        }
-
-
-    @let
     def column_name(self):
         return self.faker.sentence()
 
@@ -177,8 +142,14 @@ class TestReportFormatter(Spec):
         return {
             'binned_passed': True,
             'binned_l_infinity': 0.2
+        }    
+
+    def _gen_dist_check_result_with_unsupported_datatype(self):
+        return {
+            'binned_passed': None,
+            'message': "non-categorical strings are not supported"
         }
-    
+
     def _gen_min_max_check_result(self):
         return {
             'min_test': {
@@ -861,7 +832,7 @@ class TestReportFormatter(Spec):
         self.assertEqual(population_shift_attribute_details, formatted_report['population_shift']['details_by_attribute'])
     
     def test_return_population_shift_details_when_all_columns_are_healthy_and_psi_metric_used(self):
-        self.validation_report_with_psi['schema_check_results'] = {'passed': True}
+        self.validation_report['schema_check_results'] = {'passed': True}
 
         population_shift_attribute_details = []
 
@@ -871,8 +842,9 @@ class TestReportFormatter(Spec):
                 'PSI': 0.256,
                 'validation_outcome': 'healthy',
             })
-        
-        formatted_report = self._generate_formatted_report(psi=True)
+
+        self.validation_report['dist_check_results'] = self.distribution_checks_with_psi
+        formatted_report = self._generate_formatted_report()
         self.assertEqual(population_shift_attribute_details, formatted_report['population_shift']['details_by_attribute'])
     
     def test_return_population_shift_summary_when_one_columns_is_unhealthy(self):
@@ -889,7 +861,7 @@ class TestReportFormatter(Spec):
         
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_schema_summary, formatted_report['population_shift']['summary'])
-    
+
     def test_return_population_shift_details_when_one_columns_is_unhealthy(self):
         self.validation_report['schema_check_results'] = {'passed': True}
 
@@ -907,7 +879,7 @@ class TestReportFormatter(Spec):
         
         formatted_report = self._generate_formatted_report()
         self.assertEqual(population_shift_attribute_details, formatted_report['population_shift']['details_by_attribute'])
-    
+
     def test_return_no_data_quality_if_check_special_value_is_false(self):
         self.validation_report['schema_check_results'] = {'passed': True}
 
@@ -956,7 +928,7 @@ class TestReportFormatter(Spec):
         self.assertEqual(expected_max_report, formatted_report['max'])
 
     def test_return_min_max_critical_results(self):
-        self.validation_report_with_min_max_failed_test['schema_check_results'] = {'passed': True}
+        self.validation_report['schema_check_results'] = {'passed': True}
 
         expected_min_report = {
             'summary': {
@@ -976,26 +948,47 @@ class TestReportFormatter(Spec):
         }
         expected_max_report['details_by_attribute'] = [self._gen_expected_max_check_failed_result(column) for column in self.column_list]
 
-        formatted_report = self._generate_formatted_report(failed_min_max=True)
+        self.validation_report['min_max_test_results'] = self.min_max_failed_test
+        formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_min_report, formatted_report['min'])
         self.assertEqual(expected_max_report, formatted_report['max'])
+
+    def _test_unsupported_data_types_for_distribution_checker(self, results, expected_summary):
+        self.validation_report['schema_check_results'] = {'passed': True}
+        self.validation_report['dist_check_results'] = results
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_summary, formatted_report['population_shift']['summary'])
+
+    def test_distribution_check_with_unsupported_datatype_updates_neither_healthy_nor_critical_counts(self):
+        expected_distribution_check_summary = {
+            'healthy': 0,
+            'critical': 0,
+            'warning': 0
+        }
+        results = self.distribution_checks_with_unsupported_datatype
+        self._test_unsupported_data_types_for_distribution_checker(results, expected_distribution_check_summary)
+
+    def test_distribution_check_with_both_supported_and_unsupported_datatypes_updates_healthy_but_not_critical_counts(self):
+        expected_distribution_check_summary = {
+            'healthy': 1,
+            'critical': 0,
+            'warning': 0
+        }
+        results = self.distribution_checks_with_both_supported_and_unsupported_datatype
+        self._test_unsupported_data_types_for_distribution_checker(results, expected_distribution_check_summary)
 
     def _sort_check_for_details_by_activity(self, expected_detail_for_attribute):
         expected_detail_for_attribute.sort(key=lambda detail: (detail['validation_outcome'], detail['attribute_name']))
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
 
-    
     def _get_all_columns_list(self, columns_in_current_dataframe, columns_in_reference_dataframe):
         in_current_not_in_reference = set(columns_in_current_dataframe) - set(columns_in_reference_dataframe)
         return columns_in_reference_dataframe + list(in_current_not_in_reference)
 
-    def _generate_formatted_report(self, psi=False, failed_min_max=False):
+    def _generate_formatted_report(self):
         validation_report = self.validation_report
-        if psi:
-            validation_report = self.validation_report_with_psi
-        if failed_min_max:
-            validation_report = self.validation_report_with_min_max_failed_test
 
         formatter = ReportFormatter(inference_period=self.inference_period,
                                     monitor_package=self.monitor_package,

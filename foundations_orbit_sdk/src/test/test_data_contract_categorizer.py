@@ -173,7 +173,7 @@ class TestDataContractCategorizer(Spec):
         expected_report = {
             self.column_name_1: {
                 'message': 'non-categorical strings are not supported',
-                'binned_passed': False,
+                'binned_passed': None,
             }
         }
 

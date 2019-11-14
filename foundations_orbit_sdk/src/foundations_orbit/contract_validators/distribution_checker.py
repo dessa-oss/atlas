@@ -105,12 +105,12 @@ class DistributionChecker(object):
         column_names_to_validate = set(self._reference_column_names) - set(self._column_names_to_exclude)
 
         test_data = distribution_check(self._distribution_options, column_names_to_validate , self._bin_stats, dataframe_to_validate, categorical_attributes = self._categorical_attributes)
-        
+
         self._reference_column_names = set(self._reference_column_names).union(set(self.temp_attributes_to_exclude))
         self.temp_attributes_to_exclude = []
-        
+
         for attribute in self._attributes_to_exclude_permanently:
-            test_data[attribute] = {"binned_passed": False, 'message': "non-categorical strings are not supported"}
+            test_data[attribute] = {"binned_passed": None, 'message': "non-categorical strings are not supported"}
         return test_data
 
     def create_and_set_bin_stats(self, reference_dataframe):
