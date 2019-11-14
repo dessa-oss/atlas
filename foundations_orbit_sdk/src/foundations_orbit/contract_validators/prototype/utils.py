@@ -88,12 +88,15 @@ def add_special_value_l_infinity(col, threshold, dist_check_results, ref_special
 
 
 def add_binned_metric(col, threshold, dist_check_results, ref_bin_percentages, current_bin_percentages, method_name):
-    if method_name == 'l_infinity':
-        distance_metric = l_infinity(ref_bin_percentages, current_bin_percentages)
-    elif method_name == 'psi':
-        distance_metric = psi_score(ref_bin_percentages, current_bin_percentages)
+    if current_bin_percentages is None:
+        dist_check_results[col]['binned_passed'] = None
     else:
-        return
+        if method_name == 'l_infinity':
+            distance_metric = l_infinity(ref_bin_percentages, current_bin_percentages)
+        elif method_name == 'psi':
+            distance_metric = psi_score(ref_bin_percentages, current_bin_percentages)
+        else:
+            return
 
-    dist_check_results[col][f'binned_{method_name}'] = distance_metric
-    dist_check_results[col]['binned_passed'] = distance_metric < threshold
+        dist_check_results[col][f'binned_{method_name}'] = distance_metric
+        dist_check_results[col]['binned_passed'] = distance_metric < threshold

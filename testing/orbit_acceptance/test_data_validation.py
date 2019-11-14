@@ -53,14 +53,26 @@ class TestDataValidation(Spec):
     @let
     def dataframe_with_unsupported_data_types(self):
         import pandas
-        num_rows = 20
         same_words = [self.faker.word(), self.faker.word()]
         data = []
 
-        for i in range(0, num_rows):
+        for i in range(0, 20):
             data.append([self.faker.word(), same_words[i % 2]])
 
         return pandas.DataFrame(data, columns=['feat_1', 'feat_2'])
+
+    @let
+    def dataframe_with_mixed_data_types(self):
+        import pandas
+        import numpy
+
+        data = {
+            'feat_1': numpy.random.uniform(-1, 1, size=100),
+            'feat_2': [True] * 50 + [self.faker.word()] * 50
+        }
+        df = pandas.DataFrame(data)
+        df['feat_1'] = pandas.to_numeric(df["feat_1"])
+        return df
 
     @let
     def contract_name(self):
@@ -610,3 +622,38 @@ class TestDataValidation(Spec):
         results = controller.post().as_json()
         self.assertEqual(expected_population_shift, results['population_shift'])
 
+    def test_mixed_data_types_dataframe_columns_treated_as_unsupported_column(self):
+        import datetime
+        expected_population_shift = {
+            'details_by_attribute': [
+                {
+                    'attribute_name': 'feat_1',
+                    'L-infinity': 0.0,
+                    'validation_outcome': 'healthy'
+                },
+                {
+                    'attribute_name': 'feat_2',
+                    'validation_outcome': None
+                }
+
+            ],
+            'summary': {
+                'critical': 0, 'healthy': 1, 'warning': 0
+            }
+        }
+
+        data_contract = DataContract(self.contract_name, df=self.dataframe_with_mixed_data_types)
+        inference_period = datetime.datetime.today()
+        data_contract.validate(self.dataframe_with_mixed_data_types, inference_period)
+        # get results via the API
+        from foundations_orbit_rest_api.v1.controllers.validation_reports_controller import ValidationReportsController
+        controller = ValidationReportsController()
+        controller.params = {
+            'project_name': self.project_name,
+            'inference_period': str(inference_period),
+            'monitor_package': self.monitor_name,
+            'data_contract': self.contract_name
+        }
+
+        results = controller.post().as_json()
+        self.assertEqual(expected_population_shift, results['population_shift'])
