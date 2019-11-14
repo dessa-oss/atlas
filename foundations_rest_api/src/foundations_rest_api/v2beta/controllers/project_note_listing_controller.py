@@ -52,7 +52,9 @@ class ProjectNoteListingController(object):
         
         deserialized_data = deserialize(redis_data)
         author_id = deserialized_data['author']
-        token = get_token_from_header()
-        author_name = self.client.users_info(token)[author_id]
 
-        return {'date': str(deserialized_data['date']), 'message': deserialized_data['message'], 'author': author_name}
+        return {'date': str(deserialized_data['date']), 'message': deserialized_data['message'], 'author': self._author_name_from_id(author_id)}
+
+    def _author_name_from_id(self, author_id):
+        token = get_token_from_header()
+        return self.client.users_info(token)[author_id]
