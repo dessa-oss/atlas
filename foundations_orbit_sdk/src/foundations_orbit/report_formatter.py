@@ -289,7 +289,7 @@ class ReportFormatter(object):
 
             if col_results['binned_passed']:
                 population_shift_summary['healthy'] += 1
-            else:
+            elif col_results['binned_passed'] == False:
                 population_shift_summary['critical'] += 1
 
         return {
