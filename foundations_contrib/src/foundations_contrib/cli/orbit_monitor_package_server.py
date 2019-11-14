@@ -75,7 +75,7 @@ def start(job_directory, command, project_name, name, env):
     username = _get_username()
     monitor_job_spec = _get_monitor_job_spec(project_name, name, username, job_config, config, foundations_context)
     monitor_gpu_spec = _get_monitor_gpu_spec(foundations_context)
-    monitor_metadata = {'project_name': project_name, 'username': username}
+    monitor_metadata = {'project_name': project_name, 'monitor_name': name, 'username': username}
 
     CronJobScheduler(scheduler_url).schedule_job(
         monitor_package,
