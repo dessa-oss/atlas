@@ -15,9 +15,7 @@ class TestAuthenticationController(Spec):
             "foundations_contrib.authentication.authentication_client.AuthenticationClient",
             autospec=True,
         )
-        instance = Mock()
-        constructor.return_value = instance
-        return instance
+        return constructor('conf', 'redirect')
 
     @let
     def auth_controller(self):
