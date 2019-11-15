@@ -1,6 +1,8 @@
 /* eslint-disable max-len */
 /* eslint-disable no-trailing-spaces */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Cookies from 'js-cookie';
 import CommonHeader from '../common/CommonHeader';
 import CommonFooter from '../common/CommonFooter';
 
@@ -9,6 +11,7 @@ class SupportPage extends Component {
     super(props);
 
     this.state = {
+      isLoggedIn: Cookies.get('atlas_refresh_token') !== undefined,
     };
 
     this.onClickStackOverflow = this.onClickStackOverflow.bind(this);
@@ -29,15 +32,14 @@ class SupportPage extends Component {
   }
 
   render() {
+    const { isLoggedIn } = this.state;
     return (
       <div>
-        <CommonHeader />
+        <CommonHeader {...this.props} isLoggedIn={isLoggedIn} />
         <div className="support-page-container">
           <div>
             <h2 className="font-bold">Got a technical question?</h2>
-            <p>Our Engineers are very active on StackOverflow and constantly monitoring the 
-              <span className="font-bold"> &quot;foundations-atlas&quot; tag, </span>
-              help build the community by asking the question publicly.
+            <p>We are active on StackOverflow and monitoring the foundations-atlas tag. Help build the community by asking the question publicly.
             </p>
             <div tabIndex={0} role="button" onKeyPress={this.onClickStackOverflow} onClick={this.onClickStackOverflow}>
               <h2 className="font-bold">Ask on StackOverflow</h2>
@@ -45,17 +47,7 @@ class SupportPage extends Component {
           </div>
           <div>
             <h2 className="font-bold">Need immediate help?</h2>
-            <p>If the documentation and StackOverflow weren&apos;t helpful you can reach out to us via e-mail at
-              <span />
-              <span
-                tabIndex={0}
-                role="button"
-                onKeyPress={this.onClickEmailUs}
-                onClick={this.onClickEmailUs}
-                className="underline"
-              >
-                 foundations@dessa.com
-              </span>
+            <p>If the documentation and StackOverflow weren&apos;t helpful you can reach out to us via e-mail.
             </p>
             <div
               tabIndex={0}
@@ -69,17 +61,7 @@ class SupportPage extends Component {
           <div>
             <h2 className="font-bold">Get Foundations Enterprise</h2>
             <p>Love using Foundations? Want to implement it for your team? Or want to learn more about what Enterprise
-              version has to offer? Get in touch with us at 
-              <span />
-              <span
-                tabIndex={0}
-                role="button"
-                onKeyPress={this.onClickSales}
-                onClick={this.onClickSales}
-                className="underline"
-              >
-                deploy@dessa.com
-              </span>
+              version has to offer? Get in touch with us.
             </p>
             <div
               tabIndex={0}
@@ -96,5 +78,13 @@ class SupportPage extends Component {
     );
   }
 }
+
+SupportPage.propTypes = {
+  isLoggedIn: PropTypes.bool,
+};
+
+SupportPage.defaultProps = {
+  isLoggedIn: false,
+};
 
 export default SupportPage;
