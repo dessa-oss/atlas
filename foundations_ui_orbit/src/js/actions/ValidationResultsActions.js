@@ -118,10 +118,18 @@ const ValidationResultsActions = {
     ];
 
     const rows = validationTestResult.population_shift.details_by_attribute.map((test, ind) => {
-      const measureType = "L-infinity" in test ? "L-infinity" : "PSI";
+      let measureType = "L-infinity" in test ? "L-infinity" : "PSI";
       let distShift = measureType === "L-infinity" ? test["L-infinity"] : test.PSI;
+      let validationOutcome = test.validation_outcome;
+
       if (distShift === null) {
         distShift = "N/A";
+      }
+
+      if (test.validation_outcome === null) {
+        distShift = "N/A";
+        measureType = "N/A";
+        validationOutcome = "N/A";
       }
       return (
         // eslint-disable-next-line react/no-array-index-key
@@ -129,8 +137,8 @@ const ValidationResultsActions = {
           <th><OverflowTooltip text={test.attribute_name} /></th>
           <th><OverflowTooltip text={distShift} /></th>
           <th><OverflowTooltip text={measureType} /></th>
-          <th className={`validation-outcome-${test.validation_outcome}`}>
-            <OverflowTooltip text={test.validation_outcome} />
+          <th className={`validation-outcome-${validationOutcome}`}>
+            <OverflowTooltip text={validationOutcome} />
           </th>
         </tr>
       );
