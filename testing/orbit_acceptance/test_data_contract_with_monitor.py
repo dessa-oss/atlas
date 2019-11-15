@@ -7,9 +7,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 from foundations_orbit import DataContract
 
-# import orbit_acceptance.config # Set up foundations environment
 
-# @skip('waiting for pipeline to have a scheduler')
+@skip('waiting for pipeline to have a scheduler')
 class TestDataContractWithMonitor(Spec):
 
     @let
