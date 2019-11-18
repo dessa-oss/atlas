@@ -3,6 +3,7 @@
 if [[ $# -ne 1 ]]
 then
     echo "USAGE: $0 <nexus_url>"
+    exit 1
 else
     nexus_url="$1"
 fi
