@@ -9,6 +9,7 @@ from foundations_spec import *
 
 from foundations_orbit import DataContract
 
+
 class TestDataValidation(Spec):
 
     @let
@@ -30,7 +31,8 @@ class TestDataValidation(Spec):
         import numpy
         import pandas
 
-        return pandas.DataFrame(numpy.random.uniform(-1, 1, size=(100, 4)), columns=[f'feat_{i}' for i in range(4)], dtype=float)
+        return pandas.DataFrame(numpy.random.uniform(-1, 1, size=(100, 4)), columns=[f'feat_{i}' for i in range(4)],
+                                dtype=float)
 
     @let
     def dataframe_with_nans(self):
@@ -47,6 +49,30 @@ class TestDataValidation(Spec):
         dataframe_with_shifted_distribution = self.reference_dataframe.copy()
         dataframe_with_shifted_distribution['feat_2'] = numpy.random.uniform(0, 2, size=(100, 1))
         return dataframe_with_shifted_distribution
+
+    @let
+    def dataframe_with_unsupported_data_types(self):
+        import pandas
+        same_words = [self.faker.word(), self.faker.word()]
+        data = []
+
+        for i in range(0, 20):
+            data.append([self.faker.word(), same_words[i % 2]])
+
+        return pandas.DataFrame(data, columns=['feat_1', 'feat_2'])
+
+    @let
+    def dataframe_with_mixed_data_types(self):
+        import pandas
+        import numpy
+
+        data = {
+            'feat_1': numpy.random.uniform(-1, 1, size=100),
+            'feat_2': [True] * 50 + [self.faker.word()] * 50
+        }
+        df = pandas.DataFrame(data)
+        df['feat_1'] = pandas.to_numeric(df["feat_1"])
+        return df
 
     @let
     def contract_name(self):
@@ -127,7 +153,7 @@ class TestDataValidation(Spec):
             }
         }
         expected_special_values_report = {
-            'feat_1':{
+            'feat_1': {
                 numpy.nan: {
                     'current_percentage': 0.0,
                     'passed': True,
@@ -162,8 +188,10 @@ class TestDataValidation(Spec):
 
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe_different_schema)
 
-        wrong_reference_dataframe_different_schema = self.reference_dataframe_different_schema.copy().rename({'feat_1': 'feat_x'}, axis=1)
-        validation_report = data_contract.validate(wrong_reference_dataframe_different_schema, datetime.datetime.today())
+        wrong_reference_dataframe_different_schema = self.reference_dataframe_different_schema.copy().rename(
+            {'feat_1': 'feat_x'}, axis=1)
+        validation_report = data_contract.validate(wrong_reference_dataframe_different_schema,
+                                                   datetime.datetime.today())
 
         schema_check_passed = validation_report['schema_check_results']['passed']
         schema_failure_reason = validation_report['schema_check_results']['error_message']
@@ -200,7 +228,8 @@ class TestDataValidation(Spec):
 
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe_different_schema)
 
-        dataframe_columns_wrong_order = self.reference_dataframe_different_schema.copy()[['feat_0', 'feat_3', 'feat_2', 'feat_1']]
+        dataframe_columns_wrong_order = self.reference_dataframe_different_schema.copy()[
+            ['feat_0', 'feat_3', 'feat_2', 'feat_1']]
         validation_report = data_contract.validate(dataframe_columns_wrong_order, datetime.datetime.today())
 
         schema_check_passed = validation_report['schema_check_results']['passed']
@@ -250,7 +279,7 @@ class TestDataValidation(Spec):
             }
         }
         expected_special_values_report = {
-            'feat_1':{
+            'feat_1': {
                 numpy.nan: {
                     'current_percentage': 0.5,
                     'passed': False,
@@ -294,7 +323,7 @@ class TestDataValidation(Spec):
             }
         }
         expected_special_values_report = {
-            'feat_1':{
+            'feat_1': {
                 numpy.nan: {
                     'current_percentage': 0.0,
                     'passed': True,
@@ -331,13 +360,16 @@ class TestDataValidation(Spec):
         from foundations_orbit_rest_api.v1.models.validation_report_listing import ValidationReportListing
         subprocess.run(['python', 'create_data_contract.py'], cwd='orbit_acceptance/fixtures/data_validation')
 
-        inference_period='2019-09-01'
+        inference_period = '2019-09-01'
         contract_name = 'dv_contract'
         data_contract = DataContract.load('/tmp', contract_name)
         data_contract.validate(self.dataframe_with_shifted_distribution, inference_period=inference_period)
-        
-        report_listing = ValidationReportListing(inference_period=inference_period, monitor_package=self.monitor_name, data_contract=contract_name)
-        api_validation_report = ValidationReport.get(project_name=self.project_name, listing_object=report_listing).evaluate()
+
+        report_listing = ValidationReportListing(inference_period=inference_period,
+                                                 monitor_package=self.monitor_name,
+                                                 data_contract=contract_name)
+        api_validation_report = ValidationReport.get(project_name=self.project_name,
+                                                     listing_object=report_listing).evaluate()
 
         expected_validation_report = {
             'attribute_names': ['feat_1', 'feat_2'],
@@ -435,8 +467,10 @@ class TestDataValidation(Spec):
         self.assertIn('job_id', api_validation_report)
         del api_validation_report['job_id']
 
-        expected_validation_report['data_quality']['details_by_attribute'] = sorted(expected_validation_report['data_quality']['details_by_attribute'], key=lambda data: data['attribute_name'])
-        api_validation_report['data_quality']['details_by_attribute'] = sorted(api_validation_report['data_quality']['details_by_attribute'], key=lambda data: data['attribute_name'])
+        expected_validation_report['data_quality']['details_by_attribute'] = sorted(
+            expected_validation_report['data_quality']['details_by_attribute'], key=lambda data: data['attribute_name'])
+        api_validation_report['data_quality']['details_by_attribute'] = sorted(
+            api_validation_report['data_quality']['details_by_attribute'], key=lambda data: data['attribute_name'])
 
         self.assertEqual(expected_validation_report, api_validation_report)
 
@@ -444,7 +478,7 @@ class TestDataValidation(Spec):
         import numpy
 
         expected_special_values_report = {
-            'feat_1':{
+            'feat_1': {
                 numpy.nan: {
                     'current_percentage': 0.5,
                     'passed': True,
@@ -456,7 +490,7 @@ class TestDataValidation(Spec):
 
         dc = DataContract(self.contract_name, df=self.reference_dataframe)
         dc.special_value_test.exclude(attributes='all')
-        dc.special_value_test.configure(attributes=['feat_1'], thresholds={ numpy.nan: 0.6 })
+        dc.special_value_test.configure(attributes=['feat_1'], thresholds={numpy.nan: 0.6})
         validation_report = dc.validate(self.dataframe_with_nans)
         special_values_report = validation_report['special_values_check_results']
 
@@ -466,7 +500,7 @@ class TestDataValidation(Spec):
         import numpy
 
         expected_special_values_report = {
-            'feat_1':{
+            'feat_1': {
                 numpy.nan: {
                     'current_percentage': 0.5,
                     'passed': True,
@@ -486,8 +520,8 @@ class TestDataValidation(Spec):
 
         dc = DataContract(self.contract_name, df=self.reference_dataframe)
         dc.special_value_test.exclude(attributes='all')
-        dc.special_value_test.configure(attributes=['feat_1'], thresholds={ numpy.nan: 0.6 })
-        dc.special_value_test.configure(attributes=['feat_2'], thresholds={ numpy.nan: 0.6 })
+        dc.special_value_test.configure(attributes=['feat_1'], thresholds={numpy.nan: 0.6})
+        dc.special_value_test.configure(attributes=['feat_2'], thresholds={numpy.nan: 0.6})
         validation_report = dc.validate(self.dataframe_with_nans)
         special_values_report = validation_report['special_values_check_results']
 
@@ -498,7 +532,7 @@ class TestDataValidation(Spec):
         import numpy
 
         expected_special_values_report = {
-            'feat_0':{
+            'feat_0': {
                 numpy.nan: {
                     'current_percentage': 0.0,
                     'passed': True,
@@ -551,3 +585,75 @@ class TestDataValidation(Spec):
         special_values_report = validation_report['special_values_check_results']
 
         self.assertEqual(expected_special_values_report, special_values_report)
+
+    def test_dataframe_with_only_unique_strings_is_treated_as_a_non_categorical_column_which_is_unsupported(self):
+        import datetime
+        expected_population_shift = {
+            'details_by_attribute': [
+                {
+                    'attribute_name': 'feat_2',
+                    'L-infinity': 0.0,
+                    'validation_outcome': 'healthy'
+                },
+                {
+                    'attribute_name': 'feat_1',
+                    'validation_outcome': None
+                }
+
+            ],
+            'summary': {
+                'critical': 0, 'healthy': 1, 'warning': 0
+            }
+        }
+
+        data_contract = DataContract(self.contract_name, df=self.dataframe_with_unsupported_data_types)
+        inference_period = datetime.datetime.today()
+        data_contract.validate(self.dataframe_with_unsupported_data_types, inference_period)
+        # get results via the API
+        from foundations_orbit_rest_api.v1.controllers.validation_reports_controller import ValidationReportsController
+        controller = ValidationReportsController()
+        controller.params = {
+            'project_name': self.project_name,
+            'inference_period': str(inference_period),
+            'monitor_package': self.monitor_name,
+            'data_contract': self.contract_name
+        }
+
+        results = controller.post().as_json()
+        self.assertEqual(expected_population_shift, results['population_shift'])
+
+    def test_mixed_data_types_dataframe_columns_treated_as_unsupported_column(self):
+        import datetime
+        expected_population_shift = {
+            'details_by_attribute': [
+                {
+                    'attribute_name': 'feat_1',
+                    'L-infinity': 0.0,
+                    'validation_outcome': 'healthy'
+                },
+                {
+                    'attribute_name': 'feat_2',
+                    'validation_outcome': None
+                }
+
+            ],
+            'summary': {
+                'critical': 0, 'healthy': 1, 'warning': 0
+            }
+        }
+
+        data_contract = DataContract(self.contract_name, df=self.dataframe_with_mixed_data_types)
+        inference_period = datetime.datetime.today()
+        data_contract.validate(self.dataframe_with_mixed_data_types, inference_period)
+        # get results via the API
+        from foundations_orbit_rest_api.v1.controllers.validation_reports_controller import ValidationReportsController
+        controller = ValidationReportsController()
+        controller.params = {
+            'project_name': self.project_name,
+            'inference_period': str(inference_period),
+            'monitor_package': self.monitor_name,
+            'data_contract': self.contract_name
+        }
+
+        results = controller.post().as_json()
+        self.assertEqual(expected_population_shift, results['population_shift'])

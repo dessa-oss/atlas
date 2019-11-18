@@ -12,7 +12,7 @@ class DistributionChecker(object):
         self._initialize_default_options()
 
         self._categorical_attributes = categorical_attributes
-        self._reference_column_names = reference_column_names
+        self._reference_column_names = set(reference_column_names)
         self._reference_column_types = reference_column_types
 
         self._bin_stats = {}
@@ -45,15 +45,15 @@ class DistributionChecker(object):
                 self._attributes_to_exclude_permanently.append(column)
 
     def __str__(self):
+        return str(self.info())
 
-        information =  {
+    def info(self):
+        return {
             'distribution_options': self._distribution_options,
             'bin_stats': self._bin_stats,
             'reference_column_names': self._reference_column_names,
             'reference_column_types': self._reference_column_types
         }
-
-        return str(information)
 
     def configure(self, attributes, threshold=None, method=None):
         self._check_configure_attributes(attributes)
@@ -70,7 +70,7 @@ class DistributionChecker(object):
                 error_dictionary[column] = 'Invalid Column Name: Does not exist in reference'
             elif column in self._invalid_attributes:
                 error_dictionary[column] = f'Invalid Type: {self._reference_column_types[column]}'
-        
+
         if error_dictionary != {}:
             raise ValueError(f'The following columns have errors: {error_dictionary}')
 
@@ -96,31 +96,43 @@ class DistributionChecker(object):
 
     def validate(self, dataframe_to_validate):
         from foundations_orbit.contract_validators.prototype import distribution_check
-        
+
         if dataframe_to_validate is None or len(dataframe_to_validate) == 0:
             raise ValueError('Invalid Dataframe provided')
-        
+
         self.temp_exclude(self._attributes_to_exclude_permanently)
 
         column_names_to_validate = set(self._reference_column_names) - set(self._column_names_to_exclude)
 
-        test_data = distribution_check(self._distribution_options, column_names_to_validate , self._bin_stats, dataframe_to_validate, categorical_attributes = self._categorical_attributes)
-        
+        test_data = distribution_check(
+            self._distribution_options,
+            column_names_to_validate,
+            self._bin_stats,
+            dataframe_to_validate,
+            categorical_attributes=self._categorical_attributes
+        )
+
         self._reference_column_names = set(self._reference_column_names).union(set(self.temp_attributes_to_exclude))
         self.temp_attributes_to_exclude = []
-        
+
         for attribute in self._attributes_to_exclude_permanently:
-            test_data[attribute] = {"binned_passed": False, 'message': "non-categorical strings are not supported"}
+            test_data[attribute] = {"binned_passed": None, 'message': "non-categorical strings are not supported"}
         return test_data
 
     def create_and_set_bin_stats(self, reference_dataframe):
         self._calculate_bin_stats(reference_dataframe)
 
     def _calculate_bin_stats(self, reference_dataframe):
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats, create_bin_stats_categorical
+        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats, \
+            create_bin_stats_categorical
 
         for column_name in self._reference_column_names:
             if self._categorical_attributes[column_name]:
                 self._bin_stats[column_name] = create_bin_stats_categorical(reference_dataframe[column_name])
+            elif column_name not in self._invalid_attributes:
+                self._bin_stats[column_name] = create_bin_stats(
+                    self._distribution_options['max_bins'],
+                    reference_dataframe[column_name]
+                )
             else:
-                self._bin_stats[column_name] = create_bin_stats(self._distribution_options['max_bins'], reference_dataframe[column_name])
+                self._bin_stats[column_name] = None

@@ -35,15 +35,15 @@ class DataContract(object):
         self.summary = DataContractSummary(self._dataframe, self._column_names, self._column_types, self._categorical_attributes)
 
     def __str__(self):
-        import json
+        return str(self.info())
 
-        data_contract_info = {
-            'special_values_test': str(self.special_value_test),
-            'min_max_test': str(self.min_max_test), 'distribution_test': str(self.distribution_test),
-            'schema_test': str(self.schema_test)
+    def info(self):
+        return {
+            'special_values_test': self.special_value_test.info(),
+            'min_max_test': self.min_max_test.info(),
+            'distribution_test': self.distribution_test.info(),
+            'schema_test': self.schema_test.info()
         }
-
-        return json.dumps(data_contract_info)
 
     @staticmethod
     def _default_options():
@@ -79,11 +79,14 @@ class DataContract(object):
                 self._categorical_attributes[col_name] = True
             elif 'datetime' in col_type:
                 self._categorical_attributes[col_name] = self._check_if_attribute_is_categorical(col_name)
+            elif 'category' in col_type:
+                self._categorical_attributes[col_name] = True
+            elif 'object' in col_type:
+                self._categorical_attributes[col_name] = False
 
     def _initialize_schema_checker(self):
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         self.schema_test = SchemaChecker(self._column_names, self._column_types)
-        self._remove_object_columns_and_types(self._column_names, self._column_types)
 
     def _check_if_attribute_is_categorical(self, column_name, threshold=0.1):
         column_values = self._dataframe[column_name]
@@ -141,9 +144,10 @@ class DataContract(object):
 
     def _save_all_contract_info_to_redis(self, project_name, monitor_name, contract_name):
         from foundations_contrib.global_state import redis_connection
+        import json
 
         info_key = f'contracts:{self._uuid}:info'
-        redis_connection.set(info_key, str(self))
+        redis_connection.set(info_key, json.dumps(self.info(), default=str, indent=4))
 
         self._set_contract_info_to_redis('project_name', project_name)
         self._set_contract_info_to_redis('monitor_name', monitor_name)
@@ -161,6 +165,7 @@ class DataContract(object):
         from uuid import uuid4
         from getpass import getuser
         from redis import ConnectionError
+        import inspect
 
         from foundations_orbit.report_formatter import ReportFormatter
         from foundations_orbit.utils.get_column_types import get_column_types
@@ -168,8 +173,12 @@ class DataContract(object):
         if not self._bin_stats:
             self.set_bin_stats()
 
+        caller_stackframe = inspect.stack()[1]
+        caller_module_name = inspect.getmodule(caller_stackframe[0])
+        default_filename = os.path.basename(caller_module_name.__file__)
+
         project_name = os.environ.get('PROJECT_NAME', 'default')
-        monitor_name = os.environ.get('MONITOR_NAME', os.path.basename(__file__))
+        monitor_name = os.environ.get('MONITOR_NAME', default_filename)
         user = os.environ.get('FOUNDATIONS_USER', getuser())
         job_id = os.environ.get('FOUNDATIONS_JOB_ID', str(uuid4()))
 
@@ -286,10 +295,3 @@ class DataContract(object):
         from foundations.global_state import log_manager
         return log_manager.get_logger(__name__)
 
-    @staticmethod
-    def _remove_object_columns_and_types(column_names, column_types):
-        column_names_to_delete = []
-        for column_name, column_type in column_types.items():
-            if column_type == 'object':
-                column_names.remove(column_name)
-                column_names_to_delete.append(column_name)

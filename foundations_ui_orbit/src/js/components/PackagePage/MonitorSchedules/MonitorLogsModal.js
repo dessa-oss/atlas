@@ -2,8 +2,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import { Modal, ModalBody } from "reactstrap";
+import { getAtlas } from "../../../actions/BaseActions";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import MonitorLogs from "./MonitorLogs";
+import ModalInfo from "../../common/ModalInfo";
 
 class MonitorLogsModal extends React.Component {
   constructor(props) {
@@ -27,15 +28,15 @@ class MonitorLogsModal extends React.Component {
       <Modal
         isOpen={isOpen}
         toggle={this.onToggleModal}
-        className="monitor-logs-modal"
+        className="centered-modal"
         fade={false}
       >
         <ModalBody>
-          <div className="monitor-logs-modal-container-main">
-            <div className="monitor-logs-modal-container-title">
-              <p className="monitor-logs-modal-label-id">Details For Job</p>
-              <div className="monitor-logs-modal-container-id">
-                <p className="monitor-logs-modal-text-id">{jobID}</p>
+          <div className="centered-modal-container-main">
+            <div className="centered-modal-container-title">
+              <p className="centered-modal-label-id">Details For Job</p>
+              <div className="centered-modal-container-id">
+                <p className="centered-modal-text-id">{jobID}</p>
                 <CopyToClipboard text={jobID}>
                   <span
                     onClick={this.notifiedCopy}
@@ -52,7 +53,9 @@ class MonitorLogsModal extends React.Component {
                 tabIndex={0}
               />
             </div>
-            <MonitorLogs jobID={jobID} projectName={projectName} />
+            <ModalInfo
+              fetchInfo={() => getAtlas(`projects/${projectName}/job_listing/${jobID}/logs`).then(result => result.log)}
+            />
           </div>
         </ModalBody>
       </Modal>

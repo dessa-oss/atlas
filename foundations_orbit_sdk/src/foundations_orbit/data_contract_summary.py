@@ -85,13 +85,13 @@ class DataContractSummary(object):
 
     @staticmethod
     def _calculate_minimum(dataframe, attribute, column_type):
-        if 'str' in column_type or 'bool' in column_type:
+        if 'str' in column_type or 'bool' in column_type or 'category' in column_type:
             return None
         return DataContractSummary._numpy_type_to_python(dataframe[attribute].min())
 
     @staticmethod
     def _calculate_maximum(dataframe, attribute, column_type):
-        if 'str' in column_type or 'bool' in column_type:
+        if 'str' in column_type or 'bool' in column_type or 'category' in column_type:
             return None
         return DataContractSummary._numpy_type_to_python(dataframe[attribute].max())
 
@@ -110,12 +110,11 @@ class DataContractSummary(object):
         return bins, data
 
     def _get_bins_and_data_for_categorical_attribute(self, dataframe, attribute):
-        import numpy as np
         value_counts = dataframe[attribute].value_counts()
         bins = value_counts.keys().tolist()
         data = value_counts.tolist()
 
-        if (len(bins) > 10):
+        if len(bins) > 10:
             self._bins_were_cut_off = True
             bins = bins[:9]
             bins.append('Other')
@@ -142,7 +141,7 @@ class DataContractSummary(object):
     def _bin_data(self, attribute, attribute_type, reference_dataframe):
         bins = []
         data = []
-
+        bin_labels = None
         if self._is_categorical_column(attribute):
             bins, data = self._get_bins_and_data_for_categorical_attribute(reference_dataframe, attribute)
             bin_labels = bins

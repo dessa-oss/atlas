@@ -7,7 +7,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 from foundations_orbit import DataContract
 
-# import orbit_acceptance.config # Set up foundations environment
 
 @skip('waiting for pipeline to have a scheduler')
 class TestDataContractWithMonitor(Spec):
@@ -16,6 +15,13 @@ class TestDataContractWithMonitor(Spec):
     def reference_dataframe(self):
         import pandas
         return pandas.DataFrame(self._create_rows(100))
+
+    @let
+    def dataframe_with_mixed_data_types(self):
+        import pandas
+        df = pandas.DataFrame(self._create_rows(100))
+        df['object'] = [True] * 50 + ['hello'] * 50
+        return df
 
     @let
     def contract_name(self):
@@ -43,9 +49,7 @@ class TestDataContractWithMonitor(Spec):
 
     @set_up
     def set_up(self):
-        import os
         from foundations_contrib.global_state import redis_connection
-
         redis_connection.flushall()
 
     @tear_down
@@ -66,9 +70,6 @@ class TestDataContractWithMonitor(Spec):
 
     def _start_monitor(self):
         import subprocess
-
-        import os
-
         command = f'python -m foundations monitor create --name={self.monitor_name} --project_name={self.project_name} --env={self.env} {self.monitor_package_dir} validate.py '
         return subprocess.run(command.split(), cwd='orbit_acceptance/fixtures/end-to-end-acceptance/project/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
  

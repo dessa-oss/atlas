@@ -19,7 +19,8 @@ class JobLogsController(object):
             logs = job_logs(self.params['job_id'])
             return Response('Jobs', LazyResult(lambda: {'log': logs}))
         except Exception as exc:
-            msg = str(exc)
-            return Response('Error', LazyResult(lambda: {'message': 'Internal Server Error'}))
+            # import traceback
+            return Response('Error', LazyResult(lambda: {'message': 'Internal Server Error'}), status=500)
             # For debugging purposes:
-            # return Response('Error', LazyResult(lambda: msg), status=500)
+            # just_the_string = traceback.format_exc()
+            # return Response('Error', LazyResult(lambda: just_the_string), status=500)

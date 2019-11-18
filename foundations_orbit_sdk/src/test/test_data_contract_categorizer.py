@@ -9,6 +9,7 @@ from foundations_spec import *
 import fakeredis
 from foundations_orbit.data_contract import DataContract
 
+
 class TestDataContractCategorizer(Spec):
     mock_open = let_patch_mock_with_conditional_return('builtins.open')
     mock_file_for_write = let_mock()
@@ -173,7 +174,7 @@ class TestDataContractCategorizer(Spec):
         expected_report = {
             self.column_name_1: {
                 'message': 'non-categorical strings are not supported',
-                'binned_passed': False,
+                'binned_passed': None,
             }
         }
 

@@ -11,31 +11,31 @@
   }
 }
 
-.modal-content {
+.centered-modal-content {
   background-color: #F9F9F9;
 }
 
-.monitor-logs-modal {
+.centered-modal {
   width: 80%;
   min-width: 480px;
   margin-left: 10% !important; // important needed to override the reactstrap library
   margin-top: 10% !important;
   height: 50%;
 
-  .monitor-logs-modal-container-main {
+  .centered-modal-container-main {
     width: 100%;
     height: 600px;
 
-    .monitor-logs-modal-container-title {
+    .centered-modal-container-title {
       display: inline-block;
 
-      .monitor-logs-modal-label-id {
+      .centered-modal-label-id {
         display: inline-block;
         font-size: 18px;
         @extend .f--roboto-bold;
       }
 
-      .monitor-logs-modal-container-id {
+      .centered-modal-container-id {
         display: inline-block;
         border: solid 1px #BEBEBE;
         margin-left: 10px;
@@ -43,7 +43,7 @@
         border-radius: 3px;
         background: white;
 
-        .monitor-logs-modal-text-id {
+        .centered-modal-text-id {
           display: inline-block;
           margin-left: 10px;
           margin-right: 10px;
@@ -55,7 +55,7 @@
       }
     }
 
-    .monitor-logs-modal-container-logs {
+    .centered-modal-container {
       height: 450px;
       border: solid 1px #e9ecef;
       border-radius: 8px;
