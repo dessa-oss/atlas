@@ -1,41 +1,49 @@
 ---
-  
-- name: Install ansible dependencies
-  gather_facts: False
-  hosts: "{{ instance_name }}"
-  become: yes  
-  tasks:
-    - name: install python-apt
-      shell: apt-get install -y python-apt
-      retries: 10
-      delay: 30
-      register: result
-      until: result is success
 
 - name: Upload files needed for the installation
-  copy:
-    src: ./local_scheduler_instance/*
-    dest: /home/ubuntu/
-    owner: ubuntu
-    group: ubuntu
-    mode: '0644'
+  hosts: localhost
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Copy python and yaml files
+      copy: src={{ item.src }} dest={{ item.dest }}
+      with_items:
+        - { src: 'local_scheduler_instance/gen_default_config.py', dest: '/home/ubuntu' }
+        - { src: 'local_scheduler_instance/manifest.yaml', dest: '/home/ubuntu' }
 
 - name: Login and Pull Docker Images
-  hosts: "{{ instance_name }}"
+  hosts: localhost
   become: yes
   tasks:
     - name : Generating Configuration Files
-      shell: /home/ubuntu/gen_default_config.py
+      shell: python3 /home/ubuntu/gen_default_config.py
 
     - name : Login Docker
       shell: docker login docker.shehanigans.net -u {{ NEXUS_USER }} -p {{ NEXUS_PASSWORD }}
     
     - name : Pull Orbit Worker Images
-      shell: docker pull docker.shehanigans.net/orbit/worker:latest
+      shell: docker pull docker.shehanigans.net/orbit-team-dev/worker:latest
     - name : Retag Orbit Worker Images
-      shell: docker tag docker-staging.shehanigans.net/orbit/worker:latest orbit/worker:latest
+      shell: docker tag docker.shehanigans.net/orbit-team-dev/worker:latest orbit/worker:latest
+    - name : Retag Orbit worker Image to us.gcr.io
+      shell: docker tag docker.shehanigans.net/orbit-team-dev/worker:latest us.gcr.io/orbit-team-dev/worker:latest:latest
       
     - name : Pull Atlas Worker Images
       shell: docker pull docker.shehanigans.net/atlas-ce/worker:latest
     - name : Retag Atlas Worker Images
-      shell: docker pull docker-staging.shehanigans.net/atlas-ce/worker:latest atlas-ce/worker:latest
+      shell: docker pull docker.shehanigans.net/atlas-ce/worker:latest atlas-ce/worker:latest
+
+    - name : Pull Scheduler
+      shell: docker pull docker.shehanigans.net/orbit-team-dev/scheduler:latest
+
+    - name : Pull Tracker
+      shell: docker pull docker.shehanigans.net/orbit-team-dev/tracker:latest
+
+    - name : Pull Orbit REST API
+      shell: docker pull docker.shehanigans.net/orbit-team-dev/orbit-rest-api
+
+    - name : Pull Atlas REST API
+      shell: docker pull docker.shehanigans.net/orbit-team-dev/rest-api
+
+    - name: Pull Orbit GUI
+      shell: docker pull docker.shehanigans.net/orbit-team-dev/orbit-gui

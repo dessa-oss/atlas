@@ -8,7 +8,7 @@
         image: ami-04670c8e8d4c718ac
         instance_tags:
           Name: "{{ instance_name }}"
-        instance_type: t2.small
+        instance_type: t2.micro
         key_name: jenkins
         wait: yes
         state: present
@@ -16,7 +16,9 @@
         spot_price: "0.020"
         spot_wait_timeout: 1200
         spot_launch_group: integration_kubernetes_clusters
-        group_id: sg-0c2e6585e6fd8c276
+        group_id:
+          - sg-0c2e6585e6fd8c276
+          - sg-095885e5826b662a9
         vpc_subnet_id: subnet-055c79b79818e9614
         instance_initiated_shutdown_behavior: terminate
         volumes:
