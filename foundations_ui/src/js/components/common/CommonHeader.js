@@ -27,6 +27,7 @@ class CommonHeader extends React.Component {
 
   render() {
     const { isProject } = this.state;
+    const { isLoggedIn } = this.props;
 
     const atlasAccessToken = Cookies.get('atlas_access_token');
     let username = 'Atlas CE';
@@ -54,7 +55,7 @@ class CommonHeader extends React.Component {
             <a target="_blank" rel="noopener noreferrer" href="https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/">Documentation</a>
             <a href="/support">Support</a>
           </div>
-          { process.env.REACT_APP_SCHEDULER_TYPE !== 'CE' && (
+          { process.env.REACT_APP_SCHEDULER_TYPE !== 'CE' && isLoggedIn && (
           <div className="header-container-profile">
             <button onClick={this.onLogout} type="button">logout</button>
             <img alt="" src={ProfilePlaceholder} />
@@ -77,11 +78,13 @@ class CommonHeader extends React.Component {
 CommonHeader.propTypes = {
   isProject: PropTypes.bool,
   history: PropTypes.object,
+  isLoggedIn: PropTypes.bool,
 };
 
 CommonHeader.defaultProps = {
   isProject: false,
   history: {},
+  isLoggedIn: true,
 };
 
 export default CommonHeader;

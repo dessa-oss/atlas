@@ -75,7 +75,7 @@ class LoginPage extends Component {
     }
 
     if (loginResponse.status === 401) {
-      passwordError = 'Incorrect password';
+      passwordError = 'Incorrect credentials';
     }
 
     if (loginResponse.status === 400) {

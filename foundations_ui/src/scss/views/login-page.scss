@@ -1,5 +1,6 @@
 .login-page-container {
   background-color: $color-background-grey;
+  font-family: DINProBold, Arial, sans-serif;
   
   .login-body-container {
     width: 505px;
@@ -14,24 +15,27 @@
   h3 {
     text-align: center;
     font-size: 24px;
+    font-family: "DIN Pro", Arial, sans-serif;
   }
 
   h4 {
     text-align: center;
     font-size: 20px;
+    font-family: DINProBold, Arial, sans-serif;
   }
 
   a {
     font-size: 20px;
     color: $color-dessa-blue;
+    font-weight: 500;
   }
 
   form {
     background-color: #fff;
     border-radius: 5px;
     padding: 30px;
-    padding-top: 50px;
-    height: 230px;
+    padding-top: 60px;
+    height: 250px;
     -webkit-box-shadow: 1px 4px 5px 1px #c3c3c3;
     -moz-box-shadow: 1px 4px 5px 1px #c3c3c3;
     box-shadow: 1px 4px 5px 1px #c3c3c3;
@@ -45,7 +49,7 @@
 
         .login-form-password, .login-form-username {
           height: 35px;
-          border: 1px solid #c3c3c3;
+          border: 1px solid #e4e4e4;
           font-size: 18px;
           padding: 4px;
           padding-left: 60px;
@@ -65,19 +69,28 @@
             display: inline-block;
             &:focus {
               outline: none;
+              box-shadow: 0 0 1pt 1pt rgba(75, 92, 240, 1);
+            }
+            &::placeholder {
+              color: #999999;
             }
           }
 
         .auth-error {
-          color: #c52323;
-          font-size: 16px;
+          color: #ce5555;
+          font-size: 18px;
           text-align: center;
+          margin: 0 auto;
+          padding: 0;
+        }
+        &:last-child {
+          margin: 0;
         }
  
         }
         .login-submit {
         width: 100%;
-        height: 40px;
+        height: 50px;
         border-radius: 5px;
         background-color: $color-dessa-blue;
         color: #fff;
