@@ -2,6 +2,7 @@
 
 - name: Destroy Local Docker Scheduler
   hosts: localhost
+  connection: localhost
   tasks:
     - name: Destroy aws instance
       ec2_instance:
