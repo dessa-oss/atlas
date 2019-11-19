@@ -63,6 +63,7 @@ class TestJobSubmissionDeployment(Spec):
 
     mock_context_wrapper_klass = let_patch_mock_with_conditional_return('foundations_internal.pipeline_context_wrapper.PipelineContextWrapper')
     mock_context_wrapper = let_mock()
+    mock_get_user_name_from_token = let_patch_mock('foundations_contrib.cli.job_submission.deployment._get_user_name_from_token')
 
     @set_up
     def set_up(self):

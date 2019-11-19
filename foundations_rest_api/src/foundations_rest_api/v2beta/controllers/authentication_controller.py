@@ -87,7 +87,7 @@ class AuthenticationController(Resource):
         self.client.logout(get_token_from_header())
         return Response(status=200)
 
-    def _verify(self) -> None:
+    def _verify(self) -> Response:
         """Verify a JSON web token.
 
         verify_token will raise a 401 error if verification fails. None otherwise.
@@ -99,7 +99,7 @@ class AuthenticationController(Resource):
         token = get_token_from_header()
         jwks = self.client.json_web_key_set
         issuer = self.client.issuer
-        verify_token(token, jwks, issuer)
+        return verify_token(token, jwks, issuer)
 
 
 API.add_resource(AuthenticationController, "/api/v2beta/auth/<string:action>")

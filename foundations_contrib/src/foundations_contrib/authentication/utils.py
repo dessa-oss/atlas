@@ -91,7 +91,7 @@ def get_creds_from_header() -> str:
     return creds
 
 
-def verify_token(token: str, jwks: dict, issuer: str) -> None:
+def verify_token(token: str, jwks: dict, issuer: str) -> dict:
     try:
         unverified_header = jwt.get_unverified_header(token)
     except jwt.JWTError:
@@ -140,7 +140,7 @@ def verify_token(token: str, jwks: dict, issuer: str) -> None:
             )
 
         _request_ctx_stack.top.current_user = payload
-        return
+        return payload
 
     raise AuthError(
         {"code": "invalid_header", "description": "Unable to find appropriate key.",},

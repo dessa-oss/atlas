@@ -20,6 +20,7 @@ def deploy(project_name, entrypoint, params):
     current_foundations_context().set_project_name(project_name)
     config_manager['run_script_environment'] = {'script_to_run': entrypoint, 'enable_stages': False}
     
+    current_foundations_context().pipeline_context().provenance.user_name = _get_user_name_from_token()
     pipeline_context_wrapper = PipelineContextWrapper(current_foundations_context().pipeline_context())
 
     if params is not None:
@@ -27,3 +28,17 @@ def deploy(project_name, entrypoint, params):
             json.dump(params, params_file)
 
     return deploy_job(pipeline_context_wrapper, None, {})
+
+
+def _get_user_name_from_token() -> str:
+    import requests
+    from foundations_contrib.global_state import config_manager
+    from foundations_contrib.global_state import user_token
+
+    token = user_token()
+    scheduler_url = config_manager.config().get('scheduler_url')
+    headers = {'Authorization': f'Bearer {token}'}
+    decoded_token = requests.get(f'{scheduler_url}/api/v2beta/auth/verify', headers=headers).json()
+    user_name = decoded_token['preferred_username']
+
+    return user_name
