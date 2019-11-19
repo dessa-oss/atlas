@@ -447,24 +447,45 @@ button {
   .header-container-profile {
     vertical-align: middle;
     float: right;
-    margin-right: 50px;
+    margin-right: 30px;
     margin-top: 10px;
 
-    img {
-      width: 40px;
+    button {
+      margin-left: 30px;
       height: 40px;
-      object-fit: cover;
-      display: inline-block;
-      vertical-align: middle;
+      width: 80px;
+      background-color: #516ab3;
+      font-size: 14px;
+      &:hover {
+        background-color: #455994;
+        cursor: pointer;
+      }
     }
 
-    p {
-      @extend .f--din-bold;
+    .profile-container {
       display: inline-block;
-      color: white;
-      margin-left: 20px;
-      font-size: 14px;
+      border-radius: 5px;
+      width: 150px;
+      padding-left: 20px;
+      background-color: #fff;
+      color: #999;
+      border: 1px solid rgba(255, 255, 255, 0.365);
+      img {
+        width: 25px;
+        height: 25px;
+        object-fit: cover;
+        display: inline-block;
+        vertical-align: middle;
+      }
+  
+      p {
+        display: inline-block;
+        color: #000;
+        margin-left: 20px;
+        font-size: 14px;
+      }
     }
+
 
     i {
       display: inline-block;

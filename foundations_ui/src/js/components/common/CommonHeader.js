@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import Select from 'react-select';
 import Cookies from 'js-cookie';
 import jwt from 'jwt-decode';
 import LogoutActions from '../../actions/LogoutActions';
@@ -57,16 +58,11 @@ class CommonHeader extends React.Component {
           </div>
           { process.env.REACT_APP_SCHEDULER_TYPE !== 'CE' && isLoggedIn && (
           <div className="header-container-profile">
-            <button onClick={this.onLogout} type="button">logout</button>
-            <img alt="" src={ProfilePlaceholder} />
-            <p>{username}</p>
-            <i
-              onKeyPress={this.onKeyPress}
-              tabIndex={0}
-              role="button"
-              onClick={this.onClickArrowDown}
-              className="i--icon-arrow-down"
-            />
+            <div className="profile-container">
+              <img alt="" src={ProfilePlaceholder} />
+              <p>{username}</p>
+            </div>
+            <button onClick={this.onLogout} type="button">Log out</button>
           </div>
           )}
         </div>
