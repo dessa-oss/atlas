@@ -272,7 +272,7 @@ class TestDataContractCategorizer(Spec):
 
         expected_report = {
             self.column_name_1: {
-                'binned_l_infinity':  0.5,
+                'binned_l_infinity':  1.0,
                 'binned_passed': False
             }
         }
@@ -281,7 +281,7 @@ class TestDataContractCategorizer(Spec):
 
     
     def test_data_contract_uses_non_categorical_logic_for_distribution_check_with_datetime(self):
-        import numpy, pandas, datetime
+        import pandas, datetime
         a,b,c,d = self.faker.date_time(), self.faker.date_time(), self.faker.date_time(), self.faker.date_time()
         dataframe = pandas.DataFrame({self.column_name_1: [a]*3 + [b]*3 + [c]*3 + [d]*3})
         current_dataframe = pandas.DataFrame({self.column_name_1: [a]*2 + [b]*2 + [c]*2 + [d]*2 + [max(a,b,c,d) + datetime.timedelta(10)]*4})
@@ -292,7 +292,7 @@ class TestDataContractCategorizer(Spec):
 
         expected_report = {
             self.column_name_1: {
-                'binned_l_infinity':  0.333,
+                'binned_l_infinity':  0.25,
                 'binned_passed': False
             }
         }

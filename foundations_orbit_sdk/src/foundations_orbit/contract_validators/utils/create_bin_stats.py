@@ -11,7 +11,7 @@ from foundations_orbit.contract_validators.prototype.utils import spread_counts_
 
 def create_bin_stats(max_bins, col_values):
     bin_dicts = []
-    n_vals = len(col_values)
+    n_vals = col_values.size
     if n_vals < 1:
         raise ValueError('Invalid Column Values: Cannot create bin stats for empty column')
 
@@ -21,7 +21,7 @@ def create_bin_stats(max_bins, col_values):
     if max_bins < 1:
         raise ValueError('Invalid Max Bin: Cannot create bin stats with bins less than 1.')
 
-    if len(col_values) > 0:
+    if n_vals > 0:
         # make bins for all non-special values
         bin_counts, bin_edges = bin_values(col_values, max_bins)
         bin_percentages = list(np.array(bin_counts)/n_vals)
@@ -48,30 +48,28 @@ def create_bin_stats(max_bins, col_values):
 
 def create_bin_stats_categorical(col_values, min_category_threshold=0.01):
     bin_dicts = []
-    if len(col_values) == 0:
-        return bin_dicts
+    n_vals = col_values.size
 
-    n_vals = len(col_values)
+    if n_vals == 0:
+        return bin_dicts
 
     col_values.dropna(inplace=True)
 
-    other_percentage = 0
-    for category in col_values.unique(): 
-        num_category_in_values = len(col_values[col_values == category])
-        percentage = num_category_in_values/n_vals
-        if percentage >= min_category_threshold:
-            bin_dicts.append({'category_value':category, 'percentage': num_category_in_values/n_vals})
-        else:
-            other_percentage += percentage
-    
-    bin_dicts.append({'other_bins':True, 'percentage':other_percentage})
+    unique_value_percentages = col_values.value_counts(sort=False, normalize=True)
+    valid_column_percentages = unique_value_percentages[unique_value_percentages >= min_category_threshold]
+    other_percentage = 1.0 - valid_column_percentages.sum()
+    for value in valid_column_percentages.index:
+        bin_dicts.append({'category_value':value, 'percentage':round(valid_column_percentages.loc[value], 3)})
+
+    bin_dicts.append({'other_bins':True, 'percentage':round(other_percentage, 3)})
+
     return bin_dicts
 
 def bin_values(values, max_num_bins):
     values = values[values != np.inf]
     n_unique_values = values.nunique()
     if n_unique_values > 1:
-        n_bins = get_num_bins(values, max_num_bins)
+        n_bins = get_num_bins(n_unique_values, max_num_bins)
         bin_counts, bin_edges = find_and_apply_edges(values, n_bins)
         bin_counts = spread_counts_over_identical_edges(bin_counts, bin_edges)
     else:
@@ -80,10 +78,9 @@ def bin_values(values, max_num_bins):
     return bin_counts, bin_edges
 
 
-def get_num_bins(values, max_num_bins):
+def get_num_bins(unique_num, max_num_bins):
     '''based on the number of unique values provided, return the number of bins to apply'''
     # get number of unique values in the reference data
-    unique_num = values.nunique()
     if unique_num < max_num_bins:
         return unique_num
     else:
@@ -91,13 +88,9 @@ def get_num_bins(values, max_num_bins):
 
 
 def find_and_apply_edges(values, n_bins):
-    '''find edges and find count in each bin'''
-    values_sorted = values.sort_values().dropna()
-    values_length = values_sorted.shape[0]
-    # edges are values from values_sorted taken such that each bin contains the same number of elements
-    edges = [values_sorted.iloc[int(np.floor(values_length * i / n_bins))] for i in range(1, n_bins)]
-    binned_values = [0] + [values_sorted[values_sorted <= i].shape[0] for i in edges]
-    binned_values = np.diff(binned_values, axis=0)
-    binned_values = np.append(binned_values, values_sorted[values_sorted > edges[-1]].shape[0])
-    return binned_values, edges
+    from pandas import qcut
+    bin_for_value, edges = qcut(values, n_bins, retbins=True, duplicates='drop')
+    value_count_per_bin = bin_for_value.value_counts(sort=False).values
+    truncated_edges = list(edges[1:-1])
+    return value_count_per_bin, truncated_edges
 

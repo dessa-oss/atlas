@@ -203,11 +203,11 @@ class TestDistributionChecker(Spec):
         
         expected_dist_check_result = {
             self.column_name: {
-                'binned_l_infinity': 1.0,
+                'binned_l_infinity': 0.5,
                 'binned_passed': False,
             },
             self.column_name_2: {
-                'binned_l_infinity':  0.667,
+                'binned_l_infinity':  0.167,
                 'binned_passed': False,
             }
         }
@@ -253,12 +253,12 @@ class TestDistributionChecker(Spec):
 
         expected_dist_check_result = {
             self.column_name: {
-                'binned_l_infinity': 0.091,
-                'binned_passed': 0.091 < checker._distribution_options['default_threshold'],
+                'binned_l_infinity': 0.227,
+                'binned_passed': 0.227 < checker._distribution_options['default_threshold'],
             },
             self.column_name_2: {
-                'binned_l_infinity':  0.909,
-                'binned_passed': 0.909 < checker._distribution_options['default_threshold'],
+                'binned_l_infinity':  0.409,
+                'binned_passed': 0.409 < checker._distribution_options['default_threshold'],
             }
         }
 
@@ -296,11 +296,11 @@ class TestDistributionChecker(Spec):
 
         expected_dist_check_result = {
             self.column_name: {
-                'binned_l_infinity': 0.333,
+                'binned_l_infinity': 0.167,
                 'binned_passed': False,
             },
             self.column_name_2: {
-                'binned_l_infinity':  0.667,
+                'binned_l_infinity':  0.167,
                 'binned_passed': True,
             }
         }

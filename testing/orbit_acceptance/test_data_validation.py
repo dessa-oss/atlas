@@ -318,7 +318,7 @@ class TestDataValidation(Spec):
                 'binned_passed': True
             },
             'feat_2': {
-                'binned_l_infinity': 0.58,
+                'binned_l_infinity': 0.57,
                 'binned_passed': False
             }
         }
@@ -434,7 +434,7 @@ class TestDataValidation(Spec):
                     },
                     {
                         'attribute_name': 'feat_2',
-                        'L-infinity': 0.58,
+                        'L-infinity': 0.57,
                         'validation_outcome': 'critical'
                     }
                 ],

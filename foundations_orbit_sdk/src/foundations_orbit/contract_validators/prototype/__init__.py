@@ -98,8 +98,8 @@ def distribution_check(distribution_check_config, column_names, bin_stats, curre
                     else:
                         ref_bin_percentages.append(bin['percentage'])
                         # the upper_edge of the bin with the largest values is np.inf, ref_edges shouldn't include this
-                        if bin['upper_edge'] != np.inf:
-                            ref_edges.append(bin['upper_edge'])
+                        # if bin['upper_edge'] != np.inf:
+                        ref_edges.append(bin['upper_edge'])
                 # binning current_values
                 current_bin_percentages = bin_current_values(current_values, ref_edges, n_current_vals, unique_ref_value)
             else:  # There is no reference bin stats
