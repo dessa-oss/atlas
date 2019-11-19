@@ -2,7 +2,7 @@
 name: Engineering subtask
 about: Engineering subtask for a Foundations request or other issue
 title: "[task] Title"
-labels: Foundations, Engineering Task
+labels: Engineering Task, Foundations
 assignees: ''
 
 ---
