@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class MonitorParser(object):
     
     def __init__(self, commandline):
@@ -53,7 +54,6 @@ class MonitorParser(object):
         project_name = arguments.project_name
         name = arguments.name
         env = self._cli.arguments().env if self._cli.arguments().env is not None else 'scheduler'
-        
         name, project_name = self._get_name_and_project_name_for_error(name, project_name, command)
 
         try:
