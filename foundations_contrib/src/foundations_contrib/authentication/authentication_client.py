@@ -101,13 +101,13 @@ class AuthenticationClient:
 
     def decode_jwt(self, auth_token: str) -> dict:
         unverified_header = jwt.get_unverified_header(auth_token)
-        rsa_key = self._jwt_rsa_key()
+        rsa_key = self._jwt_rsa_key(unverified_header)
         payload = jwt.decode(
             auth_token, rsa_key, algorithms=["RS256"], audience="account", issuer=self.issuer,
         )
         return payload
 
-    def _jwt_rsa_key(self) -> Dict[str, str]:
+    def _jwt_rsa_key(self, unverified_header) -> Dict[str, str]:
         rsa_key: Dict[str, str] = {}
         for key in self.json_web_key_set["keys"]:
             if key["kid"] == unverified_header["kid"]:
