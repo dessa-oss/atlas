@@ -18,7 +18,7 @@ def user_token():
         if not os.path.isfile(credential_filepath):
             return None
         with open(credential_filepath, "r") as file:
-            credential_dict = yaml.load(file)
+            credential_dict = yaml.load(file, Loader=yaml.FullLoader)
         if "default" not in credential_dict:
             return None
         if "token" not in credential_dict["default"]:

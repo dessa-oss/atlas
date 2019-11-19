@@ -38,4 +38,4 @@ class ConfigListing(object):
             return None
 
         with open(config_path, 'r') as file:
-            return yaml.load(file.read())
+            return yaml.load(file.read(), Loader=yaml.FullLoader)
