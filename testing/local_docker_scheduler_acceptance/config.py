@@ -12,7 +12,7 @@ TEST_UUID = uuid4()
 
 def set_foundations_home():
     import os
-    os.environ['FOUNDATIONS_HOME'] = os.path.abspath(os.environ.get('FOUNDATIONS_HOME', os.path.join(os.getcwd(), '/local_docker_scheduler_acceptance/foundations_home')))
+    os.environ['FOUNDATIONS_HOME'] = os.path.abspath(os.environ.get('FOUNDATIONS_HOME', os.getcwd() + '/local_docker_scheduler_acceptance/foundations_home'))
     os.environ['FOUNDATIONS_COMMAND_LINE'] = 'True'
 
 def _flattened_config_walk():
