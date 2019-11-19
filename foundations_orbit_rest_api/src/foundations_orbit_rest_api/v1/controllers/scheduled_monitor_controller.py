@@ -16,7 +16,6 @@ class ScheduledMonitorController(object):
 
     def index(self):
         from foundations_orbit_rest_api.v1.models.scheduled_monitor import ScheduledMonitor
-        from foundations_core_rest_api_components.lazy_result import LazyResult
         from foundations_core_rest_api_components.response import Response
 
         project_name = self.params.pop('project_name')
@@ -30,7 +29,6 @@ class ScheduledMonitorController(object):
 
     def delete(self):
         from foundations_orbit_rest_api.v1.models.scheduled_monitor import ScheduledMonitor
-        from foundations_core_rest_api_components.lazy_result import LazyResult
         from foundations_core_rest_api_components.response import Response
 
         project_name = self.params.pop('project_name')
