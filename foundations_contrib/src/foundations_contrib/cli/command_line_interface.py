@@ -156,10 +156,15 @@ class CommandLineInterface(object):
         username = input("Username: ")
         password = getpass.getpass(prompt="Password: ", stream=False)
         resp = requests.get(f'{self._arguments.host}/api/v2beta/auth/cli_login', auth=(username, password))
-        credential_filepath = expanduser(join(foundations_home(), "credentials.yaml"))
-        with open(credential_filepath, 'w') as creds_file:
-            creds = {'default': {'token': resp.json()['access_token']}}
-            yaml.dump(creds, creds_file, default_flow_style=False)
+        if resp.status_code == 200:
+            credential_filepath = expanduser(join(foundations_home(), "credentials.yaml"))
+            with open(credential_filepath, 'w') as creds_file:
+                creds = {'default': {'token': resp.json()['access_token']}}
+                yaml.dump(creds, creds_file, default_flow_style=False)
+            print("\nLogin Succeeded!")
+        else:
+            print("\nLogin Failed!")
+            print(f"Error response: {resp.text}")
 
     def _print_configs(self, config_list_name, config_list):
         config_list = self._create_environment_list(config_list)

@@ -87,7 +87,7 @@ class ConfigManager(object):
         import yaml
 
         with open(path, 'r') as file:
-            return yaml.load(file)
+            return yaml.load(file, Loader=yaml.FullLoader)
 
     def _load_config(self, config, path):
         config.update(self._load_yaml(path))
