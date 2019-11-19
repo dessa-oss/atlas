@@ -43,6 +43,7 @@ class DistributionChecker(object):
             non_categorical_string = not self._categorical_attributes[column] and 'str' in self._reference_column_types[column]
             if non_categorical_string:
                 self._attributes_to_exclude_permanently.append(column)
+                self._invalid_attributes.append(column)
 
     def __str__(self):
         return str(self.info())

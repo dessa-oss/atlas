@@ -100,9 +100,9 @@ class DataContract(object):
         if type(attributes) == str:
             attributes = [attributes]
 
-        self.special_value_test.exclude(attributes=attributes)
-        self.distribution_test.exclude(attributes=attributes)
-        self.min_max_test.exclude(columns=attributes)   # TODO change this to attributes for consistency
+        self.special_value_test.exclude(attributes=attributes)# TODO change this to columns for consistency
+        self.distribution_test.exclude(attributes=attributes)# TODO change this to columns for consistency
+        self.min_max_test.exclude(columns=attributes)
 
     def _exclude_from_current_validation(self, attributes):
         if type(attributes) == str:

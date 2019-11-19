@@ -14,11 +14,19 @@ def nand(a,b):
 
 
 def apply_edges(values, edges):
+    import pandas as pd
+    import numpy as np
+    from datetime import datetime
     '''find corresponding bin counts using provided bin edges'''
-    binned_values = [0] + [values[values <= i].shape[0] for i in edges]
-    binned_values = np.diff(binned_values, axis=0)
-    binned_values = np.append(binned_values, values[values > edges[-1]].shape[0])
-    return binned_values
+
+    values = values[~values.isnull()].copy()
+    if type(values.iloc[0]) == pd.Timestamp:
+        values = pd.to_timedelta(values).dt.total_seconds() * 1000000000
+
+    edges.insert(0, -np.inf)
+    bin_for_value = pd.cut(values, edges)
+    value_count_per_bin = bin_for_value.value_counts(sort=False).values
+    return value_count_per_bin
 
 
 def spread_counts_over_identical_edges(binned_values, edges):

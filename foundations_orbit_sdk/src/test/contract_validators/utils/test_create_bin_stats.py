@@ -65,10 +65,10 @@ class TestCreateBinStats(Spec):
         col_values = pd.Series([1, 2])
 
         expected_output = [{
-            'percentage': 1.0,
-            'upper_edge': 2
+            'percentage': 0.5,
+            'upper_edge': 1.5
         }, {
-            'percentage': 0.0,
+            'percentage': 0.5,
             'upper_edge': np.inf
         }]
 
@@ -99,10 +99,10 @@ class TestCreateBinStats(Spec):
         col_values = pd.Series([1,2,3,4])
 
         expected_output = [{
-            'percentage': 0.75, 
-            'upper_edge': 3
+            'percentage': 0.5,
+            'upper_edge': 2.5
         }, {
-            'percentage': 0.25, 
+            'percentage': 0.5,
             'upper_edge': np.inf
         }]
 
