@@ -5,7 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from tabulate import tabulate
 
 class CommandLineInterface(object):
 
@@ -41,7 +40,6 @@ class CommandLineInterface(object):
 
         self._initialize_init_parser()
         self._initialize_info_parser()
-
 
     def add_sub_parser(self, name, help=None):
         sub_parser = self._subparsers.add_parser(name, help=help)
@@ -89,8 +87,6 @@ class CommandLineInterface(object):
         serving_deploy_parser.set_defaults(function=self._model_serving_stop)
 
     def execute(self):
-        from foundations_contrib.global_state import log_manager
-
         self._arguments = self._argument_parser.parse_args(self._input_arguments)
         try:
             self._arguments.function()
@@ -149,7 +145,8 @@ class CommandLineInterface(object):
             print(self._format_environment_printout(config_list))
 
     def _format_environment_printout(self, environment_array):
-        return tabulate(environment_array, headers = ['env_name', 'env_path'])
+        from tabulate import tabulate
+        return tabulate(environment_array, headers=['env_name', 'env_path'])
 
     def _create_environment_list(self, available_environments):
         import os
