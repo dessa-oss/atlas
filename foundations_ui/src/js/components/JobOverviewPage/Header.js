@@ -81,10 +81,6 @@ class Header extends React.Component {
             <div className="container-label-date font-bold">Date Created: </div>
             <div className="container-text-date">{CommonActions.formatDate(dateCreated)}</div>
           </div>
-          <div>
-            <div className="container-label-date font-bold">Project Owners: </div>
-            <div className="container-text-date">CE User</div>
-          </div>
         </div>
       </div>
     );
