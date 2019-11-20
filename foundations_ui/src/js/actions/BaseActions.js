@@ -48,27 +48,18 @@ const BaseActions = {
       });
   },
 
-  getFromStagingAuth(url, userpass) {
+  async getFromStagingAuth(url, userpass) {
     const fullURL = this.baseStagingURL.concat(url);
-    return fetch(fullURL, {
-      headers: {
-        Authorization: `Basic ${userpass}`,
-      },
-    })
-      .then((result) => {
-        result.json().then((res) => {
-          // only set cookies if valid user/pass
-          if (res.access_token) {
-            Cookies.set('atlas_access_token', res.access_token);
-            Cookies.set('atlas_refresh_token', res.refresh_token);
-          }
-        });
-        return result;
-      })
-      .catch((error) => {
-        console.log('getFromStagingAuth error: ', error);
-        return error;
-      });
+    try {
+      const fetchResponse = await fetch(fullURL, { headers: { Authorization: `Basic ${userpass}` } });
+
+      const userResponse = await fetchResponse.json();
+      Cookies.set('atlas_access_token', userResponse.access_token);
+      Cookies.set('atlas_refresh_token', userResponse.refresh_token);
+      return fetchResponse;
+    } catch (error) {
+      return error;
+    }
   },
 
   getFromStagingAuthLogout(url) {

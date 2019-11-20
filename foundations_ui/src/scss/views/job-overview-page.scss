@@ -448,7 +448,8 @@ button {
     vertical-align: middle;
     float: right;
     margin-right: 30px;
-    margin-top: 10px;
+    width: 200px;
+    margin-top: 8px;
 
     button {
       margin-left: 30px;
@@ -460,36 +461,6 @@ button {
         background-color: #455994;
         cursor: pointer;
       }
-    }
-
-    .profile-container {
-      display: inline-block;
-      border-radius: 5px;
-      width: 150px;
-      padding-left: 20px;
-      background-color: #fff;
-      color: #999;
-      border: 1px solid rgba(255, 255, 255, 0.365);
-      img {
-        width: 25px;
-        height: 25px;
-        object-fit: cover;
-        display: inline-block;
-        vertical-align: middle;
-      }
-  
-      p {
-        display: inline-block;
-        color: #000;
-        margin-left: 20px;
-        font-size: 14px;
-      }
-    }
-
-
-    i {
-      display: inline-block;
-      margin-left: 20px;
     }
   }
 }

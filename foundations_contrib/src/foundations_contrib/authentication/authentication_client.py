@@ -18,7 +18,7 @@ class AuthenticationClient:
     """A facade for the some authentication implementation, currently keycloak."""
 
     issuer = None
-    json_web_key_set = None
+    json_web_key_set: dict = {}
 
     def __init__(self, conf: Union[str, dict], redirect_url: str):
         """
@@ -29,9 +29,9 @@ class AuthenticationClient:
         :type redirect_url: str
         """
 
-        config = self._get_config_from_file(conf) if isinstance(conf, str) else conf
+        self.config = self._get_config_from_file(conf) if isinstance(conf, str) else conf
         self._redirect_url = redirect_url
-        self._client = keycloak_client(config)
+        self._client = keycloak_client(self.config)
         self.issuer = self._client.well_know()["issuer"]
         self.json_web_key_set = self._client.certs()
 
@@ -93,8 +93,9 @@ class AuthenticationClient:
 
     def users_info(self, auth_token: str) -> Dict[str, str]:
         import requests
+        
         users_response = requests.get(
-            "http://localhost:8080/auth/admin/realms/Atlas/users",
+            f"{self.config['auth-server-url']}/admin/realms/Atlas/users",
             headers={"Authorization": f"Bearer {auth_token}"},
         ).json()
         return {info["id"]: info["username"] for info in users_response}

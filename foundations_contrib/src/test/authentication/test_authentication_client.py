@@ -25,8 +25,8 @@ class TestAuthenticationClient(Spec):
             autospec=True,
             spec_set=True,
         )
-        config = load_config(self.conf_file)
-        self.auth_client = AuthenticationClient(config, self.redirect_url)
+        self.config = load_config(self.conf_file)
+        self.auth_client = AuthenticationClient(self.config, self.redirect_url)
         self.mock_auth_backend = self.auth_client._client
 
     def test_keycloak_client_uses_a_dict_to_create_a_keycloak_open_id_instance(self):
@@ -95,7 +95,7 @@ class TestAuthenticationClient(Spec):
     def test_users_info_triggers_get_request(self):
         auth_token = self.faker.word()
         users = self.auth_client.users_info(auth_token)
-        url = "http://localhost:8080/auth/admin/realms/Atlas/users"
+        url = f"{self.config['auth-server-url']}/admin/realms/Atlas/users"
         headers = {"Authorization": f"Bearer {auth_token}"}
         self.requests_get.assert_called_once_with(url, headers=headers)
 
