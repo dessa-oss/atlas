@@ -36,21 +36,10 @@ def _config():
     import os
     import subprocess
 
-    scheduler_host = os.environ.get('LOCAL_DOCKER_SCHEDULER_HOST')
-    redis_host = os.environ.get('REDIS_HOST')
-    redis_port = os.environ.get('REDIS_PORT')
-
-    if not scheduler_host:
-        print('LOCAL_DOCKER_SCHEDULER_HOST not set')
-        exit(1)
-
-    if not redis_host:
-        print('REDIS_HOST not set')
-        exit(1)
-
-    if not redis_port:
-        print('REDIS_PORT not set')
-        exit(1)
+    for env_var in ['LOCAL_DOCKER_SCHEDULER_HOST', 'REDIS_HOST', 'REDIS_PORT', 'REMOTE_FOUNDATIONS_HOME']:
+        if not os.environ.get(env_var, None):
+            print(f'{env_var} was not set')
+            exit(1)
 
     for template_file_name in _flattened_config_walk():
         output_file_name = template_file_name[:-len('.envsubst.yaml')] + '.yaml'
@@ -59,5 +48,6 @@ def _config():
     _load_execution_config()
 
 
-set_foundations_home()
-_config()
+def setup_orbit_home_config():
+    set_foundations_home()
+    _config()
