@@ -35,7 +35,6 @@ def create_bin_stats(max_bins, col_values):
             })
         # otherwise there is more than one unique value
         else:
-            bin_edges.append(np.inf)
             for i, pct in enumerate(bin_percentages):
                 bin_dict = {
                     "percentage": pct,
@@ -89,8 +88,11 @@ def get_num_bins(unique_num, max_num_bins):
 
 def find_and_apply_edges(values, n_bins):
     from pandas import qcut
+
     bin_for_value, edges = qcut(values, n_bins, retbins=True, duplicates='drop')
     value_count_per_bin = bin_for_value.value_counts(sort=False).values
     truncated_edges = list(edges[1:-1])
-    return value_count_per_bin, truncated_edges
 
+    truncated_edges.append(np.inf)
+
+    return value_count_per_bin, truncated_edges
