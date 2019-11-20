@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 import sys, os
 import importlib
-from mock import Mock, patch, call
+from mock import Mock, patch, call, mock_open
 
 from foundations_contrib.cli.command_line_interface import CommandLineInterface
 from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
@@ -309,6 +309,39 @@ class TestCommandLineInterface(Spec):
         self.mock_getpass.return_value = self.password
         CommandLineInterface(['login', f'{self.hostname}']).execute()
         self.mock_get.assert_called_once_with(self.hostname + '/api/v2beta/auth/cli_login', auth=(self.username, self.password))
+
+    def test_login_writes_to_credentials_file_when_credentials_valid(self):
+        mock_response = Mock()
+        mock_response.status_code = 200
+        access_token = self.faker.word()
+        mock_response.json.return_value = {'access_token': access_token}
+        self.mock_get.return_value = mock_response
+
+        mock_yaml_dumps = self.patch('yaml.dump')
+
+        open_mock = mock_open()
+
+        with patch('builtins.open', open_mock):
+            mock_file = open_mock()
+            CommandLineInterface(['login', f'{self.hostname}']).execute()
+
+        mock_yaml_dumps.assert_called_with({'default': {'token': access_token}}, mock_file, default_flow_style=False)
+
+    def test_login_prints_success_message_when_credentials_valid(self):
+        mock_response = Mock()
+        mock_response.status_code = 200
+        access_token = self.faker.word()
+        mock_response.json.return_value = {'access_token': access_token}
+        self.mock_get.return_value = mock_response
+
+        mock_yaml_dumps = self.patch('yaml.dump')
+
+        open_mock = mock_open()
+
+        with patch('builtins.open', open_mock):
+            CommandLineInterface(['login', f'{self.hostname}']).execute()
+
+        self.print_mock.assert_called_with("\nLogin Succeeded!")
 
     def _process_constructor(self, pid):
         from psutil import NoSuchProcess
