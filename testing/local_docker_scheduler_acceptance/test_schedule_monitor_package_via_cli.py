@@ -90,7 +90,7 @@ class TestScheduleMonitorPackageViaCli(Spec):
 
     def _call_monitor_with_command(self, operation):
         command = f'python -m foundations monitor {operation} --env={self.env} {self.project_name} {self.monitor_name}'
-        return subprocess.run(command, shell=True)
+        return subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def test_schedule_monitor_package_via_cli_runs_package_code_on_a_schedule(self):
         result = self._start_monitor()
@@ -114,11 +114,7 @@ class TestScheduleMonitorPackageViaCli(Spec):
             self.assertEqual('current_time', metric_set.yAxis['title']['text'])
 
     def test_schedule_monitor_package_via_cli_with_same_monitor_name_twice_returns_correct_error(self):
-        import subprocess
-
-        result = self._start_monitor()
-        self.assertEqual(0, result.returncode)
-
+        self._start_monitor()
         result = self._start_monitor()
         self.assertNotEqual(0, result.returncode)
         self.assertEqual(f'Unable to create monitor {self.monitor_name} in project {self.project_name}\n', result.stdout.decode())

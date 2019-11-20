@@ -13,6 +13,29 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
 
     sleep_time = 1
     existing_words = []
+    _flask_process = None
+
+    @set_up_class
+    def set_up_class(klass):
+        import subprocess
+        from foundations_contrib.global_state import redis_connection
+        redis_connection.flushall()
+
+        # Clear any un-removed flask process to prevent conflicts
+        get_pid_for_any_flask_app = "kill -9 $(lsof -i:37222 -t)"
+        subprocess.run(get_pid_for_any_flask_app, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        klass._flask_process = subprocess.Popen(
+            'python start_api_server.py',
+            shell=True,
+            cwd='local_docker_scheduler_acceptance/fixtures/orbit_rest_api',
+            stdout=subprocess.PIPE
+        )
+
+    @tear_down_class
+    def tear_down_class(klass):
+        if klass._flask_process is not None:
+            klass._flask_process.terminate()
 
     def _gen_unique_word(self):
         word = self.faker.word().lower()
@@ -63,7 +86,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         return f'http://localhost:37223/api/v2beta/projects/{self.project_name}/job_listing'
 
     @let
-    def valid_schedule_1(self):
+    def valid_schedule_every_5_secs(self):
         return {
             'schedule': {
                 'second': '*/5'
@@ -71,7 +94,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         }
 
     @let
-    def valid_schedule_2(self):
+    def valid_schedule_every_2_secs(self):
         return {
             'schedule': {
                 'second': '*/2'
@@ -97,8 +120,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
 
     @set_up
     def set_up(self):
-        from foundations_contrib.global_state import redis_connection
-        redis_connection.flushall()
+        pass
 
     @tear_down
     def tear_down(self):
@@ -112,7 +134,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
 
         scheduler_address = os.environ['LOCAL_DOCKER_SCHEDULER_HOST']
         return requests.delete(f'http://{scheduler_address}:5000/scheduled_jobs/{job_name}')
-    
+
     def test_pause_scheduled_monitor_package_via_api(self):
         self._start_and_wait_for_monitor(self.monitor_name)
 
@@ -122,9 +144,10 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
     def test_pause_scheduled_monitor_package_via_api_halts_execution_but_can_resume_later(self):
         self._start_and_wait_for_monitor(self.monitor_name)
         pause_response = self._pause_monitor()
+        self.assertEqual(204, pause_response.status_code)
 
         resume_response = self._resume_monitor()
-        self.assertEqual(204, pause_response.status_code)
+        self.assertEqual(204, resume_response.status_code)
 
     def test_attempting_to_pause_invalid_monitor_should_produce_404(self):
         pause_response = self._pause_monitor(monitor_name=self.invalid_monitor_name)
@@ -137,8 +160,6 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         self.assertEqual(404, resume_response.status_code)
 
     def test_get_scheduled_monitors_returns_scheduled_monitors(self):
-        import time
-
         self._start_and_wait_for_monitor(self.monitor_name)
         self._start_and_wait_for_monitor(self.monitor_name_2)
 
@@ -146,9 +167,6 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         monitors = monitors_response.json()
         self.assertIn(f'{self.project_name}-{self.monitor_name}', monitors)
         self.assertIn(f'{self.project_name}-{self.monitor_name_2}', monitors)
-
-        monitor_package1 = f'{self.project_name}-{self.monitor_name}'
-        monitor_package2 = f'{self.project_name}-{self.monitor_name_2}'
 
         delete_response1 = self._delete_monitor(self.monitor_name)
         self.assertEqual(204, delete_response1.status_code)
@@ -159,7 +177,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
     def test_get_scheduled_monitor_returns_scheduled_monitor(self):
         self._start_and_wait_for_monitor(self.monitor_name)
 
-        monitor_response = self._get_monitors(self.monitor_name)
+        monitor_response = self._get_monitor(self.monitor_name)
         self.assertEqual(200, monitor_response.status_code)
         monitor_content = monitor_response.json()[f'{self.project_name}-{self.monitor_name}']
 
@@ -179,7 +197,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         self.assertEqual(200, monitor_response.status_code)
         self.assertEqual('paused', monitor_content['status'])
         self.assertEqual(expected_schedule, monitor_content['schedule'])
-        self.assertIsNone(monitor_content['next_run_time'])
+        self.assertEqual([None, None, None], monitor_content['next_run_time'])
 
         delete_response = self._delete_monitor(self.monitor_name)
         self.assertEqual(204, delete_response.status_code)
@@ -203,7 +221,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         self.assertEqual(404, delete_response.status_code)
 
     def test_update_schedule_on_nonexistent_monitor_returns_404(self):
-        valid_schedule = self.valid_schedule_1
+        valid_schedule = self.valid_schedule_every_5_secs
         update_response = self._update_monitor(self.monitor_name, valid_schedule)
 
         self.assertEqual(404, update_response.status_code)
@@ -223,9 +241,6 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         update_response = self._update_monitor(self.monitor_name, invalid_schedule_2)
         self.assertEqual(404, update_response.status_code)
 
-        delete_response = self._delete_monitor(self.monitor_name)
-        self.assertEqual(204, delete_response.status_code)
-
     def test_update_schedule_on_monitor_with_correct_schedule_returns_204(self):
         import time
         self._start_and_wait_for_monitor(self.monitor_name)
@@ -234,7 +249,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         monitor_package = f'{self.project_name}-{self.monitor_name}'
         self.assertIn(monitor_package, monitor_response.json())
 
-        valid_schedule = self.valid_schedule_1
+        valid_schedule = self.valid_schedule_every_5_secs
         update_response = self._update_monitor(self.monitor_name, valid_schedule)
         self.assertEqual(204, update_response.status_code)
         time.sleep(5)
@@ -246,41 +261,42 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         self.assertEqual(404, get_jobs_response.status_code)
 
     def test_get_monitor_jobs_returns_all_jobs_for_monitor(self):
-        import time
-        from foundations_orbit_rest_api.v1.models.production_metric_set import ProductionMetricSet
+        try:
+            from foundations_orbit_rest_api.v1.models.production_metric_set import ProductionMetricSet
 
-        self._start_and_update_and_resume_monitor(self.monitor_name)
-        time.sleep(9)
+            self._start_and_update_and_resume_monitor(self.monitor_name)
 
-        metric_sets = ProductionMetricSet.all(self.project_name).evaluate()
-        number_of_runs = len(metric_sets[0].series[0]['data'])
-        self.assertIn(number_of_runs, [2, 3])
+            metric_sets = ProductionMetricSet.all(self.project_name).evaluate()
+            number_of_runs = len(metric_sets[0].series[0]['data'])
+            self.assertIn(number_of_runs, [2, 3])
+            import time
+            time.sleep(10)
+            jobs_list_response = self._get_monitor_jobs(monitor_name=self.monitor_name)
+            self.assertEqual(200, jobs_list_response.status_code)
 
-        jobs_list_response = self._get_monitor_jobs(monitor_name=self.monitor_name)
-        self.assertEqual(200, jobs_list_response.status_code)
-
-        jobs_list = jobs_list_response.json()
-        self.assertEqual(number_of_runs, len(jobs_list))
-        self.assertEqual(self.project_name, jobs_list[0]['project_name'])
-        self.assertIn(self.monitor_name, jobs_list[0]['job_id'])
-        self.assertEqual(self.project_name, jobs_list[1]['project_name'])
-        self.assertIn(self.monitor_name, jobs_list[1]['job_id'])
+            jobs_list = jobs_list_response.json()
+            self.assertEqual(number_of_runs, len(jobs_list))
+            self.assertEqual(self.project_name, jobs_list[0]['project_name'])
+            self.assertIn(self.monitor_name, jobs_list[0]['job_id'])
+            self.assertEqual(self.project_name, jobs_list[1]['project_name'])
+            self.assertIn(self.monitor_name, jobs_list[1]['job_id'])
+        except:
+            self.fail('Exception error throw while running test')
 
     def test_delete_monitor_job_deletes_job(self):
-        import time
+        try:
+            self._start_and_update_and_resume_monitor(self.monitor_name)
+            jobs_list = self._get_monitor_jobs().json()
+            job_id = jobs_list[0]['job_id']
 
-        self._start_and_update_and_resume_monitor(self.monitor_name)
-        time.sleep(9)
+            delete_job_response = self._delete_job(monitor_name=self.monitor_name, job_id=job_id)
+            self.assertEqual(200, delete_job_response.status_code)
 
-        jobs_list = self._get_monitor_jobs().json()
-        job_id = jobs_list[0]['job_id']
-
-        delete_job_response = self._delete_job(monitor_name=self.monitor_name, job_id=job_id)
-        self.assertEqual(200, delete_job_response.status_code)
-
-        jobs_list = self._get_monitor_jobs().json()
-        job_ids = [job['job_id'] for job in jobs_list]
-        self.assertNotIn(job_id, job_ids)
+            jobs_list = self._get_monitor_jobs().json()
+            job_ids = [job['job_id'] for job in jobs_list]
+            self.assertNotIn(job_id, job_ids)
+        except Exception as e:
+            self.fail(f'Program encountered an error: {e}')
 
     def _get_monitor_jobs(self, monitor_name=None):
         monitor_name = self.monitor_name if monitor_name is None else monitor_name
@@ -288,13 +304,16 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         return requests.get(monitor_jobs_url)
 
     def _start_and_update_and_resume_monitor(self, name):
+        import time
         self._start_and_wait_for_monitor(name)
 
-        update_response = self._update_monitor(monitor_name=name, schedule=self.valid_schedule_2)
+        update_response = self._update_monitor(monitor_name=name, schedule=self.valid_schedule_every_2_secs)
         self.assertEqual(204, update_response.status_code)
 
         resume_response = self._resume_monitor(monitor_name=name)
         self.assertEqual(204, resume_response.status_code)
+
+        time.sleep(10)
 
     def _start_and_wait_for_monitor(self, name):
         start_response = self._start_monitor(name)
@@ -302,20 +321,24 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
 
     def _start_monitor(self, name):
         import subprocess
-        return subprocess.run(['python', '-m', 'foundations', 'monitor', 'create', f'--project_name={self.project_name}', f'--name={name}', '.', 'main.py'], cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/')
+        return subprocess.run(
+            ['python', '-m', 'foundations', 'monitor', 'create', f'--project_name={self.project_name}', f'--name={name}', '.', 'main.py'],
+            cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/',
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
 
     def _get_all_monitors(self):
         return requests.get(self.orbit_monitor_base_api_url)
 
-    def _get_monitors(self, monitor_name=None):
-        monitor_name = monitor_name if self.monitor_name is None else self.monitor_name
+    def _get_monitor(self, monitor_name=None):
+        monitor_name = self.monitor_name if monitor_name is None else monitor_name
         monitor_url = f'{self.orbit_monitor_base_api_url}/{monitor_name}'
         return requests.get(monitor_url)
 
     def _pause_monitor(self, monitor_name=None):
         payload = {'status': 'pause'}
-        monitor_name = monitor_name if self.monitor_name is None else monitor_name
-        monitor_url = f'{self.orbit_monitor_base_api_url}/{self.monitor_name}'
+        monitor_name = self.monitor_name if monitor_name is None else monitor_name
+        monitor_url = f'{self.orbit_monitor_base_api_url}/{monitor_name}'
         return requests.put(monitor_url, json=payload)
 
     def _resume_monitor(self, monitor_name=None):
