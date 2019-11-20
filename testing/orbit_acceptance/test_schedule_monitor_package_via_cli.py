@@ -12,7 +12,7 @@ from foundations_orbit_rest_api.v1.models.production_metric_set import Productio
 
 
 class TestScheduleMonitorPackageViaCli(Spec):
-    
+
     @let
     def monitor_name(self):
         return self.faker.word()
@@ -51,7 +51,7 @@ class TestScheduleMonitorPackageViaCli(Spec):
     def _delete_scheduled_job(job_name):
         import os
         import requests
-        
+
         scheduler_address = os.environ['LOCAL_DOCKER_SCHEDULER_HOST']
         return requests.delete(f'http://{scheduler_address}:5000/scheduled_jobs/{job_name}')
 
@@ -65,7 +65,8 @@ class TestScheduleMonitorPackageViaCli(Spec):
         }
 
         scheduler_address = os.environ['LOCAL_DOCKER_SCHEDULER_HOST']
-        return requests.patch(f'http://{scheduler_address}:5000/scheduled_jobs/{job_name}', json={'schedule': new_schedule})
+        return requests.patch(f'http://{scheduler_address}:5000/scheduled_jobs/{job_name}',
+                              json={'schedule': new_schedule})
 
     @staticmethod
     def _get_scheduled_job(job_name):
@@ -74,7 +75,6 @@ class TestScheduleMonitorPackageViaCli(Spec):
 
         scheduler_address = os.environ['LOCAL_DOCKER_SCHEDULER_HOST']
         return requests.get(f'http://{scheduler_address}:5000/scheduled_jobs/{job_name}')
-
 
     @staticmethod
     def _put_to_scheduled_job(job_name, status):
@@ -86,7 +86,8 @@ class TestScheduleMonitorPackageViaCli(Spec):
 
     def _start_monitor(self):
         command = f'python -m foundations monitor create --name={self.monitor_name} --project_name={self.project_name} --env={self.env} {self.monitor_package_dir} main.py '
-        return subprocess.run(command.split(), cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return subprocess.run(command.split(), cwd='orbit_acceptance/fixtures/this_cool_monitor/',
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def _call_monitor_with_command(self, operation):
         command = f'python -m foundations monitor {operation} --env={self.env} {self.project_name} {self.monitor_name}'
@@ -97,7 +98,8 @@ class TestScheduleMonitorPackageViaCli(Spec):
         self.assertEqual(0, result.returncode)
         self.assertIn('Foundations INFO: Job bundle submitted.\n', result.stdout.decode())
         self.assertIn('Foundations INFO: Monitor scheduled.\n', result.stdout.decode())
-        self.assertIn(f'Successfully created monitor {self.monitor_name} in project {self.project_name}\n', result.stdout.decode())
+        self.assertIn(f'Successfully created monitor {self.monitor_name} in project {self.project_name}\n',
+                      result.stdout.decode())
 
         metric_sets = ProductionMetricSet.all(self.project_name).evaluate()
         self.assertEqual([], metric_sets)
@@ -117,18 +119,21 @@ class TestScheduleMonitorPackageViaCli(Spec):
         self._start_monitor()
         result = self._start_monitor()
         self.assertNotEqual(0, result.returncode)
-        self.assertEqual(f'Unable to create monitor {self.monitor_name} in project {self.project_name}\n', result.stdout.decode())
+        self.assertEqual(f'Unable to create monitor {self.monitor_name} in project {self.project_name}\n',
+                         result.stdout.decode())
         self.assertEqual('Command failed with error: Monitor already exists\n', result.stderr.decode())
 
     def test_schedule_monitor_package_via_cli_with_same_monitor_name_twice_returns_correct_error_when_monitor_name_and_project_name_not_set(self):
         import subprocess
 
         command = f'python -m foundations monitor create --env={self.env} {self.monitor_package_dir} main.py'
-        result = subprocess.run(command.split(), cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        result = subprocess.run(command.split(), cwd='orbit_acceptance/fixtures/this_cool_monitor/',
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.assertEqual(0, result.returncode)
 
         command = f'python -m foundations monitor create --env={self.env} {self.monitor_package_dir} main.py'
-        result = subprocess.run(command.split(), cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        result = subprocess.run(command.split(), cwd='orbit_acceptance/fixtures/this_cool_monitor/',
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.assertNotEqual(0, result.returncode)
         self.assertEqual(f'Unable to create monitor main-py in project this_cool_monitor\n', result.stdout.decode())
         self.assertEqual('Command failed with error: Monitor already exists\n', result.stderr.decode())
@@ -149,7 +154,10 @@ class TestScheduleMonitorPackageViaCli(Spec):
 
         time.sleep(5)
         metric_sets_during_pause = ProductionMetricSet.all(self.project_name).evaluate()
-        self.assertEqual(before_pause_data_series_length, len(metric_sets_during_pause[0].series[0]['data']))
+        # added +1 as it is possible for pause to be executed while a job is progress
+        expected_equality = len(metric_sets_during_pause[0].series[0]['data']) == before_pause_data_series_length or \
+                            len(metric_sets_during_pause[0].series[0]['data']) == before_pause_data_series_length + 1
+        self.assertTrue(expected_equality)
 
         resume_result = self._call_monitor_with_command('resume')
         self.assertEqual(0, resume_result.returncode)
