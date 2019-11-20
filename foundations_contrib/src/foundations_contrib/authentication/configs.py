@@ -7,9 +7,11 @@ Written by Susan Davis <s.davis@dessa.com>, 11 2018
 
 ATLAS = {
     "realm": "Atlas",
-    "auth-server-url": "http://localhost:8080/auth",
-    "ssl-required": "external",
+    "auth-server-url": "http://atlas-ce-authentication-server:8080/auth",
+    "ssl-required": "none",
     "resource": "foundations",
-    "confidential-port": 0,
+    "public-client": True,
+    "verify-token-audience": True,
+    "use-resource-role-mappings": True,
+    "confidential-port": 0
 }
-

@@ -37,9 +37,10 @@ class DeploymentManager(object):
         deployment.config().update(deployment_config)
         project_name = current_foundations_context().project_name()
 
+        # TODO: Make this not stupid
         if isinstance(deployment, LocalShellJobDeployment):
-            logger.info("Job submitted with ID '{}' in project '{}'.".format(job_name, project_name))
             deployment.deploy()
+            logger.info("Job submitted with ID '{}' in project '{}'.".format(job_name, project_name))
         else:
             deployment.deploy()
             logger.info("Job submitted with ID '{}' in project '{}'.".format(job_name, project_name))
