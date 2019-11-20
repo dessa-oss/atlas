@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 import requests
+import time
 
 
 class TestSchedulerMonitorPackageViaRESTAPI(Spec):
@@ -119,10 +120,6 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
                 'second': 'not-a-second'
             }
         }
-
-    @set_up
-    def set_up(self):
-        pass
 
     @tear_down
     def tear_down(self):
@@ -244,7 +241,6 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         self.assertEqual(404, update_response.status_code)
 
     def test_update_schedule_on_monitor_with_correct_schedule_returns_204(self):
-        import time
         self._start_and_wait_for_monitor(self.monitor_name)
 
         monitor_response = self._get_all_monitors()
@@ -254,38 +250,41 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         valid_schedule = self.valid_schedule_every_5_secs
         update_response = self._update_monitor(self.monitor_name, valid_schedule)
         self.assertEqual(204, update_response.status_code)
-        time.sleep(5)
-        delete_response = self._delete_monitor(self.monitor_name)
-        self.assertEqual(204, delete_response.status_code)
 
     def test_get_monitor_jobs_for_nonexistent_monitor_returns_404(self):
         get_jobs_response = self._get_monitor_jobs(self.monitor_name)
         self.assertEqual(404, get_jobs_response.status_code)
 
-    @skip('fails to create a job for monitor')
+    def _start_monitor_and_retrieve_jobs(self):
+        self._start_and_update_and_resume_monitor(self.monitor_name)
+        # paused to attempt to reduce the occurrence of other jobs running between evaluating outputs of the jobs
+        self._pause_monitor()
+        # give job time to complete
+        time.sleep(2)
+
+        jobs_list_response = self._get_monitor_jobs(self.monitor_name)
+        self.assertEqual(200, jobs_list_response.status_code)
+
+        return jobs_list_response.json()
+
+    def test_all_jobs_requested_for_a_monitor_belongs_to_the_monitor(self):
+        jobs_list = self._start_monitor_and_retrieve_jobs()
+
+        for job in jobs_list:
+            self.assertEqual(self.project_name, job['project_name'])
+            self.assertIn(self.monitor_name, job['job_id'])
+
     def test_get_monitor_jobs_returns_all_jobs_for_monitor(self):
-        try:
-            from foundations_orbit_rest_api.v1.models.production_metric_set import ProductionMetricSet
+        jobs_list = self._start_monitor_and_retrieve_jobs()
+        number_of_runs = self._get_number_of_production_metrics_produced_by_jobs()
+        self.assertEqual(number_of_runs, len(jobs_list))
 
-            self._start_and_update_and_resume_monitor(self.monitor_name)
+    def _get_number_of_production_metrics_produced_by_jobs(self):
+        from foundations_orbit_rest_api.v1.models.production_metric_set import ProductionMetricSet
+        metric_sets = ProductionMetricSet.all(self.project_name).evaluate()
+        number_of_runs = len(metric_sets[0].series[0]['data'])
+        return number_of_runs
 
-            metric_sets = ProductionMetricSet.all(self.project_name).evaluate()
-            number_of_runs = len(metric_sets[0].series[0]['data'])
-            self.assertIn(number_of_runs, [2, 3])
-
-            jobs_list_response = self._get_monitor_jobs(self.monitor_name)
-            self.assertEqual(200, jobs_list_response.status_code)
-
-            jobs_list = jobs_list_response.json()
-            self.assertEqual(number_of_runs, len(jobs_list))
-            self.assertEqual(self.project_name, jobs_list[0]['project_name'])
-            self.assertIn(self.monitor_name, jobs_list[0]['job_id'])
-            self.assertEqual(self.project_name, jobs_list[1]['project_name'])
-            self.assertIn(self.monitor_name, jobs_list[1]['job_id'])
-        except:
-            self.fail('Exception error throw while running test')
-
-    @skip('fails to create a job for monitor')
     def test_delete_monitor_job_deletes_job(self):
         try:
             self._start_and_update_and_resume_monitor(self.monitor_name)
@@ -296,8 +295,12 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
             self.assertEqual(200, delete_job_response.status_code)
 
             jobs_list = self._get_monitor_jobs().json()
-            job_ids = [job['job_id'] for job in jobs_list]
-            self.assertNotIn(job_id, job_ids)
+
+            # In the case that the only monitor job has been deleted, jobs_list is a dictionary with 'error'
+            # Else, if there were more than one monitor jobs and one has been deleted, jobs_list is a list
+            if type(jobs_list) != dict or 'error' not in jobs_list:
+                job_ids = [job['job_id'] for job in jobs_list]
+                self.assertNotIn(job_id, job_ids)
         except Exception as e:
             self.fail(f'Program encountered an error: {e}')
 
@@ -316,7 +319,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         resume_response = self._resume_monitor(monitor_name=name)
         self.assertEqual(204, resume_response.status_code)
 
-        time.sleep(10)
+        time.sleep(5)
 
     def _start_and_wait_for_monitor(self, name):
         start_response = self._start_monitor(name)
