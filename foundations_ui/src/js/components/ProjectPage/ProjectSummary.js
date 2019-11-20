@@ -50,10 +50,6 @@ const ProjectSummary = (props) => {
         >
           {project.name}
         </h2>
-        {/* <p>Data Source: Unknown</p> */}
-        <p className="font-bold">
-          Project owner: <span>CE User</span>
-        </p>
         <p className="font-bold">
           Created at: <span>{CommonActions.formatDate(project.created_at)}</span>
         </p>
