@@ -158,7 +158,7 @@ pipeline{
                                 container("python3") {
                                     ws("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
-                                        sh "export LOCAL_DOCKER_SCHEDULER_HOST=$ATLAS_LOCAL_SCHEDULER && export REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && python -Wi -m unittest -f -v acceptance"
+                                        sh 'export LOCAL_DOCKER_SCHEDULER_HOST=$ATLAS_LOCAL_SCHEDULER && export REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && python -Wi -m unittest -f -v acceptance'
                                     }
                                 }
                             }
@@ -213,7 +213,7 @@ pipeline{
                                 container("python3-4") {
                                     ws("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
-                                        sh "export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && export LOCAL_DOCKER_SCHEDULER_HOST=$ORBIT_LOCAL_SCHEDULER && export REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && python -Wi -m unittest -f -v orbit_acceptance"
+                                        sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && export LOCAL_DOCKER_SCHEDULER_HOST=$ORBIT_LOCAL_SCHEDULER && export REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && python -Wi -m unittest -f -v orbit_acceptance'
                                     }
                                 }
                             }
