@@ -272,7 +272,7 @@ class TestDataContractCategorizer(Spec):
 
         expected_report = {
             self.column_name_1: {
-                'binned_l_infinity':  1.0,
+                'binned_l_infinity':  0.5,
                 'binned_passed': False
             }
         }

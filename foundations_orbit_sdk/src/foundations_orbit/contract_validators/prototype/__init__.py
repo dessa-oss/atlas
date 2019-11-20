@@ -14,8 +14,11 @@ from .utils import nand, bin_current_values, add_special_value_l_infinity, \
 
 def bin_current_values_categorical(column_values, ref_column_bin_stats):
     current_category_percentages = {'other_bins':0}
-    n_rows = len(column_values)
-    current_unique_values = column_values.unique()
+    n_rows = column_values.size
+
+    column_value_counts = column_values.value_counts(sort=False, normalize=True)
+    current_unique_values = list(column_value_counts.index)
+    current_unique_value_percentages = column_value_counts.values
 
     category_bins = []
 
@@ -25,9 +28,9 @@ def bin_current_values_categorical(column_values, ref_column_bin_stats):
 
     for unique_value in current_unique_values:
         if unique_value in category_bins:
-            current_category_percentages[unique_value] = len(column_values[column_values == unique_value])/n_rows
+            current_category_percentages[unique_value] = column_value_counts.loc[unique_value]
         else:
-            current_category_percentages['other_bins'] += len(column_values[column_values == unique_value])/n_rows
+            current_category_percentages['other_bins'] += column_value_counts.loc[unique_value]
 
     return current_category_percentages
 
