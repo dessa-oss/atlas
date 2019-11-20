@@ -92,7 +92,7 @@ def distribution_check(distribution_check_config, column_names, bin_stats, curre
             ref_bin_stats = bin_stats[col]
 
             if ref_bin_stats:
-                print(ref_bin_stats)
+                # print(ref_bin_stats)
                 for bin in ref_bin_stats:
                     # special value
                     if 'upper_edge' in bin and bin['upper_edge'] is None:
