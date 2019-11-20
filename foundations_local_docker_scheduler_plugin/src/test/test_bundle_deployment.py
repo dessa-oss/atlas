@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
+from unittest.mock import mock_open, patch
 
 class TestBundleDeployment(Spec):
 
@@ -52,23 +53,30 @@ class TestBundleDeployment(Spec):
 
         folder_job_bundle = FolderJobSourceBundle()
 
-        mock_open = self.patch('builtins.open', ConditionalReturn())
-        mock_file = Mock()
-        mock_open.return_when(mock_file, '.', 'rb')
-        mock_file.__enter__ = lambda *_: mock_file
-        mock_file.__exit__ = Mock()
 
-        self.user_token.return_value = "user-token"
+        with patch('builtins.open', mock_open()) as mock_file:
+            self.user_token.return_value = "user-token"
+            mock_post = self.patch('requests.post', ConditionalReturn())
+            mock_response = Mock()
+            mock_post.return_when(
+                mock_response, 
+                'http://localhost:5000/job_bundle', 
+                files={'job_bundle': mock_file()},
+                headers={"Authorization": f"Bearer user-token"}
+            )
 
-        mock_post = self.patch('requests.post', ConditionalReturn())
-        mock_response = Mock()
-        mock_post.return_when(
-            mock_response, 
-            'http://localhost:5000/job_bundle', 
-            files={'job_bundle': mock_file},
-            headers={"Authorization": f"bearer user-token"}
-        )
+            response = submit_job_bundle(folder_job_bundle)
 
-        response = submit_job_bundle(folder_job_bundle)
+            self.assertEqual(mock_response, response)
 
-        self.assertEqual(mock_response, response)
+
+#TODO: DOJO/ quick demo
+
+# with patch('builtins.open', mock_open()) as mock_file:
+#     mock_file().read.return_value = 'hello'
+
+# mock_open = self.patch('builtins.open', ConditionalReturn())
+# mock_file = Mock()
+# mock_open.return_when(mock_file, '.', 'rb')
+# mock_file.__enter__ = lambda *_: mock_file
+# mock_file.__exit__ = Mock()
