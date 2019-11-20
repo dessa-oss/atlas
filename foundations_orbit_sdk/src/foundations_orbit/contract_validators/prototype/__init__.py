@@ -90,7 +90,9 @@ def distribution_check(distribution_check_config, column_names, bin_stats, curre
             ref_edges = []
             unique_ref_value = None
             ref_bin_stats = bin_stats[col]
+
             if ref_bin_stats:
+                print(ref_bin_stats)
                 for bin in ref_bin_stats:
                     # special value
                     if 'upper_edge' in bin and bin['upper_edge'] is None:
@@ -100,8 +102,8 @@ def distribution_check(distribution_check_config, column_names, bin_stats, curre
                     # normal bins
                     else:
                         ref_bin_percentages.append(bin['percentage'])
+
                         # the upper_edge of the bin with the largest values is np.inf, ref_edges shouldn't include this
-                        # if bin['upper_edge'] != np.inf:
                         ref_edges.append(bin['upper_edge'])
                 # binning current_values
                 current_bin_percentages = bin_current_values(current_values, ref_edges, n_current_vals, unique_ref_value)
