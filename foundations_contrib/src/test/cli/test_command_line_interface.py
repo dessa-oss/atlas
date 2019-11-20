@@ -1,5 +1,5 @@
 """
-Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Copyright (C) DeepLearning Financial Techno\es Inc. - All Rights Reserved
 Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
@@ -38,6 +38,9 @@ class TestCommandLineInterface(Spec):
     mock_message_router = let_patch_mock('foundations_contrib.global_state.message_router')
     print_mock = let_patch_mock('builtins.print')
     environment_fetcher_mock = let_patch_mock('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher.get_all_environments')
+    mock_input = let_patch_mock('builtins.input')
+    mock_getpass = let_patch_mock('getpass.getpass')
+    mock_get = let_patch_mock('requests.get')
 
     @let_now
     def mock_environment(self):
@@ -84,6 +87,18 @@ class TestCommandLineInterface(Spec):
     @let
     def command(self):
         return self.faker.sentence()
+
+    @let
+    def username(self):
+        return self.faker.word()
+
+    @let
+    def password(self):
+        return self.faker.word()
+
+    @let
+    def hostname(self):
+        return self.faker.hostname()
 
     def fake_config_path(self, environment):
         return 'home/foundations/lou/config/{}.config.yaml'.format(environment)
@@ -283,6 +298,17 @@ class TestCommandLineInterface(Spec):
         project_call = call([['local', '/home/local.config.yaml']])
         global_call = call([['local','~/foundations/local.config.yaml']])
         mock_print.assert_has_calls([project_call, global_call], any_order = True)
+
+    def test_login_without_username_password_args_prompts_user_for_info(self):
+        CommandLineInterface(['login', f'{self.hostname}']).execute()
+        self.mock_input.assert_called_once()
+        self.mock_getpass.assert_called_once()
+
+    def test_login_makes_token_request_using_basic_auth(self):
+        self.mock_input.return_value = self.username
+        self.mock_getpass.return_value = self.password
+        CommandLineInterface(['login', f'{self.hostname}']).execute()
+        self.mock_get.assert_called_once_with(self.hostname + '/api/v2beta/auth/cli_login', auth=(self.username, self.password))
 
     def _process_constructor(self, pid):
         from psutil import NoSuchProcess
