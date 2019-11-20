@@ -17,8 +17,7 @@ def bin_current_values_categorical(column_values, ref_column_bin_stats):
     n_rows = column_values.size
 
     column_value_counts = column_values.value_counts(sort=False, normalize=True)
-    current_unique_values = list(column_value_counts.index)
-    current_unique_value_percentages = column_value_counts.values
+    current_unique_values = column_value_counts.index
 
     category_bins = []
 
@@ -26,11 +25,12 @@ def bin_current_values_categorical(column_values, ref_column_bin_stats):
         if category_bin.get('category_value', None) != None:
             category_bins.append(category_bin['category_value'])
 
-    for unique_value in current_unique_values:
-        if unique_value in category_bins:
-            current_category_percentages[unique_value] = column_value_counts.loc[unique_value]
-        else:
-            current_category_percentages['other_bins'] += column_value_counts.loc[unique_value]
+    current_unique_values_not_in_ref = column_value_counts[~column_value_counts.index.isin(category_bins)].index
+    current_category_percentages['other_bins'] = column_value_counts[current_unique_values_not_in_ref].sum()
+    remaining_values_in_current_unique_values = set(current_unique_values) - set(current_unique_values_not_in_ref)
+
+    dict_of_remaining_current_category_pct =  column_value_counts[remaining_values_in_current_unique_values].to_dict()
+    current_category_percentages = {**dict_of_remaining_current_category_pct, **current_category_percentages}
 
     return current_category_percentages
 
