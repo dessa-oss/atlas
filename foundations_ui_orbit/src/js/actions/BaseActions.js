@@ -182,7 +182,6 @@ const del = url => {
     headers: {
       Accept: "application/json"
     }
-    method: "DELETE"
   })
     .then(res => res.json())
     .then(result => {
