@@ -86,7 +86,7 @@ class TestScheduleMonitorPackageViaCli(Spec):
 
     def _start_monitor(self):
         command = f'python -m foundations monitor create --name={self.monitor_name} --project_name={self.project_name} --env={self.env} {self.monitor_package_dir} main.py '
-        return subprocess.run(command.split(), cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return subprocess.run(command.split(), cwd='orbit_acceptance/fixtures/this_cool_monitor/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def _call_monitor_with_command(self, operation):
         command = f'python -m foundations monitor {operation} --env={self.env} {self.project_name} {self.monitor_name}'
@@ -124,11 +124,11 @@ class TestScheduleMonitorPackageViaCli(Spec):
         import subprocess
 
         command = f'python -m foundations monitor create --env={self.env} {self.monitor_package_dir} main.py'
-        result = subprocess.run(command.split(), cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        result = subprocess.run(command.split(), cwd='orbit_acceptance/fixtures/this_cool_monitor/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.assertEqual(0, result.returncode)
 
         command = f'python -m foundations monitor create --env={self.env} {self.monitor_package_dir} main.py'
-        result = subprocess.run(command.split(), cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        result = subprocess.run(command.split(), cwd='orbit_acceptance/fixtures/this_cool_monitor/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.assertNotEqual(0, result.returncode)
         self.assertEqual(f'Unable to create monitor main-py in project this_cool_monitor\n', result.stdout.decode())
         self.assertEqual('Command failed with error: Monitor already exists\n', result.stderr.decode())

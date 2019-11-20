@@ -1,5 +1,0 @@
-*.config.yaml
-tracker_client_plugins.yaml
-job_data
-work_dir
-*.log

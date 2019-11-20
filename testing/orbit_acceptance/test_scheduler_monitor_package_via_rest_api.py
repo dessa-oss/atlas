@@ -29,7 +29,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         klass._flask_process = subprocess.Popen(
             'python start_api_server.py',
             shell=True,
-            cwd='local_docker_scheduler_acceptance/fixtures/orbit_rest_api',
+            cwd='orbit_acceptance/fixtures/orbit_rest_api',
             stdout=subprocess.PIPE
         )
         time.sleep(2)  # wait for the flask server to come up before proceeding
@@ -326,7 +326,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         import subprocess
         return subprocess.run(
             ['python', '-m', 'foundations', 'monitor', 'create', f'--project_name={self.project_name}', f'--name={name}', '.', 'main.py'],
-            cwd='local_docker_scheduler_acceptance/fixtures/this_cool_monitor/',
+            cwd='orbit_acceptance/fixtures/this_cool_monitor/',
             stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
 
