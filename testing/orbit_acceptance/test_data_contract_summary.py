@@ -10,6 +10,7 @@ from foundations_spec import *
 from foundations_orbit import DataContract
 from foundations_orbit_rest_api.v1.controllers.data_contract_summary_controller import DataContractSummaryController
 
+
 class TestDataContractSummary(Spec):
 
     @let
