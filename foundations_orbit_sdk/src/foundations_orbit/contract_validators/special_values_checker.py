@@ -14,7 +14,7 @@ class SpecialValuesChecker(object):
         self._special_value_percentages = None
         self._reference_column_names = reference_column_names.copy() if reference_column_names else []
         self._config_columns = []
-        self._allowed_types = ['int', 'float', 'str', 'bool', 'datetime']
+        self._allowed_types = ['int', 'float', 'str', 'bool', 'datetime', 'category']
         self._reference_column_types = reference_column_types
         self._invalid_attributes = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
         self.temp_attributes_to_exclude = []
@@ -55,13 +55,14 @@ class SpecialValuesChecker(object):
         return column_results
 
     def _special_values_check_for_special_value_in_column(self, dataframe_to_validate_special_value_percentages, column, special_value, reference_threshold):
+        import pandas as pd
         import numpy
 
         special_value_results = {}
 
-        if numpy.isnan(special_value):
+        if pd.isnull(special_value):
             for key, value in self._special_value_percentages[column].items():
-                if numpy.isnan(key):
+                if pd.isnull(key):
                     reference_percentage = value
         else:
             reference_percentage = self._special_value_percentages[column][special_value]
@@ -81,21 +82,29 @@ class SpecialValuesChecker(object):
         return special_value_results
 
     def _create_special_value_percentages_for_dataframe(self, dataframe):
-        import math
+        import pandas as pd
+        import numpy as np
 
         special_value_percentages = {}
-        num_rows_in_df = len(dataframe)
 
         for column, threshold_dictionary in self._special_value_thresholds.items():
-            special_value_percentages[column] = {}
-            series_to_validate = dataframe[column]
-            for special_value, _ in threshold_dictionary.items():
-                if math.isnan(special_value):
-                    num_special_values = series_to_validate.isna().sum()
+            column_value_counts = dataframe[column].value_counts(sort=False, dropna=False, normalize=True)
+            special_values = pd.Series(list(self._special_value_thresholds[column].keys()))
+
+            temp_dict = {}
+            if special_values.isna().sum():
+                if column_value_counts.index.isnull().sum():
+                    temp_dict = {np.nan: column_value_counts[column_value_counts.index.isnull()].values[0]}
                 else:
-                    num_special_values = len(series_to_validate[series_to_validate == special_value])
-                special_value_percentage = num_special_values/num_rows_in_df
-                special_value_percentages[column][special_value] = special_value_percentage
+                    temp_dict = {np.nan: 0}
+
+                special_values = special_values[~special_values.isna()].copy()
+
+            special_values_in_test_dataframe = special_values.isin(column_value_counts.index)
+            temp_dict = {**temp_dict,
+                         **{value: 0 for value in special_values[~special_values_in_test_dataframe].values}}
+            special_value_percentages[column] = {**temp_dict, **column_value_counts[
+                special_values[special_values_in_test_dataframe]].to_dict()}
 
         return special_value_percentages
 
