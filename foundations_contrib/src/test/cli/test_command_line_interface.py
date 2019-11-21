@@ -313,20 +313,28 @@ class TestCommandLineInterface(Spec):
         self.mock_get.assert_called_once_with(self.hostname + '/api/v2beta/auth/cli_login', auth=(self.username, self.password))
 
     def test_login_writes_to_credentials_file_when_credentials_valid(self):
-        access_token = self._set_up_mock_get_for_successful_request()
+        access_token = self._set_up_mock_get_for_request(200)
 
         mock_file = self._execute_command_line_interface_in_patched_open(self.hostname)
         self.mock_yaml_dump.assert_called_with({'default': {'token': access_token}}, mock_file, default_flow_style=False)
 
     def test_login_prints_success_message_when_credentials_valid(self):
-        self._set_up_mock_get_for_successful_request()
+        self._set_up_mock_get_for_request(200)
 
         self._execute_command_line_interface_in_patched_open(self.hostname)
         self.print_mock.assert_called_with("\nLogin Succeeded!")
 
-    def _set_up_mock_get_for_successful_request(self):
+    def test_login_prints_failure_message_when_credentials_invalid(self):
+        failure_message = self.faker.sentence()
+        self._set_up_mock_get_for_request(400, text=failure_message)
+        CommandLineInterface(['login', f'{self.hostname}']).execute()
+        self.print_mock.assert_has_calls([call("\nLogin Failed!"), call(f"Error response: {failure_message}")])
+
+    def _set_up_mock_get_for_request(self, status_code, text=''):
         mock_response = Mock()
-        mock_response.status_code = 200
+        mock_response.status_code = status_code
+        mock_response.text = text
+
         access_token = self.faker.word()
         mock_response.json.return_value = {'access_token': access_token}
         self.mock_get.return_value = mock_response
