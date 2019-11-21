@@ -14,6 +14,7 @@ export REDIS_HOST=localhost
 export REDIS_PORT=6379
 export ARCHIVE_DIR=$FOUNDATIONS/job_data
 export WORKING_DIR=$FOUNDATIONS/local_docker_scheduler/work_dir
+export JOB_BUNDLE_STORE_DIR=$FOUNDATIONS/job_bundle_store_dir
 export NUM_WORKERS=0
 
 export REACT_APP_API_URL="http://127.0.0.1:${ORBIT_PORT}/api/v1/"
