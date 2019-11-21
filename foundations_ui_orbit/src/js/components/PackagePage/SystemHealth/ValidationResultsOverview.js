@@ -8,6 +8,7 @@ import moment from "moment";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import Select from "react-select";
+import Toggle from "react-toggle";
 import PropTypes from "prop-types";
 import CommonActions from "../../../actions/CommonActions";
 import ValidationResultsActions from "../../../actions/ValidationResultsActions";
@@ -16,12 +17,12 @@ import OverflowTooltip from "../../common/OverflowTooltip";
 const ValidationResultsOverviewGraph = ({
   data,
   bins,
-  isDefaultSelectedOverview
+  isDefaultSelectedOverview,
+  dataIsNormalized
 }) => {
   const graphDiv = useRef(null);
   const [graphWidth, setGraphWidth] = useState(null);
   const [graphHeight, setGraphHeight] = useState(null);
-  const [dataIsNormalized, setDataIsNormalized] = useState(false);
   const [normalizedExpectedData, setNormalizedExpectedData] = useState([]);
   const [normalizedActualData, setNormalizedActualData] = useState([]);
 
@@ -52,10 +53,6 @@ const ValidationResultsOverviewGraph = ({
       setNormalizedActualData(actualData.map(val => val / actualDataSum));
     }
   }, [data, normalizedActualData, dataIsNormalized]);
-
-  const toggleDataNormalization = () => {
-    setDataIsNormalized(!dataIsNormalized);
-  };
 
   const expectedData = (
     dataIsNormalized
@@ -135,7 +132,6 @@ const ValidationResultsOverviewGraph = ({
 
   return (
     <div className="overview-graph" ref={graphDiv}>
-      <div onClick={toggleDataNormalization}>Normalize</div>
       {graph}
     </div>
   );
@@ -148,7 +144,8 @@ class ValidationResultsOverview extends Component {
     this.state = {
       selectedAttribute: null,
       selectedOverview: this.defaultSelectedOverview(),
-      isDefaultSelectedOverview: true
+      isDefaultSelectedOverview: true,
+      dataIsNormalized: false
     };
 
     this.update = this.update.bind(this);
@@ -156,6 +153,7 @@ class ValidationResultsOverview extends Component {
     this.onChangeAttribute = this.onChangeAttribute.bind(this);
     this.defaultSelectedOverview = this.defaultSelectedOverview.bind(this);
     this.onClickOpenInfo = this.onClickOpenInfo.bind(this);
+    this.toggleDataNormalization = this.toggleDataNormalization.bind(this);
   }
 
   update() {
@@ -175,6 +173,11 @@ class ValidationResultsOverview extends Component {
   onClickOpenInfo() {
     const { toggleInfo, uuid } = this.props;
     toggleInfo(uuid);
+  }
+
+  toggleDataNormalization() {
+    const { dataIsNormalized } = this.state;
+    this.setState({ dataIsNormalized: !dataIsNormalized });
   }
 
   componentDidUpdate(prevProps) {
@@ -258,7 +261,8 @@ class ValidationResultsOverview extends Component {
     const {
       selectedAttribute,
       selectedOverview,
-      isDefaultSelectedOverview
+      isDefaultSelectedOverview,
+      dataIsNormalized
     } = this.state;
     const { validationResult } = this.props;
     const date = moment(validationResult.date).format("YYYY-MM-DD h:mm A");
@@ -295,6 +299,7 @@ class ValidationResultsOverview extends Component {
         data={selectedOverview.binned_data.data}
         bins={selectedOverview.binned_data.bins}
         isDefaultSelectedOverview={isDefaultSelectedOverview}
+        dataIsNormalized={dataIsNormalized}
       />
     );
 
@@ -346,6 +351,16 @@ class ValidationResultsOverview extends Component {
               options={selectOptions}
               onChange={this.onChangeAttribute}
             />
+            <div className="attribute-data-toggle-container">
+              <span>Normalized</span>
+              <label>
+                <Toggle
+                  defaultChecked={false}
+                  icons={false}
+                  onChange={this.toggleDataNormalization}
+                />
+              </label>
+            </div>
             <div className="attribute-data-container">
               <div className="attribute-data-label">
                 <div className="light-blue-box" />
@@ -404,13 +419,15 @@ class ValidationResultsOverview extends Component {
 ValidationResultsOverviewGraph.propTypes = {
   data: PropTypes.object,
   bins: PropTypes.array,
-  isDefaultSelectedOverview: PropTypes.bool
+  isDefaultSelectedOverview: PropTypes.bool,
+  dataIsNormalized: PropTypes.bool
 };
 
 ValidationResultsOverviewGraph.defaultProps = {
   data: {},
   bins: [],
-  isDefaultSelectedOverview: true
+  isDefaultSelectedOverview: true,
+  dataIsNormalized: false
 };
 
 ValidationResultsOverview.propTypes = {
