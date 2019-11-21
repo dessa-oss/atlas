@@ -1,14 +1,21 @@
 try:
     from foundations_contrib.global_state import config_manager
     from foundations_rest_api.global_state import app_manager
+    from foundations_local_docker_scheduler_plugin.job_deployment import JobDeployment
     import logging
     import os
     import sys
 
     foundations_home = os.path.abspath(os.path.expanduser(os.environ.get('FOUNDATIONS_HOME', '~/.foundations')))
     redis_url = f"redis://{os.environ.get('REDIS_HOST', 'redis')}:{os.environ.get('REDIS_PORT', 6379)}"
+    translated_submission_config = {'redis_url': redis_url,
+                                    'deployment_implementation': {
+                                        'deployment_type': JobDeployment,
+                                    },
+                                    'scheduler_url': os.environ["FOUNDATIONS_SCHEDULER_URL"],
+                                    }
 
-    config_manager.config()['redis_url'] = redis_url
+    config_manager.config().update(translated_submission_config)
 
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.DEBUG)

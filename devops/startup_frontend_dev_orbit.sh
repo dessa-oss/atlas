@@ -8,7 +8,7 @@ export ATLAS_PORT=37722
 export ORBIT_PORT=37222
 export SCHEDULER_PORT=5000
 
-export FOUNDATIONS_SCHEDULER_URL=localhost:${SCHEDULER_PORT}
+export FOUNDATIONS_SCHEDULER_URL=http://localhost:${SCHEDULER_PORT}
 
 export REDIS_HOST=localhost
 export REDIS_PORT=6379
@@ -26,10 +26,10 @@ export REACT_APP_APIARY_URL="http://private-d03986-iannelladessa.apiary-mock.com
 echo "Note: Ensure you have redis running on port ${REDIS_PORT}"
 
 echo "Running Atlas REST API on port ${ATLAS_PORT}"
-python devops/startup_atlas_api.py ${ATLAS_PORT} > $FOUNDATIONS/logs/atlas_rest_api.log 2>&1 &
+python devops/startup_atlas_api.py ${ATLAS_PORT} &
 
 echo "Running Orbit REST API on port ${ORBIT_PORT}"
-python devops/startup_orbit_api.py ${ORBIT_PORT} > $FOUNDATIONS/logs/atlas_rest_api.log 2>&1 &
+python devops/startup_orbit_api.py ${ORBIT_PORT} &
 
 echo "Running local docker scheduler on port ${SCHEDULER_PORT}"
 cd ../local-docker-scheduler && python -m local_docker_scheduler -p ${SCHEDULER_PORT} > $FOUNDATIONS/logs/scheduler.log 2>&1 &

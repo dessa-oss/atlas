@@ -1,6 +1,6 @@
 try:
     from foundations_contrib.global_state import config_manager
-    from foundations_rest_api.global_state import app_manager
+    from foundations_orbit_rest_api.global_state import app_manager
     import logging
     import os
     import sys
