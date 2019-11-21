@@ -87,7 +87,7 @@ const SideBar = props => {
       <div onClick={onClickDashboard} className="sidebar-item icon-home">
         <div className="label">Dashboard</div>
       </div>
-      <div
+      {/* <div
         onClick={onClickTimeline}
         className={
           tab === "Timeline"
@@ -96,7 +96,7 @@ const SideBar = props => {
         }
       >
         <div className="label">History</div>
-      </div>
+      </div> */}
       <div
         onClick={onClickEvaluation}
         className={
@@ -121,7 +121,7 @@ const SideBar = props => {
       >
         <div className="label">Data Health</div>
       </div>
-      <div
+      {/* <div
         onClick={onClickDeployment}
         className={
           tab === "Deployment"
@@ -140,7 +140,7 @@ const SideBar = props => {
         }
       >
         <div className="label">Model Management</div>
-      </div>
+      </div> */}
       <div
         onClick={onClickSchedules}
         className={
@@ -151,7 +151,7 @@ const SideBar = props => {
       >
         <div className="label">Monitor<br />Schedules</div>
       </div>
-      <div
+      {/* <div
         onClick={onClickSettings}
         className={
           tab === "Settings"
@@ -160,7 +160,7 @@ const SideBar = props => {
         }
       >
         <div className="label settings">Settings</div>
-      </div>
+      </div> */}
     </div>
   );
 };

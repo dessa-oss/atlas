@@ -94,7 +94,7 @@ class MonitorSchedules extends Component {
     );
 
     return (
-      <Layout tab="Schedules" title="Data Health">
+      <Layout tab="Schedules" title="Monitor Schedules">
         <div className="monitor-schedules-container">
           <div className="section-title font-bold">Monitor Schedules</div>
           <div className="schedule-details">
