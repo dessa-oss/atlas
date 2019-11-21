@@ -315,14 +315,14 @@ class TestCommandLineInterface(Spec):
     def test_login_writes_to_credentials_file_when_credentials_valid(self):
         access_token = self._set_up_mock_get_for_successful_request()
 
-        with self._execute_command_line_interface_in_patched_open(self.hostname) as mock_file:
-            self.mock_yaml_dump.assert_called_with({'default': {'token': access_token}}, mock_file, default_flow_style=False)
+        mock_file = self._execute_command_line_interface_in_patched_open(self.hostname)
+        self.mock_yaml_dump.assert_called_with({'default': {'token': access_token}}, mock_file, default_flow_style=False)
 
     def test_login_prints_success_message_when_credentials_valid(self):
         self._set_up_mock_get_for_successful_request()
 
-        with self._execute_command_line_interface_in_patched_open(self.hostname):
-            self.print_mock.assert_called_with("\nLogin Succeeded!")
+        self._execute_command_line_interface_in_patched_open(self.hostname)
+        self.print_mock.assert_called_with("\nLogin Succeeded!")
 
     def _set_up_mock_get_for_successful_request(self):
         mock_response = Mock()
@@ -333,17 +333,15 @@ class TestCommandLineInterface(Spec):
 
         return access_token
 
-    @contextmanager
     def _execute_command_line_interface_in_patched_open(self, hostname):
         open_mock = mock_open()
 
         with patch('builtins.open', open_mock):
+            mock_file = open_mock()
             try:
-                mock_file = open_mock()
                 CommandLineInterface(['login', f'{hostname}']).execute()
-                yield mock_file
             finally:
-                return
+                return mock_file
 
     def _process_constructor(self, pid):
         from psutil import NoSuchProcess
