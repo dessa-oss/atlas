@@ -64,6 +64,7 @@
       width: 45%;
       display: flex;
       align-items: center;
+      flex-direction: column;
 
       .empty-overview-graph-container {
         width: 100%;
