@@ -14,13 +14,21 @@ import ValidationResultsActions from "../../../actions/ValidationResultsActions"
 import OverflowTooltip from "../../common/OverflowTooltip";
 
 const ValidationResultsOverviewGraph = ({
-  selectedOverview,
+  data,
+  bins,
   isDefaultSelectedOverview
 }) => {
   const graphDiv = useRef(null);
   const [graphWidth, setGraphWidth] = useState(null);
   const [graphHeight, setGraphHeight] = useState(null);
   const [dataIsNormalized, setDataIsNormalized] = useState(false);
+  const [normalizedExpectedData, setNormalizedExpectedData] = useState([]);
+  const [normalizedActualData, setNormalizedActualData] = useState([]);
+
+  useEffect(() => {
+    setNormalizedExpectedData([]);
+    setNormalizedActualData([]);
+  }, [data]);
 
   useEffect(() => {
     if (graphDiv) {
@@ -29,20 +37,47 @@ const ValidationResultsOverviewGraph = ({
     }
   }, [graphDiv]);
 
+  useEffect(() => {
+    if (normalizedExpectedData.length === 0 && data.expected_data.length > 0) {
+      const expectedData = data.expected_data;
+      const expectedDataSum = expectedData.reduce((a, b) => a + b, 0);
+      setNormalizedExpectedData(expectedData.map(val => val / expectedDataSum));
+    }
+  }, [data, normalizedExpectedData, dataIsNormalized]);
+
+  useEffect(() => {
+    if (normalizedActualData.length === 0 && data.actual_data.length > 0) {
+      const actualData = data.actual_data;
+      const actualDataSum = actualData.reduce((a, b) => a + b, 0);
+      setNormalizedActualData(actualData.map(val => val / actualDataSum));
+    }
+  }, [data, normalizedActualData, dataIsNormalized]);
+
   const toggleDataNormalization = () => {
     setDataIsNormalized(!dataIsNormalized);
   };
 
-  const binLabels = selectedOverview.binned_data.bins;
+  const expectedData = (
+    dataIsNormalized
+      ? normalizedExpectedData.slice()
+      : data.expected_data.slice()
+  );
+  const actualData = (
+    dataIsNormalized
+      ? normalizedActualData.slice()
+      : data.actual_data.slice()
+  );
+
+  const binLabels = bins;
   const series = [
     {
       name: "Reference Data",
-      data: selectedOverview.binned_data.data.expected_data,
+      data: expectedData,
       color: "#50B8FF"
     },
     {
       name: "Current Data",
-      data: selectedOverview.binned_data.data.actual_data,
+      data: actualData,
       color: "#004A9C"
     }
   ];
@@ -92,13 +127,11 @@ const ValidationResultsOverviewGraph = ({
     }
   };
 
-  const graph = isDefaultSelectedOverview ? (
+  const graph = (isDefaultSelectedOverview || !expectedData || expectedData.length === 0) ? (
     <div className="empty-overview-graph-container">
       <div className="empty-overview-graph" />
     </div>
-  ) : (
-    <HighchartsReact highcharts={Highcharts} options={options} />
-  );
+  ) : <HighchartsReact highcharts={Highcharts} options={options} />;
 
   return (
     <div className="overview-graph" ref={graphDiv}>
@@ -259,7 +292,8 @@ class ValidationResultsOverview extends Component {
 
     const graph = (
       <ValidationResultsOverviewGraph
-        selectedOverview={selectedOverview}
+        data={selectedOverview.binned_data.data}
+        bins={selectedOverview.binned_data.bins}
         isDefaultSelectedOverview={isDefaultSelectedOverview}
       />
     );
@@ -368,12 +402,14 @@ class ValidationResultsOverview extends Component {
 }
 
 ValidationResultsOverviewGraph.propTypes = {
-  selectedOverview: PropTypes.object,
+  data: PropTypes.object,
+  bins: PropTypes.array,
   isDefaultSelectedOverview: PropTypes.bool
 };
 
 ValidationResultsOverviewGraph.defaultProps = {
-  selectedOverview: {},
+  data: {},
+  bins: [],
   isDefaultSelectedOverview: true
 };
 
