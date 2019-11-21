@@ -8,6 +8,9 @@ import logging
 import os
 
 os.environ['FOUNDATIONS_SCHEDULER_URL'] = 'http://' + os.environ['LOCAL_DOCKER_SCHEDULER_HOST'] + ':5000'
+from foundations import config_manager
+config_manager.config()['redis_url'] = f"redis://{os.environ['REDIS_HOST']}:{os.environ['REDIS_PORT']}"
+
 
 app = app_manager.app()
 
