@@ -149,9 +149,10 @@ class SpecialValuesChecker(object):
         self._special_value_percentages = self._create_special_value_percentages_for_dataframe(reference_dataframe)
 
     def _update_nans_in_thresholds(self):
+        import pandas as pd
         import numpy as np
         for col, threshold_dict in self._special_value_thresholds.items():
             for key in threshold_dict.keys():
-                if np.isnan(key):
+                if pd.isnull(key):
                     special_value_threshold = threshold_dict.pop(key)
                     self._special_value_thresholds[col][np.nan] = special_value_threshold
