@@ -31,6 +31,9 @@ class SpecialValuesChecker(object):
         self._config_columns = set(self._config_columns).union(set(self.temp_attributes_to_exclude))
         self.temp_attributes_to_exclude = []
 
+        if self._special_value_thresholds:
+            self._update_nans_in_thresholds()
+
         special_values_results = self._special_values_check(dataframe_to_validate)
 
         return special_values_results
@@ -144,3 +147,11 @@ class SpecialValuesChecker(object):
 
     def create_and_set_special_value_percentages(self, reference_dataframe):
         self._special_value_percentages = self._create_special_value_percentages_for_dataframe(reference_dataframe)
+
+    def _update_nans_in_thresholds(self):
+        import numpy as np
+        for col, threshold_dict in self._special_value_thresholds.items():
+            for key in threshold_dict.keys():
+                if np.isnan(key):
+                    special_value_threshold = threshold_dict.pop(key)
+                    self._special_value_thresholds[col][np.nan] = special_value_threshold
