@@ -17,7 +17,7 @@ const ModelEvaluation = props => {
 
   return (
     <Layout tab={tab} title="Model Evaluation" openTutorial={onToggleTutorial}>
-      <Schedule />
+      {/* <Schedule /> */}
       <Charts {...props} />
       <ModalTutorial
         tutorialVisible={tutorialVisible}
