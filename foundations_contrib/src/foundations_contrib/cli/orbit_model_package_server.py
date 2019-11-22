@@ -49,14 +49,6 @@ def _save_model_to_redis(project_name, model_name, model_details):
     project_model_listings.update({model_name: serialized_model_information})
     redis_connection.hmset(f'projects:{project_name}:model_listing', project_model_listings)
 
-def save_project_to_redis(project_name):
-    from time import time
-    from foundations_contrib.global_state import redis_connection
-
-    timestamp = time()
-    redis_connection.execute_command('ZADD', 'projects', 'NX', timestamp, project_name)
-
-
 def _retrieve_project_model_listings_from_redis(project_name):
     from foundations_contrib.global_state import redis_connection
     return redis_connection.hgetall(f'projects:{project_name}:model_listing')
@@ -176,6 +168,7 @@ def _load_entrypoints_from_manifest(project_manifest_file):
 def _deploy_setup(project_name, model_name, project_directory, env='local', setup_env=True):
     import warnings
     from cryptography.utils import CryptographyDeprecationWarning
+    from foundations_contrib.utils import save_project_to_redis
     warnings.filterwarnings('ignore', category=CryptographyDeprecationWarning)
     _check_for_invalid_names(project_name, model_name)
     _check_for_valid_project_directory(project_directory)

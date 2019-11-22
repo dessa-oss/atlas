@@ -9,6 +9,12 @@ import fakeredis
 from foundations_orbit.data_contract import DataContract
 from foundations_spec import *
 
+# A hack so that we can use execute command with our out of date fakeredis
+def do_nothing(*args):
+    return
+fake_redis = fakeredis.FakeRedis()
+fake_redis.execute_command = do_nothing
+
 
 class TestDataContract(Spec):
 
@@ -228,7 +234,7 @@ class TestDataContract(Spec):
         mock_environ['PROJECT_NAME'] = self.project_name
         mock_environ['MONITOR_NAME'] = self.model_name
 
-        self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+        self._redis = self.patch('foundations_contrib.global_state.redis_connection', fake_redis)
 
     @tear_down
     def tear_down(self):

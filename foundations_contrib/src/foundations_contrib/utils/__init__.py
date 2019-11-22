@@ -96,3 +96,10 @@ def cd(path):
         yield
     finally:
         os.chdir(prev_path)
+
+def save_project_to_redis(project_name):
+    from time import time
+    from foundations_contrib.global_state import redis_connection
+
+    timestamp = time()
+    redis_connection.execute_command('ZADD', 'projects', 'NX', timestamp, project_name)
