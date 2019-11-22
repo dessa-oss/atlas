@@ -191,6 +191,7 @@ class TestMonitorJobsController(Spec):
         for index, result in enumerate(expected_result):
             if result['job_id'] == self.job_id:
                 index_to_delete = index
+                break
 
         del expected_result[index_to_delete]
 

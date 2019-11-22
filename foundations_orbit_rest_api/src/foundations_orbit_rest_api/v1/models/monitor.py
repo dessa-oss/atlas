@@ -10,7 +10,7 @@ from foundations_core_rest_api_components.common.models.property_model import Pr
 class Monitor(PropertyModel):
 
     @staticmethod
-    def job_ids_from_monitors_dictionary(project_name, monitor_name, sort_kind):
+    def job_ids_from_monitors_dictionary(project_name, monitor_name, sort_kind='desc'):
         from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _monitor_exists_in_project(project_name, monitor_name):
