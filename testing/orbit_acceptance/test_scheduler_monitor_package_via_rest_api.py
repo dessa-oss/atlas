@@ -285,6 +285,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         number_of_runs = len(metric_sets[0].series[0]['data'])
         return number_of_runs
 
+
     def test_delete_monitor_job_deletes_job(self):
         try:
             self._start_and_update_and_resume_monitor(self.monitor_name)
