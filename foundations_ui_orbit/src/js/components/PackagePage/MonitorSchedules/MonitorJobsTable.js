@@ -10,12 +10,14 @@ class MonitorJobsTable extends Component {
     this.state = {
       rows: null,
       projectName: location.state.project.name,
-      selectedRows: new Set()
+      selectedRows: new Set(),
+      isAscending: false
     };
 
     this.onSelectRow = this.onSelectRow.bind(this);
     this.deleteJobs = this.deleteJobs.bind(this);
     this.reload = this.reload.bind(this);
+    this.onClickSortByLaunched = this.onClickSortByLaunched.bind(this);
   }
 
   componentDidMount() {
@@ -34,11 +36,11 @@ class MonitorJobsTable extends Component {
   }
 
   async reload() {
-    const { projectName } = this.state;
+    const { projectName, isAscending } = this.state;
     const { reload, toggleLogsModal, monitorResult } = this.props;
 
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-    const result = await MonitorSchedulesActions.getMonitorJobs(projectName, monitorName);
+    const result = await MonitorSchedulesActions.getMonitorJobs(projectName, monitorName, isAscending);
     const rows = MonitorSchedulesActions.getMonitorJobRows(result, this.onSelectRow, toggleLogsModal);
     this.setState({ rows: rows });
     reload();
@@ -66,8 +68,19 @@ class MonitorJobsTable extends Component {
     this.reload();
   }
 
+  onClickSortByLaunched() {
+    let { isAscending } = this.state;
+    isAscending = !isAscending;
+    this.setState({ isAscending: isAscending });
+    this.reload();
+  }
+
   render() {
-    const { rows, selectedRows } = this.state;
+    const {
+      rows,
+      selectedRows,
+      isAscending
+    } = this.state;
 
     let rowsWithProps = [];
     if (rows) {
@@ -76,6 +89,30 @@ class MonitorJobsTable extends Component {
         { selectedRows: selectedRows }
       ));
     }
+
+    let arrowUp = null;
+    let arrowDown = null;
+
+    arrowUp = (
+      <i
+        onKeyPress={this.onClickSortByLaunched}
+        tabIndex={0}
+        role="button"
+        onClick={this.onClickSortByLaunched}
+        className={(isAscending === null || isAscending)
+          ? "i--icon-arrow-up" : "i--icon-arrow-up-unfilled"}
+      />
+    );
+    arrowDown = (
+      <i
+        onKeyPress={this.onClickSortByLaunched}
+        tabIndex={0}
+        role="button"
+        onClick={this.onClickSortByLaunched}
+        className={(isAscending === null || !isAscending)
+          ? "i--icon-arrow-down" : "i--icon-arrow-down-unfilled"}
+      />
+    );
 
     return (
       <div className="monitor-jobs">
@@ -90,7 +127,11 @@ class MonitorJobsTable extends Component {
               <div className="monitor-job-checkbox" />
               <div className="monitor-job-name-cell">Job ID</div>
               <div className="monitor-job-status-cell">Status</div>
-              <div className="monitor-job-launched-cell">Launched</div>
+              <div className="monitor-job-launched-cell">
+                Launched
+                {arrowUp}
+                {arrowDown}
+              </div>
               <div className="monitor-job-duration-cell">Duration</div>
             </div>
             {rowsWithProps}

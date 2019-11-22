@@ -37,8 +37,9 @@ const MonitorSchedulesActions = {
     });
   },
 
-  getMonitorJobs: (projectName, monitorName) => {
-    const url = `projects/${projectName}/monitors/${monitorName}/jobs`;
+  getMonitorJobs: (projectName, monitorName, isAscending) => {
+    const sortkind = (isAscending ? "asc" : "desc");
+    const url = `projects/${projectName}/monitors/${monitorName}/jobs?sort=${sortkind}`;
 
     return get(url)
       .then(results => {

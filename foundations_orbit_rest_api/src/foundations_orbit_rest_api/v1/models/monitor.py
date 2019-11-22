@@ -10,7 +10,7 @@ from foundations_core_rest_api_components.common.models.property_model import Pr
 class Monitor(PropertyModel):
 
     @staticmethod
-    def job_ids_from_monitors_dictionary(project_name, monitor_name):
+    def job_ids_from_monitors_dictionary(project_name, monitor_name, sort_kind):
         from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _monitor_exists_in_project(project_name, monitor_name):
@@ -28,6 +28,7 @@ class Monitor(PropertyModel):
             serialized_job_ids = redis_connection.smembers(f'projects:{project_name}:monitors:{monitor_name}:jobs')
             job_ids = [serialized_job_id.decode() for serialized_job_id in serialized_job_ids]
             internal_jobs = JobDataRedis.all_jobs_by_list_of_job_ids(job_ids, redis_connection, False)
+            internal_jobs.sort(key=lambda job: job['start_time'], reverse=True if sort_kind=='desc' else False)
 
             return internal_jobs
 

@@ -27,6 +27,11 @@ class TestMonitorJobsController(Spec):
     def job_id_2(self):
         return f'{self.project_name}-{self.monitor_name}_{self.faker.random_int()}'
     
+
+    @let
+    def job_id_3(self):
+        return f'{self.project_name}-{self.monitor_name}_{self.faker.random_int()}'
+
     @set_up
     def set_up(self):
         import fakeredis
@@ -56,11 +61,30 @@ class TestMonitorJobsController(Spec):
                 'user': 'pairing',
                 'start_time': 1571931156.550436,
                 'state': 'running'
+            },
+            {
+                'project': 'so',
+                'job_id': self.job_id_3,
+                'user': 'pairing',
+                'start_time': 1501931156.550436,
+                'state': 'running'
             }
         ]
 
     def _expected_data(self):
         return [
+            {
+                'project_name': 'so',
+                'job_id': self.job_id_2,
+                'user': 'pairing',
+                'job_parameters': {},
+                'input_params': [],
+                'output_metrics': [],
+                'status': 'running',
+                'start_time': 1571931156.550436,
+                'completed_time': None,
+                'tags': {}
+            },
             {
                 'project_name': 'so',
                 'job_id': self.job_id,
@@ -72,16 +96,16 @@ class TestMonitorJobsController(Spec):
                 'start_time': 1571931153.0313132,
                 'completed_time': 1571931153.6426458,
                 'tags': {}
-            }
-            , {
+            },
+            {
                 'project_name': 'so',
-                'job_id': self.job_id_2,
+                'job_id': self.job_id_3,
                 'user': 'pairing',
                 'job_parameters': {},
                 'input_params': [],
                 'output_metrics': [],
                 'status': 'running',
-                'start_time': 1571931156.550436,
+                'start_time': 1501931156.550436,
                 'completed_time': None,
                 'tags': {}
             }
@@ -162,9 +186,32 @@ class TestMonitorJobsController(Spec):
         jobs_list = self.controller.index().as_json()
 
         expected_result = self._expected_data()
-        del expected_result[0]
 
-        self.assertEqual(expected_result, jobs_list)  
+        index_to_delete = 0
+        for index, result in enumerate(expected_result):
+            if result['job_id'] == self.job_id:
+                index_to_delete = index
+
+        del expected_result[index_to_delete]
+
+        self.assertEqual(expected_result, jobs_list)
+    
+    def test_get_job_returns_results_in_ascending_order(self):
+        import time
+        self._create_job_information_for_monitor(self.project_name, self.monitor_name, self._data_to_set())
+
+        self.controller.params = {
+            'project_name': self.project_name,
+            'monitor_name': self.monitor_name,
+            'sort': 'asc'
+        }
+
+        jobs_list = self.controller.index().as_json()
+
+        expected_result = self._expected_data()
+        expected_result.reverse()
+
+        self.assertEqual(expected_result, jobs_list)
 
     def _create_job_information_for_monitor(self, project_name, monitor_name, job_data):
         for job_listing in job_data:
