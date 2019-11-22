@@ -54,8 +54,11 @@ const BaseActions = {
       const fetchResponse = await fetch(fullURL, { headers: { Authorization: `Basic ${userpass}` } });
 
       const userResponse = await fetchResponse.json();
-      Cookies.set('atlas_access_token', userResponse.access_token);
-      Cookies.set('atlas_refresh_token', userResponse.refresh_token);
+
+      if (fetchResponse.status === 200) {
+        Cookies.set('atlas_access_token', userResponse.access_token);
+        Cookies.set('atlas_refresh_token', userResponse.refresh_token);
+      }
       return fetchResponse;
     } catch (error) {
       return error;

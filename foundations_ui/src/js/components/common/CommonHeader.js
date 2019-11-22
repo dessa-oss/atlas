@@ -41,7 +41,7 @@ class CommonHeader extends React.Component {
     let username = 'Atlas CE';
 
     if (atlasAccessToken) {
-      if (typeof (atlasAccessToken) !== 'undefined') {
+      if (atlasAccessToken !== 'undefined') {
         const decodeToken = jwt(atlasAccessToken);
         username = decodeToken.preferred_username;
       }
