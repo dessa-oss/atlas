@@ -17,12 +17,12 @@ class MinMaxChecker(object):
         self._columns_excluded_for_type_mismatch = Checker.find_invalid_attributes(self._allowed_types, self._reference_column_types)
         self._columns_to_bounds_temp = {}
 
-    def configure(self, columns, lower_bound=None, upper_bound=None):
+    def configure(self, attributes, lower_bound=None, upper_bound=None):
         error_dictionary = {}
         if lower_bound is None and upper_bound is None:
             raise ValueError('expected either lower and/or upper bound')
 
-        for attribute in columns:
+        for attribute in attributes:
             if attribute in self._columns_excluded_for_type_mismatch:
                 error_dictionary[attribute] = self._reference_column_types[attribute]
             else:
@@ -41,12 +41,12 @@ class MinMaxChecker(object):
     def info(self):
         return self.columns_to_bounds
 
-    def exclude(self, columns=None):
-        if columns == 'all':
+    def exclude(self, attributes=None):
+        if attributes == 'all':
             self.columns_to_bounds = {}
             return
 
-        for attribute in columns:
+        for attribute in attributes:
             try:
                 del self.columns_to_bounds[attribute]
             except:
@@ -57,12 +57,12 @@ class MinMaxChecker(object):
         for attr in columns:
             self._columns_to_bounds_temp[attr] = self.columns_to_bounds.get(attr, None)
         
-        self.exclude(columns=columns)
+        self.exclude(attributes=columns)
 
     def _undo_schema_failure_temp_exclusion(self):
         for column, settings in self._columns_to_bounds_temp.items():
             if settings != None:
-                self.configure(columns=[column], lower_bound=settings['lower_bound'], upper_bound=settings['upper_bound'])
+                self.configure(attributes=[column], lower_bound=settings['lower_bound'], upper_bound=settings['upper_bound'])
         self._columns_to_bounds_temp = {}
 
     def validate(self, dataframe_to_validate):
