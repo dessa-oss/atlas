@@ -19,7 +19,7 @@ try:
     root_logger.addHandler(file_handler)
 
     app = app_manager.app()
-    app.run(host='127.0.0.1', port=sys.argv[1])
+    app.run(host='127.0.0.1', port=sys.argv[1], debug=True)
 
 except Exception as e:
     print(e)

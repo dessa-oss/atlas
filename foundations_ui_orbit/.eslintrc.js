@@ -13,9 +13,12 @@ module.exports = {
   plugins: [
     "react-hooks"
   ],
+  parserOptions: {
+    "ecmaFeatures": {
+        "jsx": true
+    }
+  },
   rules: {
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
     "class-methods-use-this": 0,
     "no-unused-vars": 1,
     "arrow-body-style": 0,
