@@ -102,7 +102,7 @@ class DataContract(object):
 
         self.special_value_test.exclude(attributes=attributes)# TODO change this to columns for consistency
         self.distribution_test.exclude(attributes=attributes)# TODO change this to columns for consistency
-        self.min_max_test.exclude(columns=attributes)
+        self.min_max_test.exclude(attributes=attributes)
 
     def _exclude_from_current_validation(self, attributes):
         if type(attributes) == str:
