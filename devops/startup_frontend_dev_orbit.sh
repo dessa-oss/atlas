@@ -2,7 +2,7 @@
 
 source dev_env.sh
 export REDIS_URL=redis://localhost:6379
-export FOUNDATIONS=~/.foundations
+export FOUNDATIONS=${FOUNDATIONS_HOME:-~/.foundations}
 
 export ATLAS_PORT=37722
 export ORBIT_PORT=37222
@@ -30,6 +30,8 @@ python devops/startup_atlas_api.py ${ATLAS_PORT} &
 
 echo "Running Orbit REST API on port ${ORBIT_PORT}"
 python devops/startup_orbit_api.py ${ORBIT_PORT} &
+
+echo "Attempting to run scheduler with foundations home set to $FOUNDATIONS"
 
 echo "Running local docker scheduler on port ${SCHEDULER_PORT}"
 cd ../local-docker-scheduler && python -m local_docker_scheduler -p ${SCHEDULER_PORT} > $FOUNDATIONS/logs/scheduler.log 2>&1 &
