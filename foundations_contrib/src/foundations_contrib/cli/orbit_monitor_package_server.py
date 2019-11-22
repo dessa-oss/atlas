@@ -169,6 +169,7 @@ def _get_monitor_gpu_spec(foundations_context):
 
 def _get_monitor_job_spec(project_name, monitor_name, username, job_config, config, foundations_context):
     working_dir_root_path, job_mount_path, job_results_root_path, container_config_root_path = _get_volume_mounts_for_spec(config, project_name, monitor_name)
+    import time
 
     _orbit_spec = {
         'volumes':
@@ -202,7 +203,8 @@ def _get_monitor_job_spec(project_name, monitor_name, username, job_config, conf
                     "MONITOR_NAME": monitor_name,
                     "FOUNDATIONS_JOB_ID": f'{project_name}-{monitor_name}',
                     "PYTHONPATH": "/job/",
-                    "FOUNDATIONS_HOME": "/root/.foundations/"
+                    "FOUNDATIONS_HOME": "/root/.foundations/",
+                    "TZ": time.tzname[0]
                 },
             "network": "foundations-orbit"
     }
@@ -219,7 +221,7 @@ def _get_monitor_job_spec(project_name, monitor_name, username, job_config, conf
         _orbit_spec['runtime'] = 'runc'
 
     for override_key in ['image', 'working_dir', 'entrypoint']:
-        if override_key in worker_container_overrides:
+        if override_key in worker_container_overrides: 
             _orbit_spec[override_key] = worker_container_overrides[override_key]
 
     for override_key in ['environment', 'volumes']:
