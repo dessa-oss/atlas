@@ -274,7 +274,7 @@ pipeline{
             steps {
                 container("python3") {
                     sh "tar -czvf coverage.tar.gz coverage_results"
-                    archiveArtifacts artifacts: coverage.tar, fingerprint: true
+                    archiveArtifacts artifacts: coverage.tar.gz, fingerprint: true
                 }
             }
         }
