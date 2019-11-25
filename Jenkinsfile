@@ -206,7 +206,7 @@ pipeline{
                             steps {
                                 container("python3-3") {
                                     ws("${WORKSPACE}/foundations_rest_api/src") {
-                                        sh 'pip install coverage'
+                                        sh 'pip install coverage fakeredis==0.15.0'
                                         sh "python -Wi -m unittest -f -v acceptance"
                                     }
                                 }
