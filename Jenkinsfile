@@ -36,9 +36,9 @@ pipeline{
                         } 
                     }
                 }
-                stage('Install CI Requirements') {
+                stage('Install CI Requirements (container 1)') {
                     stages {
-                        stage('Install CI Requirements') {
+                        stage('Install CI Requirements (container 1)') {
                             steps {
                                 container("python3-1") {
                                     sh "./ci_install_requirements.sh"
@@ -47,9 +47,9 @@ pipeline{
                         } 
                     }
                 }
-                stage('Install CI Requirements') {
+                stage('Install CI Requirements (container 2)') {
                     stages {
-                        stage('Install CI Requirements') {
+                        stage('Install CI Requirements (container 2)') {
                             steps {
                                 container("python3-2") {
                                     sh "./ci_install_requirements.sh"
@@ -58,9 +58,9 @@ pipeline{
                         } 
                     }
                 }
-                stage('Install CI Requirements') {
+                stage('Install CI Requirements (container 3)') {
                     stages {
-                        stage('Install CI Requirements') {
+                        stage('Install CI Requirements (container 3)') {
                             steps {
                                 container("python3-3") {
                                     sh "./ci_install_requirements.sh"
@@ -69,9 +69,9 @@ pipeline{
                         } 
                     }
                 }
-                stage('Install CI Requirements') {
+                stage('Install CI Requirements (container 4)') {
                     stages {
-                        stage('Install CI Requirements') {
+                        stage('Install CI Requirements (container 4)') {
                             steps {
                                 container("python3-4") {
                                     sh "./ci_install_requirements.sh"
