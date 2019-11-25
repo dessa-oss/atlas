@@ -15,21 +15,75 @@ pipeline{
                 }
             }
         }
-        stage('Get Foundations Scheduler') {
+        stage('Get K8S Scheduler') {
             steps {
                 container("python3") {
                     sh 'python -m pip install -U foundations-scheduler'
                 }
             }
         }
-        stage('Foundations Install Test Requirements') {
-            steps {
-                container("python3") {
-                    sh "./ci_install_requirements.sh"
+        stage('Install Test Requirements') {
+            failFast true
+            parallel {
+                stage('Install CI Requirements') {
+                    stages {
+                        stage('Install CI Requirements') {
+                            steps {
+                                container("python3") {
+                                    sh "./ci_install_requirements.sh"
+                                }
+                            }
+                        } 
+                    }
+                }
+                stage('Install CI Requirements') {
+                    stages {
+                        stage('Install CI Requirements') {
+                            steps {
+                                container("python3-1") {
+                                    sh "./ci_install_requirements.sh"
+                                }
+                            }
+                        } 
+                    }
+                }
+                stage('Install CI Requirements') {
+                    stages {
+                        stage('Install CI Requirements') {
+                            steps {
+                                container("python3-2") {
+                                    sh "./ci_install_requirements.sh"
+                                }
+                            }
+                        } 
+                    }
+                }
+                stage('Install CI Requirements') {
+                    stages {
+                        stage('Install CI Requirements') {
+                            steps {
+                                container("python3-3") {
+                                    sh "./ci_install_requirements.sh"
+                                }
+                            }
+                        } 
+                    }
+                }
+                stage('Install CI Requirements') {
+                    stages {
+                        stage('Install CI Requirements') {
+                            steps {
+                                container("python3-4") {
+                                    sh "./ci_install_requirements.sh"
+                                }
+                            }
+                        } 
+                    }
                 }
             }
+            
         }
-        stage('Build Foundations Wheels') {
+        stage('Build Wheels') {
             steps {
                 container("python3") {
                     sh "./build_dist.sh"
@@ -99,7 +153,6 @@ pipeline{
                             steps {
                                 container("python3-1") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh 'pip install coverage'
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                 }
@@ -113,7 +166,6 @@ pipeline{
                             steps {
                                 container("python3-2") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh 'pip install coverage'
                                         sh 'python -m pip install -U foundations-scheduler'
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
@@ -128,7 +180,6 @@ pipeline{
                             steps {
                                 container("python3-3") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh 'pip install coverage'
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                 }
@@ -142,7 +193,6 @@ pipeline{
                             steps {
                                 container("python3-4") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh 'pip install coverage'
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                 }
@@ -152,16 +202,15 @@ pipeline{
                 }
             }
         }
-        stage('Python3 All Foundations Acceptance Tests'){
+        stage('Acceptance Tests'){
             failFast true
             parallel{
-                stage('Parallel Foundations Acceptance Tests') {
+                stage('F9S Acceptance Tests') {
                     stages {
-                        stage('Python3 Foundations Acceptance Tests'){
+                        stage('F9S Acceptance Tests'){
                             steps{
                                 container("python3") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh 'pip install coverage'
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'export LOCAL_DOCKER_SCHEDULER_HOST=$ATLAS_LOCAL_SCHEDULER && export REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && python -Wi -m unittest -f -v acceptance'
                                     }
@@ -170,13 +219,12 @@ pipeline{
                         }
                     }
                 }
-                stage('Parallel Foundations Acceptance Tests for Stageless Deploys') {
+                stage('Acceptance Tests for Stageless Deploys') {
                     stages{
-                        stage('Parallel Foundations Acceptance Tests for Stageless Deploys'){
+                        stage('Acceptance Tests for Stageless Deploys'){
                             steps {
                                 container("python3-1") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh 'pip install coverage'
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'python -Wi -m unittest -f -v stageless_acceptance'
                                     }
@@ -185,13 +233,12 @@ pipeline{
                         }
                     }
                 }
-                stage('Parallel Foundations Scheduler Acceptance Tests for Remote Deploys') {
+                stage('Scheduler Acceptance Tests for Remote Deploys') {
                     stages{
-                        stage('Python3 Foundations Scheduler Acceptance Tests for Remote Deploys') {
+                        stage('Scheduler Acceptance Tests for Remote Deploys') {
                             steps {
                                 container("python3-2") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh 'pip install coverage'
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v scheduler_acceptance'
                                     }
@@ -200,13 +247,12 @@ pipeline{
                         }
                     }
                 }
-                stage('Parallel Foundations REST API Acceptance Tests') {
+                stage('REST API Acceptance Tests') {
                     stages{
-                        stage('Python3 Foundations REST API Acceptance Tests') {
+                        stage('Atlas REST API Acceptance Tests') {
                             steps {
                                 container("python3-3") {
                                     ws("${WORKSPACE}/foundations_rest_api/src") {
-                                        sh 'pip install coverage fakeredis==0.15.0'
                                         sh "python -Wi -m unittest -f -v acceptance"
                                     }
                                 }
@@ -214,9 +260,9 @@ pipeline{
                         }
                     }
                 }
-                stage('Parallel Foundations Orbit Acceptance Tests') {
+                stage('Orbit Acceptance Tests') {
                     stages{
-                        stage('Python3 Foundations Orbit Acceptance Tests') {
+                        stage('Orbit Acceptance Tests') {
                             steps {
                                 container("python3-4") {
                                     ws("${WORKSPACE}/testing") {
@@ -230,7 +276,7 @@ pipeline{
                 }
             }
         }
-        stage('Install dependencies for Foundations UI (Atlas)') {
+        stage('Install dependencies for Atlas UI') {
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
@@ -239,7 +285,7 @@ pipeline{
                 }
             }
         }
-        stage('Run Front End Unit Tests (Atlas)') {
+        stage('Run Atlas Front End Unit Tests') {
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
@@ -248,7 +294,7 @@ pipeline{
                 }
             }
         }
-        stage('Check for linting (Atlas)') {
+        stage('Check for Atlas linting ') {
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
@@ -257,7 +303,7 @@ pipeline{
                 }
             }
         }
-        stage('Install dependencies for Foundations UI (Orbit)') {
+        stage('Install dependencies for Orbit UI') {
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui_orbit/") {
@@ -349,19 +395,19 @@ pipeline{
             influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
         }
         failure {
-            script {
-                def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
-                def attachments = [
-                    [
-                        pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
-                        text: output_logs,
-                        fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
-                        color: '#FF0000'
-                    ]
-                ]
+            // script {
+            //     def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
+            //     def attachments = [
+            //         [
+            //             pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+            //             text: output_logs,
+            //             fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+            //             color: '#FF0000'
+            //         ]
+            //     ]
 
-                slackSend(channel: '#f9s-builds', attachments: attachments)
-            }
+            //     slackSend(channel: '#f9s-builds', attachments: attachments)
+            // }
         }
         success {
             slackSend color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.'
