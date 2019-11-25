@@ -11,6 +11,11 @@ from foundations import log_param
 
 class TestLogParam(Spec):
 
+    @set_up
+    def set_up(self):
+        from foundations_contrib.global_state import redis_connection
+        redis_connection.flushall()
+
     @tear_down
     def tear_down(self):
         self._set_job_id(None)
@@ -72,6 +77,7 @@ class TestLogParam(Spec):
             flattened_parameters_data.append({'argument': {'name': parameter_name, 'value': {'type': 'dynamic', 'name': parameter_name}}, 'stage_uuid': 'stageless'})
 
         logged_parameters = redis_connection.get('jobs:{}:input_parameters'.format(job_id))
+
         self.assertEqual(flattened_parameters_data, loads(logged_parameters))
 
     def _set_job_id(self, job_id):
