@@ -99,6 +99,7 @@ pipeline{
                             steps {
                                 container("python3-1") {
                                     ws("${WORKSPACE}/testing") {
+                                        sh "./ci_install_requirements.sh"
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                 }
@@ -112,6 +113,7 @@ pipeline{
                             steps {
                                 container("python3-2") {
                                     ws("${WORKSPACE}/testing") {
+                                        sh "./ci_install_requirements.sh"
                                         sh 'python -m pip install -U foundations-scheduler'
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
@@ -126,6 +128,7 @@ pipeline{
                             steps {
                                 container("python3-3") {
                                     ws("${WORKSPACE}/testing") {
+                                        sh "./ci_install_requirements.sh"
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                 }
@@ -139,6 +142,7 @@ pipeline{
                             steps {
                                 container("python3-4") {
                                     ws("${WORKSPACE}/testing") {
+                                        sh "./ci_install_requirements.sh"
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                 }
