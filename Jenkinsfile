@@ -279,7 +279,7 @@ pipeline{
             steps {
                 container("python3") {
                     sh "tar -czvf coverage.tar.gz coverage_results"
-                    archiveArtifacts artifacts: coverage.tar.gz
+                    archiveArtifacts artifacts: 'coverage.tar.gz'
                 }
             }
         }
