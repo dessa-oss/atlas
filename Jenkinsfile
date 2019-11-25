@@ -142,6 +142,7 @@ pipeline{
                             steps {
                                 container("python3-4") {
                                     ws("${WORKSPACE}/testing") {
+                                        sh 'pip install coverage'
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                 }
@@ -160,6 +161,7 @@ pipeline{
                             steps{
                                 container("python3") {
                                     ws("${WORKSPACE}/testing") {
+                                        sh 'pip install coverage'
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'export LOCAL_DOCKER_SCHEDULER_HOST=$ATLAS_LOCAL_SCHEDULER && export REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && python -Wi -m unittest -f -v acceptance'
                                     }
@@ -174,6 +176,7 @@ pipeline{
                             steps {
                                 container("python3-1") {
                                     ws("${WORKSPACE}/testing") {
+                                        sh 'pip install coverage'
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'python -Wi -m unittest -f -v stageless_acceptance'
                                     }
@@ -188,6 +191,7 @@ pipeline{
                             steps {
                                 container("python3-2") {
                                     ws("${WORKSPACE}/testing") {
+                                        sh 'pip install coverage'
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v scheduler_acceptance'
                                     }
@@ -202,6 +206,7 @@ pipeline{
                             steps {
                                 container("python3-3") {
                                     ws("${WORKSPACE}/foundations_rest_api/src") {
+                                        sh 'pip install coverage'
                                         sh "python -Wi -m unittest -f -v acceptance"
                                     }
                                 }
@@ -274,7 +279,7 @@ pipeline{
             steps {
                 container("python3") {
                     sh "tar -czvf coverage.tar.gz coverage_results"
-                    archiveArtifacts artifacts: coverage.tar, fingerprint: true
+                    archiveArtifacts artifacts: coverage.tar.gz, fingerprint: true
                 }
             }
         }
