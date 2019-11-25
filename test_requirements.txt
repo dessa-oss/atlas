@@ -2,3 +2,4 @@
 coveralls
 xenon
 wily
+coverage

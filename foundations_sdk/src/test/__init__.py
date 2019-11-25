@@ -5,6 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+import coverage
+
+cov = coverage.Coverage()
+cov.start()
+
 from test.helpers import *
 from test.job_parameters import *
 from test.parameters import *
@@ -26,3 +31,8 @@ from test.test_track_production_metrics import TestTrackProductionMetrics
 from test.artifacts import *
 from test.local_run import *
 from test.submission import *
+
+cov.stop()
+cov.save()
+
+cov.html_report(directory='../../coverage_results/foundations_sdk')
