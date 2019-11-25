@@ -1,3 +1,4 @@
+[![Build Status](https://jenkins.shehanigans.net/buildStatus/icon?job=foundations%2Fel-local-docker-scheduler-plugin)](https://jenkins.shehanigans.net/job/foundations/job/el-local-docker-scheduler-plugin/)
 # Foundations
 *Foundations* is a Python library to manage and improve machine learning workflow. It easily integrates with machine learning workflow written in Python.
 *Foundations* only support Python 3 and above versions.
