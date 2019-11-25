@@ -34,7 +34,7 @@ class TestDataContract(Spec):
             st.floats(min_value=-100, max_value=100, allow_nan=False),
         )
     )
-    @settings(max_examples=5)
+    @settings(max_examples=5, deadline=None)
     def test_validate_method_creates_a_project_in_redis(self, df: DataFrame):
         assume(not df.empty)
         data_contract = DataContract("some_contract", df)
