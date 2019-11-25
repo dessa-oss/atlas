@@ -6,7 +6,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_rest_api.utils.api_resource import api_resource
-from foundations_contrib.global_state import redis_connection
 from foundations_core_rest_api_components.response import Response
 from foundations_core_rest_api_components.lazy_result import LazyResult
 
@@ -14,6 +13,7 @@ from foundations_core_rest_api_components.lazy_result import LazyResult
 class JobTagsController(object):
 
     def __init__(self):
+        from foundations_contrib.global_state import redis_connection
         self._redis = redis_connection
 
     def post(self):

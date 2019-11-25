@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+import fakeredis
 import unittest
 from unittest import skip
 from mock import patch
@@ -30,6 +31,7 @@ class TestProjectV2(Spec):
     @set_up
     def project_set_up(self):
         self._find_project = self.patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
+        self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
 
     @tear_down
     def project_tear_down(self):
@@ -78,16 +80,12 @@ class TestProjectV2(Spec):
         self.assertEqual('my favourite project', lazy_result.evaluate().name)
 
     def test_find_looks_for_correct_project(self):
-        from foundations_contrib.global_state import redis_connection
-
         Project.find_by(name='my favourite project').evaluate()
-        self._find_project.assert_called_with(redis_connection, 'my favourite project')
+        self._find_project.assert_called_with(self._redis, 'my favourite project')
 
     def test_find_looks_for_correct_project_different_project(self):
-        from foundations_contrib.global_state import redis_connection
-
         Project.find_by(name='my least favourite project').evaluate()
-        self._find_project.assert_called_with(redis_connection, 'my least favourite project')
+        self._find_project.assert_called_with(self._redis, 'my least favourite project')
 
     def test_find_returns_none_when_project_does_not_exist(self):
         self._find_project.return_value = None
