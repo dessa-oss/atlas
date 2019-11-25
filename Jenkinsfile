@@ -267,6 +267,14 @@ pipeline{
                 }
             }
         }
+        stage('Upload Coverage results to Jenkins') {
+            steps {
+                container("python3") {
+                    sh "tar -czvf coverage.tar.gz coverage_results"
+                    archiveArtifacts artifacts: coverage.tar, fingerprint: true
+                }
+            }
+        }
         stage('Upload Wheels to Releases') {
             steps {
                 container("python3"){
