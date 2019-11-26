@@ -111,3 +111,4 @@ test_data_contract_with_monitor.pkl
 
 .coverage
 coverage_results/
+htmlcov/
