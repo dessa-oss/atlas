@@ -16,7 +16,27 @@ export TZ=EST
 
 for module_directory in $(echo foundations_*) $(echo *_utils)
 do
-    get_coverage_report_for_module "${cwd}/${module_directory}/src" ${module_directory}
+    if [[ "$module_directory" == "foundations_sdk" ]]; then
+        real_module_name="foundations"
+    fi
+
+    if [[ "$module_directory" == "foundations_orbit_sdk" ]]; then
+        real_module_name="foundations_orbit"
+    fi
+
+    if [[ "$module_directory" == "ssh_utils" ]]; then
+        real_module_name="foundations_ssh"
+    fi
+
+    if [[ "$module_directory" == "gcp_utils" ]]; then
+        real_module_name="foundations_gcp"
+    fi
+
+    if [[ "$module_directory" == "aws_utils" ]]; then
+        real_module_name="foundations_aws"
+    fi
+
+    get_coverage_report_for_module "${cwd}/${module_directory}/src" ${real_module_name}
 done
 
 cd ${cwd}/coverage_results && \
