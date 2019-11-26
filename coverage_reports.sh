@@ -16,6 +16,8 @@ export TZ=EST
 
 for module_directory in $(echo foundations_*) $(echo *_utils)
 do
+    real_module_name=$module_directory
+
     if [[ "$module_directory" == "foundations_sdk" ]]; then
         real_module_name="foundations"
     fi
