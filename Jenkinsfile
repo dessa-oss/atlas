@@ -97,6 +97,13 @@ pipeline{
                 }
             }
         }
+        stage('Run Coverage Tests') {
+            steps {
+                container("python3") {
+                    sh "./coverage_reports.sh"
+                }
+            }
+        }
         stage('Build Images and Push to Testing Env') {
             failFast true
             parallel{
