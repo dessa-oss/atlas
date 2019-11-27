@@ -4,11 +4,6 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
-import coverage
-
-cov = coverage.Coverage()
-cov.start()
-
 import os
 
 os.environ['TZ'] = 'EST'
@@ -18,8 +13,3 @@ from test.test_lazy_result import TestLazyResult
 from test.test_response import TestResponse
 from test.utils import *
 from test.v1 import *
-
-cov.stop()
-cov.save()
-
-cov.html_report(directory='../../coverage_results/foundations_core_rest_api_components')

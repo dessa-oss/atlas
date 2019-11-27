@@ -4,10 +4,6 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
-import coverage
-
-cov = coverage.Coverage()
-cov.start()
 
 import os
 
@@ -18,8 +14,3 @@ from test.utils import *
 from test.v1 import *
 from test.v2beta import *
 from test.filters import *
-
-cov.stop()
-cov.save()
-
-cov.html_report(directory='../../coverage_results/foundations_rest_api')
