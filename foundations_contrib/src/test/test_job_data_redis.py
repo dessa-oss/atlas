@@ -35,7 +35,7 @@ class TestJobDataRedis(Spec):
 
     def _load_data_new_job(self, job_id, data):
         set_parameter_name = ['project', 'start_time',
-                              'completed_time', 'user', 'state', 'parameters', 'input_parameters']
+                              'completed_time', 'creation_time', 'user', 'state', 'parameters', 'input_parameters']
         rpush_parameter_name = ['metrics']
         hmset_parameter_name = ['tags']
 
@@ -62,6 +62,7 @@ class TestJobDataRedis(Spec):
             'state': 'dead',
             'start_time': '456',
             'completed_time': '123',
+            'creation_time': '789',
             'tags': {}
         }
         job_id = 'the boy who lived'
@@ -82,6 +83,7 @@ class TestJobDataRedis(Spec):
             'status': 'dead',
             'start_time': float('456'),
             'completed_time': float('123'),
+            'creation_time': float('789'),
             'tags': {}
         }
         self.assertDictEqual(expected_result, result.get())
@@ -96,6 +98,7 @@ class TestJobDataRedis(Spec):
             'state': 'dead',
             'start_time': '456',
             'completed_time': '123',
+            'creation_time': '789',
             'tags': {
                 'this_tag': 123,
                 'that_tag': 'asdf'
@@ -119,6 +122,7 @@ class TestJobDataRedis(Spec):
             'status': 'dead',
             'start_time': float('456'),
             'completed_time': float('123'),
+            'creation_time': float('789'),
             'tags': {
                 'this_tag': '123',
                 'that_tag': 'asdf'
@@ -146,6 +150,7 @@ class TestJobDataRedis(Spec):
             'status': None,
             'start_time': None,
             'completed_time': None,
+            'creation_time': None,
             'tags': {}
         }
         self.assertDictEqual(expected_result, result.get())
@@ -160,6 +165,7 @@ class TestJobDataRedis(Spec):
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123',
+            'creation_time': '789',
             'tags': {
                 'bep': 'bip'
             }
@@ -183,6 +189,7 @@ class TestJobDataRedis(Spec):
             'status': 'completed',
             'start_time': float('1231003123'),
             'completed_time': float('123'),
+            'creation_time': float('789'),
             'tags': {
                 'bep': 'bip'
             }
@@ -201,6 +208,7 @@ class TestJobDataRedis(Spec):
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123',
+            'creation_time': '789',
             'tags': {
                 'bep': 'bip'
             }
@@ -220,6 +228,7 @@ class TestJobDataRedis(Spec):
             'status': 'completed',
             'start_time': float('1231003123'),
             'completed_time': float('123'),
+            'creation_time': float('789'),
             'tags': {
                 'bep': 'bip'
             }
@@ -241,6 +250,7 @@ class TestJobDataRedis(Spec):
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123',
+            'creation_time': '789',
             'tags': {
                 'bep': 'bip'
             }
@@ -260,6 +270,7 @@ class TestJobDataRedis(Spec):
             'status': 'completed',
             'start_time': float('1231003123'),
             'completed_time': float('123'),
+            'creation_time': float('789'),
             'tags': {
                 'bep': 'bip'
             }
@@ -281,6 +292,7 @@ class TestJobDataRedis(Spec):
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123',
+            'creation_time': '789',
             'tags': {
                 'bep': 'bip'
             }
@@ -303,6 +315,7 @@ class TestJobDataRedis(Spec):
             'status': 'completed',
             'start_time': float('1231003123'),
             'completed_time': float('123'),
+            'creation_time': float('789'),
             'tags': {
                 'bep': 'bip'
             }
@@ -318,6 +331,7 @@ class TestJobDataRedis(Spec):
             'status': 'completed',
             'start_time': float('1231003123'),
             'completed_time': float('123'),
+            'creation_time': float('789'),
             'tags': {
                 'bep': 'bip'
             }
@@ -336,7 +350,8 @@ class TestJobDataRedis(Spec):
             'parameters': json.dumps({'harry': 'potter'}),
             'state': 'dead',
             'start_time': '456',
-            'completed_time': '123'
+            'completed_time': '123',
+            'creation_time': '789'
         }
         job_id = 'the boy who lived'
         redis_pipe = RedisPipelineWrapper(
@@ -356,6 +371,7 @@ class TestJobDataRedis(Spec):
             'status': 'dead',
             'start_time': float('456'),
             'completed_time': float('123'),
+            'creation_time': float('789'),
             'tags': {}
         }
         self.assertDictEqual(expected_result, result.get())
