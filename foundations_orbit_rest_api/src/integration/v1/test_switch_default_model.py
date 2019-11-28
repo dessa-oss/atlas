@@ -12,6 +12,7 @@ from foundations_orbit_rest_api.global_state import app_manager
 from os.path import abspath
 from faker import Faker
 
+@skip('Uses K8s')
 class TestSwitchDefaultModel(Spec):
     _contrib_source_root = abspath('../../foundations_contrib/src')
     client = app_manager.app().test_client()
