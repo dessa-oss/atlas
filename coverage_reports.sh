@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function get_coverage_report_for_module {
     module_directory_to_add="$1"
     module_directory="$2"

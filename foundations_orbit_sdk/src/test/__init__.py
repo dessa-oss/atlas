@@ -13,3 +13,7 @@ from .test_data_contract_options import TestDataContractOptions
 from .test_report_formatter import TestReportFormatter
 from .test_data_contract_summary import TestDataContractSummary
 from .test_data_contract_categorizer import TestDataContractCategorizer
+<<<<<<< HEAD
+=======
+
+>>>>>>> e0f245642afb17bbc477a6533074348677b2f30b

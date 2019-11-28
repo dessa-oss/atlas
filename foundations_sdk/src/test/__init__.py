@@ -5,6 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> e0f245642afb17bbc477a6533074348677b2f30b
 from test.helpers import *
 from test.job_parameters import *
 from test.parameters import *
@@ -25,4 +29,8 @@ from test.test_get_queued_jobs import TestGetQueuedJobs
 from test.test_track_production_metrics import TestTrackProductionMetrics
 from test.artifacts import *
 from test.local_run import *
+<<<<<<< HEAD
 from test.submission import *
+=======
+from test.submission import *
+>>>>>>> e0f245642afb17bbc477a6533074348677b2f30b

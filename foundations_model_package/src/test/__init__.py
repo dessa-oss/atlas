@@ -14,4 +14,8 @@ from test.test_importlib_wrapper import TestImportlibWrapper
 from test.test_recalibrate_deployer import TestRecalibrateDeployer
 from test.test_recalibrate_driver import TestRecalibrateDriver
 
+<<<<<<< HEAD
 from .resource_factories import *
+=======
+from .resource_factories import *
+>>>>>>> e0f245642afb17bbc477a6533074348677b2f30b
