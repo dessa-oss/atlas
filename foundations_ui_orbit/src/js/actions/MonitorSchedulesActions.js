@@ -39,6 +39,7 @@ const MonitorSchedulesActions = {
 
   getMonitorJobs: (projectName, monitorName, isAscending) => {
     const sortkind = (isAscending ? "asc" : "desc");
+    console.log("Before request: ", isAscending, sortkind);
     const url = `projects/${projectName}/monitors/${monitorName}/jobs?sort=${sortkind}`;
 
     return get(url)
@@ -59,8 +60,8 @@ const MonitorSchedulesActions = {
             key={key}
             jobID={job.job_id}
             status={job.status}
-            launched={job.start_time}
-            duration={job.completed_time}
+            completed={job.completed_time}
+            started={job.start_time}
             onSelect={onSelectRow}
             onClickLogs={toggleLogsModal}
           />
