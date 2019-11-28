@@ -5,11 +5,6 @@ Proprietary and confidential
 Written by Katherine Bancroft <k.bancroft@dessa.com>, 11 2018
 """
 
-import coverage
-
-cov = coverage.Coverage()
-cov.start()
-
 from test.helpers import *
 from test.models import *
 from test.job_bundling import *
@@ -68,8 +63,3 @@ from test.config import *
 from test.notifiers import *
 from test.jobs import *
 from test.utils import *
-
-cov.stop()
-cov.save()
-
-cov.html_report(directory='../../coverage_results/foundations_contrib')

@@ -4,10 +4,6 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
-import coverage
-
-cov = coverage.Coverage()
-cov.start()
 
 from test.test_job import TestJob
 from test.test_manifest_validator import TestManifestValidator
@@ -19,8 +15,3 @@ from test.test_recalibrate_deployer import TestRecalibrateDeployer
 from test.test_recalibrate_driver import TestRecalibrateDriver
 
 from .resource_factories import *
-
-cov.stop()
-cov.save()
-
-cov.html_report(directory='../../coverage_results/foundations_model_package')

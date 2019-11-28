@@ -4,11 +4,6 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Katherine Bancroft <k.bancroft@dessa.com>, 11 2018
 """
-import coverage
-
-cov = coverage.Coverage()
-cov.start()
-
 from test.test_provenance import TestProvenance
 from test.test_argument import TestArgument
 from test.test_cache_name_generator import TestCacheNameGenerator
@@ -43,9 +38,3 @@ if sys.version_info[0] >= 3:
 else:
     from test.test_staged_module_py2_loader import TestStagedModulePy2Loader
     from test.test_staged_meta_py2_finder import TestStagedMetaPy2Finder
-
-
-cov.stop()
-cov.save()
-
-cov.html_report(directory='../../coverage_results/foundations_internal')
