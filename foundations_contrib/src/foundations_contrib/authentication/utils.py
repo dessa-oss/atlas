@@ -33,7 +33,7 @@ def get_token_from_header() -> str:
         raise AuthError(
             {
                 "code": "invalid_header",
-                "description": "Authorization header must start with" " Bearer",
+                "description": "Authorization header must start with Bearer",
             },
             401,
         )

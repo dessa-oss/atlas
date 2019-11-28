@@ -80,7 +80,7 @@ class AuthenticationController(Resource):
     def _logout(self) -> Response:
         """Logout of Atlas/Orbit.
 
-        :return: The login page of the authentication server.
+        :return: Just a successful response, no content.
         :rtype: Response
 
         """
@@ -90,10 +90,10 @@ class AuthenticationController(Resource):
     def _verify(self) -> Response:
         """Verify a JSON web token.
 
-        verify_token will raise a 401 error if verification fails. None otherwise.
+        verify_token will raise a 401 error if verification fails. Token information otherwise.
         
-        :return: None
-        :rtype: None
+        :return: A dictionary containing token information.
+        :rtype: dict
 
         """
         token = get_token_from_header()
