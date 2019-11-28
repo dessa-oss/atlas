@@ -40,6 +40,7 @@ class MonitorJobsTable extends Component {
     const { reload, toggleLogsModal, monitorResult } = this.props;
 
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
+    console.log("Before getting", isAscending);
     const result = await MonitorSchedulesActions.getMonitorJobs(projectName, monitorName, isAscending);
     const rows = MonitorSchedulesActions.getMonitorJobRows(result, this.onSelectRow, toggleLogsModal);
     this.setState({ rows: rows });
@@ -70,9 +71,7 @@ class MonitorJobsTable extends Component {
 
   onClickSortByLaunched() {
     let { isAscending } = this.state;
-    isAscending = !isAscending;
-    this.setState({ isAscending: isAscending });
-    this.reload();
+    this.setState({ isAscending: !isAscending }, this.reload);
   }
 
   render() {
@@ -90,27 +89,14 @@ class MonitorJobsTable extends Component {
       ));
     }
 
-    let arrowUp = null;
-    let arrowDown = null;
-
-    arrowUp = (
+    const arrow = (
       <i
         onKeyPress={this.onClickSortByLaunched}
         tabIndex={0}
         role="button"
         onClick={this.onClickSortByLaunched}
-        className={(isAscending === null || isAscending)
-          ? "i--icon-arrow-up" : "i--icon-arrow-up-unfilled"}
-      />
-    );
-    arrowDown = (
-      <i
-        onKeyPress={this.onClickSortByLaunched}
-        tabIndex={0}
-        role="button"
-        onClick={this.onClickSortByLaunched}
-        className={(isAscending === null || !isAscending)
-          ? "i--icon-arrow-down" : "i--icon-arrow-down-unfilled"}
+        className={isAscending
+          ? "i--icon-arrow-up" : "i--icon-arrow-down"}
       />
     );
 
@@ -128,9 +114,8 @@ class MonitorJobsTable extends Component {
               <div className="monitor-job-name-cell">Job ID</div>
               <div className="monitor-job-status-cell">Status</div>
               <div className="monitor-job-launched-cell">
-                Launched
-                {arrowUp}
-                {arrowDown}
+                Completed
+                {arrow}
               </div>
               <div className="monitor-job-duration-cell">Duration</div>
             </div>
