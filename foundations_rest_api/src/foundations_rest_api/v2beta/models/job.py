@@ -18,6 +18,7 @@ class Job(PropertyModel):
     status = PropertyModel.define_property()
     start_time = PropertyModel.define_property()
     completed_time = PropertyModel.define_property()
+    creation_time = PropertyModel.define_property()
     duration = PropertyModel.define_property()
     tags = PropertyModel.define_property()
     artifacts = PropertyModel.define_property()
