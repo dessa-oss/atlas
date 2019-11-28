@@ -6,7 +6,6 @@ Written by Susan Davis <s.davis@dessa.com>, 10 2019
 """
 
 from .test_project_listing_endpoint import TestProjectListingEndpoint
-from .test_model_listing_endpoint import TestModelListingEndpoint
 from .test_retrieve_evaluation_metrics_endpoint import TestRetrieveEvaluationMetricsEndpoint
 from .test_retrieve_validation_report_listing_endpoint import TestRetrieveValidationReportListingEndpoint
 from .test_retrieve_validation_report_endpoint import TestRetrieveValidationReportEndpoint
