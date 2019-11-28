@@ -28,9 +28,14 @@ class Monitor(PropertyModel):
             serialized_job_ids = redis_connection.smembers(f'projects:{project_name}:monitors:{monitor_name}:jobs')
             job_ids = [serialized_job_id.decode() for serialized_job_id in serialized_job_ids]
             internal_jobs = JobDataRedis.all_jobs_by_list_of_job_ids(job_ids, redis_connection, False)
-            internal_jobs.sort(key=lambda job: job['start_time'], reverse=True if sort_kind=='desc' else False)
 
-            return internal_jobs
+            jobs_with_completed_time = list(filter(lambda job: job['completed_time'] is not None, internal_jobs))
+            jobs_without_completed_time = list(filter(lambda job: job['completed_time'] is None, internal_jobs))
+            jobs_with_completed_time.sort(key=lambda job: job['completed_time'],
+                                          reverse=True if sort_kind == 'desc' else False)
+            jobs_without_completed_time.sort(key=lambda job: job['creation_time'],
+                                          reverse=True if sort_kind == 'desc' else False)
+            return jobs_without_completed_time + jobs_with_completed_time
 
         return LazyResult(_callback)
 

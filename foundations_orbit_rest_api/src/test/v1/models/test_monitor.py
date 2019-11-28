@@ -45,6 +45,7 @@ class TestMonitor(Spec):
                 'project': 'so',
                 'job_id': self.job_id,
                 'user': 'pairing',
+                'creation_time': 1571931153.0313132,
                 'start_time': 1571931153.0313132,
                 'completed_time': 1571931153.6426458,
                 'state': 'completed'
@@ -53,6 +54,7 @@ class TestMonitor(Spec):
                 'project': 'so',
                 'job_id': self.job_id_2,
                 'user': 'pairing',
+                'creation_time': 1571931156.550436,
                 'start_time': 1571931156.550436,
                 'state': 'running'
             }
@@ -68,6 +70,7 @@ class TestMonitor(Spec):
                 'input_params': [],
                 'output_metrics': [],
                 'status': 'running',
+                'creation_time': 1571931156.550436,
                 'start_time': 1571931156.550436,
                 'completed_time': None,
                 'tags': {}
@@ -80,6 +83,7 @@ class TestMonitor(Spec):
                 'input_params': [],
                 'output_metrics': [],
                 'status': 'completed',
+                'creation_time': 1571931153.0313132,
                 'start_time': 1571931153.0313132,
                 'completed_time': 1571931153.6426458,
                 'tags': {}
