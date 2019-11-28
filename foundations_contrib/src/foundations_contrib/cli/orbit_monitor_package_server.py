@@ -220,7 +220,7 @@ def _get_monitor_job_spec(project_name, monitor_name, username, job_config, conf
         _orbit_spec['image'] = 'docker.shehanigans.net/orbit-team-dev/worker:latest'
         _orbit_spec['runtime'] = 'runc'
 
-    for override_key in ['image', 'working_dir', 'entrypoint']:
+    for override_key in ['image', 'working_dir', 'entrypoint', 'mem_limit']:
         if override_key in worker_container_overrides: 
             _orbit_spec[override_key] = worker_container_overrides[override_key]
 
