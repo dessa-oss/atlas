@@ -223,20 +223,6 @@ pipeline{
                         }
                     }
                 }
-                stage('Scheduler Acceptance Tests for Remote Deploys') {
-                    stages{
-                        stage('Scheduler Acceptance Tests for Remote Deploys') {
-                            steps {
-                                container("python3-2") {
-                                    ws("${WORKSPACE}/testing") {
-                                        sh 'cp -r ../testing/* . || true'
-                                        sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v scheduler_acceptance'
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
                 stage('REST API Acceptance Tests') {
                     stages{
                         stage('Atlas REST API Acceptance Tests') {
