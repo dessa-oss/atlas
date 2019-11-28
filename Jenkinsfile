@@ -107,23 +107,6 @@ pipeline{
         stage('Build Images and Push to Testing Env') {
             failFast true
             parallel{
-                stage('Build Model Package Image and Push to Testing Env') {
-                    stages {
-                        stage('Build Model Package Image and Push to Testing Env') {
-                            steps {
-                                container("python3") {
-                                    ws("${WORKSPACE}/foundations_model_package/src"){
-                                        sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-                                        sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-                                        sh './build.sh'
-                                        sh 'docker push docker-staging.shehanigans.net/foundations-model-package:latest'
-                                        sh './pull_staging_image_onto_scheduler.sh'
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
                 stage('Build Worker Images and Push to Testing Env') {
                     stages {
                         stage('Build Worker Images and Push to Testing Env') {
@@ -240,20 +223,6 @@ pipeline{
                         }
                     }
                 }
-                stage('Scheduler Acceptance Tests for Remote Deploys') {
-                    stages{
-                        stage('Scheduler Acceptance Tests for Remote Deploys') {
-                            steps {
-                                container("python3-2") {
-                                    ws("${WORKSPACE}/testing") {
-                                        sh 'cp -r ../testing/* . || true'
-                                        sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v scheduler_acceptance'
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
                 stage('REST API Acceptance Tests') {
                     stages{
                         stage('Atlas REST API Acceptance Tests') {
@@ -354,15 +323,6 @@ pipeline{
             steps {
                 container("python3"){
                     sh "./push_gui_images.sh"
-                }
-            }
-        }
-        stage('Push Model Package Images') {
-            steps {
-                container("python3"){
-                    ws("${WORKSPACE}/foundations_model_package/src"){
-                        sh './push_green_images.sh'
-                    }
                 }
             }
         }

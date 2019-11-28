@@ -5,7 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-
 from test.helpers import *
 from test.job_parameters import *
 from test.parameters import *

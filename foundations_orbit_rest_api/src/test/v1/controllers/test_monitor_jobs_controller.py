@@ -37,6 +37,8 @@ class TestMonitorJobsController(Spec):
         import fakeredis
 
         self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+        self._redis.flushall()
+
         self.controller = MonitorJobsController()
 
         self.controller.params = {
@@ -53,6 +55,7 @@ class TestMonitorJobsController(Spec):
                 'user': 'pairing',
                 'start_time': 1571931153.0313132,
                 'completed_time': 1571931153.6426458,
+                'creation_time': 1571931153.0313132,
                 'state': 'completed'
             }
             , {
@@ -60,6 +63,7 @@ class TestMonitorJobsController(Spec):
                 'job_id': self.job_id_2,
                 'user': 'pairing',
                 'start_time': 1571931156.550436,
+                'creation_time': 1571931156.550436,
                 'state': 'running'
             },
             {
@@ -67,6 +71,7 @@ class TestMonitorJobsController(Spec):
                 'job_id': self.job_id_3,
                 'user': 'pairing',
                 'start_time': 1501931156.550436,
+                'creation_time': 1501931156.550436,
                 'state': 'running'
             }
         ]
@@ -83,18 +88,7 @@ class TestMonitorJobsController(Spec):
                 'status': 'running',
                 'start_time': 1571931156.550436,
                 'completed_time': None,
-                'tags': {}
-            },
-            {
-                'project_name': 'so',
-                'job_id': self.job_id,
-                'user': 'pairing',
-                'job_parameters': {},
-                'input_params': [],
-                'output_metrics': [],
-                'status': 'completed',
-                'start_time': 1571931153.0313132,
-                'completed_time': 1571931153.6426458,
+                'creation_time': 1571931156.550436,
                 'tags': {}
             },
             {
@@ -107,8 +101,22 @@ class TestMonitorJobsController(Spec):
                 'status': 'running',
                 'start_time': 1501931156.550436,
                 'completed_time': None,
+                'creation_time': 1501931156.550436,
                 'tags': {}
-            }
+            },
+            {
+                'project_name': 'so',
+                'job_id': self.job_id,
+                'user': 'pairing',
+                'job_parameters': {},
+                'input_params': [],
+                'output_metrics': [],
+                'status': 'completed',
+                'start_time': 1571931153.0313132,
+                'completed_time': 1571931153.6426458,
+                'creation_time': 1571931153.0313132,
+                'tags': {}
+            },
         ]
 
     def test_index_returns_404_if_monitor_does_not_exist(self):
@@ -204,13 +212,13 @@ class TestMonitorJobsController(Spec):
         self.controller.params = {
             'project_name': self.project_name,
             'monitor_name': self.monitor_name,
-            'sort': 'asc'
+            # 'sort': 'asc'
         }
 
         jobs_list = self.controller.index().as_json()
 
         expected_result = self._expected_data()
-        expected_result.reverse()
+        # expected_result.reverse()
 
         self.assertEqual(expected_result, jobs_list)
 

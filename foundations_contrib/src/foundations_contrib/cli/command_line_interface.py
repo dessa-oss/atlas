@@ -68,24 +68,6 @@ class CommandLineInterface(object):
         info_parser.add_argument('--env', action='store_true')
         info_parser.set_defaults(function=self._info)
 
-    def _initialize_model_serve_parser(self):
-        serving_parser = self.add_sub_parser('serve', help='Used to serve models in Atlas')
-        serving_subparsers = serving_parser.add_subparsers()
-
-        serving_deploy_parser = serving_subparsers.add_parser('start')
-        serving_deploy_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
-        serving_deploy_parser.add_argument('job_id')
-        serving_deploy_parser.set_defaults(function=self._kubernetes_model_serving_deploy)
-
-        serving_destroy_parser = serving_subparsers.add_parser('stop')
-        serving_destroy_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
-        serving_destroy_parser.add_argument('model_name')
-        serving_destroy_parser.set_defaults(function=self._kubernetes_model_serving_destroy)
-
-    def _initialize_serving_stop_parser(self, serving_subparsers):
-        serving_deploy_parser = serving_subparsers.add_parser('stop', help='Stop foundations model package server')
-        serving_deploy_parser.set_defaults(function=self._model_serving_stop)
-
     def execute(self):
         self._arguments = self._argument_parser.parse_args(self._input_arguments)
         try:
@@ -172,25 +154,3 @@ class CommandLineInterface(object):
 
         print(message)
         sys.exit(1)
-
-    def _deploy_model_package(self):
-        import requests
-        import sys
-
-        response = requests.post('http://{}/v1/{}/'.format(self._arguments.domain, self._arguments.slug), json = {'model_id': self._arguments.model_id})
-        if response.status_code == 201:
-            print('Model package was deployed successfully to model server.')
-        else:
-            print('Failed to deploy model package to model server.', file=sys.stderr)
-            sys.exit(11)
-
-    def _kubernetes_model_serving_deploy(self):
-        from foundations_contrib.cli.model_package_server import deploy
-        from foundations_contrib.global_state import message_router
-
-        message_router.push_message('model_served', {'job_id': self._arguments.job_id, 'project_name': self._arguments.project_name})
-        deploy(self._arguments.project_name, self._arguments.job_id)
-
-    def _kubernetes_model_serving_destroy(self):
-        from foundations_contrib.cli.model_package_server import destroy
-        destroy(self._arguments.project_name, self._arguments.model_name)

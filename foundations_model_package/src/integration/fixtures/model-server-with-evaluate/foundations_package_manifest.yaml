@@ -1,7 +1,0 @@
-entrypoints:
-  predict:
-    module: project_code.predictor
-    function: predict
-  evaluate:
-    module: project_code.evaluate
-    function: eval

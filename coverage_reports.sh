@@ -6,7 +6,7 @@ function get_coverage_report_for_module {
     if [ -d "${module_directory_to_add}/test" ]; then
         cd ${module_directory_to_add}
         coverage erase && coverage run --source=${module_directory} -m unittest test && \
-        coverage html && \
+        coverage html -i && \
         mkdir -p ${cwd}/coverage_results && \
         cp .coverage ${cwd}/coverage_results/.coverage_${module_directory}
     fi
@@ -45,4 +45,4 @@ done
 
 cd ${cwd}/coverage_results && \
 coverage combine .coverage* && \
-coverage html
+coverage html -i
