@@ -326,15 +326,6 @@ pipeline{
                 }
             }
         }
-        stage('Push Model Package Images') {
-            steps {
-                container("python3"){
-                    ws("${WORKSPACE}/foundations_model_package/src"){
-                        sh './push_green_images.sh'
-                    }
-                }
-            }
-        }
         stage('Trigger Orbit Team Dev Build Pipeline') {
             steps {
                 script {
