@@ -13,6 +13,7 @@ import foundations_contrib
 from orbit_acceptance.mixins.contrib_path_mixin import ContribPathMixin
 from faker import Faker
 
+@skip('Not using K8s anymore')
 class TestManageDefaultModel(Spec, ContribPathMixin):
 
     api_port = 8080
@@ -50,18 +51,6 @@ class TestManageDefaultModel(Spec, ContribPathMixin):
     def tear_down(self):
         self._perform_tear_down_for_model_package(self.mock_project_name, self.mock_model_name)
         self._perform_tear_down_for_model_package(self.mock_project_name, self.mock_second_model_name)
-
-    # @let
-    # def mock_project_name(self):
-    #     return self.faker.word()
-
-    # @let
-    # def mock_model_name(self):
-    #     return self.faker.word()
-    
-    # @let
-    # def mock_second_model_name(self):
-    #     return self.faker.word()
 
     @let
     def project_directory(self):
