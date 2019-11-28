@@ -94,6 +94,7 @@ class JobDataRedis(object):
         start_time = self._add_decoded_get_to_pipe('start_time').then(self._make_float)
         completed_time = self._add_decoded_get_to_pipe(
             'completed_time').then(self._make_float)
+        creation_time = self._add_decoded_get_to_pipe('creation_time').then(self._make_float)
         tags = self._add_decoded_hgetall_to_pipe('annotations')
 
         list_of_properties = Promise.all(
@@ -106,6 +107,7 @@ class JobDataRedis(object):
                 status,
                 start_time,
                 completed_time,
+                creation_time,
                 tags
             ]
         )
@@ -176,6 +178,7 @@ class JobDataRedis(object):
                                 status,
                                 start_time,
                                 completed_time,
+                                creation_time,
                                 tags):
             return {
                 'project_name': project_name,
@@ -187,6 +190,7 @@ class JobDataRedis(object):
                 'status': status,
                 'start_time': start_time,
                 'completed_time': completed_time,
+                'creation_time': creation_time,
                 'tags': tags
             }
         return seperate_args_inner(*args)
