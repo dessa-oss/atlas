@@ -88,6 +88,7 @@ dist
 **/.eggs/
 
 !foundations_ui/package.json
+!foundations_ui/cypress.json
 !foundations_ui_orbit/package.json
 !foundations_ui_orbit/package-lock.json
 !examples/example_configs/*.config.yaml
