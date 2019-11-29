@@ -1,0 +1,225 @@
+Foundations DEBUG: Setting run_script_environment to {'script_to_run': None, 'enable_stages': False}
+Foundations INFO: Job submission started. Ctrl-C to cancel.
+Foundations DEBUG: Reflecting constructor for deployment (deployment) via deployment_implementation (deployment_type)
+Foundations DEBUG: Configured with {'deployment_type': <class 'foundations_local_docker_scheduler_plugin.job_deployment.JobDeployment'>}
+Foundations DEBUG: Adding module foundations_internal at /Users/calvinchoi/Documents/dev/foundations/foundations_internal/src/foundations_internal
+Foundations DEBUG: Adding module foundations_contrib at /Users/calvinchoi/Documents/dev/foundations/foundations_contrib/src/foundations_contrib
+Foundations DEBUG: Adding module foundations_events at /Users/calvinchoi/Documents/dev/foundations/foundations_events/src/foundations_events
+Foundations DEBUG: Adding module foundations_orbit at /Users/calvinchoi/Documents/dev/foundations/foundations_orbit_sdk/src/foundations_orbit
+Foundations DEBUG: Adding module foundations at /Users/calvinchoi/Documents/dev/foundations/foundations_sdk/src/foundations
+Foundations DEBUG: Adding module foundations_local_docker_scheduler_plugin at /Users/calvinchoi/Documents/dev/foundations/foundations_local_docker_scheduler_plugin/src/foundations_local_docker_scheduler_plugin
+Foundations INFO: Job submitted with ID '0e9baab2-e40a-429a-95c1-b89e992a7a00' in project 'set_tag_with_scheduler_project'.
+Foundations DEBUG: Reflecting constructor for project_listing (project_listing) via project_listing_implementation (project_listing_type)
+Foundations DEBUG: Returning <function DeploymentManager._create_default_project_listing at 0x10c1119d8>, [], {}
+Foundations INFO: Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.
+Foundations INFO: Job running, streaming logs.
+Foundations ERROR: Job '0e9baab2-e40a-429a-95c1-b89e992a7a00' has failed.
+Foundations DEBUG: Setting run_script_environment to {'script_to_run': None, 'enable_stages': False}
+Foundations INFO: Job submission started. Ctrl-C to cancel.
+Foundations DEBUG: Reflecting constructor for deployment (deployment) via deployment_implementation (deployment_type)
+Foundations DEBUG: Configured with {'deployment_type': <class 'foundations_local_docker_scheduler_plugin.job_deployment.JobDeployment'>}
+Foundations DEBUG: Adding module foundations_internal at /Users/calvinchoi/Documents/dev/foundations/foundations_internal/src/foundations_internal
+Foundations DEBUG: Adding module foundations_contrib at /Users/calvinchoi/Documents/dev/foundations/foundations_contrib/src/foundations_contrib
+Foundations DEBUG: Adding module foundations_events at /Users/calvinchoi/Documents/dev/foundations/foundations_events/src/foundations_events
+Foundations DEBUG: Adding module foundations_orbit at /Users/calvinchoi/Documents/dev/foundations/foundations_orbit_sdk/src/foundations_orbit
+Foundations DEBUG: Adding module foundations at /Users/calvinchoi/Documents/dev/foundations/foundations_sdk/src/foundations
+Foundations DEBUG: Adding module foundations_local_docker_scheduler_plugin at /Users/calvinchoi/Documents/dev/foundations/foundations_local_docker_scheduler_plugin/src/foundations_local_docker_scheduler_plugin
+Foundations INFO: Job submitted with ID '0076cf38-c4c5-417a-92af-c2ac73ae7e51' in project 'set_tag_with_scheduler_project'.
+Foundations DEBUG: Reflecting constructor for project_listing (project_listing) via project_listing_implementation (project_listing_type)
+Foundations DEBUG: Returning <function DeploymentManager._create_default_project_listing at 0x105de29d8>, [], {}
+Foundations INFO: Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.
+Foundations DEBUG: Trying paths: ['/Users/calvinchoi/.docker/config.json', '/Users/calvinchoi/.dockercfg']
+Foundations DEBUG: Found file at path: /Users/calvinchoi/.docker/config.json
+Foundations DEBUG: Found 'credsStore' section
+Foundations WARNING: Could not find local container for job 0076cf38-c4c5-417a-92af-c2ac73ae7e51. The job may have already completed or was submitted to a remote machine. Please see the GUI for full job logs and status.
+Foundations INFO: Job '0076cf38-c4c5-417a-92af-c2ac73ae7e51' has completed.
+Foundations DEBUG: Setting run_script_environment to {'script_to_run': None, 'enable_stages': False}
+Foundations INFO: Job submission started. Ctrl-C to cancel.
+Foundations DEBUG: Reflecting constructor for deployment (deployment) via deployment_implementation (deployment_type)
+Foundations DEBUG: Configured with {'deployment_type': <class 'foundations_local_docker_scheduler_plugin.job_deployment.JobDeployment'>}
+Foundations DEBUG: Adding module foundations_internal at /Users/calvinchoi/Documents/dev/foundations/foundations_internal/src/foundations_internal
+Foundations DEBUG: Adding module foundations_contrib at /Users/calvinchoi/Documents/dev/foundations/foundations_contrib/src/foundations_contrib
+Foundations DEBUG: Adding module foundations_events at /Users/calvinchoi/Documents/dev/foundations/foundations_events/src/foundations_events
+Foundations DEBUG: Adding module foundations_orbit at /Users/calvinchoi/Documents/dev/foundations/foundations_orbit_sdk/src/foundations_orbit
+Foundations DEBUG: Adding module foundations at /Users/calvinchoi/Documents/dev/foundations/foundations_sdk/src/foundations
+Foundations DEBUG: Adding module foundations_local_docker_scheduler_plugin at /Users/calvinchoi/Documents/dev/foundations/foundations_local_docker_scheduler_plugin/src/foundations_local_docker_scheduler_plugin
+Foundations INFO: Job submitted with ID '1f1cf8d3-a5a0-468e-ae44-d4b18e4ed3ea' in project 'set_tag_with_scheduler_project'.
+Foundations DEBUG: Reflecting constructor for project_listing (project_listing) via project_listing_implementation (project_listing_type)
+Foundations DEBUG: Returning <function DeploymentManager._create_default_project_listing at 0x1034499d8>, [], {}
+Foundations INFO: Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.
+Foundations DEBUG: Trying paths: ['/Users/calvinchoi/.docker/config.json', '/Users/calvinchoi/.dockercfg']
+Foundations DEBUG: Found file at path: /Users/calvinchoi/.docker/config.json
+Foundations DEBUG: Found 'credsStore' section
+Foundations WARNING: Could not find local container for job 1f1cf8d3-a5a0-468e-ae44-d4b18e4ed3ea. The job may have already completed or was submitted to a remote machine. Please see the GUI for full job logs and status.
+Foundations INFO: Job '1f1cf8d3-a5a0-468e-ae44-d4b18e4ed3ea' has completed.
+Foundations DEBUG: Setting run_script_environment to {'script_to_run': None, 'enable_stages': False}
+Foundations INFO: Job submission started. Ctrl-C to cancel.
+Foundations DEBUG: Reflecting constructor for deployment (deployment) via deployment_implementation (deployment_type)
+Foundations DEBUG: Configured with {'deployment_type': <class 'foundations_local_docker_scheduler_plugin.job_deployment.JobDeployment'>}
+Foundations DEBUG: Adding module foundations_internal at /Users/calvinchoi/Documents/dev/foundations/foundations_internal/src/foundations_internal
+Foundations DEBUG: Adding module foundations_contrib at /Users/calvinchoi/Documents/dev/foundations/foundations_contrib/src/foundations_contrib
+Foundations DEBUG: Adding module foundations_events at /Users/calvinchoi/Documents/dev/foundations/foundations_events/src/foundations_events
+Foundations DEBUG: Adding module foundations_orbit at /Users/calvinchoi/Documents/dev/foundations/foundations_orbit_sdk/src/foundations_orbit
+Foundations DEBUG: Adding module foundations at /Users/calvinchoi/Documents/dev/foundations/foundations_sdk/src/foundations
+Foundations DEBUG: Adding module foundations_local_docker_scheduler_plugin at /Users/calvinchoi/Documents/dev/foundations/foundations_local_docker_scheduler_plugin/src/foundations_local_docker_scheduler_plugin
+Foundations INFO: Job submitted with ID '386c51bb-ef4f-4632-b0b7-8d7a36357bc2' in project 'set_tag_with_scheduler_project'.
+Foundations DEBUG: Reflecting constructor for project_listing (project_listing) via project_listing_implementation (project_listing_type)
+Foundations DEBUG: Returning <function DeploymentManager._create_default_project_listing at 0x1014d09d8>, [], {}
+Foundations INFO: Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.
+Foundations DEBUG: Trying paths: ['/Users/calvinchoi/.docker/config.json', '/Users/calvinchoi/.dockercfg']
+Foundations DEBUG: Found file at path: /Users/calvinchoi/.docker/config.json
+Foundations DEBUG: Found 'credsStore' section
+Foundations WARNING: Could not find local container for job 386c51bb-ef4f-4632-b0b7-8d7a36357bc2. The job may have already completed or was submitted to a remote machine. Please see the GUI for full job logs and status.
+Foundations INFO: Job '386c51bb-ef4f-4632-b0b7-8d7a36357bc2' has completed.
+Foundations DEBUG: Setting run_script_environment to {'script_to_run': None, 'enable_stages': False}
+Foundations INFO: Job submission started. Ctrl-C to cancel.
+Foundations DEBUG: Reflecting constructor for deployment (deployment) via deployment_implementation (deployment_type)
+Foundations DEBUG: Configured with {'deployment_type': <class 'foundations_local_docker_scheduler_plugin.job_deployment.JobDeployment'>}
+Foundations DEBUG: Adding module foundations_internal at /Users/calvinchoi/Documents/dev/foundations/foundations_internal/src/foundations_internal
+Foundations DEBUG: Adding module foundations_contrib at /Users/calvinchoi/Documents/dev/foundations/foundations_contrib/src/foundations_contrib
+Foundations DEBUG: Adding module foundations_events at /Users/calvinchoi/Documents/dev/foundations/foundations_events/src/foundations_events
+Foundations DEBUG: Adding module foundations_orbit at /Users/calvinchoi/Documents/dev/foundations/foundations_orbit_sdk/src/foundations_orbit
+Foundations DEBUG: Adding module foundations at /Users/calvinchoi/Documents/dev/foundations/foundations_sdk/src/foundations
+Foundations DEBUG: Adding module foundations_local_docker_scheduler_plugin at /Users/calvinchoi/Documents/dev/foundations/foundations_local_docker_scheduler_plugin/src/foundations_local_docker_scheduler_plugin
+Foundations INFO: Job submitted with ID 'efec5397-6e2f-40d5-b653-042bcb150ed4' in project 'set_tag_with_scheduler_project'.
+Foundations DEBUG: Reflecting constructor for project_listing (project_listing) via project_listing_implementation (project_listing_type)
+Foundations DEBUG: Returning <function DeploymentManager._create_default_project_listing at 0x10c4db9d8>, [], {}
+Foundations INFO: Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.
+Foundations DEBUG: Trying paths: ['/Users/calvinchoi/.docker/config.json', '/Users/calvinchoi/.dockercfg']
+Foundations DEBUG: Found file at path: /Users/calvinchoi/.docker/config.json
+Foundations DEBUG: Found 'credsStore' section
+Foundations WARNING: Could not find local container for job efec5397-6e2f-40d5-b653-042bcb150ed4. The job may have already completed or was submitted to a remote machine. Please see the GUI for full job logs and status.
+Foundations INFO: Job 'efec5397-6e2f-40d5-b653-042bcb150ed4' has completed.
+Foundations DEBUG: Setting run_script_environment to {'script_to_run': None, 'enable_stages': False}
+Foundations INFO: Job submission started. Ctrl-C to cancel.
+Foundations DEBUG: Reflecting constructor for deployment (deployment) via deployment_implementation (deployment_type)
+Foundations DEBUG: Configured with {'deployment_type': <class 'foundations_local_docker_scheduler_plugin.job_deployment.JobDeployment'>}
+Foundations DEBUG: Adding module foundations_internal at /Users/calvinchoi/Documents/dev/foundations/foundations_internal/src/foundations_internal
+Foundations DEBUG: Adding module foundations_contrib at /Users/calvinchoi/Documents/dev/foundations/foundations_contrib/src/foundations_contrib
+Foundations DEBUG: Adding module foundations_events at /Users/calvinchoi/Documents/dev/foundations/foundations_events/src/foundations_events
+Foundations DEBUG: Adding module foundations_orbit at /Users/calvinchoi/Documents/dev/foundations/foundations_orbit_sdk/src/foundations_orbit
+Foundations DEBUG: Adding module foundations at /Users/calvinchoi/Documents/dev/foundations/foundations_sdk/src/foundations
+Foundations DEBUG: Adding module foundations_local_docker_scheduler_plugin at /Users/calvinchoi/Documents/dev/foundations/foundations_local_docker_scheduler_plugin/src/foundations_local_docker_scheduler_plugin
+Foundations INFO: Job submitted with ID '2af6820f-d9ad-4164-934d-856247fd9b72' in project 'set_tag_with_scheduler_project'.
+Foundations DEBUG: Reflecting constructor for project_listing (project_listing) via project_listing_implementation (project_listing_type)
+Foundations DEBUG: Returning <function DeploymentManager._create_default_project_listing at 0x102c089d8>, [], {}
+Foundations INFO: Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.
+Foundations DEBUG: Trying paths: ['/Users/calvinchoi/.docker/config.json', '/Users/calvinchoi/.dockercfg']
+Foundations DEBUG: Found file at path: /Users/calvinchoi/.docker/config.json
+Foundations DEBUG: Found 'credsStore' section
+Foundations WARNING: Could not find local container for job 2af6820f-d9ad-4164-934d-856247fd9b72. The job may have already completed or was submitted to a remote machine. Please see the GUI for full job logs and status.
+Foundations INFO: Job '2af6820f-d9ad-4164-934d-856247fd9b72' has completed.
+Foundations DEBUG: Setting run_script_environment to {'script_to_run': None, 'enable_stages': False}
+Foundations INFO: Job submission started. Ctrl-C to cancel.
+Foundations DEBUG: Reflecting constructor for deployment (deployment) via deployment_implementation (deployment_type)
+Foundations DEBUG: Configured with {'deployment_type': <class 'foundations_local_docker_scheduler_plugin.job_deployment.JobDeployment'>}
+Foundations DEBUG: Adding module foundations_internal at /Users/calvinchoi/Documents/dev/foundations/foundations_internal/src/foundations_internal
+Foundations DEBUG: Adding module foundations_contrib at /Users/calvinchoi/Documents/dev/foundations/foundations_contrib/src/foundations_contrib
+Foundations DEBUG: Adding module foundations_events at /Users/calvinchoi/Documents/dev/foundations/foundations_events/src/foundations_events
+Foundations DEBUG: Adding module foundations_orbit at /Users/calvinchoi/Documents/dev/foundations/foundations_orbit_sdk/src/foundations_orbit
+Foundations DEBUG: Adding module foundations at /Users/calvinchoi/Documents/dev/foundations/foundations_sdk/src/foundations
+Foundations DEBUG: Adding module foundations_local_docker_scheduler_plugin at /Users/calvinchoi/Documents/dev/foundations/foundations_local_docker_scheduler_plugin/src/foundations_local_docker_scheduler_plugin
+Foundations INFO: Job submitted with ID 'ccdbbf8e-0c7d-4662-b34c-40e1c5b18e12' in project 'set_tag_with_scheduler_project'.
+Foundations DEBUG: Reflecting constructor for project_listing (project_listing) via project_listing_implementation (project_listing_type)
+Foundations DEBUG: Returning <function DeploymentManager._create_default_project_listing at 0x102b2d9d8>, [], {}
+Foundations INFO: Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.
+Foundations DEBUG: Trying paths: ['/Users/calvinchoi/.docker/config.json', '/Users/calvinchoi/.dockercfg']
+Foundations DEBUG: Found file at path: /Users/calvinchoi/.docker/config.json
+Foundations DEBUG: Found 'credsStore' section
+Foundations WARNING: Could not find local container for job ccdbbf8e-0c7d-4662-b34c-40e1c5b18e12. The job may have already completed or was submitted to a remote machine. Please see the GUI for full job logs and status.
+Foundations INFO: Job 'ccdbbf8e-0c7d-4662-b34c-40e1c5b18e12' has completed.
+Foundations DEBUG: Setting run_script_environment to {'script_to_run': None, 'enable_stages': False}
+Foundations INFO: Job submission started. Ctrl-C to cancel.
+Foundations DEBUG: Reflecting constructor for deployment (deployment) via deployment_implementation (deployment_type)
+Foundations DEBUG: Configured with {'deployment_type': <class 'foundations_local_docker_scheduler_plugin.job_deployment.JobDeployment'>}
+Foundations DEBUG: Adding module foundations_internal at /Users/calvinchoi/Documents/dev/foundations/foundations_internal/src/foundations_internal
+Foundations DEBUG: Adding module foundations_contrib at /Users/calvinchoi/Documents/dev/foundations/foundations_contrib/src/foundations_contrib
+Foundations DEBUG: Adding module foundations_events at /Users/calvinchoi/Documents/dev/foundations/foundations_events/src/foundations_events
+Foundations DEBUG: Adding module foundations_orbit at /Users/calvinchoi/Documents/dev/foundations/foundations_orbit_sdk/src/foundations_orbit
+Foundations DEBUG: Adding module foundations at /Users/calvinchoi/Documents/dev/foundations/foundations_sdk/src/foundations
+Foundations DEBUG: Adding module foundations_local_docker_scheduler_plugin at /Users/calvinchoi/Documents/dev/foundations/foundations_local_docker_scheduler_plugin/src/foundations_local_docker_scheduler_plugin
+Foundations INFO: Job submitted with ID 'd960c56a-11ba-4227-99cf-e9b1b6f88037' in project 'set_tag_with_scheduler_project'.
+Foundations DEBUG: Reflecting constructor for project_listing (project_listing) via project_listing_implementation (project_listing_type)
+Foundations DEBUG: Returning <function DeploymentManager._create_default_project_listing at 0x11075e9d8>, [], {}
+Foundations INFO: Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.
+Foundations DEBUG: Trying paths: ['/Users/calvinchoi/.docker/config.json', '/Users/calvinchoi/.dockercfg']
+Foundations DEBUG: Found file at path: /Users/calvinchoi/.docker/config.json
+Foundations DEBUG: Found 'credsStore' section
+Foundations WARNING: Could not find local container for job d960c56a-11ba-4227-99cf-e9b1b6f88037. The job may have already completed or was submitted to a remote machine. Please see the GUI for full job logs and status.
+Foundations INFO: Job 'd960c56a-11ba-4227-99cf-e9b1b6f88037' has completed.
+Foundations DEBUG: Setting run_script_environment to {'script_to_run': None, 'enable_stages': False}
+Foundations INFO: Job submission started. Ctrl-C to cancel.
+Foundations DEBUG: Reflecting constructor for deployment (deployment) via deployment_implementation (deployment_type)
+Foundations DEBUG: Configured with {'deployment_type': <class 'foundations_local_docker_scheduler_plugin.job_deployment.JobDeployment'>}
+Foundations DEBUG: Adding module foundations_internal at /Users/calvinchoi/Documents/dev/foundations/foundations_internal/src/foundations_internal
+Foundations DEBUG: Adding module foundations_contrib at /Users/calvinchoi/Documents/dev/foundations/foundations_contrib/src/foundations_contrib
+Foundations DEBUG: Adding module foundations_events at /Users/calvinchoi/Documents/dev/foundations/foundations_events/src/foundations_events
+Foundations DEBUG: Adding module foundations_orbit at /Users/calvinchoi/Documents/dev/foundations/foundations_orbit_sdk/src/foundations_orbit
+Foundations DEBUG: Adding module foundations at /Users/calvinchoi/Documents/dev/foundations/foundations_sdk/src/foundations
+Foundations DEBUG: Adding module foundations_local_docker_scheduler_plugin at /Users/calvinchoi/Documents/dev/foundations/foundations_local_docker_scheduler_plugin/src/foundations_local_docker_scheduler_plugin
+Foundations INFO: Job submitted with ID '49a3181b-ff88-42a8-b782-fa62bea06955' in project 'set_tag_with_scheduler_project'.
+Foundations DEBUG: Reflecting constructor for project_listing (project_listing) via project_listing_implementation (project_listing_type)
+Foundations DEBUG: Returning <function DeploymentManager._create_default_project_listing at 0x1088289d8>, [], {}
+Foundations INFO: Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.
+Foundations DEBUG: Trying paths: ['/Users/calvinchoi/.docker/config.json', '/Users/calvinchoi/.dockercfg']
+Foundations DEBUG: Found file at path: /Users/calvinchoi/.docker/config.json
+Foundations DEBUG: Found 'credsStore' section
+Foundations WARNING: Could not find local container for job 49a3181b-ff88-42a8-b782-fa62bea06955. The job may have already completed or was submitted to a remote machine. Please see the GUI for full job logs and status.
+Foundations INFO: Job '49a3181b-ff88-42a8-b782-fa62bea06955' has completed.
+Foundations DEBUG: Setting run_script_environment to {'script_to_run': None, 'enable_stages': False}
+Foundations INFO: Job submission started. Ctrl-C to cancel.
+Foundations DEBUG: Reflecting constructor for deployment (deployment) via deployment_implementation (deployment_type)
+Foundations DEBUG: Configured with {'deployment_type': <class 'foundations_local_docker_scheduler_plugin.job_deployment.JobDeployment'>}
+Foundations DEBUG: Adding module foundations_internal at /Users/calvinchoi/Documents/dev/foundations/foundations_internal/src/foundations_internal
+Foundations DEBUG: Adding module foundations_contrib at /Users/calvinchoi/Documents/dev/foundations/foundations_contrib/src/foundations_contrib
+Foundations DEBUG: Adding module foundations_events at /Users/calvinchoi/Documents/dev/foundations/foundations_events/src/foundations_events
+Foundations DEBUG: Adding module foundations_orbit at /Users/calvinchoi/Documents/dev/foundations/foundations_orbit_sdk/src/foundations_orbit
+Foundations DEBUG: Adding module foundations at /Users/calvinchoi/Documents/dev/foundations/foundations_sdk/src/foundations
+Foundations DEBUG: Adding module foundations_local_docker_scheduler_plugin at /Users/calvinchoi/Documents/dev/foundations/foundations_local_docker_scheduler_plugin/src/foundations_local_docker_scheduler_plugin
+Foundations INFO: Job submitted with ID '2f8f092b-7c0c-4521-88dc-03cddeaf12b6' in project 'set_tag_with_scheduler_project'.
+Foundations DEBUG: Reflecting constructor for project_listing (project_listing) via project_listing_implementation (project_listing_type)
+Foundations DEBUG: Returning <function DeploymentManager._create_default_project_listing at 0x10f44d9d8>, [], {}
+Foundations INFO: Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.
+Foundations DEBUG: Trying paths: ['/Users/calvinchoi/.docker/config.json', '/Users/calvinchoi/.dockercfg']
+Foundations DEBUG: Found file at path: /Users/calvinchoi/.docker/config.json
+Foundations DEBUG: Found 'credsStore' section
+Foundations WARNING: Could not find local container for job 2f8f092b-7c0c-4521-88dc-03cddeaf12b6. The job may have already completed or was submitted to a remote machine. Please see the GUI for full job logs and status.
+Foundations INFO: Job '2f8f092b-7c0c-4521-88dc-03cddeaf12b6' has completed.
+Foundations DEBUG: Setting run_script_environment to {'script_to_run': None, 'enable_stages': False}
+Foundations INFO: Job submission started. Ctrl-C to cancel.
+Foundations DEBUG: Reflecting constructor for deployment (deployment) via deployment_implementation (deployment_type)
+Foundations DEBUG: Configured with {'deployment_type': <class 'foundations_local_docker_scheduler_plugin.job_deployment.JobDeployment'>}
+Foundations DEBUG: Adding module foundations_internal at /Users/calvinchoi/Documents/dev/foundations/foundations_internal/src/foundations_internal
+Foundations DEBUG: Adding module foundations_contrib at /Users/calvinchoi/Documents/dev/foundations/foundations_contrib/src/foundations_contrib
+Foundations DEBUG: Adding module foundations_events at /Users/calvinchoi/Documents/dev/foundations/foundations_events/src/foundations_events
+Foundations DEBUG: Adding module foundations_orbit at /Users/calvinchoi/Documents/dev/foundations/foundations_orbit_sdk/src/foundations_orbit
+Foundations DEBUG: Adding module foundations at /Users/calvinchoi/Documents/dev/foundations/foundations_sdk/src/foundations
+Foundations DEBUG: Adding module foundations_local_docker_scheduler_plugin at /Users/calvinchoi/Documents/dev/foundations/foundations_local_docker_scheduler_plugin/src/foundations_local_docker_scheduler_plugin
+Foundations INFO: Job submitted with ID 'db758e8f-f2a7-493d-9d9b-25f59bdf44e2' in project 'set_tag_with_scheduler_project'.
+Foundations DEBUG: Reflecting constructor for project_listing (project_listing) via project_listing_implementation (project_listing_type)
+Foundations DEBUG: Returning <function DeploymentManager._create_default_project_listing at 0x102d2c9d8>, [], {}
+Foundations INFO: Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.
+Foundations DEBUG: Trying paths: ['/Users/calvinchoi/.docker/config.json', '/Users/calvinchoi/.dockercfg']
+Foundations DEBUG: Found file at path: /Users/calvinchoi/.docker/config.json
+Foundations DEBUG: Found 'credsStore' section
+Foundations WARNING: Could not find local container for job db758e8f-f2a7-493d-9d9b-25f59bdf44e2. The job may have already completed or was submitted to a remote machine. Please see the GUI for full job logs and status.
+Foundations INFO: Job 'db758e8f-f2a7-493d-9d9b-25f59bdf44e2' has completed.
+Foundations DEBUG: Setting run_script_environment to {'script_to_run': None, 'enable_stages': False}
+Foundations INFO: Job submission started. Ctrl-C to cancel.
+Foundations DEBUG: Reflecting constructor for deployment (deployment) via deployment_implementation (deployment_type)
+Foundations DEBUG: Configured with {'deployment_type': <class 'foundations_local_docker_scheduler_plugin.job_deployment.JobDeployment'>}
+Foundations DEBUG: Adding module foundations_internal at /Users/calvinchoi/Documents/dev/foundations/foundations_internal/src/foundations_internal
+Foundations DEBUG: Adding module foundations_contrib at /Users/calvinchoi/Documents/dev/foundations/foundations_contrib/src/foundations_contrib
+Foundations DEBUG: Adding module foundations_events at /Users/calvinchoi/Documents/dev/foundations/foundations_events/src/foundations_events
+Foundations DEBUG: Adding module foundations_orbit at /Users/calvinchoi/Documents/dev/foundations/foundations_orbit_sdk/src/foundations_orbit
+Foundations DEBUG: Adding module foundations at /Users/calvinchoi/Documents/dev/foundations/foundations_sdk/src/foundations
+Foundations DEBUG: Adding module foundations_local_docker_scheduler_plugin at /Users/calvinchoi/Documents/dev/foundations/foundations_local_docker_scheduler_plugin/src/foundations_local_docker_scheduler_plugin
+Foundations INFO: Job submitted with ID 'c0f3e61f-c44b-4edd-acd1-f58261e5df88' in project 'set_tag_with_scheduler_project'.
+Foundations DEBUG: Reflecting constructor for project_listing (project_listing) via project_listing_implementation (project_listing_type)
+Foundations DEBUG: Returning <function DeploymentManager._create_default_project_listing at 0x1051c49d8>, [], {}
+Foundations INFO: Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.
+Foundations DEBUG: Trying paths: ['/Users/calvinchoi/.docker/config.json', '/Users/calvinchoi/.dockercfg']
+Foundations DEBUG: Found file at path: /Users/calvinchoi/.docker/config.json
+Foundations DEBUG: Found 'credsStore' section
+Foundations WARNING: Could not find local container for job c0f3e61f-c44b-4edd-acd1-f58261e5df88. The job may have already completed or was submitted to a remote machine. Please see the GUI for full job logs and status.
+Foundations INFO: Job 'c0f3e61f-c44b-4edd-acd1-f58261e5df88' has completed.

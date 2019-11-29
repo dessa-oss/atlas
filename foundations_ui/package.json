@@ -71,7 +71,8 @@
     "build": "node scripts/build.js --max_old_space_size=4096",
     "prune": "node scripts/yarn-prune.js",
     "test": "node scripts/test.js",
-    "testLint": "node node_modules/.bin/eslint ."
+    "testLint": "node node_modules/.bin/eslint .",
+    "cy:run": "cypress run"
   },
   "eslintConfig": {
     "extends": "react-app"
