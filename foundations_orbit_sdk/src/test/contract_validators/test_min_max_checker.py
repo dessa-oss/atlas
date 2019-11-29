@@ -8,6 +8,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
 
+from hypothesis import given
+import hypothesis.strategies as st
+from hypothesis.extra.pandas import column, columns, data_frames
+import numpy as np
+import pandas as pd
 # TODO: Refactor this whole thing to be cleaner
 class TestMinMaxChecker(Spec):
 
@@ -29,26 +34,22 @@ class TestMinMaxChecker(Spec):
 
     @let_now
     def dataframe_one_column(self):
-        import pandas
-        return pandas.DataFrame(columns=[self.column_name], data=[20, 40, 50, 100, 110])
+        return pd.DataFrame(columns=[self.column_name], data=[20, 40, 50, 100, 110])
 
     @let_now
     def dataframe_two_columns(self):
-        import pandas
-        return pandas.DataFrame(columns=[self.column_name, self.column_name_two], data=[[20, 0], [40, 4], [50, 10], [100, 40], [110, 99]])
+        return pd.DataFrame(columns=[self.column_name, self.column_name_two], data=[[20, 0], [40, 4], [50, 10], [100, 40], [110, 99]])
 
     @let_now
     def dataframe_four_columns(self):
-        import pandas
-        return pandas.DataFrame(columns=[self.column_name, self.column_name_two, self.column_name_three, self.column_name_four],
+        return pd.DataFrame(columns=[self.column_name, self.column_name_two, self.column_name_three, self.column_name_four],
                                 data=[[1, 5, 3, -1], [-1, 4, 2, -2], [-5, -1, 1, -4]])
 
     @let_now
     def dataframe_one_column_with_datetime(self):
         import datetime
-        import pandas
 
-        return pandas.DataFrame(columns=[self.column_name], data=[datetime.datetime(2020,2,16), datetime.datetime(2018,2,16), datetime.datetime(2019,2,16)])
+        return pd.DataFrame(columns=[self.column_name], data=[datetime.datetime(2020,2,16), datetime.datetime(2018,2,16), datetime.datetime(2019,2,16)])
 
     @let
     def dataframe_one_column_reference_column_types(self):
@@ -144,11 +145,10 @@ class TestMinMaxChecker(Spec):
 
     
     def test_min_max_test_returns_empty_dict_with_empty_dataframe(self):
-        import pandas
 
         min_max_checker = MinMaxChecker(self.dataframe_one_column_reference_column_types)
         min_max_checker.configure(attributes=[self.column_name], upper_bound=self.faker.random.randint(0,10))
-        result = min_max_checker.validate(pandas.DataFrame())
+        result = min_max_checker.validate(pd.DataFrame())
 
         expected_result = {}
 
@@ -589,3 +589,38 @@ class TestMinMaxChecker(Spec):
         }
 
         self.assertEqual(expected_result, result)
+
+    @st.composite
+    def dataframes(draw, *strategies: st.SearchStrategy) -> st.SearchStrategy:
+        names = draw(st.lists(st.integers(), unique=True, min_size=1))
+        cols = [column(name, elements=draw(st.sampled_from(strategies))) for name in names]
+        return draw(data_frames(cols))
+
+    @staticmethod
+    @given(dataframes(st.integers(), st.floats(), st.just(np.nan)))
+    def test_min_max(df: pd.DataFrame) -> None:
+        min_max = MinMaxChecker({col_name: "int" for col_name in df.columns})
+        if df.empty:
+            min_max.configure(df.columns, lower_bound=0, upper_bound=1)
+            assert min_max.validate(df) == {}
+        else:
+            min_bound = min(df[col].min() for col in df.columns)
+            max_bound = max(df[col].max() for col in df.columns)
+            min_max.configure(df.columns, lower_bound=min_bound, upper_bound=max_bound)
+            report = min_max.validate(df)
+            expected = {
+                col: {
+                    "max_test": {
+                        "max_value": df[col].max(),
+                        "passed": True,
+                        "upper_bound": max_bound,
+                    },
+                    "min_test": {
+                        "min_value": df[col].min(),
+                        "passed": True,
+                        "lower_bound": min_bound,
+                    },
+                }
+                for col in df.columns
+            }
+            assert report == expected
