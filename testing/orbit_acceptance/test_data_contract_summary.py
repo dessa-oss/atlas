@@ -14,6 +14,14 @@ from foundations_orbit_rest_api.v1.controllers.data_contract_summary_controller 
 class TestDataContractSummary(Spec):
 
     @let
+    def column_name(self):
+        return 'feat_1'
+
+    @let
+    def second_column_name(self):
+        return 'feat_2'
+
+    @let
     def reference_dataframe_with_one_numerical_column(self):
         import pandas
         import numpy
@@ -23,7 +31,7 @@ class TestDataContractSummary(Spec):
             for _ in range(i):
                 values.append(i)
 
-        return pandas.DataFrame(data={'feat_1': values}, dtype=numpy.float64)
+        return pandas.DataFrame(data={self.column_name: values}, dtype=numpy.float64)
 
     @let
     def reference_dataframe_with_two_numerical_columns(self):
@@ -40,7 +48,7 @@ class TestDataContractSummary(Spec):
             for _ in range(i):
                 values_2.append(12 - i)
 
-        return pandas.DataFrame(data={'feat_1': values_1, 'feat_2': values_2}, dtype=numpy.float64)
+        return pandas.DataFrame(data={self.column_name: values_1, self.second_column_name: values_2}, dtype=numpy.float64)
 
     @let
     def dataframe_to_validate_with_one_numerical_column(self):
@@ -52,7 +60,7 @@ class TestDataContractSummary(Spec):
             for _ in range(i):
                 values.append(12 - i)
 
-        return pandas.DataFrame(data={'feat_1': values}, dtype=numpy.float64)
+        return pandas.DataFrame(data={self.column_name: values}, dtype=numpy.float64)
 
     @let
     def dataframe_to_validate_with_one_numerical_column_and_nans(self):
@@ -66,7 +74,7 @@ class TestDataContractSummary(Spec):
         nans = [numpy.nan] * 9
         values.extend(nans)
 
-        return pandas.DataFrame(data={'feat_1': values}, dtype=numpy.float64)
+        return pandas.DataFrame(data={self.column_name: values}, dtype=numpy.float64)
 
     @let
     def dataframe_to_validate_with_two_numerical_columns(self):
@@ -83,7 +91,7 @@ class TestDataContractSummary(Spec):
             for _ in range(i):
                 values_2.append(i)
 
-        return pandas.DataFrame(data={'feat_1': values_1, 'feat_2': values_2}, dtype=numpy.float64)
+        return pandas.DataFrame(data={self.column_name: values_1, self.second_column_name: values_2}, dtype=numpy.float64)
 
     @let
     def contract_name(self):
@@ -100,6 +108,11 @@ class TestDataContractSummary(Spec):
     @let
     def controller(self):
         return DataContractSummaryController()
+
+    @let
+    def inference_date(self):
+        import datetime
+        return datetime.datetime.today()
 
     @set_up
     def set_up(self):
@@ -135,8 +148,6 @@ class TestDataContractSummary(Spec):
             os.environ.pop('MONITOR_NAME')
 
     def test_validating_dataframe_creates_summary_which_is_retrieved_from_rest_api(self):
-        import datetime
-
         summary_for_feat_1 = {
             'expected_data_summary': {
                 'percentage_missing': 0.0,
@@ -158,18 +169,10 @@ class TestDataContractSummary(Spec):
             }
         }
 
-        inference_date = datetime.datetime.today()
-
-        data_contract = DataContract(self.contract_name, df=self.reference_dataframe_with_one_numerical_column)
-        data_contract.validate(self.dataframe_to_validate_with_one_numerical_column, inference_date)
-
-        self.controller.params['inference_period'] = inference_date
-        self.controller.params['attribute'] = 'feat_1'
-        self.assertEqual(summary_for_feat_1, self.controller.index().as_json())
+        dc = DataContract(self.contract_name, df=self.reference_dataframe_with_one_numerical_column)
+        self._validate_and_assert_equal_on_column_from_api(dc, self.dataframe_to_validate_with_one_numerical_column, self.column_name, summary_for_feat_1)
 
     def test_validating_dataframe_with_nans_creates_summary_which_is_retrieved_from_rest_api(self):
-        import datetime
-
         summary_for_feat_1 = {
             'expected_data_summary': {
                 'percentage_missing': 0.0,
@@ -191,18 +194,10 @@ class TestDataContractSummary(Spec):
             }
         }
 
-        inference_date = datetime.datetime.today()
-
-        data_contract = DataContract(self.contract_name, df=self.reference_dataframe_with_one_numerical_column)
-        data_contract.validate(self.dataframe_to_validate_with_one_numerical_column_and_nans, inference_date)
-
-        self.controller.params['inference_period'] = inference_date
-        self.controller.params['attribute'] = 'feat_1'
-        self.assertEqual(summary_for_feat_1, self.controller.index().as_json())
+        dc = DataContract(self.contract_name, df=self.reference_dataframe_with_one_numerical_column)
+        self._validate_and_assert_equal_on_column_from_api(dc, self.dataframe_to_validate_with_one_numerical_column_and_nans, self.column_name, summary_for_feat_1)
 
     def test_validating_dataframe_with_two_columns_creates_summary_which_is_retrieved_from_rest_api(self):
-        import datetime
-
         summary_for_feat_1 = {
             'expected_data_summary': {
                 'percentage_missing': 0.0,
@@ -224,12 +219,41 @@ class TestDataContractSummary(Spec):
             }
         }
 
-        inference_date = datetime.datetime.today()
+        dc = DataContract(self.contract_name, df=self.reference_dataframe_with_two_numerical_columns)
+        self._validate_and_assert_equal_on_column_from_api(dc, self.dataframe_to_validate_with_two_numerical_columns, self.second_column_name, summary_for_feat_1)
 
-        data_contract = DataContract(self.contract_name, df=self.reference_dataframe_with_two_numerical_columns)
-        data_contract.validate(self.dataframe_to_validate_with_two_numerical_columns, inference_date)
+    def test_data_report_for_data_frame_with_only_one_values_against_itself(self):
+        import pandas as pd
+        size = 20
+        summary_for_feat_2 = {
+            'actual_data_summary': {
+                'maximum': 2.0,
+                'minimum': 2.0,
+                'percentage_missing': 0.0
+            },
+            'binned_data': {
+                'bins': [2],
+                'data': {
+                    'actual_data': [size], 'expected_data': [size]
+                }
+            },
+            'expected_data_summary': {
+                'maximum': 2.0,
+                'minimum': 2.0,
+                'percentage_missing': 0.0
+            }
+        }
 
-        self.maxDiff = None
-        self.controller.params['inference_period'] = inference_date
-        self.controller.params['attribute'] = 'feat_2'
-        self.assertEqual(summary_for_feat_1, self.controller.index().as_json())
+        df = pd.DataFrame(data={
+            self.column_name: [2] * size,
+            self.second_column_name: [2] * size
+        })
+        dc = DataContract(self.contract_name, df=df)
+        self._validate_and_assert_equal_on_column_from_api(dc, df, self.second_column_name, summary_for_feat_2)
+
+    def _validate_and_assert_equal_on_column_from_api(self, data_contract, validation_dataframe, column_name, expected_results):
+        data_contract.validate(validation_dataframe, self.inference_date)
+
+        self.controller.params['inference_period'] = self.inference_date
+        self.controller.params['attribute'] = column_name
+        self.assertEqual(expected_results, self.controller.index().as_json())

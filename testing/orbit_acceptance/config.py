@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 # separates test runs
 from uuid import uuid4
+
 TEST_UUID = uuid4()
 
 
@@ -14,6 +15,7 @@ def set_foundations_home():
     import os
     os.environ['FOUNDATIONS_HOME'] = os.getcwd() + '/orbit_acceptance/fixtures/end-to-end-acceptance/foundations_home'
     os.environ['FOUNDATIONS_COMMAND_LINE'] = 'True'
+
 
 def _flattened_config_walk():
     import os
