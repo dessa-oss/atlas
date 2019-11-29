@@ -596,13 +596,13 @@ class TestMinMaxChecker(Spec):
         cols = [column(name, elements=draw(st.sampled_from(strategies))) for name in names]
         return draw(data_frames(cols))
 
-    @staticmethod
-    @given(dataframes(st.integers(), st.floats(), st.just(np.nan)))
-    def test_min_max(df: pd.DataFrame) -> None:
+    # TODO Temporarily restrict from using NaNs
+    @given(dataframes(st.integers(), st.floats(allow_nan=False)))
+    def test_min_max(self, df: pd.DataFrame) -> None:
         min_max = MinMaxChecker({col_name: "int" for col_name in df.columns})
         if df.empty:
             min_max.configure(df.columns, lower_bound=0, upper_bound=1)
-            assert min_max.validate(df) == {}
+            self.assertEqual({}, min_max.validate(df))
         else:
             min_bound = min(df[col].min() for col in df.columns)
             max_bound = max(df[col].max() for col in df.columns)
@@ -623,4 +623,4 @@ class TestMinMaxChecker(Spec):
                 }
                 for col in df.columns
             }
-            assert report == expected
+            self.assertEqual(report, expected)
