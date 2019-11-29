@@ -18,7 +18,7 @@ try:
     file_handler.setFormatter(formatter)
     root_logger.addHandler(file_handler)
 
-    root_logger.log(f'RUNNING REDIS AT: {config_manager.config()["redis_url"]}')
+    print(f'Running Orbit API with Redis at: {config_manager.config()["redis_url"]}')
 
     app = app_manager.app()
     app.run(host='127.0.0.1', port=sys.argv[1], debug=True)

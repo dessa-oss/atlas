@@ -85,7 +85,7 @@ def distribution_check(distribution_check_config, column_names, bin_stats, curre
                 ref_bin_percentages.append(ref_value_percentage)
                 current_bin_percentages.append(current_value_percentage)
         else:
-            current_values = current_df[col].copy()
+            current_values = current_df[col]
             n_current_vals = len(current_values)
             dist_check_results[col] = {}
             # bin the col in current_df using edges from reference

@@ -94,14 +94,12 @@ class TestValidationReportListingsController(Spec):
                 'monitor_package': self.monitor_package_2,
                 'inference_period': '2019-03-04',
                 'num_critical_tests': self.num_critical_tests2
-
             },
             {
                 'data_contract': self.data_contract,
                 'monitor_package': self.monitor_package,
                 'inference_period': '2019-10-13',
                 'num_critical_tests': self.num_critical_tests
-
             }
         ]
 
