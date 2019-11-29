@@ -1,13 +1,14 @@
 describe('Test Set Tag', () => {
   const projectName = 'set_tag_project';
+  const schedulerIP = Cypress.env('SCHEDULER_IP');
 
   before(() => {
-    cy.exec('redis-cli -h 54.91.54.99 -p 5556 flushall');
+    cy.exec(`redis-cli -h ${schedulerIP} -p 5556 flushall`);
     cy.exec(`export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/set_tag/${projectName} && python main.py`);
   });
 
   beforeEach(() => {
-    cy.visit('http://54.91.54.99:5555/projects');
+    cy.visit(`http://${schedulerIP}:5555/projects`);
   });
 
   it('Project exists', () => {
