@@ -41,18 +41,32 @@ python devops/startup_orbit_api.py ${ORBIT_PORT} &
 
 echo "Attempting to run scheduler with foundations home set to $FOUNDATIONS"
 
-echo "Running local docker scheduler on port ${SCHEDULER_PORT}"
+# SCHEDULER_CONDA_ENV=local_docker_scheduler
+# echo "Creating environment for local_docker_scheduler"
+# conda env list | grep $SCHEDULER_CONDA_ENV
+# if $? == 1; then
+#     conda create --name $SCHEDULER_CONDA_ENV python=3.6 -y
+# fi
+# previous_env=$(conda env list | grep "*" | awk '{print $1}')
+# echo "Running local docker scheduler on port ${SCHEDULER_PORT}"
+# cd ../local-docker-scheduler \
+#   && echo "Updated dependencies for $SCHEDULER_CONDA_ENV" \
+#   && conda activate $SCHEDULER_CONDA_ENV \
+#   && pip install -r requirements.txt \
+#   && python -m local_docker_scheduler -p ${SCHEDULER_PORT} > $FOUNDATIONS/logs/scheduler.log 2>&1 &
+# conda activate $previous_env
+
 cd ../local-docker-scheduler \
-  && echo "Updated dependencies for local_docker_scheduler" \
   && pip install -r requirements.txt \
   && python -m local_docker_scheduler -p ${SCHEDULER_PORT} > $FOUNDATIONS/logs/scheduler.log 2>&1 &
 
-echo Running UI on port 3000
 cd foundations_ui_orbit && \
   echo "Install UI dependencies" && \
   yarn install && \
   echo "Starting the UI in development mode with yarn" && \
   yarn start > $FOUNDATIONS/logs/yarn.log 2>&1 &
+
+echo "Running UI on port 3000"
 
 echo "Check log files for status of programs:"
 echo "    $FOUNDATIONS/logs/scheduler.log"
