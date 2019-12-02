@@ -24,11 +24,9 @@ if __name__ == '__main__':
 
     images_to_be_pushed = [
         'foundations-orbit-rest-api',
-        # 'foundations-rest-api',
         'foundations-orbit-gui',
         'orbit-rest-api',
         'orbit-gui',
-        # 'rest-api'
     ]
     for image_name in images_to_be_pushed:
         push_image_to_repository(image_name=image_name)

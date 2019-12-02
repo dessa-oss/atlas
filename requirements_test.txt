@@ -1,4 +1,4 @@
--r ./dev_requirements.txt
+-r ./requirements_dev.txt
 coveralls
 xenon
 wily

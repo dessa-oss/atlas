@@ -79,7 +79,7 @@ pipeline{
         stage('Build Wheels') {
             steps {
                 container("python3") {
-                    sh "./build_dist.sh"
+                    sh "./devops/build_scripts/build_all_dist.sh"
                 }
             }
         }
@@ -93,26 +93,7 @@ pipeline{
         stage('Run Coverage Tests') {
             steps {
                 container("python3") {
-                    sh "./coverage_reports.sh"
-                }
-            }
-        }
-        stage('Build Images and Push to Testing Env') {
-            failFast true
-            parallel{
-                stage('Build Worker Images and Push to Testing Env') {
-                    stages {
-                        stage('Build Worker Images and Push to Testing Env') {
-                            steps {
-                                container("python3-1") {
-                                    sh 'python -m pip install ./dist/*.whl'
-                                    sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-                                    sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-                                    sh './build_worker_images.sh '
-                                }
-                            }
-                        }
-                    }
+                    sh "./run_coverage_tests.sh"
                 }
             }
         }
@@ -149,7 +130,6 @@ pipeline{
                             steps {
                                 container("python3-2") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh 'python -m pip install -U foundations-scheduler'
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                 }
@@ -298,44 +278,6 @@ pipeline{
                 }
             }
         }
-        stage('Upload Wheels to Releases') {
-            steps {
-                container("python3"){
-                    sh "./upload_modules_to_artifactory.sh $NEXUS_PYPI"
-                }
-            }
-        }
-        stage('Build GUI and Rest API Images'){
-            steps {
-                container("python3"){
-                    sh "./build_gui.sh"
-                }
-            }
-        }
-        stage('Push GUI and Rest API Images'){
-            steps {
-                container("python3"){
-                    sh "./push_gui_images.sh"
-                }
-            }
-        }
-        stage('Trigger Atlas CE Dev Build Pipeline') {
-            steps {
-                script {
-                    echo "Triggering job for branch atlas-ce-dev-build-artifacts"
-                    build job: "atlas-ce-dev-build-artifacts", wait: false
-                }
-            }
-        }
-        stage('Trigger Orbit Team Dev Build Pipeline') {
-            steps {
-                script {
-                    echo "Triggering job for branch orbit-team-dev-build-artifact"
-                    build job: "orbit-team-dev-build-artifacts", wait: false
-                }
-            }
-        }
-
         stage("Calculate Recovery Metrics") {
             steps {
                 script {
