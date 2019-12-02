@@ -15,13 +15,6 @@ pipeline{
                 }
             }
         }
-        stage('Get K8S Scheduler') {
-            steps {
-                container("python3") {
-                    sh 'python -m pip install -U foundations-scheduler'
-                }
-            }
-        }
         stage('Install Test Requirements') {
             failFast true
             parallel {
