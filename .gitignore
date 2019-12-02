@@ -120,3 +120,4 @@ foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/logs/system.log
 foundations_ui/cypress/videos/*
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/config/submission/scheduler.config.yaml
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/config/execution/default.config.yaml
+foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/job_data

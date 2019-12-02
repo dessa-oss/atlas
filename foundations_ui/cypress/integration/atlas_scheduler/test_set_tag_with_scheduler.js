@@ -1,14 +1,17 @@
 describe('Test Set Tag with Scheduler', () => {
   const projectName = 'set_tag_with_scheduler_project';
   const schedulerIP = Cypress.env('SCHEDULER_IP');
+  const schedulerRedisPort = Cypress.env('SCHEDULER_REDIS_PORT');
+  const guiHost = Cypress.env('GUI_HOST');
+  const guiPort = Cypress.env('GUI_PORT');
 
   before(() => {
-    cy.exec(`redis-cli -h ${schedulerIP} -p 5556 flushall`);
+    cy.exec(`redis-cli -h ${schedulerIP} -p ${schedulerRedisPort} flushall`);
     cy.exec(`export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/set_tag_with_scheduler && foundations submit scheduler ${projectName} main.py`);
   });
 
   beforeEach(() => {
-    cy.visit(`http://${schedulerIP}:5555/projects`);
+    cy.visit(`http://${guiHost}:${guiPort}/projects`);
   });
 
   it('Project exists', () => {

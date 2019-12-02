@@ -3,4 +3,4 @@ cache_config:
 log_level: INFO
 results_config:
   archive_end_point: ${CYPRESS_LOCAL_FOUNDATIONS_HOME}/job_data
-  redis_end_point: redis://${CYPRESS_SCHEDULER_IP}:5556
+  redis_end_point: redis://${CYPRESS_SCHEDULER_IP}:${CYPRESS_SCHEDULER_REDIS_PORT}
