@@ -61,7 +61,6 @@ rm -rf obi/* && \
     build_module foundations_scheduler_plugin foundations_scheduler_plugin ${cwd} "foundations_scheduler_plugin" && \
     build_module foundations_local_docker_scheduler_plugin foundations_local_docker_scheduler_plugin ${cwd} "foundations_local_docker_scheduler_plugin" && \
     build_module foundations_sdk dessa_foundations ${cwd} "foundations" && \
-    build_module foundations_production foundations_production ${cwd} "foundations_production" && \
     build_module foundations_core_rest_api_components foundations_core_rest_api_components ${cwd} "foundations_core_rest_api_components" && \
     build_module foundations_rest_api foundations_rest_api ${cwd} "foundations_rest_api" && \
     build_module foundations_orbit_rest_api foundations_orbit_rest_api ${cwd} "foundations_orbit_rest_api"

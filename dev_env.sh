@@ -14,7 +14,6 @@ add_path "$cwd/foundations_spec/src" && \
     add_path "$cwd/gcp_utils/src" && \
     add_path "$cwd/aws_utils/src" && \
     add_path "$cwd/foundations_local_docker_scheduler_plugin/src" && \
-    add_path "$cwd/foundations_production/src" && \
     add_path "$cwd/foundations_rest_api/src" && \
     add_path "$cwd/foundations_core_rest_api_components/src" && \
     add_path "$cwd/foundations_orbit_rest_api/src" && \
