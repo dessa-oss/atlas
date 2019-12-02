@@ -239,7 +239,7 @@ class ModalJobDetails extends React.Component {
                 tabIndex={0}
               />
             </div>
-            <div className="container-tags">
+            <div className="container-tags" data-class="job-details-tags">
               {tags.map((tag) => {
                 return <Tag key={tag} value={tag} removeVisible removeTag={() => this.onClickRemoveTag(tag)} />;
               })}

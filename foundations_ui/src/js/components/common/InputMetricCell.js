@@ -73,9 +73,11 @@ class InputMetricCell extends Component {
     let finalValue = value;
     let expandedValue = value;
     let shouldCheckExpand = expand;
+    let dataClass = '';
     if (pClass.includes('tag') && value !== '') {
       finalValue = [];
       let index = 0;
+      dataClass = 'metric-cell-tags';
       if (Array.isArray(value)) {
         value.forEach((tag) => {
           if (index === maxLength) {
@@ -113,7 +115,13 @@ class InputMetricCell extends Component {
         overMaxLength = this.isContentOverMaxLength(finalValue);
       }
       if ((overMaxLength && hoverable)) {
-        hover = <HoverCell onMouseLeave={this.toggleExpand} textToRender={expandedValue} />;
+        hover = (
+          <HoverCell
+            onMouseLeave={this.toggleExpand}
+            textToRender={expandedValue}
+            dataClass="hover-cell-tags-details"
+          />
+        );
       }
     }
 
@@ -121,6 +129,7 @@ class InputMetricCell extends Component {
       <div className={divClass} onMouseLeave={() => this.toggleExpand(false)}>
         <p
           className={pClass}
+          data-class={dataClass}
           onMouseEnter={() => this.toggleExpand(true)}
         >
           {finalValue}

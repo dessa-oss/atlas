@@ -19,7 +19,7 @@ describe('Test Set Tag with Scheduler', () => {
   });
 
   it('Tags exist on projects page', () => {
-    cy.contains('.project-summary-container', projectName)
+    cy.contains('[data-class=project-summary]', projectName)
       .should('contain', 'Str')
       .should('contain', 'Int')
       .should('contain', 'Float')
@@ -28,7 +28,7 @@ describe('Test Set Tag with Scheduler', () => {
 
   it('Tags exist on project page', () => {
     cy.contains(projectName).click({ force: true }).then(() => {
-      cy.get('.project-summary-tags-container')
+      cy.get('[data-class=project-page-tags]')
         .should('contain', 'Str')
         .should('contain', 'Int')
         .should('contain', 'Float')
@@ -38,8 +38,8 @@ describe('Test Set Tag with Scheduler', () => {
 
   it('Tags exist on details modal', () => {
     cy.contains(projectName).click({ force: true }).then(() => {
-      cy.get('.pop-up-cell').click({ force: true });
-      cy.get('.container-tags')
+      cy.get('[data-class=job-details-button]').click({ force: true });
+      cy.get('[data-class=job-details-tags]')
         .should('contain', 'Str')
         .should('contain', 'Int')
         .should('contain', 'Float')
@@ -49,7 +49,7 @@ describe('Test Set Tag with Scheduler', () => {
 
   it('First two tags exist in job row', () => {
     cy.contains(projectName).click({ force: true }).then(() => {
-      cy.get('.type-tag')
+      cy.get('[data-class=metric-cell-tags]')
         .should('contain', 'Str')
         .should('contain', 'Int')
         .should('not.contain', 'Float')
@@ -59,8 +59,8 @@ describe('Test Set Tag with Scheduler', () => {
 
   it('Tags exist in job row hover', () => {
     cy.contains(projectName).click({ force: true }).then(() => {
-      cy.contains('.type-tag', '...').trigger('mouseover', { force: true });
-      cy.get('.job-cell-hover')
+      cy.contains('[data-class=metric-cell-tags]', '...').trigger('mouseover', { force: true });
+      cy.get('[data-class=hover-cell-tags-details]')
       .should('contain', 'Str')
       .should('contain', 'Int')
       .should('contain', 'Float')

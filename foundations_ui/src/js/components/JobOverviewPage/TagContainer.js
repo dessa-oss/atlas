@@ -66,7 +66,7 @@ class TagContainer extends React.Component {
     }
 
     return (
-      <div className="project-summary-tags-container">
+      <div className="project-summary-tags-container" data-class="project-page-tags">
         <p>tags</p>
         <div onMouseLeave={this.onMouseLeave} onBlur={this.onMouseOut}>
           {tagSpans}
