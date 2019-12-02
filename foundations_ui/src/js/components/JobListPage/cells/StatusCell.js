@@ -29,7 +29,7 @@ class StatusCell extends Component {
     const divClass = isError ? `status-cell error row-${rowNumber}` : `status-cell  row-${rowNumber}`;
 
     return (
-      <span className={divClass}>
+      <span className={divClass} data-class={`job-status-${status}`}>
         { statusClass.includes('status-running')
           ? (
             <svg className="spinner" width="18px" height="18px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">

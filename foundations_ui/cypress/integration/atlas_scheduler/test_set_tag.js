@@ -30,7 +30,7 @@ describe('Test Set Tag', () => {
       it('Project exists', () => {
         cy.contains(state.projectName).should('exist');
       });
-    
+
       it('Tags exist on projects page', () => {
         cy.contains('[data-class=project-summary]', state.projectName)
           .should('contain', 'Str')
