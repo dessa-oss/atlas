@@ -2,7 +2,7 @@
 name: Foundations feature request
 about: "Suggest an \U0001F4A1 for Foundations"
 title: "[Request] Title"
-labels: Foundations
+labels: ''
 assignees: ''
 
 ---
