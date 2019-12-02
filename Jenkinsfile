@@ -319,14 +319,23 @@ pipeline{
                 }
             }
         }
-        stage('Trigger Orbit Team Dev Build Pipeline') {
+        stage('Trigger Atlas CE Dev Build Pipeline') {
             steps {
                 script {
-                    echo "Triggering job for branch orbit-team-dev-build"
-                    build job: "orbit-team-dev-build", wait: false
+                    echo "Triggering job for branch atlas-ce-dev-build-artifacts"
+                    build job: "atlas-ce-dev-build-artifacts", wait: false
                 }
             }
         }
+        stage('Trigger Orbit Team Dev Build Pipeline') {
+            steps {
+                script {
+                    echo "Triggering job for branch orbit-team-dev-build-artifact"
+                    build job: "orbit-team-dev-build-artifacts", wait: false
+                }
+            }
+        }
+
         stage("Calculate Recovery Metrics") {
             steps {
                 script {
