@@ -13,6 +13,6 @@ then
         mkdir -p tmp/pip_wheels && \
         cp dist/* tmp/pip_wheels && \
         cp docker/gui_ce_Dockerfile foundations_ui && \
-        python $script_location/build_gui_ce.py && \
+        python $script_location/gui_and_rest_apis/build_gui_ce.py && \
         rm -rf foundations_ui/gui_ce_Dockerfile
 fi

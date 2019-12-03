@@ -21,73 +21,27 @@ pipeline{
         }
       }
     }
-    stage('Build Foundations Wheels') {
+    stage('Build Atlas CE Wheels') {
       steps {
         container("python3") {
-          sh "./build_dist.sh"
-        }
-      }
-    }
-    stage('Build Worker Images and Push to Testing Env') {
-      stages {
-        stage('Build Worker Images and Push to Testing Env') {
-          steps {
-            container("python3") {
-              sh 'python -m pip install ./dist/*.whl'
-              sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-              sh './build_worker_images.sh '
-            }
-          }
+          sh "./devops/build_scripts/build_ce_dist.sh"
         }
       }
     }
     stage('Build Atlas GUI and Rest API Images'){
       steps {
         container("python3"){
-          sh "./build_gui_ce.sh"
+          sh "./devops/build_scripts/gui_and_rest_apis/build_gui_ce.sh"
         }
       }
     }
     stage('Push Atlas GUI and Rest API Images'){
       steps {
         container("python3"){
-          // sh "./push_gui_images.sh"
-          sh "echo skipping for now"
+          sh "./devops/build_scripts/gui_and_rest_apis/push_gui_atlas_ce_images.sh"
         }
       }
     }
-    stage('Build Orbit Team'){
-      steps {
-        container("python3"){
-          sh "./build_orbit_team_dist.sh"
-        }
-      }
-    }
-    stage('Build Orbit Team GUI and Rest API Images'){
-      steps {
-        container("python3"){
-          sh "./build_gui_orbit_team.sh"
-        }
-      }
-    }
-    stage('Push Orbit Team GUI and Rest API Images'){
-      steps {
-        container("python3"){
-          sh "./push_gui_orbit_team_images.sh"
-        }
-      }
-    }
-
-    // stage('Upload Wheels to Releases') {
-    //     agent {
-    //         label 'ci-pipeline-jenkins-slave'
-    //     }
-    //     steps {
-    //         container("python3"){
-    //             sh "./upload_modules_to_artifactory.sh $NEXUS_PYPI"
-    //         }
-    //     }
-    // }
     stage("Calculate Recovery Metrics") {
       steps {
         script {
