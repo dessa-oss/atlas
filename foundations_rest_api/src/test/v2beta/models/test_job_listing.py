@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
-import fakeredis
+
 from foundations_spec import *
 from mock import patch
 from foundations_rest_api.v2beta.models.job import Job
@@ -28,6 +28,7 @@ class TestJobListingV2(Spec):
 
     @set_up
     def set_up(self):
+        import fakeredis
         from foundations_internal.pipeline import Pipeline
         from foundations_internal.pipeline_context import PipelineContext
 

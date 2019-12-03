@@ -5,9 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import fakeredis
+
 import unittest
-from unittest import skip
 from mock import patch
 from foundations_rest_api.v2beta.models.project import Project
 from foundations_rest_api.v2beta.models.property_model import PropertyModel
@@ -30,6 +29,7 @@ class TestProjectV2(Spec):
 
     @set_up
     def project_set_up(self):
+        import fakeredis
         self._find_project = self.patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
         self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
 
