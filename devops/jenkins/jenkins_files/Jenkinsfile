@@ -16,20 +16,13 @@ pipeline{
             }
         }
         stage('Install Test Requirements') {
-            failFast true
-            parallel {
-                stage('Install CI Requirements') {
-                    stages {
-                        stage('Install CI Requirements') {
-                            steps {
-                                container("python3") {
-                                    sh "./ci_install_requirements.sh"
-                                }
-                            }
-                        }
+            stage('Install CI Requirements') {
+                steps {
+                    container("python3") {
+                        sh "./ci_install_requirements.sh"
                     }
                 }
-            }            
+            }
         }
         stage('Build Wheels') {
             steps {

@@ -31,14 +31,14 @@ pipeline{
     stage('Build Atlas GUI and Rest API Images'){
       steps {
         container("python3"){
-          sh "./devops/build_scripts/gui_and_rest_apis/build_gui_ce.sh"
+          sh "NEXUS_DOCKER_REGISTRY=docker-staging.shehanigans.net && ./devops/build_scripts/gui_and_rest_apis/build_gui_ce.sh"
         }
       }
     }
     stage('Push Atlas GUI and Rest API Images'){
       steps {
         container("python3"){
-          sh "./devops/build_scripts/gui_and_rest_apis/push_gui_atlas_ce_images.sh"
+          sh "NEXUS_DOCKER_REGISTRY=docker-staging.shehanigans.net && ./devops/build_scripts/gui_and_rest_apis/push_gui_atlas_ce_images.sh"
         }
       }
     }

@@ -47,7 +47,7 @@ pipeline{
     stage('Push Images To Staging') {
       steps {
         container("python3") {
-          sh 'docker push '
+          sh 'NEXUS_DOCKER_REGISTRY=docker-staging.shehanigans.net && ./devops/build_scripts/workers/push_worker_images.sh'
         }
       }
     }

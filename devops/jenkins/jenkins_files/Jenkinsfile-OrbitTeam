@@ -31,14 +31,14 @@ pipeline{
     stage('Build Orbit Team GUI and Rest API Images'){
       steps {
         container("python3"){
-          sh "./devops/build_scripts/gui_and_rest_apis/build_gui_orbit_team.sh"
+          sh "NEXUS_DOCKER_REGISTRY=docker-staging.shehanigans.net && ./devops/build_scripts/gui_and_rest_apis/build_gui_orbit_team.sh"
         }
       }
     }
-    stage('Push Orbit Team GUI and Rest API Images'){
+    stage('Push Orbit Team GUI and Rest API Images to Staging'){
       steps {
         container("python3"){
-          sh "./devops/build_scripts/gui_and_rest_apis/push_gui_orbit_team_images.sh"
+          sh "NEXUS_DOCKER_REGISTRY=docker-staging.shehanigans.net && ./devops/build_scripts/gui_and_rest_apis/push_gui_orbit_team_images.sh"
         }
       }
     }
