@@ -16,11 +16,9 @@ pipeline{
             }
         }
         stage('Install Test Requirements') {
-            stage('Install CI Requirements') {
-                steps {
-                    container("python3") {
-                        sh "./ci_install_requirements.sh"
-                    }
+            steps {
+                container("python3") {
+                    sh "./ci_install_requirements.sh"
                 }
             }
         }

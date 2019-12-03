@@ -1,5 +1,5 @@
 wheel
-request
+requests
 jsonschema
 dill==0.2.8.2
 redis==3.3.11
