@@ -9,14 +9,27 @@ nexus_registry = os.environ['NEXUS_DOCKER_REGISTRY']
 def build_and_tag_gui_image(path, dockerfile, repository, buildargs=None):
     if buildargs is None:
         buildargs = {}
+    build_tag = '{}:{}'.format(repository, build_version)
 
     try:
-        image, image_logs = client.images.build(path=path, dockerfile=dockerfile, tag='{}:{}'.format(repository, build_version), buildargs=buildargs)
-        image.tag(repository, tag='latest')
-        print_logs(image_logs)
+        client = docker.APIClient(base_url='unix://var/run/docker.sock')
+        streamer = client.build(path=path, 
+                                tag=build_tag, 
+                                dockerfile=dockerfile, 
+                                decode=True,
+                                buildargs=buildargs)
+        print_logs(streamer)
     except docker.errors.BuildError as ex:
         print_logs(ex.build_log)
-        raise
+
+    # try:
+        
+    #     image, image_logs = client.images.build(path=path, dockerfile=dockerfile, tag=build_tag, buildargs=buildargs)
+    #     image.tag(repository, tag='latest')
+    #     print_logs(image_logs)
+    # except docker.errors.BuildError as ex:
+    #     print_logs(ex.build_log)
+    #     raise
 
 def print_logs(logs):
     for line in logs:
