@@ -1,126 +1,126 @@
-describe('Test Log Metric', () => {
+describe('Test Log Param', () => {
   const schedulerIP = Cypress.env('SCHEDULER_IP');
   const schedulerRedisPort = Cypress.env('SCHEDULER_REDIS_PORT');
   const guiHost = Cypress.env('GUI_HOST');
   const guiPort = Cypress.env('GUI_PORT');
-  const projectName = 'log_metric_project';
+  const projectName = 'log_param_project';
 
   const states = [
     {
-      testName: `Test Logging Metrics of Type Int`,
+      testName: `Test Logging Params of Type Int`,
       projectName: projectName,
-      metrics: [
+      params: [
         {
-          label: 'metric_int',
+          label: 'param_int',
           value: '1',
           hasHover: false
         },
         {
-          label: 'metric_large_int',
+          label: 'param_large_int',
           value: '8.8889e+24',
           hasHover: false
         },
         {
-          label: 'metric_list_of_ints',
+          label: 'param_list_of_ints',
           value: '[1, 2]',
           hasHover: false
         },
         {
-          label: 'metric_long_list_of_ints',
+          label: 'param_long_list_of_ints',
           value: '[1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2]',
           hasHover: true
         },
         {
-          label: 'metric_long_list_of_long_ints',
+          label: 'param_long_list_of_long_ints',
           value: '[8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24, 8.888888888888889e+24]',
           hasHover: true
         },
         {
-          label: 'metric_mixed_type',
+          label: 'param_mixed_type',
           value: '1',
           hasHover: false
         },
         {
-          label: 'metric_repeat',
-          value: '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]',
-          hasHover: true
+          label: 'param_repeat',
+          value: '19',
+          hasHover: false
         }
       ],
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_metric/ && foundations submit scheduler ${projectName} ints.py`
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_param/ && foundations submit scheduler ${projectName} ints.py`
     },
     {
-      testName: `Test Logging Metrics of Type Float`,
+      testName: `Test Logging Params of Type Float`,
       projectName: projectName,
-      metrics: [
+      params: [
         {
-          label: 'metric_float',
+          label: 'param_float',
           value: '1',
           hasHover: false
         },
         {
-          label: 'metric_large_float',
+          label: 'param_large_float',
           value: '1.0000e+9',
           hasHover: false
         },
         {
-          label: 'metric_list_of_floats',
+          label: 'param_list_of_floats',
           value: '[1, 2]',
           hasHover: false
         },
         {
-          label: 'metric_long_list_of_floats',
+          label: 'param_long_list_of_floats',
           value: '[1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2]',
           hasHover: true
         },
         {
-          label: 'metric_long_list_of_long_floats',
+          label: 'param_long_list_of_long_floats',
           value: '[999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888, 999999999.8888888]',
           hasHover: true
         },
         {
-          label: 'metric_mixed_type',
+          label: 'param_mixed_type',
           value: '2.222',
           hasHover: false
         },
         {
-          label: 'metric_repeat',
-          value: '[0, 0.3333333333333333, 0.6666666666666666, 1, 1.3333333333333333, 1.6666666666666667, 2, 2.3333333333333335, 2.6666666666666665, 3, 3.3333333333333335, 3.6666666666666665, 4, 4.333333333333333, 4.666666666666667, 5, 5.333333333333333, 5.666666666666667, 6, 6.333333333333333]',
-          hasHover: true
+          label: 'param_repeat',
+          value: '6.3333',
+          hasHover: false
         },
       ],
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_metric/ && foundations submit scheduler ${projectName} floats.py`
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_param/ && foundations submit scheduler ${projectName} floats.py`
     },
     {
-      testName: `Test Logging Metrics of Type Str`,
+      testName: `Test Logging Params of Type Str`,
       projectName: projectName,
-      metrics: [
+      params: [
         {
-          label: 'metric_str',
+          label: 'param_str',
           value: '1',
           hasHover: false
         },
         {
-          label: 'metric_long_str',
+          label: 'param_long_str',
           value: 'asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf',
           hasHover: true
         },
         {
-          label: 'metric_long_list_of_str',
+          label: 'param_long_list_of_str',
           value: '[qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe, qwe]',
           hasHover: true
         },
         {
-          label: 'metric_mixed_type',
+          label: 'param_mixed_type',
           value: 'asdf',
           hasHover: false
         },
         {
-          label: 'metric_repeat',
-          value: '[str0, str1, str2, str3, str4, str5, str6, str7, str8, str9, str10, str11, str12, str13, str14, str15, str16, str17, str18, str19]',
-          hasHover: true
+          label: 'param_repeat',
+          value: 'str19',
+          hasHover: false
         },
       ],
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_metric/ && foundations submit scheduler ${projectName} strs.py`
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_param/ && foundations submit scheduler ${projectName} strs.py`
     },
   ];
 
@@ -145,30 +145,30 @@ describe('Test Log Metric', () => {
         });
       });
 
-      it('Project has metric headers', () => {
+      it('Project has param headers', () => {
         cy.contains(projectName).click({ force: true }).then(() => {
-          state.metrics.map(metric => metric.label).forEach(metricName => {
-           cy.get('[data-class=metric-header]')
-            .should('contain', metricName);
+          state.params.map(param => param.label).forEach(paramName => {
+           cy.get('[data-class=param-header]')
+            .should('contain', paramName);
           });
         });
       });
 
-      it('Job has metric values', () => {
+      it('Job has param values', () => {
         cy.contains(projectName).click({ force: true }).then(() => {
-          state.metrics.forEach(metric => {
-            cy.get(`[data-class=job-table-cell-with-header-${metric.label}]`)
-              .should('contain', metric.value);
+          state.params.forEach(param => {
+            cy.get(`[data-class=job-table-cell-with-header-${param.label}]`)
+              .should('contain', param.value);
           });
         });
       });
 
-      it('Job hover has metric values', () => {
+      it('Job hover has param values', () => {
         cy.contains(projectName).click({ force: true }).then(() => {
-          state.metrics.forEach(metric => {
-            if (metric.hasHover) {
-              cy.get(`[data-class=job-table-cell-with-header-${metric.label}]`).trigger('mouseover', { force: true });
-              cy.get('[data-class=hover-cell]').should('contain', metric.value);
+          state.params.forEach(param => {
+            if (param.hasHover) {
+              cy.get(`[data-class=job-table-cell-with-header-${param.label}]`).trigger('mouseover', { force: true });
+              cy.get('[data-class=hover-cell]').should('contain', param.value);
             }
           });
         });

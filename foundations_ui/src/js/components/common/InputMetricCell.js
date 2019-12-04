@@ -115,16 +115,12 @@ class InputMetricCell extends Component {
         hoverDataClass = 'hover-cell-tags-details';
       } else {
         overMaxLength = this.isContentOverMaxLength(finalValue);
-        if (overMaxLength) {
-          hoverDataClass = 'hover-cell-metric';
-        }
       }
       if ((overMaxLength && hoverable)) {
         hover = (
           <HoverCell
             onMouseLeave={this.toggleExpand}
             textToRender={expandedValue}
-            dataClass={hoverDataClass}
           />
         );
       }
