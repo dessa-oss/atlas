@@ -39,16 +39,15 @@ pipeline{
       steps {
         container("python3") {
           sh 'python -m pip install ./dist/*.whl'
-          sh 'export NEXUS_DOCKER_REGISTRY_STAGING=docker-staging.shehanigans.net'
-          sh 'docker login $NEXUS_DOCKER_REGISTRY_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD'
-          sh 'RELEASED=True && NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_REGISTRY_STAGING && ./devops/build_scripts/workers/build_worker_images.sh'
+          sh 'docker login $NEXUS_DOCKER_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD'
+          sh 'RELEASED=True && NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING && ./devops/build_scripts/workers/build_worker_images.sh'
         }
       }
     }
     stage('Push Images To Staging') {
       steps {
         container("python3") {
-          sh 'NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_REGISTRY_STAGING && ./devops/build_scripts/workers/push_worker_images.sh'
+          sh 'NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING && ./devops/build_scripts/workers/push_worker_images.sh'
         }
       }
     }
@@ -56,16 +55,16 @@ pipeline{
       steps {
         container("python3") {
           sh "docker pull redis:5 "
-          sh "docker tag redis:5 $NEXUS_DOCKER_REGISTRY_STAGING/tracker:5"
-          sh "docker tag $NEXUS_DOCKER_REGISTRY_STAGING/tracker:5 $NEXUS_DOCKER_REGISTRY_STAGING/tracker:latest"
+          sh "docker tag redis:5 $NEXUS_DOCKER_STAGING/tracker:5"
+          sh "docker tag $NEXUS_DOCKER_STAGING/tracker:5 $NEXUS_DOCKER_STAGING/tracker:latest"
         }
       }
     }
     stage('Push Tracker Image') {
       steps {
         container("python3") {
-          sh "docker push $NEXUS_DOCKER_REGISTRY_STAGING/tracker:5"
-          sh "docker push $NEXUS_DOCKER_REGISTRY_STAGING/tracker:latest"
+          sh "docker push $NEXUS_DOCKER_STAGING/tracker:5"
+          sh "docker push $NEXUS_DOCKER_STAGING/tracker:latest"
         }
       }
     }
@@ -105,30 +104,30 @@ pipeline{
       }
     }
   }
-  post {
-    always {
-      script {
-        customMetricsMap["jenkins_data"] = customMetrics
-      }
-      influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
-    }
-    failure {
-      script {
-        def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
-        def attachments = [
-            [
-                pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
-                text: output_logs,
-                fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
-                color: '#FF0000'
-            ]
-        ]
+  // post {
+  //   always {
+  //     script {
+  //       customMetricsMap["jenkins_data"] = customMetrics
+  //     }
+  //     influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
+  //   }
+  //   failure {
+  //     script {
+  //       def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
+  //       def attachments = [
+  //           [
+  //               pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+  //               text: output_logs,
+  //               fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+  //               color: '#FF0000'
+  //           ]
+  //       ]
 
-        slackSend(channel: '#f9s-builds', attachments: attachments)
-      }
-    }
-    success {
-      slackSend color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.'
-    }
-  }
+  //       slackSend(channel: '#f9s-builds', attachments: attachments)
+  //     }
+  //   }
+  //   success {
+  //     slackSend color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.'
+  //   }
+  // }
 }
