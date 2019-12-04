@@ -3,7 +3,7 @@ import os
 import foundations
 
 client = docker.from_env()
-build_version = os.environ['build_version']
+build_version = os.environ['docker_build_version']
 nexus_registry = os.environ['NEXUS_DOCKER_REGISTRY']
 
 from build_gui import build_and_tag_gui_image

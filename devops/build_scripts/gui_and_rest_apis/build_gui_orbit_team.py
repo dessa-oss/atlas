@@ -1,7 +1,7 @@
 import os
 
-build_version = os.environ['build_version']
-nexus_registry = os.environ['NEXUS_DOCKER_REGISTRY']
+build_version = os.environ['docker_build_version']
+nexus_registry = os.environ.get('NEXUS_DOCKER_REGISTRY', 'docker.shehanigans.net')
 
 from build_gui import build_and_tag_gui_image
 

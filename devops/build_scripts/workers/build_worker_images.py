@@ -1,7 +1,7 @@
 import docker
 import os
 
-build_version = os.environ['build_version']
+build_version = os.environ['docker_build_version']
 to_be_released = os.environ.get('RELEASED', False)
 
 

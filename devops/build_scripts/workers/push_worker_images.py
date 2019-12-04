@@ -2,7 +2,7 @@ import docker
 import os
 
 
-build_version = os.environ['build_version']
+build_version = os.environ['docker_build_version']
 nexus_password = os.environ['NEXUS_PASSWORD']
 nexus_username = os.environ['NEXUS_USER']
 nexus_registry = os.environ['NEXUS_DOCKER_REGISTRY']

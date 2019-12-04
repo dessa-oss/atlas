@@ -31,6 +31,6 @@ pip install -r requirements_test.txt \
         && yarn run test \
         && node_modules/.bin/eslint . \
     && cd $cwd \
-        tar -czvf coverage.tar.gz coverage_results \
+        && tar -czvf coverage.tar.gz coverage_results \
     echo "Successfully ran all test"
 

@@ -2,9 +2,8 @@
 
 python -m pip install setuptools_scm docker
 
-pip_version=`python get_version.py`
-export build_version=`echo $pip_version | sed 's/+/_/g'`
-script_location="`pwd`/devops/build_scripts"
+script_location="$(pwd)/devops/build_scripts"
+source "$script_location/build_common.sh"
 
 if [ $? -eq 0 ]
 then

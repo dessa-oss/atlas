@@ -1,34 +1,11 @@
 #!/bin/bash
 
-wheel_suffix=`python -c "import sys; print(sys.version_info.major)"`
 cli=$1
 
-python -m pip install setuptools_scm
-export build_version=`python get_version.py`
+script_location="$(pwd)/devops/build_scripts"
+source "$script_location/build_common.sh"
 
-wheel_name_tail="${build_version}-py${wheel_suffix}-none-any.whl"
 
-build_module () {
-    directory=$1
-    module_name=$2
-    cwd=$3
-    wheel_path=${directory}/dist/${module_name}-${wheel_name_tail}
-
-    unset BUILD_FOUNDATIONS_OBFUSCATED
-
-    cd ${directory} && \
-
-    if [ ${directory} = 'foundations_contrib' ]
-    then
-        export FOUNDATIONS_CLI=${cli}
-    fi
-
-    python setup.py sdist bdist_wheel && \
-    cd .. && \
-    python -m pip install -U $wheel_path && \
-    mkdir -p ${cwd}/dist 2>/dev/null && \
-    cp $wheel_path ${cwd}/dist
-}
 
 cwd=`pwd`
 
