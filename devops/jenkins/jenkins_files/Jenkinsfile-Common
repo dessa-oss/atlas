@@ -39,15 +39,33 @@ pipeline{
       steps {
         container("python3") {
           sh 'python -m pip install ./dist/*.whl'
-          sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-          sh 'RELEASED=True && NEXUS_DOCKER_REGISTRY=docker-staging.shehanigans.net && ./devops/build_scripts/workers/build_worker_images.sh'
+          sh 'export NEXUS_DOCKER_REGISTRY_STAGING=docker-staging.shehanigans.net'
+          sh 'docker login $NEXUS_DOCKER_REGISTRY_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD'
+          sh 'RELEASED=True && NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_REGISTRY_STAGING && ./devops/build_scripts/workers/build_worker_images.sh'
         }
       }
     }
     stage('Push Images To Staging') {
       steps {
         container("python3") {
-          sh 'NEXUS_DOCKER_REGISTRY=docker-staging.shehanigans.net && ./devops/build_scripts/workers/push_worker_images.sh'
+          sh 'NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_REGISTRY_STAGING && ./devops/build_scripts/workers/push_worker_images.sh'
+        }
+      }
+    }
+    stage('Build Tracker Image') {
+      steps {
+        container("python3") {
+          sh "docker pull redis:5 "
+          sh "docker tag redis:5 $NEXUS_DOCKER_REGISTRY_STAGING/tracker:5"
+          sh "docker tag $NEXUS_DOCKER_REGISTRY_STAGING/tracker:5 $NEXUS_DOCKER_REGISTRY_STAGING/tracker:latest"
+        }
+      }
+    }
+    stage('Push Tracker Image') {
+      steps {
+        container("python3") {
+          sh "docker push $NEXUS_DOCKER_REGISTRY_STAGING/tracker:5"
+          sh "docker push $NEXUS_DOCKER_REGISTRY_STAGING/tracker:latest"
         }
       }
     }
