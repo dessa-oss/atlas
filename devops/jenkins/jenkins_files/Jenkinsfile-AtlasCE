@@ -8,11 +8,11 @@ pipeline{
   }
   stages {
     stage('Preparation') {
-        steps {
-            container("python3") {
-              git branch: 'el-local-docker-scheduler-plugin', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations.git'
-            }
+      steps {
+        container("python3") {
+          git branch: 'el-local-docker-scheduler-plugin', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations.git'
         }
+      }
     }
     stage('Foundations Install Test Requirements') {
       steps {
@@ -56,6 +56,23 @@ pipeline{
         container("python3"){
           sh "NEXUS_DOCKER_REGISTRY=docker-staging.shehanigans.net ./tensorboard/docker/tensorboard_rest_api/push_image.sh"
           sh "NEXUS_DOCKER_REGISTRY=docker-staging.shehanigans.net ./tensorboard/docker/tensorboard_server/push_image.sh"
+        }
+      }
+    }
+    stage('Build Tracker Image') {
+      steps {
+        container("python3") {
+          sh "docker pull redis:5 "
+          sh "docker tag redis:5 docker-staging.shehanigans.net/tracker:5"
+          sh "docker tag docker-staging.shehanigans.net/tracker:5 docker-staging.shehanigans.net/tracker:latest"
+        }
+      }
+    }
+    stage('Push Tracker Image') {
+      steps {
+        container("python3") {
+          sh "docker push docker-staging.shehanigans.net/tracker:5"
+          sh "docker push docker-staging.shehanigans.net/tracker:latest"
         }
       }
     }
