@@ -180,15 +180,15 @@ pipeline{
                 }
             }
         }
-        stage('Run Atlas Front End Unit Tests') {
-            steps {
-                container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui/") {
-                        sh "yarn run test"
-                    }
-                }
-            }
-        }
+        // stage('Run Atlas Front End Unit Tests') {
+        //     steps {
+        //         container("yarn") {
+        //             ws("${WORKSPACE}/foundations_ui/") {
+        //                 sh "yarn run test"
+        //             }
+        //         }
+        //     }
+        // }
         stage('Check for Atlas linting ') {
             steps {
                 container("yarn") {
