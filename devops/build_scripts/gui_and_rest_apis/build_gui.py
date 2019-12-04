@@ -7,6 +7,7 @@ client = docker.from_env()
 build_version = os.environ['docker_build_version']
 nexus_registry = os.environ['NEXUS_DOCKER_REGISTRY']
 
+
 def build_and_tag_gui_image(path, dockerfile, repository, buildargs=None):
     if buildargs is None:
         buildargs = {}
@@ -14,11 +15,14 @@ def build_and_tag_gui_image(path, dockerfile, repository, buildargs=None):
     latest_tag = f'{repository}:latest'
     try:
         client = docker.APIClient(base_url='unix://var/run/docker.sock')
-        streamer = client.build(path=path, 
-                                tag=build_tag, 
-                                dockerfile=dockerfile, 
-                                decode=True,
-                                buildargs=buildargs)
+        streamer = client.build(
+            path=path,
+            tag=build_tag,
+            dockerfile=dockerfile,
+            decode=True,
+            network_mode='host',
+            buildargs=buildargs
+        )
         print_logs(streamer)
         
         print(f'Tagging image {build_tag} to {latest_tag}')
@@ -30,19 +34,12 @@ def build_and_tag_gui_image(path, dockerfile, repository, buildargs=None):
     except docker.errors.BuildError as ex:
         print_logs(ex.build_log)
 
-    # try:
-        
-    #     image, image_logs = client.images.build(path=path, dockerfile=dockerfile, tag=build_tag, buildargs=buildargs)
-    #     image.tag(repository, tag='latest')
-    #     print_logs(image_logs)
-    # except docker.errors.BuildError as ex:
-    #     print_logs(ex.build_log)
-    #     raise
 
 def print_logs(logs):
     for line in logs:
         if 'stream' in line:
             print(line['stream'].strip())
+
 
 def main(argv):
     if len(argv) != 2:

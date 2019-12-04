@@ -47,7 +47,7 @@ pipeline{
     stage('Push Images To Staging') {
       steps {
         container("python3") {
-          sh 'NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING && ./devops/build_scripts/workers/push_worker_images.sh'
+          sh 'RELEASED=True && NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING && ./devops/build_scripts/workers/push_worker_images.sh'
         }
       }
     }

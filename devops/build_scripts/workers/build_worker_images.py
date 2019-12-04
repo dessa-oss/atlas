@@ -39,11 +39,14 @@ def build_worker_images():
         
         try:
             client = docker.APIClient(base_url='unix://var/run/docker.sock')
-            streamer = client.build(path=worker_file_path, 
-                                    tag=worker_tag, 
-                                    dockerfile=dockerfile, 
-                                    decode=True,
-                                    buildargs=None)
+            streamer = client.build(
+                path=worker_file_path,
+                tag=worker_tag,
+                dockerfile=dockerfile,
+                decode=True,
+                network_mode='host',
+                buildargs=None
+            )
             print_logs(streamer)
 
             print(f'Tagging image {worker_tag} to {latest_tag}')
@@ -54,10 +57,7 @@ def build_worker_images():
                 print('Successfully tagged image')
         except docker.errors.BuildError as ex:
             print_logs(ex.build_log)
-
-        # image, image_logs = client.images.build(path=worker_file_path, dockerfile=dockerfile, tag=worker_tag, buildargs=None)
-        # image.tag(worker_tag, tag='latest')
-        # print_logs(image_logs)
+            raise
 
 
 if __name__ == '__main__':
