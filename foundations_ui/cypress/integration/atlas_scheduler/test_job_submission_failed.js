@@ -6,15 +6,15 @@ describe('Test Job Submission that Fails', () => {
 
   const states = [
     {
-        testName: `Test Job Submission that Fails with CLI with project job_submission_project`,
-        projectName: 'job_submission_project',
-        command: 'export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit scheduler job_submission_project main.py 0 "Complete_Failed_Task_1"'
-      },
-      {
-        testName: `Test Job Submission that Fails with CLI with project job_submission_project_with_foundations`,
-        projectName: 'job_submission_project_with_foundations',
-        command: 'export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit scheduler job_submission_project_with_foundations main.py 0 "Complete_Failed_Task_2"'
-      }
+      testName: `Test Job Submission that Fails with CLI with project job_submission_project`,
+      projectName: 'job_submission_project',
+      command: 'export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit scheduler job_submission_project main.py 0 "Complete_Failed_Task_1"'
+    },
+    {
+      testName: `Test Job Submission that Fails with CLI with project job_submission_project_with_foundations`,
+      projectName: 'job_submission_project_with_foundations',
+      command: 'export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit scheduler job_submission_project_with_foundations main.py 0 "Complete_Failed_Task_2"'
+    }
   ];
 
   states.forEach(state => {

@@ -4,19 +4,18 @@ describe('Test Local Job Submission that Fails', () => {
   const schedulerRedisPort = Cypress.env('SCHEDULER_REDIS_PORT');
   const guiHost = Cypress.env('GUI_HOST');
   const guiPort = Cypress.env('GUI_PORT');
-  const projectName = 'local_job_submission_project';
 
   const states = [
     {
-        testName: `Test Local Job Submission that Fails with CLI from outside job directory`,
-        projectName: 'local_job_submission',
-        command: 'export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/local_job_submission/ && python local_job_submission_project/main.py 0 "Complete_Fail_Task_3"'
-      },
-      {
-        testName: `Test Local Job Submission that Fails with CLI from inside job directory`,
-        projectName: 'local_job_submission_project',
-        command: 'export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/local_job_submission/local_job_submission_project && python main.py 0 "Complete_Fail_Task_4"'
-      }
+      testName: `Test Local Job Submission that Fails with CLI from outside job directory`,
+      projectName: 'local_job_submission',
+      command: 'export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/local_job_submission/ && python local_job_submission_project/main.py 0 "Complete_Fail_Task_3"'
+    },
+    {
+      testName: `Test Local Job Submission that Fails with CLI from inside job directory`,
+      projectName: 'local_job_submission_project',
+      command: 'export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/local_job_submission/local_job_submission_project && python main.py 0 "Complete_Fail_Task_4"'
+    }
   ];
 
   states.forEach(state => {

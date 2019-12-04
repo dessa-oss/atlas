@@ -87,10 +87,17 @@ class JobColumnHeader extends Component {
       );
     }
 
+    let dataClass = '';
+
+    if (isMetric) {
+      dataClass = 'metric-header';
+    }
+
     return (
       <div
-        className={`${divClassName}`}
+        className={divClassName}
         ref={(c) => { this.headerContainer = c; }}
+        data-class={dataClass}
       >
         <div className={offsetDivClass}>
           <h4

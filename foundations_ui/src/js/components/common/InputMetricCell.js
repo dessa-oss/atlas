@@ -65,6 +65,7 @@ class InputMetricCell extends Component {
       value, isError, cellType, rowNumber, expand, hoverable, jobID,
 
     } = this.state;
+    const { columnHeader } = this.props;
 
     const pClass = CommonActions.getInputMetricCellPClass(isError, cellType);
     const divClass = CommonActions.getInputMetricCellDivClass(isError, rowNumber, jobID);
@@ -77,7 +78,6 @@ class InputMetricCell extends Component {
     if (pClass.includes('tag') && value !== '') {
       finalValue = [];
       let index = 0;
-      dataClass = 'metric-cell-tags';
       if (Array.isArray(value)) {
         value.forEach((tag) => {
           if (index === maxLength) {
@@ -109,27 +109,35 @@ class InputMetricCell extends Component {
 
     if (shouldCheckExpand) {
       let overMaxLength;
+      let hoverDataClass = '';
       if (pClass.includes('tag') && value !== '') {
         overMaxLength = this.isTagContentOverMaxLength(finalValue);
+        hoverDataClass = 'hover-cell-tags-details';
       } else {
         overMaxLength = this.isContentOverMaxLength(finalValue);
+        if (overMaxLength) {
+          hoverDataClass = 'hover-cell-metric';
+        }
       }
       if ((overMaxLength && hoverable)) {
         hover = (
           <HoverCell
             onMouseLeave={this.toggleExpand}
             textToRender={expandedValue}
-            dataClass="hover-cell-tags-details"
+            dataClass={hoverDataClass}
           />
         );
       }
     }
 
     return (
-      <div className={divClass} onMouseLeave={() => this.toggleExpand(false)}>
+      <div
+        className={divClass}
+        onMouseLeave={() => this.toggleExpand(false)}
+      >
         <p
           className={pClass}
-          data-class={dataClass}
+          data-class={`job-table-cell-with-header-${columnHeader}`}
           onMouseEnter={() => this.toggleExpand(true)}
         >
           {finalValue}
@@ -150,6 +158,7 @@ InputMetricCell.propTypes = {
   hoverable: PropTypes.bool,
   jobID: PropTypes.string,
   onClickOpenModalJobDetails: PropTypes.func,
+  columnHeader: PropTypes.string,
 };
 
 InputMetricCell.defaultProps = {
@@ -160,6 +169,7 @@ InputMetricCell.defaultProps = {
   hoverable: true,
   jobID: '',
   onClickOpenModalJobDetails: () => null,
+  columnHeader: '',
 };
 
 export default InputMetricCell;
