@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 class HoverCell extends Component {
   render() {
-    const { textToRender, onMouseLeave, dataClass } = this.props;
+    const { textToRender, onMouseLeave } = this.props;
     return (
-      <div onMouseLeave={onMouseLeave} className="job-cell-hover" data-class={dataClass}>
+      <div onMouseLeave={onMouseLeave} className="job-cell-hover" data-class="hover-cell">
         {textToRender}
       </div>
     );
@@ -15,13 +15,11 @@ class HoverCell extends Component {
 HoverCell.propTypes = {
   textToRender: PropTypes.object,
   onMouseLeave: PropTypes.func,
-  dataClass: PropTypes.string,
 };
 
 HoverCell.defaultProps = {
   textToRender: <p />,
   onMouseLeave: () => {},
-  dataClass: '',
 };
 
 export default HoverCell;

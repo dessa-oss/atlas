@@ -29,6 +29,7 @@ class ArtifactRow extends React.Component {
         role="button"
         onClick={this.onClickThisArtifact}
         className="table-artifacts-row"
+        data-class="artifacts-table-row"
       >
         <div className="table-artifacts-row-cell">
           <p>{artifact.filename}</p>

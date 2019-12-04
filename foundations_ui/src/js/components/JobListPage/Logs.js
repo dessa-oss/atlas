@@ -45,7 +45,7 @@ class Logs extends React.Component {
   render() {
     const { message } = this.state;
     return (
-      <div className="container-logs">
+      <div className="container-logs" data-class="logs-container">
         {message}
       </div>
     );

@@ -276,6 +276,7 @@ class ModalJobDetails extends React.Component {
                   className={tab === 'artifacts' ? 'active' : ''}
                   onClick={this.onClickArtifacts}
                   onKeyDown={this.onKeyDown}
+                  data-class="artifacts-tab-button"
                 >
                   Artifacts
                 </h3>

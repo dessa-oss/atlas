@@ -141,6 +141,7 @@ class CommonActions {
 
         cells.push(<InputMetricCell
           key={key}
+          columnHeader={key}
           value={inputValue}
           isError={isError}
           cellType={cellType}
@@ -174,6 +175,7 @@ class CommonActions {
 
         cells.push(<InputMetricCell
           key={key}
+          columnHeader={key}
           value={inputValue}
           isError={isError}
           cellType={cellType}
