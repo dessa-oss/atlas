@@ -1,6 +1,7 @@
 import docker
 import os
 import foundations
+import sys
 
 client = docker.from_env()
 build_version = os.environ['docker_build_version']
@@ -9,8 +10,8 @@ nexus_registry = os.environ['NEXUS_DOCKER_REGISTRY']
 def build_and_tag_gui_image(path, dockerfile, repository, buildargs=None):
     if buildargs is None:
         buildargs = {}
-    build_tag = '{}:{}'.format(repository, build_version)
-
+    build_tag = f'{repository}:{build_version}'
+    latest_tag = f'{repository}:latest'
     try:
         client = docker.APIClient(base_url='unix://var/run/docker.sock')
         streamer = client.build(path=path, 
@@ -19,6 +20,13 @@ def build_and_tag_gui_image(path, dockerfile, repository, buildargs=None):
                                 decode=True,
                                 buildargs=buildargs)
         print_logs(streamer)
+        
+        print(f'Tagging image {build_tag} to {latest_tag}')
+        image = client.tag(repository, latest_tag)
+        if image == False:
+            sys.exit('Unable to tag image')
+        else:
+            print('Successfully tagged image')
     except docker.errors.BuildError as ex:
         print_logs(ex.build_log)
 
@@ -63,5 +71,4 @@ def main(argv):
     build_and_tag_gui_image(gui_directory, gui_docker_file, f'{nexus_registry}/{gui_docker_image}')
 
 if __name__ == '__main__':
-    import sys
     main(sys.argv)
