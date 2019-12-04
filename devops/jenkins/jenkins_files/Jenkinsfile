@@ -243,10 +243,9 @@ pipeline{
                 }
             }
         }
-        stage('Trigger Orbit Team Dev Build Pipeline') {
+        stage('Trigger Build Artifacts for Foundations Pipeline') {
             steps {
                 script {
-                    echo "Triggering job for branch orbit-team-dev-build-artifact"
                     build job: "build-artifacts-foundations", wait: false
                 }
             }
