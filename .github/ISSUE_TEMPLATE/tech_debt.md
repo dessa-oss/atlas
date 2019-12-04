@@ -7,11 +7,8 @@ assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-Explain the problem you faced, that you want to solve
+**What's holding us back, and how?**
+(describe problem here)
 
-**Describe the solution you'd like**
-Here is your opportunity to really the user experience of the solution
-
-**Optional - Describe hacks you've considered**
-Hackerman 🤯
+**Optional: what are some options for remediating it?**
+(brainstorm possible approaches)
