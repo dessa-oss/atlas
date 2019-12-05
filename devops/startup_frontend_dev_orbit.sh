@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source dev_env.sh
+source activate_dev_env.sh
 
 export FOUNDATIONS=${FOUNDATIONS_HOME:-~/.foundations}
 
