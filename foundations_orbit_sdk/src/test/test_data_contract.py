@@ -986,16 +986,27 @@ class TestDataContract(Spec):
 
         self.assertIsInstance(contract, DataContract)
 
-    def test_data_contract_works_without_any_errors_when_current_dataframe_has_missing_columns(self):
+    def test_data_contract_works_without_any_errors_when_dataframe_to_validate_has_missing_columns(self):
         import numpy
         data_contract = DataContract("my_contract", self.two_column_dataframe)
         data_contract.special_value_test.configure(attributes=self.two_column_dataframe.columns, thresholds={numpy.nan: 0.1})
 
-        dataframe_to_validate = self.two_column_dataframe.loc[:self.column_name]
+        dataframe_to_validate = self.two_column_dataframe.drop(columns=[self.column_name_2])
         try:
             data_contract.validate(dataframe_to_validate)
         except Exception as ex:
-            self.fail(f'Unexpected exception {ex}')
+            raise ex
+    
+    def test_data_contract_works_without_any_errors_when_reference_dataframe_has_missing_columns(self):
+        import numpy
+        reference_dataframe = self.two_column_dataframe.drop(columns=[self.column_name_2])
+        data_contract = DataContract("my_contract", reference_dataframe)
+        data_contract.special_value_test.configure(attributes=self.two_column_dataframe.columns, thresholds={numpy.nan: 0.1})
+
+        try:
+            data_contract.validate(self.two_column_dataframe)
+        except Exception as ex:
+            raise ex
 
     def _test_special_values_checker_for_datatype_input_returns_expected_results(self, data):
         import pandas, numpy

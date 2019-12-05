@@ -89,9 +89,8 @@ class SpecialValuesChecker(object):
         import numpy as np
 
         special_value_percentages = {}
-
         for column, threshold_dictionary in self._special_value_thresholds.items():
-            if column in self.temp_attributes_to_exclude:
+            if column in self.temp_attributes_to_exclude or column not in dataframe:
                 continue
 
             column_value_counts = dataframe[column].value_counts(sort=False, dropna=False, normalize=True)
