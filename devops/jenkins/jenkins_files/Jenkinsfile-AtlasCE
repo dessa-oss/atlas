@@ -11,7 +11,7 @@ pipeline{
       steps {
         container("python3") {
           dir('f9s') {
-            git branch: 'el-local-docker-scheduler-plugin', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations.git'
+            git branch: 'master', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations.git'
           }
         }
       }
