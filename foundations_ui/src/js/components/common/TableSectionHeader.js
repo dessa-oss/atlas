@@ -59,7 +59,6 @@ class TableSectionHeader extends Component {
 
     return (
       <div className={divClass}>
-        <p className={textClass}>{header}</p>
         <div
           role="presentation"
           onClick={this.toggleShowingFilter}

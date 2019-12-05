@@ -55,7 +55,9 @@ class GCPBucket(object):
         object_file_names = [basename(path) for path in object_names]
         for path in object_file_names:
             if fnmatch(path, path_filter):
-                yield '{}/{}'.format(directory, path)
+                if directory:
+                    path = '{}/{}'.format(directory, path)
+                yield path
 
     def _list_files_prefix(self, directory):
         from os.path import join

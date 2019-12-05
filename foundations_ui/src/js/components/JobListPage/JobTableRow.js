@@ -3,11 +3,14 @@ import PropTypes from 'prop-types';
 import StartCell from './cells/StartTimeCell';
 import StatusCell from './cells/StatusCell';
 import JobIDCell from './cells/JobIDCell';
+// import TagsCell from './cells/TagsCell';
 import DurationCell from './cells/DurationCell';
 import UserCell from './cells/UserCell';
+import CancelJobCell from './cells/CancelJobCell';
 import JobListActions from '../../actions/JobListActions';
 import CommonActions from '../../actions/CommonActions';
 
+// [KD] Class is not Longer used, kept for reference
 class JobTableRow extends Component {
   constructor(props) {
     super(props);
@@ -17,22 +20,40 @@ class JobTableRow extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.job !== this.props.job) {
+      this.setState(
+        {
+          job: nextProps.job,
+          rowNumber: nextProps.rowNumber,
+        },
+      );
+    }
+  }
+
   render() {
     const { job, rowNumber } = this.state;
 
     const isError = CommonActions.isError(job.status);
 
     return (
-      <div className="job-table-row">
-        <StartCell startTime={job.start_time} isError={isError} rowNumber={rowNumber} />
-        <StatusCell status={job.status} isError={isError} rowNumber={rowNumber} />
+      <div
+        role="presentation"
+        className="job-table-row"
+        onClick={() => this.props.handleClick(job, job.job_id)}
+        onKeydown={() => this.props.handleClick(job, job.job_id)}
+      >
+        <CancelJobCell job={job} />
         <JobIDCell jobID={job.job_id} isError={isError} rowNumber={rowNumber} />
+        <StartCell startTime={job.start_time} status={job.status} isError={isError} rowNumber={rowNumber} />
+        <StatusCell status={job.status} isError={isError} rowNumber={rowNumber} />
         <DurationCell
           duration={JobListActions.parseDuration(job.duration)}
           isError={isError}
           rowNumber={rowNumber}
         />
         <UserCell user={job.user} isError={isError} rowNumber={rowNumber} />
+        {/* <TagsCell tag={job.tags} isError={isError} rowNumber={rowNumber} /> */}
       </div>
     );
   }
@@ -41,11 +62,13 @@ class JobTableRow extends Component {
 JobTableRow.propTypes = {
   job: PropTypes.object,
   rowNumber: PropTypes.number,
+  handleClick: PropTypes.func,
 };
 
 JobTableRow.defaultProps = {
   job: {},
   rowNumber: 0,
+  handleClick: () => null,
 };
 
 export default JobTableRow;

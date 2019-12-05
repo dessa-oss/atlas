@@ -4,6 +4,23 @@
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-top: 5px solid $color-dark-blue;
+
+  &.unselected {
+      position: absolute;
+      margin: auto;
+      top: -70px;
+      left: 0;
+      right: 0;
+      width: 137px;
+      height: 137px;
+      transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      border-right: 5px solid $color-dark-blue;
+      border-bottom: 5px solid $color-dark-blue;
+  }
 }
 
 .arrow-up {
@@ -12,6 +29,24 @@
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-bottom: 5px solid $color-dark-blue;
+
+  &.unselected {
+      position: absolute;
+      margin: auto;
+      top: -70px;
+      left: 0;
+      right: 0;
+      width: 137px;
+      height: 137px;
+      transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      border-right: 5px solid $color-dark-blue;
+      border-bottom: 5px solid $color-dark-blue;
+  }
+
 }
 
 .arrow-left {
@@ -34,12 +69,38 @@
   background-color: $color-status-green;
 }
 
+.status-running {
+  background-color: $color-status-green;
+  animation: blinker 1s linear infinite;
+}
+
+.blink_me {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
 .status-yellow {
   background-color: $color-status-yellow;
 }
 
 .status-red {
   background-color: $color-status-red;
+  background-image: url('../assets/svgs/status-error-icon.svg');
+  @include icon-helper;
+  width: 20px;
+  height: 20px;
+  // cursor: pointer;
+  opacity: 0.7;
+  border: none;
+  &:hover {
+    opacity: 1;
+  }
+  margin-top: 5px;
 }
 
 .button-icon {
@@ -51,6 +112,8 @@
   vertical-align: top;
   border-width: 0;
   outline: none;
+  position: relative;
+  left: -2px;
 }
 
 .button-icon:hover {
@@ -97,7 +160,6 @@
   line-height: $size;
   display: inline-block;
   vertical-align: middle;
-  background: $color-light-blue;
   border-radius: 50%;
   outline: none;
   border: none;
@@ -229,3 +291,135 @@
     transform: rotate(360deg);
   }
 }
+
+
+[class*="icono"] {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  color: #666;
+  box-sizing: border-box;
+  &:after, &:before {
+    content: "";
+    box-sizing: border-box;
+  }
+}
+[class*="icono-arrow1"]{
+  width: 9px;
+  height: 9px;
+  border-width: 2px 2px 0 0;
+  border-style: solid;
+  margin: 10px;
+  margin-right: 20px;
+  &:before{
+    right: 0;
+    top: -2.5px;
+    position: absolute;
+    height: 2px;
+    box-shadow: inset 0 0 0 32px;
+    transform: rotate(-45deg);
+    width: 19px;
+    transform-origin: right top;
+  }
+  &[class*="-left"]{
+    transform: rotate(45deg);
+    &[class*="-up"]{
+      transform: none;
+    }
+    &[class*="-down"]{
+      transform: rotate(90deg);
+    }
+  }
+  &[class*="-right"]{
+    transform: rotate(-135deg);
+    &[class*="-up"]{
+      transform: rotate(-90deg);
+    }
+    &[class*="-down"]{
+      transform: rotate(180deg);
+    }
+  }
+  &[class*="-up"]{
+    transform: rotate(-45deg);
+  }
+  &[class*="-down"]{
+    transform: rotate(135deg);
+  }
+}
+
+.close {
+
+}
+
+.close:hover {
+  opacity: 1;
+  cursor: pointer;
+  &:before, &:after {
+    background-color: $color-black;
+  }
+}
+
+.close:before, .close:after {
+  position: absolute;
+  content: ' ';
+  top: 6px;
+  height: 17px;
+  width: 2px;
+  background-color: $color-border-bottom;
+}
+
+.close:before {
+  transform: rotate(45deg);
+}
+
+.close:after {
+  transform: rotate(-45deg);
+}
+
+
+
+// spinner
+// Here is where the magic happens
+
+$offset: 187;
+$duration: 3s;
+
+.spinner {
+  animation: rotator $duration linear infinite;
+}
+
+@keyframes rotator {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(270deg); }
+}
+
+.path {
+  stroke-dasharray: $offset;
+  stroke-dashoffset: 0;
+  transform-origin: center;
+  animation:
+    dash $duration ease-in-out infinite, 
+    colors ($duration*4) ease-in-out infinite;
+}
+
+@keyframes colors {
+	0% { stroke: #00B086; }
+	25% { stroke: #00B086; }
+	50% { stroke: #00B086; }
+	75% { stroke: #00B086; }
+  100% { stroke: #00B086; }
+}
+
+@keyframes dash {
+ 0% { stroke-dashoffset: $offset; }
+ 50% {
+   stroke-dashoffset: $offset/4;
+   transform:rotate(135deg);
+ }
+ 100% {
+   stroke-dashoffset: $offset;
+   transform:rotate(450deg);
+ }
+}
+
+

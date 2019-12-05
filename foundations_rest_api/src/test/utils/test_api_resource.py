@@ -5,15 +5,13 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
-from mock import patch, Mock
+from mock import patch
 from foundations_rest_api.utils.api_resource import api_resource
 from test.helpers.api_resource_mocks import APIResourceMocks
-from foundations_rest_api.lazy_result import LazyResult
-from foundations_rest_api.response import Response
+from foundations_core_rest_api_components.lazy_result import LazyResult
+from foundations_core_rest_api_components.response import Response
 
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import let, let_patch_mock
+from foundations_spec import *
 
 class TestAPIResource(Spec):
 
@@ -41,7 +39,9 @@ class TestAPIResource(Spec):
     def random_cookie_value(self):
         return self.faker.sha256()
 
-    authorization_mock = let_patch_mock('foundations_rest_api.v1.models.session.Session.is_authorized')
+    @let
+    def random_data(self):
+        return {self.faker.sentence(): self.faker.sentence() for _ in range(self.faker.random.randint(3, 10))}
 
     def test_returns_class(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.Mock)
@@ -53,12 +53,40 @@ class TestAPIResource(Spec):
             response = client.get(self.uri_path)
             self.assertEqual(self._json_response(response), 'some data')
     
+    def test_get_returns_show(self):
+        klass = api_resource(self.uri_path)(APIResourceMocks.MockWithShow)
+        with self._test_client() as client:
+            response = client.get(self.uri_path)
+            self.assertEqual(self._json_response(response), 'some specific data')
+
+    def test_delete_returns_delete(self):
+        klass = api_resource(self.uri_path)(APIResourceMocks.MockWithDelete)
+        with self._test_client() as client:
+            response = client.delete(self.uri_path)
+            self.assertEqual(self._json_response(response), 'some data')
+        
+    def test_delete_sets_params(self):
+        def _callback(mock_instance):
+            return mock_instance.params
+
+        mock_klass = self._mock_resource('delete', _callback)
+
+        klass = api_resource(self.uri_path)(mock_klass)
+        with self._test_client() as client:
+            response = client.delete(self.uri_path, data=self.random_data)
+            self.assertEqual(self._json_response(response), self.random_data)
+
     def test_post_returns_post(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.MockWithPost)
         with self._test_client() as client:
             response = client.post(self.uri_path)
             self.assertEqual(self._json_response(response), 'some data')
         
+    def test_put_returns_update(self):
+        klass = api_resource(self.uri_path)(APIResourceMocks.MockWithUpdate)
+        with self._test_client() as client:
+            response = client.put(self.uri_path)
+            self.assertEqual(self._json_response(response), 'some updated data')
     
     def test_post_sets_params(self):
         def _callback(mock_instance):
@@ -69,6 +97,17 @@ class TestAPIResource(Spec):
         klass = api_resource(self.uri_path)(mock_klass)
         with self._test_client() as client:
             response = client.post(self.uri_path, data={'password': 'world'})
+            self.assertEqual(self._json_response(response), {'password': 'world'})
+
+    def test_post_sets_json(self):
+        def _callback(mock_instance):
+            return mock_instance.params
+
+        mock_klass = self._mock_resource('post', _callback)
+
+        klass = api_resource(self.uri_path)(mock_klass)
+        with self._test_client() as client:
+            response = client.post(self.uri_path, json={'password': 'world'})
             self.assertEqual(self._json_response(response), {'password': 'world'})
 
     def test_post_sets_params_different_params(self):
@@ -114,6 +153,18 @@ class TestAPIResource(Spec):
             response = client.get(self.uri_path)
             self.assertEqual(response.status_code, 403)
 
+    def test_delete_has_status_code(self):
+        klass = api_resource(self.uri_path)(APIResourceMocks.MockWithDelete)
+        with self._test_client() as client:
+            response = client.delete(self.uri_path)
+            self.assertEqual(response.status_code, 200)
+
+    def test_delete_has_status_code_different_code(self):
+        klass = api_resource(self.uri_path)(APIResourceMocks.MockWithDeleteAndStatus)
+        with self._test_client() as client:
+            response = client.delete(self.uri_path)
+            self.assertEqual(response.status_code, 403)
+
     def test_post_has_status_code(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.MockWithIndexAndPost)
         with self._test_client() as client:
@@ -136,10 +187,22 @@ class TestAPIResource(Spec):
             response = client.post(self.uri_path, data={'password': 'world'})
             self.assertEqual(self.cookie_string + ';path=/', response.headers.get('Set-Cookie'))
 
+    def test_delete_returns_path_param(self):
+        klass = api_resource('/path/to/resource/with/<string:project_name>/params')(APIResourceMocks.ParamsMockWithDelete)
+        with self._test_client() as client:
+            response = client.delete('/path/to/resource/with/value/params')
+            self.assertEqual(self._json_response(response), {'project_name': 'value'})
+
     def test_get_returns_path_param(self):
         klass = api_resource('/path/to/resource/with/<string:project_name>/params')(APIResourceMocks.ParamsMockWithIndex)
         with self._test_client() as client:
             response = client.get('/path/to/resource/with/value/params')
+            self.assertEqual(self._json_response(response), {'project_name': 'value'})
+
+    def test_post_returns_path_param(self):
+        klass = api_resource('/path/to/resource/with/<string:project_name>/params')(APIResourceMocks.ParamsMockWithPost)
+        with self._test_client() as client:
+            response = client.post('/path/to/resource/with/value/params')
             self.assertEqual(self._json_response(response), {'project_name': 'value'})
 
     def test_get_returns_path_with_query_params(self):
@@ -154,33 +217,6 @@ class TestAPIResource(Spec):
             response = client.get('/path/to/resource/with/query_list/params?hello=world&hello=lou')
             self.assertEqual(self._json_response(response), {'hello': ['world', 'lou']})
 
-    def test_get_returns_unauthorized_when_not_authenticated(self):
-        mock_klass = self._mock_resource('index', self._empty_callback)
-        klass = api_resource(self.uri_path)(mock_klass)
-
-        self.authorization_mock.return_value = False
-        headers = {'Cookie': 'auth_token={}'.format(self.random_cookie_value)}
-        with self._test_client() as client:
-            response = client.get(self.uri_path, headers=self.cookie_header)
-            self.assertEqual(self._json_response(response), 'Unauthorized')
-    
-    def test_get_returns_unauthorized_status_when_not_authenticated(self):
-        mock_klass = self._mock_resource('index', self._empty_callback)
-        klass = api_resource(self.uri_path)(mock_klass)
-
-        self.authorization_mock.return_value = False
-        headers = {'Cookie': 'auth_token={}'.format(self.random_cookie_value)}
-        with self._test_client() as client:
-            response = client.get(self.uri_path, headers=self.cookie_header)
-            self.assertEqual(response.status_code, 401)
-
-    def test_get_calls_session_is_authorized_with_correct_parameters(self):
-        mock_klass = self._mock_resource('index', self._empty_callback)
-        klass = api_resource(self.uri_path)(mock_klass)
-
-        with self._test_client() as client:
-            response = client.get(self.uri_path, headers=self.cookie_header)
-            self.authorization_mock.assert_called_with({'auth_token': self.random_cookie_value})
 
     def _empty_callback(self, mock_instance):
         return ''
@@ -190,7 +226,7 @@ class TestAPIResource(Spec):
         return app_manager.app().test_client()
 
     def _mock_resource(self, method, callback, status=200, cookie=None):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         mock_klass = Mock()
         mock_instance = Mock()

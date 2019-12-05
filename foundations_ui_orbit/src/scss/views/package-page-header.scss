@@ -1,0 +1,19 @@
+.package-header-container {
+  height: $package-toolbar-height;
+  max-height: $package-toolbar-height;
+  background-color: $color-white;
+  border-bottom: 1px solid $color-border-bottom;
+  padding: 5px 40px 10px 40px;
+  white-space: nowrap;
+  h2{
+    margin: 0;
+    color: $color-dark-blue;
+    font-size: 25px;
+  }
+
+  h3{
+    margin-top: 0px;
+    font-size: 14px;
+  }
+
+}

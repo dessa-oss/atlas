@@ -16,7 +16,7 @@ class LocalFileSystemBucket(object):
         self._log().debug('Creating bucket at path {}'.format(self._path))
 
     def upload_from_string(self, name, data):
-        from foundations.utils import byte_string
+        from foundations_contrib.utils import byte_string
 
         path = self._full_path(name)
         self._log().debug('Uploading %s (%s) from string', name, path)
@@ -45,7 +45,7 @@ class LocalFileSystemBucket(object):
         return isfile(path)
 
     def download_as_string(self, name):
-        from foundations.utils import byte_string
+        from foundations_contrib.utils import byte_string
 
         path = self._full_path(name)
         self._log().debug('Downloading %s (%s)', name, path)
@@ -97,5 +97,5 @@ class LocalFileSystemBucket(object):
         ensure_path_exists(self._path, name)
 
     def _log(self):
-        from foundations.global_state import log_manager
+        from foundations_contrib.global_state import log_manager
         return log_manager.get_logger(__name__)

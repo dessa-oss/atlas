@@ -15,21 +15,23 @@
   }
 }
 
-.blue-header {
-  text-align: center;
-  background-color: $color-medium-blue;
-  height: 36px;
+.column-header {
+  background-color: #FBFBFB;
+  height: 52px;
+  line-height: 52px;
   width: 100%;
+  border-top: solid 1px #E2E2E2;
+  border-top-left-radius: 1px;
+  border-top-right-radius: 1px;
 }
 
-.blue-header-text {
-  color: $color-white;
-  text-transform: uppercase;
+.table-header-text {
+  color: #747474;
   margin: 0px;
-  line-height: 36px;
+  line-height: 52px;
 }
 
-.blue-header-arrow {
+.table-header-arrow {
   border-top: 6px solid $color-white;
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;

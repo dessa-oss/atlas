@@ -2,15 +2,14 @@
 
 In this tutorial we will go over how to build and deploy a model using Foundations, as well as demonstrate additional features. To use Foundations to its maximum extent, we recommend seperating any job deployment code from the actual model itself. For this example, we will seperate all model code into a file called model.py and any job deployment code into deploy.py which will just use the functions defined in model.py.
 
-This tutorial will also be using Jupyter Notebook as the primary interface to deploy model code locally; however, Foundations is **not** dependant of Jupyter Notebook and models can be deployed natively through Python. For those wishing to run the code without Jupyter, simply run the driver code with `python driver.py`.
+This tutorial will also be using Jupyter Notebook as the primary interface to deploy model code **locally**; however, Foundations is **not** dependant of Jupyter Notebook and models can be deployed natively through Python. For those wishing to run the code without Jupyter, simply run the driver code with the Foundations CLI command: `foundations deploy project_code/driver.py --env=local`.
 
 <h3>Before you start</h3>
 
 You should have already [installed Foundations](../quick_start/) as well as [Jupyter Notebook](../start_guide/#jupyter-notebook-setup) up and runnning.
 
 ## Step 0: Set your configuration (optional)
-
-If you are:
+This tutorial will deploy and run model code on your local machine using the auto-generated environment configuration file from the [init](../project_creation/#project-creation) command. However, if you are:
 
  - Planning on running your foundations code on a remote environment like Google Cloud Platform (GCP) or SSH
  - Want to modify where foundations stores data when running locally
@@ -18,10 +17,12 @@ If you are:
  - Looking to modify the verbosity of foundations logs
  - Looking to set environment variables in your deployment environment
 
- you can customize your configurations. Instructions and examples on how to do this can be found [here](../configs/).
+you can customize your configurations. Instructions and examples on how to do this can be found [here](../configs/#configuration-options). 
+
+Additional information on what deployment environments are and how to set up Foundations configuration files can be found under [Deploying to Different Environments](../configs/)
 
 
- *By default, foundations will deploy locally, running your code on your local machine.*
+*By default, foundations will deploy locally, running your code on your local machine.*
 
 ## Step 1: Writing model code
 
@@ -54,12 +55,10 @@ For best coding practices we recommend breaking down model code into different s
 
 ## Step 2: Use Foundations to run model code
 
-Create a new notebook called `driver.ipynb` in the `project_code` directory and for the code below. The following `driver.py` file shows how to shows how to use Foundations to run model code.
+Create a new notebook called `driver.ipynb` in the project root directory and add the code below. The following file shows how to shows how to use Foundations to run model code.
 ```python
 import foundations
-from model import incr_by_10, mult
-
-foundations.config_manager.add_config_path('../config/default.local.yaml')
+from project_code.model import incr_by_10, mult
 
 incr_by_10 = foundations.create_stage(incr_by_10)
 mult = foundations.create_stage(mult)
@@ -79,13 +78,8 @@ result.run()
 Let's break it down line by line:
 
 ```python
-foundations.config_manager.add_config_path('../config/default.local.yaml')
-```
-This line specifies the location of the configuration file which Foundations will reference for deployment details of the job. For this tutorial, we will only deploy job in our local environment; however, Foundations supports deploying to remote environments as well which can be specified with different configuration files. More information can be found [here](../configs/) 
-
-```python
 import foundations
-from models.model import incr_by_10, mult
+from project_code.model import incr_by_10, mult
 
 incr_by_10 = foundations.create_stage(incr_by_10)
 mult = foundations.create_stage(mult)
@@ -108,7 +102,16 @@ This behaves the same as above where `result` is now a `stage_object` since it's
 # run the model
 result.run()
 ```
-To execute any stage, we need to invoke `run` function on the stage_object. This step will execute the stage and any dependent stage it needs to invoke. Give it a try!
+To execute any stage, we need to invoke `run` function on the stage_object. This step will execute the stage and any dependent stage it needs to invoke. 
+
+Finally, before deploying the job, we need to specify the deployment environment in the notebook. Before the `.run()` function, we need to run the following line in Jupyter to specify to Foundations what environment to run the job in:
+
+```python
+foundations.set_environment('local')
+```
+This line specifies the location of the configuration file which Foundations will reference for deployment details of the job. For this tutorial, we will only deploy job in our local environment; however, Foundations supports deploying to remote environments as well which can be specified with different configuration files. More information can be found [here](../configs/).
+
+To deploy the job, run the cell containing the `.run()` function. Give it a try!
 
 ## Step 3: Specifying project names for your experiments
 
@@ -157,7 +160,54 @@ incr_value.enable_caching()
 This will enable the caching feature on `incr_value` stage_object. For every job ran, the return value from `incr_value` will be cached in Foundations.
 Therefore, if first job runs `incr_value(3)` then its return value of `13` will be cached in Foundations. When second job runs `incr_value(3)`, Foundations will directly use pre-computed cached value `13` instead of re-computing this step. You can imagine how powerful this feature can become in model training.
 
-## Step 7: Deploying to Remote Environments (optional)
+## Step 7: Tracking and Retriving Job Artifacts (optional)
+
+Now, lets say that we want to store the values of our mult function in the `model.py` file to be later used for analysis. Users can define create and specify a path where Foundations will a track during the job run. When the job is completed, any artifacts generated into that path will be persisted and stored for analysis. 
+
+First, in the `project_code` folder, lets create an empty folder called `storedFiles`. This is where we'll store any artifacts from our job, to be saved by Foundations. Our project directory should look something like this:
+```
+project_name
+├── config
+│   └── local.config.yaml
+├── data
+├── post_processing
+│   └── results.py
+├── project_code
+│   ├── artifacts
+│   ├── driver.py
+│   └── model.py
+└── README.txt
+```
+
+Next, we'll have to modify our `local.config.yaml` configuration file, located in the `config` directory of the project. By adding a relative `artifact_path`, Foundations will track that path when the job is running:
+
+```yaml
+job_deployment_env: local
+results_config:
+  artifact_path: artifacts
+cache_config: {}
+obfuscate_foundations: False
+```
+
+In our model code, let's store the values of x and y as a dataframe and serialize it for later analysis. We can do this by adding ```import pandas as pd``` to the top of the file, as well as the following lines of code in the `mult` function:
+```python
+df = pd.DataFrame([[x,y]],columns=['x','y'])
+df.to_pickle("artifacts/variables.pkl")
+```
+
+Let's deploy the job (make sure you keep track of the job_id!) with:
+```bash
+$foundations deploy project_code/driver.py --env=local
+```
+
+Once the job has completed running, we should be able to see that our files were written to disk and saved in the archives directory. By default, this can be found at: `~/.foundations/job_data/archive`. If we look under `~/.foundations/job_data/archive/<JOB_ID>`, we should see an artifacts folder, containing our `variables.pkl`! Files can be retrieved also with the Foundations CLI command `foundations retrieve artifacts`. To retrieve our pkl file, run the following:
+```bash
+$foundations retrieve artifacts --env=local --job_id=<JOB_ID>
+```
+
+Now, you should see that our variables.pkl file was downloaded to the present directory.
+
+## Step 8: Deploying to Remote Environments (optional)
 
 To run jobs on remote environments, you will need to use different configuration files and additional resources when deploying the job. This can be done via configuration file management 
 
@@ -169,7 +219,7 @@ In addition, you may need to set environment variables in your notebook first be
 
 For more information on deploying to remote environments, please refer to the documentation [here](../configs/)
 
-## Step 8: Adding additional dependencies (optional)
+## Step 9: Adding additional dependencies (optional)
 
 Be aware that installing a package locally doesn't mean it will be in the execution environment. If you want to use an external python package, you'll need to create a `requirements.txt` wherever your model code exists with the dependencies explicitly stated. The requirements file will be in the root of the model code directory. 
 
@@ -179,9 +229,7 @@ Reference the main [start guide](../start_guide/) for a more detailed explanatio
 ```python
 # driver.py
 import foundations
-from model import incr_by_10, mult
-
-foundations.config_manager.add_config_path('../config/default.local.yaml')
+from project_code.model import incr_by_10, mult
 
 incr_by_10 = foundations.create_stage(incr_by_10)
 mult = foundations.create_stage(mult)

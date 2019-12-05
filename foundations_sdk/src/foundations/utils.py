@@ -6,34 +6,13 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
-def file_archive_name(prefix, name):
-    if prefix is not None:
-        return prefix + '/' + name
-    else:
-        return name
-
-
-def file_archive_name_with_additional_prefix(prefix, additional_prefix, name):
-    return file_archive_name(prefix, additional_prefix + '/' + name)
+from foundations_contrib.utils import *
+from foundations_internal.utils import *
 
 
 def using_python_2():
     from sys import version_info
     return version_info[0] < 3
-
-
-if using_python_2():
-    def force_encoding(string):
-        return string.decode('utf-8').encode('utf-8', 'ignore')
-
-    def is_string(string):
-        return isinstance(string, basestring)
-else:
-    def force_encoding(string):
-        return string.encode('utf-8', 'ignore')
-
-    def is_string(string):
-        return isinstance(string, str)
 
 
 def byte_string(string):
@@ -42,12 +21,6 @@ def byte_string(string):
     else:
         return bytes(force_encoding(string))
 
-
-def string_from_bytes(string):
-    if is_string(string):
-        return string
-    else:
-        return string.decode()
 
 
 def generate_uuid(string):
@@ -135,8 +108,6 @@ def concat_strings(iterable):
 def pretty_error(pipeline_name, error_info):
     import traceback
 
-    from foundations_internal.error_printer import ErrorPrinter
-
     if error_info is None:
         return None
 
@@ -144,16 +115,24 @@ def pretty_error(pipeline_name, error_info):
                   ": ", str(error_info["exception"]), "\n"]
     traceback_items = error_info["traceback"]
 
-    error_printer = ErrorPrinter()
-    filtered_traceback = error_printer.transform_extracted_traceback(
-        traceback_items)
-    filtered_traceback_strings = traceback.format_list(filtered_traceback)
+    filtered_traceback_strings = traceback.format_list(traceback_items)
 
-    error_message = concat_strings(
-        error_name + filtered_traceback_strings).rstrip("\n")
+    error_message = concat_strings(error_name + filtered_traceback_strings).rstrip("\n")
 
-    return error_message, error_printer.get_callback()
+    return error_message, generate_compatible_error_callback()
 
+    def generate_compatible_error_callback():
+        def _callback(ex_type, ex_value, ex_traceback):
+            """
+            Arguments:
+                ex_type: {type} -- The type of the exception to which the stack trace belongs.
+                ex_value: {Exception} -- The exception value itself.
+                ex_traceback: {TracebackType} -- The traceback for the exception.
+            """
+            error_msg = f'Type: {ex_type}, Value: {ex_value}, Traceback: {ex_traceback}'
+            self._log().error(error_msg)
+            
+        return _callback
 
 def split_process_output(output):
     lines = output.decode().strip().split("\n")
@@ -182,17 +161,11 @@ def directory_path(path, name):
 
 
 def ensure_path_exists(path, name):
-    from distutils.dir_util import mkpath
-    from os.path import isdir
+    import os
 
     directory = directory_path(path, name)
     _log().debug('Ensuring that {} exists'.format(directory))
-    if not isdir(directory):
-        _log().debug('Creating {}'.format(directory))
-        result = mkpath(directory)
-        _log().debug('{} created'.format(result))
-    else:
-        _log().debug('{} Already exists'.format(directory))
+    os.makedirs(directory, exist_ok=True)
 
 
 def _log():
@@ -254,6 +227,3 @@ def datetime_string(time):
     date_time = datetime.fromtimestamp(time)
     return date_time.isoformat()
 
-
-def is_number(number):
-    return isinstance(number, (int, float))

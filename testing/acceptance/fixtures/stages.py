@@ -41,3 +41,14 @@ def get_and_log_python_path_as_metric():
 
 def add_two_numbers(num1, num2):
     return num1 + num2
+
+def save_file_with_pickle(path, thing_to_serialize):
+    import pickle
+    import os
+
+    directory_path = os.path.dirname(path)
+    os.makedirs(directory_path, exist_ok=True)
+    with open(path, 'wb') as pickle_file:
+        pickle.dump(thing_to_serialize, pickle_file)
+
+    return thing_to_serialize

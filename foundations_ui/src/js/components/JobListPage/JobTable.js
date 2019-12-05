@@ -1,11 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import JobTableHeader from './JobTableHeader';
-import JobTableRow from './JobTableRow';
+import JobTableButtons from './JobTableButtons';
+import rowSelect from '../../../scss/jquery/rowSelect';
+
 
 class JobTable extends Component {
   constructor(props) {
     super(props);
+    this.onDataUpdated = props.onDataUpdated.bind(this);
+    this.onClickOpenModalJobDetails = this.onClickOpenModalJobDetails.bind(this);
+    this.updateFilterSearchText = this.updateFilterSearchText.bind(this);
+    this.filterColumns = this.filterColumns.bind(this);
+    this.updateHiddenColumns = this.updateHiddenColumns.bind(this);
+    this.sortTable = this.sortTable.bind(this);
+    this.selectJob = this.selectJob.bind(this);
+    this.selectAllJobs = this.selectAllJobs.bind(this);
+    this.selectNoJobs = this.selectNoJobs.bind(this);
     this.state = {
       jobs: this.props.jobs,
       isLoaded: this.props.isLoaded,
@@ -23,13 +34,22 @@ class JobTable extends Component {
       allUsers: this.props.allUsers,
       hiddenUsers: this.props.hiddenUsers,
       numberFilters: this.props.numberFilters,
-      containFilters: this.props.containFilters,
       boolFilters: this.props.boolFilters,
       boolCheckboxes: this.props.boolCheckboxes,
       durationFilters: this.props.durationFilters,
       jobIdFilters: this.props.jobIdFilters,
       startTimeFilters: this.props.startTimeFilters,
       filters: this.props.filters,
+      filterSearchText: '',
+      filteredColumns: null,
+      hiddenColumns: [],
+      sortedColumn: { column: '', isAscending: true },
+      selectedJobs: [],
+      allJobsSelected: false,
+      projectName: this.props.projectName,
+      getJobs: this.props.getJobs,
+      reload: this.props.reload,
+      tensorboardEnabled: false,
     };
   }
 
@@ -45,49 +65,202 @@ class JobTable extends Component {
         hiddenUsers: nextProps.hiddenUsers,
         boolCheckboxes: nextProps.boolCheckboxes,
         numberFilters: nextProps.numberFilters,
-        containFilters: nextProps.containFilters,
         boolFilters: nextProps.boolFilters,
         durationFilters: nextProps.durationFilters,
         jobIdFilters: nextProps.jobIdFilters,
         startTimeFilters: nextProps.startTimeFilters,
         filters: nextProps.filters,
+        projectName: nextProps.projectName,
       },
     );
+  }
+
+  handleRowSelection(rowNumber) {
+    const { selectedRow } = this.state;
+    if (selectedRow === rowNumber) {
+      this.setState({ selectedRow: -1 });
+      rowSelect.deselect(rowNumber);
+    } else {
+      rowSelect.select(rowNumber);
+      this.setState({ selectedRow: rowNumber });
+    }
+  }
+
+  closeSideBar() {
+    this.setState({ selectedRow: -1 });
+    rowSelect.removePreviousActiveRows();
+  }
+
+  onClickOpenModalJobDetails(job) {
+    const { onClickJob } = this.props;
+    onClickJob(job);
+    this.handleRowSelection(job.job_id);
+  }
+
+  async updateFilterSearchText(newText) {
+    await this.setState({ filterSearchText: newText });
+    this.filterColumns();
+  }
+
+  filterColumns() {
+    const { filterSearchText, allMetrics, allInputParams } = this.state;
+    const allFilterableColumns = allMetrics.concat(allInputParams);
+    if (filterSearchText.trim().length > 0) {
+      const filteredColumns = allFilterableColumns.filter((col) => {
+        return col.name.includes(filterSearchText);
+      });
+      this.setState({ filteredColumns });
+    } else {
+      this.setState({ filteredColumns: allFilterableColumns });
+    }
+  }
+
+  updateHiddenColumns(newHidden) {
+    this.setState({ hiddenColumns: newHidden });
+  }
+
+  sortTable(clickedColumn, mainHeader) {
+    const { sortedColumn, getJobs } = this.state;
+
+    let clickedColumnWithMainHeader = clickedColumn;
+    let isAscending = true;
+
+    if (mainHeader === 'Parameters') {
+      clickedColumnWithMainHeader = `input_params:${clickedColumn}`;
+    }
+    if (mainHeader === 'Metrics') {
+      clickedColumnWithMainHeader = `output_metrics:${clickedColumn}`;
+    }
+
+    if (clickedColumnWithMainHeader === sortedColumn.column) {
+      if (sortedColumn.isAscending === true) {
+        clickedColumnWithMainHeader = '';
+      }
+    } else {
+      isAscending = false;
+    }
+
+    this.setState({ sortedColumn: { column: clickedColumnWithMainHeader, isAscending } }, () => {
+      getJobs(this.state.sortedColumn);
+    });
+  }
+
+  selectJob(jobID) {
+    const { selectedJobs, jobs } = this.state;
+    let newSelectedJobs = Array.from(selectedJobs);
+    if (selectedJobs.includes(jobID)) {
+      newSelectedJobs = newSelectedJobs.filter((job) => {
+        return job !== jobID;
+      });
+    } else {
+      newSelectedJobs.push(jobID);
+      const selectedJob = jobs.find((job) => {
+        return job.job_id === jobID;
+      });
+    }
+    let newAllJobsSelected = false;
+    if (jobs.length === newSelectedJobs.length) {
+      newAllJobsSelected = true;
+    }
+
+    const newTensorboardEnabled = this.canGoToTensorboard(newSelectedJobs);
+
+    this.setState({
+      selectedJobs: newSelectedJobs,
+      allJobsSelected: newAllJobsSelected,
+      tensorboardEnabled: newTensorboardEnabled,
+    });
+  }
+
+  canGoToTensorboard(newSelectedJobs) {
+    const { jobs } = this.state;
+    const jobsByID = {};
+    jobs.forEach((job) => {
+      jobsByID[job.job_id] = job;
+    });
+    const selectedJobObjects = newSelectedJobs.map((singleJobID) => {
+      return jobsByID[singleJobID];
+    });
+    return !!selectedJobObjects.length && selectedJobObjects.every((job) => {
+      return !!job.tags.tf;
+    });
+  }
+
+  selectAllJobs() {
+    const { jobs, selectedJobs, allJobsSelected } = this.state;
+    let jobIds = [];
+    let areAllSelected = false;
+    if (selectedJobs.length !== jobs.length) {
+      jobIds = jobs.map((job) => {
+        return job.job_id;
+      });
+      areAllSelected = true;
+    }
+    const newTensorboardEnabled = this.canGoToTensorboard(jobIds);
+    this.setState({
+      selectedJobs: jobIds,
+      allJobsSelected: areAllSelected,
+      tensorboardEnabled: newTensorboardEnabled,
+    });
+  }
+
+  selectNoJobs() {
+    this.setState({ selectedJobs: [], allJobsSelected: false });
   }
 
   render() {
     const {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
-      updateNumberFilter, numberFilters, updateContainsFilter, containFilters, updateBoolFilter, boolFilters,
+      updateNumberFilter, numberFilters, updateContainsFilter, cotainFilters, updateBoolFilter, boolFilters,
       boolCheckboxes, updateDurationFilter, durationFilters, updateJobIdFilter, jobIdFilters, updateStartTimeFilter,
-      startTimeFilters, filters,
+      startTimeFilters, filters, filteredColumns, hiddenColumns, sortedColumn, selectedJobs, allJobsSelected,
+      projectName, getJobs, reload, tensorboardEnabled,
     } = this.state;
 
-    let jobRows = [];
-    let rowNum = 1;
+    const jobRows = [];
+    const rowNum = 1;
     const rowNumbers = [];
-    if (isLoaded) {
-      if (jobs.length === 0) {
-        jobRows.push(<p key="no-jobs-available">No Jobs available</p>);
+
+    const handleClick = (job) => {};
+
+    const allFilterableColumns = allMetrics.concat(allInputParams);
+    const visibleMetrics = allMetrics.filter((col) => {
+      return !hiddenColumns.includes(col.name);
+    });
+    const visibleParams = allInputParams.filter((col) => {
+      return !hiddenColumns.includes(col.name);
+    });
+
+    const curVisibleColumns = filteredColumns !== null && filteredColumns.length < allFilterableColumns.length
+      ? filteredColumns : allFilterableColumns;
+
+    curVisibleColumns.forEach((col) => {
+      if (hiddenColumns.includes(col.name)) {
+        col.hidden = true;
       } else {
-        jobRows = [];
-        jobs.forEach((job) => {
-          const key = job.job_id;
-          jobRows.push(<JobTableRow key={key} job={job} rowNumber={rowNum - 1} />);
-          rowNumbers.push(<p key={key}>{rowNum}</p>);
-          rowNum += 1;
-        });
+        col.hidden = false;
       }
-    } else {
-      jobRows.push(<p key="loading-jobs">Loading Jobs</p>);
-    }
+    });
 
     return (
       <div className="job-table-content">
         <div className="job-table-container">
+          <JobTableButtons
+            columns={curVisibleColumns}
+            updateSearchText={this.updateFilterSearchText}
+            hiddenColumns={hiddenColumns}
+            updateHiddenColumns={this.updateHiddenColumns}
+            selectAllJobs={this.selectAllJobs}
+            selectedJobs={selectedJobs}
+            projectName={projectName}
+            getJobs={getJobs}
+            selectNoJobs={this.selectNoJobs}
+            reload={reload}
+            buttonTensorboardEnabled={tensorboardEnabled}
+          />
           <JobTableHeader
-            allInputParams={allInputParams}
-            allMetrics={allMetrics}
+            allInputParams={visibleParams}
+            allMetrics={visibleMetrics}
             jobs={jobs}
             statuses={statuses}
             updateHiddenStatus={updateHiddenStatus}
@@ -100,7 +273,6 @@ class JobTable extends Component {
             updateNumberFilter={updateNumberFilter}
             numberFilters={numberFilters}
             updateContainsFilter={updateContainsFilter}
-            containFilters={containFilters}
             updateBoolFilter={updateBoolFilter}
             boolFilters={boolFilters}
             updateDurationFilter={updateDurationFilter}
@@ -110,13 +282,22 @@ class JobTable extends Component {
             updateStartTimeFilter={updateStartTimeFilter}
             startTimeFilters={startTimeFilters}
             filters={filters}
+            onMetricRowClick={handleClick}
+            onDataUpdated={this.onDataUpdated}
+            onClickOpenModalJobDetails={this.onClickOpenModalJobDetails}
+            sortedColumn={sortedColumn}
+            sortTable={this.sortTable}
+            selectJob={this.selectJob}
+            selectAllJobs={this.selectAllJobs}
+            selectedJobs={selectedJobs}
+            allJobsSelected={allJobsSelected}
           />
-          <div className="pagination-controls">
-            {/* <p><span className="font-bold">Viewing:</span> 1-100/600</p>
+          {/* <div className="pagination-controls">
+            <p><span className="font-bold">Viewing:</span> 1-100/600</p>
             <div className="arrow-right" />
             <p>Page 1</p>
-            <div className="arrow-left" /> */}
-          </div>
+            <div className="arrow-left" />
+          </div> */}
         </div>
       </div>
     );
@@ -149,6 +330,11 @@ JobTable.propTypes = {
   updateStartTimeFilter: PropTypes.func,
   startTimeFilters: PropTypes.array,
   filters: PropTypes.array,
+  selectedRow: PropTypes.string,
+  onDataUpdated: PropTypes.func,
+  onClickJob: PropTypes.func,
+  getJobs: PropTypes.func,
+  reload: PropTypes.func,
 };
 
 JobTable.defaultProps = {
@@ -177,6 +363,11 @@ JobTable.defaultProps = {
   updateStartTimeFilter: () => {},
   startTimeFilters: [],
   filters: [],
+  selectedRow: -1,
+  onDataUpdated: () => window.location.reload(),
+  onClickJob: (job) => {},
+  getJobs: () => {},
+  reload: () => {},
 };
 
 export default JobTable;

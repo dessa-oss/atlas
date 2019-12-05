@@ -7,14 +7,15 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 from mock import Mock
+from foundations_spec import *
 
-
+@quarantine
 class TestConsumers(unittest.TestCase):
 
     def setUp(self):
-        from foundations.global_state import redis_connection
-        from foundations.global_state import message_router
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import redis_connection
+        from foundations_contrib.global_state import message_router
+        from foundations_contrib.global_state import config_manager
         from foundations_internal.pipeline_context import PipelineContext
         from foundations_internal.pipeline import Pipeline
         from slackclient import SlackClient
@@ -40,11 +41,13 @@ class TestConsumers(unittest.TestCase):
 
         self._message_router = message_router
 
+        self._check_slack_tokens_set_properly()
         self._slack_client = SlackClient(os.environ['FOUNDATIONS_TESTING_SLACK_TOKEN'])
+
         self._testing_channel_id = config_manager['job_notification_channel_id']
 
     def test_queue_job_consumers(self):
-        from foundations.utils import byte_string
+        from foundations_contrib.utils import byte_string
         from foundations_contrib.models.project_listing import ProjectListing
         from foundations_contrib.producers.jobs.queue_job import QueueJob
         from time import time
@@ -76,6 +79,11 @@ class TestConsumers(unittest.TestCase):
         input_parameter_names = self._redis.smembers(input_parameter_key)
         self.assertEqual(set([b'random_input_data']), input_parameter_names)
         
+        running_jobs_key = 'project:{}:jobs:running'.format(self._project_name)
+        running_and_completed_jobs = self._redis.smembers(running_jobs_key)
+        expected_jobs = set([byte_string(self._job_id)])
+        self.assertEqual(expected_jobs, running_and_completed_jobs)
+
         stage_time_key = self._stage_time(self._project_name)
         stage_time = self._redis.zrange(stage_time_key, 0, -1)
         self.assertEqual(b'21aad1de62dcd003b4d28909bd2add8431fceec7', stage_time[0])
@@ -103,7 +111,7 @@ class TestConsumers(unittest.TestCase):
         tracked_projects = ProjectListing.list_projects(self._redis)
         project_listing = tracked_projects[0]
         self.assertEqual(self._project_name, project_listing['name'])
-        self.assertTrue(current_time - project_listing['created_at'] < 0.5)
+        self.assertLess(current_time - project_listing['created_at'], 5)
 
         job_user_key = 'jobs:{}:user'.format(self._job_id)
         job_user = self._redis.get(job_user_key)
@@ -112,7 +120,7 @@ class TestConsumers(unittest.TestCase):
         creation_time_key = 'jobs:{}:creation_time'.format(self._job_id)
         string_creation_time = self._redis.get(creation_time_key)
         creation_time = float(string_creation_time.decode())
-        self.assertTrue(current_time - creation_time < 0.5)
+        self.assertLess(current_time - creation_time, 5)
 
         input_parameters_key = 'jobs:{}:input_parameters'.format(self._job_id)
         input_parameters = self._get_and_deserialize(input_parameters_key)
@@ -129,8 +137,8 @@ class TestConsumers(unittest.TestCase):
         return 'projects:{}:stage_time'.format(project_name)
 
     def test_running_job_consumers(self):
-        from foundations.global_state import message_router
-        from foundations.utils import byte_string
+        from foundations_contrib.global_state import message_router
+        from foundations_contrib.utils import byte_string
         from foundations_contrib.producers.jobs.run_job import RunJob
         from time import time
 
@@ -149,11 +157,6 @@ class TestConsumers(unittest.TestCase):
         global_queued_jobs = self._redis.smembers(global_queued_job_key)
         self.assertEqual(set(), global_queued_jobs)
 
-        running_jobs_key = 'project:{}:jobs:running'.format(self._project_name)
-        running_and_completed_jobs = self._redis.smembers(running_jobs_key)
-        expected_jobs = set([byte_string(self._job_id)])
-        self.assertEqual(expected_jobs, running_and_completed_jobs)
-
         job_state_key = 'jobs:{}:state'.format(self._job_id)
         state = self._redis.get(job_state_key)
         self.assertEqual(b'running', state)
@@ -161,15 +164,15 @@ class TestConsumers(unittest.TestCase):
         start_time_key = 'jobs:{}:start_time'.format(self._job_id)
         string_start_time = self._redis.get(start_time_key)
         start_time = float(string_start_time.decode())
-        self.assertTrue(current_time - start_time < 0.1)
+        self.assertLess(current_time - start_time, 1)
 
         notification = self._slack_message_for_job()
         self.assertIsNotNone(notification)
         self.assertIn('Running', notification)
 
     def test_completed_job_consumers(self):
-        from foundations.global_state import message_router
-        from foundations.utils import byte_string
+        from foundations_contrib.global_state import message_router
+        from foundations_contrib.utils import byte_string
         from time import time
 
         project_name = self._faker.name()
@@ -187,7 +190,7 @@ class TestConsumers(unittest.TestCase):
         completed_time_key = 'jobs:{}:completed_time'.format(self._job_id)
         string_completed_time = self._redis.get(completed_time_key)
         completed_time = float(string_completed_time.decode())
-        self.assertTrue(current_time - completed_time < 0.5)
+        self.assertLess(current_time - completed_time, 5)
 
         notification = self._slack_message_for_job()
         self.assertIsNotNone(notification)
@@ -199,7 +202,7 @@ class TestConsumers(unittest.TestCase):
         self.assertEqual(expected_jobs, running_and_completed_jobs)
 
     def test_failed_job_consumers(self):
-        from foundations.global_state import message_router
+        from foundations_contrib.global_state import message_router
         from time import time
 
         project_name = self._faker.name()
@@ -223,16 +226,16 @@ class TestConsumers(unittest.TestCase):
         completed_time_key = 'jobs:{}:completed_time'.format(self._job_id)
         string_completed_time = self._redis.get(completed_time_key)
         completed_time = float(string_completed_time.decode())
-        self.assertTrue(current_time - completed_time < 0.5)
+        self.assertLess(current_time - completed_time, 5)
 
         notification = self._slack_message_for_job()
         self.assertIsNotNone(notification)
         self.assertIn('Failed', notification)
 
     def test_job_metric_consumers(self):
-        from foundations.global_state import message_router
+        from foundations_contrib.global_state import message_router
         from foundations_internal.fast_serializer import deserialize
-        from foundations.utils import byte_string
+        from foundations_contrib.utils import byte_string
         from time import time
 
         project_name = self._str_random_uuid()
@@ -255,7 +258,7 @@ class TestConsumers(unittest.TestCase):
         job_metrics = [deserialize(data) for data in job_metrics]
         first_job_metric = list(job_metrics)[0]
 
-        self.assertTrue(current_time - first_job_metric[0] < 0.5)
+        self.assertLess(current_time - first_job_metric[0], 5)
         self.assertEqual(key, first_job_metric[1])
         self.assertEqual(value, first_job_metric[2])
 
@@ -285,3 +288,13 @@ class TestConsumers(unittest.TestCase):
             if self._job_id in message:
                 return message
         return None
+
+    def _check_slack_tokens_set_properly(self):
+        self._check_environment_variable_set('FOUNDATIONS_SLACK_TOKEN')
+        self._check_environment_variable_set('FOUNDATIONS_TESTING_SLACK_TOKEN')
+
+    def _check_environment_variable_set(self, environment_variable_name):
+        import os
+
+        if environment_variable_name not in os.environ:
+            self.fail('{} environment variable not set'.format(environment_variable_name))

@@ -12,29 +12,44 @@ class InputMetricRow extends Component {
       allInputMetricColumn: this.props.allInputMetricColumn,
       hiddenInputParams: this.props.hiddenInputParams,
       rowNumber: this.props.rowNumber,
+      onMetricRowClick: this.props.onMetricRowClick,
+      key: this.props.key,
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
+      isError: nextProps.isError,
+      job: nextProps.job,
+      isMetric: nextProps.isMetric,
+      allInputMetricColumn: nextProps.allInputMetricColumn,
       hiddenInputParams: nextProps.hiddenInputParams,
+      rowNumber: nextProps.rowNumber,
+      onMetricRowClick: nextProps.onMetricRowClick,
+      key: nextProps.key,
     });
   }
 
   render() {
     const {
-      job, isError, isMetric, allInputMetricColumn, hiddenInputParams, rowNumber,
+      job, isError, isMetric, allInputMetricColumn, hiddenInputParams, rowNumber, key, onMetricRowClick,
     } = this.state;
-
+    const { onClickOpenModalJobDetails } = this.props;
     const cells = CommonActions.getInputMetricCells(job,
       isError,
       isMetric,
       allInputMetricColumn,
       hiddenInputParams,
-      rowNumber);
-
+      rowNumber,
+      onClickOpenModalJobDetails);
     return (
-      <div className="job-table-row">
+      <div
+        role="presentation"
+        className="job-table-row"
+        data-class="job-table-row"
+        onClick={() => onMetricRowClick(job, key)}
+        onKeyDown={() => onMetricRowClick(job, key)}
+      >
         {cells}
       </div>
     );
@@ -42,21 +57,27 @@ class InputMetricRow extends Component {
 }
 
 InputMetricRow.propTypes = {
+  onMetricRowClick: PropTypes.func,
+  key: PropTypes.string,
   job: PropTypes.object,
   isError: PropTypes.bool,
   isMetric: PropTypes.bool,
   allInputMetricColumn: PropTypes.array,
   hiddenInputParams: PropTypes.array,
   rowNumber: PropTypes.number,
+  onClickOpenModalJobDetails: PropTypes.func,
 };
-
+const defaultFunc = () => console.warn('InputMetricRow: onClick func missing.');
 InputMetricRow.defaultProps = {
+  onMetricRowClick: defaultFunc,
+  key: '',
   job: {},
   isError: false,
   isMetric: false,
   allInputMetricColumn: [],
   hiddenInputParams: [],
   rowNumber: 0,
+  onClickOpenModalJobDetails: () => null,
 };
 
 export default InputMetricRow;

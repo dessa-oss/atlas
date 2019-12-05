@@ -11,6 +11,16 @@ class UserCell extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.rowNumber !== this.props.rowNumber) {
+      this.setState({
+        rowNumber: nextProps.rowNumber,
+        isError: nextProps.isError,
+        user: nextProps.user,
+      });
+    }
+  }
+
   render() {
     const { user, isError, rowNumber } = this.state;
 

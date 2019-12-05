@@ -15,6 +15,9 @@ from foundations_internal.stage_hierarchy import StageHierarchy
 class Provenance(object):
 
     def __init__(self):
+        import os
+        from getpass import getuser
+
         self.job_source_bundle = None
         self.environment = {}
         self.config = {}
@@ -26,7 +29,14 @@ class Provenance(object):
         self.python_version = None
         self.job_run_data = {}
         self.project_name = 'default'
-        self.user_name = 'default'
+        self.monitor_name = os.getenv('MONITOR_NAME', None)
+        self.user_name = os.getenv("FOUNDATIONS_USER", None)
+        if self.user_name is None:
+            try:
+                self.user_name = getuser()
+            except KeyError:
+                self.user_name = ""
+        self.annotations = {}
 
     def fill_python_version(self):
         import sys
@@ -106,6 +116,7 @@ class Provenance(object):
             "job_run_data": self.job_run_data,
             "project_name": self.project_name,
             "user_name": self.user_name,
+            "annotations": self.annotations,
         }
 
     def _load_archive_provenance(self, archive_provenance):
@@ -127,3 +138,4 @@ class Provenance(object):
         self.project_name = archive_provenance.get(
             'project_name', self.project_name)
         self.user_name = archive_provenance.get('user_name', self.user_name)
+        self.annotations = archive_provenance.get('annotations', self.annotations)

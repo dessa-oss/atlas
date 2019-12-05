@@ -1,0 +1,10 @@
+entrypoints:
+  predict:
+    module: 'src.main'
+    function: 'predict'
+  recalibrate:
+    module: 'src.main'
+    function: 'train'
+  evaluate:
+    module: 'src.main'
+    function: 'evaluate'

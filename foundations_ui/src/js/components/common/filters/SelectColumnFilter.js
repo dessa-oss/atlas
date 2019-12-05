@@ -46,15 +46,19 @@ class SelectColumnFilter extends Component {
   }
 
   onApply() {
-    const { changeHiddenParams, changedParams, toggleShowingFilter } = this.state;
+    const {
+      changeHiddenParams, changedParams, toggleShowingFilter, updateSearchText,
+    } = this.state;
     changeHiddenParams(changedParams);
     toggleShowingFilter();
+    updateSearchText('');
   }
 
   onCancel() {
-    const { toggleShowingFilter } = this.state;
+    const { toggleShowingFilter, updateSearchText } = this.state;
     this.setState({ changedParams: [] });
     toggleShowingFilter();
+    updateSearchText('');
   }
 
   onClearFilters() {

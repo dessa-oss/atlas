@@ -8,8 +8,8 @@ import unittest
 from mock import Mock, call, patch
 
 from foundations_contrib.obfuscation_detection_mixin import ObfuscationDetectionMixin
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import let, let_mock, set_up, let_patch_mock
+from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers import let, let_mock, set_up, let_patch_mock
 
 
 class TestObfuscationDetectionMixin(Spec):

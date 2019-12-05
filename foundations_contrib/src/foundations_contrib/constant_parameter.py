@@ -25,4 +25,4 @@ class ConstantParameter(object):
         pass
 
     def __str__(self):
-        return self._value.__str__()
+        return str(self._value)

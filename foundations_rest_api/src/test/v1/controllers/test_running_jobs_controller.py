@@ -44,7 +44,7 @@ class TestRunningJobsController(unittest.TestCase):
         mock.assert_called_with(name='the not so great potato project')
 
     def _make_lazy_result(self, name, queued_jobs):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _callback():
             return self.Mock(name=name, running_jobs=queued_jobs)

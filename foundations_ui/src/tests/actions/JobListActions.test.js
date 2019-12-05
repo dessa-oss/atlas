@@ -196,7 +196,7 @@ it('getFormatedTime no date', () => {
 it('getFormatedTime has date', () => {
   const date = '2018-08-23T09:30:00';
   const formatedTime = JobListActions.getFormatedTime(date);
-  expect(formatedTime).toBe('09:30:00');
+  expect(formatedTime).toBe('5:30 AM');
 });
 
 it('getDurationDays', () => {
@@ -300,17 +300,17 @@ it('checks if field hidden, is hidden', () => {
 it('getStatusCircle green', () => {
   const status = 'completed';
   const circleClass = JobListActions.getStatusCircle(status);
-  expect(circleClass).toBe('status status-green');
+  expect(circleClass).toBe('status-icon i--icon-status-completed');
 });
 
 it('gets JobColumnHeaderH4Class', () => {
   const header = JobListActions.getJobColumnHeaderH4Class(isNotStatus);
-  expect(header).toBe('blue-border-bottom');
+  expect(header).toBe('');
 });
 
 it('gets JobColumnHeaderH4Class isStatus', () => {
   const header = JobListActions.getJobColumnHeaderH4Class(isStatus);
-  expect(header).toBe('blue-border-bottom status-header');
+  expect(header).toBe('status-header');
 });
 
 it('gets JobColumnHeaderArrowClass', () => {
@@ -335,7 +335,7 @@ it('getJobColumnHeaderPresentationClass', () => {
 
 it('gets TableSectionHeaderDivClass', () => {
   const div = JobListActions.getTableSectionHeaderDivClass(header);
-  expect(div).toBe('table-section-header blue-header');
+  expect(div).toBe('table-section-header table-header');
 });
 
 it('gets TableSectionHeaderDivClass emptyHeader', () => {
@@ -345,7 +345,7 @@ it('gets TableSectionHeaderDivClass emptyHeader', () => {
 
 it('gets TableSectionHeaderArrowClass', () => {
   const arrow = JobListActions.getTableSectionHeaderArrowClass(header);
-  expect(arrow).toBe('arrow-down blue-header-arrow');
+  expect(arrow).toBe('arrow-down table-header-arrow');
 });
 
 it('gets TableSectionHeaderArrowClass emptyHeader', () => {
@@ -355,18 +355,18 @@ it('gets TableSectionHeaderArrowClass emptyHeader', () => {
 
 it('gets TableSectionHeaderTextClass', () => {
   const text = JobListActions.getTableSectionHeaderTextClass(header);
-  expect(text).toBe('blue-header-text');
+  expect(text).toBe('table-header-text');
 });
 
 it('gets TableSectionHeaderTextClass emptyHeader', () => {
   const text = JobListActions.getTableSectionHeaderTextClass(emptyHeader);
-  expect(text).toBe('blue-header-text no-margin');
+  expect(text).toBe('table-header-text no-margin');
 });
 
 it('getStatusCircle red', () => {
   const status = 'Failed';
   const circleClass = JobListActions.getStatusCircle(status);
-  expect(circleClass).toBe('status status-red');
+  expect(circleClass).toBe('status-icon status-red');
 });
 
 it('getDurationClass days', () => {
@@ -449,22 +449,22 @@ it('getInputMetricValue no metric non const', () => {
 
 it('getInputMetricValue metric const value 0', () => {
   const value = JobListActions.getInputMetricValue(zeroConstParam, isMetric, columns);
-  expect(value).toBe(0);
+  expect(value).toBe('0');
 });
 
 it('getInputMetricValue no metric const value 0', () => {
   const value = JobListActions.getInputMetricValue(zeroConstParam, noMetric, columns);
-  expect(value).toBe(0);
+  expect(value).toBe('0');
 });
 
 it('getInputMetricValue metric non const value 0', () => {
   const value = JobListActions.getInputMetricValue(zeroNonConstParam, isMetric, columns);
-  expect(value).toBe(0);
+  expect(value).toBe('0');
 });
 
 it('getInputMetricValue no metric non const value 0', () => {
   const value = JobListActions.getInputMetricValue(zeroNonConstParam, noMetric, columns);
-  expect(value).toBe(0);
+  expect(value).toBe('0');
 });
 
 it('getInputMetricValue metric const value null', () => {
@@ -475,6 +475,94 @@ it('getInputMetricValue metric const value null', () => {
 it('getInputMetricValue no metric const value null', () => {
   const value = JobListActions.getInputMetricValue(nullConstParam, noMetric, columns);
   expect(value).toBe('not available');
+});
+
+it('getInputMetricValue rounds positive constant metric number to 5 significant figures', () => {
+  const param = {
+    name: 'abc',
+    source: 'constant',
+    value: 1.1234567
+  };
+
+  const value = JobListActions.getInputMetricValue(param, isMetric, columns);
+  expect(value).toBe('1.1235');
+});
+
+it('getInputMetricValue rounds negative non-constant non metric number to 5 significant figures', () => {
+  const param = {
+    name: 'abc',
+    source: 'non-constant',
+    value: -3.00065456e-3
+  };
+
+  const value = JobListActions.getInputMetricValue(param, noMetric, columns);
+  expect(value).toBe('-3.0007e-3');
+});
+
+it('getInputMetricValue rounds megative constant metric number to 5 significant figures', () => {
+  const param = {
+    name: 'abc',
+    source: 'constant',
+    value: -1.1234567
+  };
+
+  const value = JobListActions.getInputMetricValue(param, isMetric, columns);
+  expect(value).toBe('-1.1235');
+});
+
+it('getInputMetricValue rounds positive non-constant non metric number to 5 significant figures', () => {
+  const param = {
+    name: 'abc',
+    source: 'non-constant',
+    value: 3.00065456e-3
+  };
+
+  const value = JobListActions.getInputMetricValue(param, noMetric, columns);
+  expect(value).toBe('3.0007e-3');
+});
+
+it('getInputMetricValue const metric returns NaN if given NaN', () => {
+  const param = {
+    name: 'abc',
+    source: 'constant',
+    value: NaN
+  };
+
+  const value = JobListActions.getInputMetricValue(param, isMetric, columns);
+  expect(value).toBe('NaN');
+});
+
+it('getInputMetricValue non-const no metric returns NaN if given NaN', () => {
+  const param = {
+    name: 'abc',
+    source: 'non-constant',
+    value: NaN
+  };
+
+  const value = JobListActions.getInputMetricValue(param, noMetric, columns);
+  expect(value).toBe('NaN');
+});
+
+it('getInputMetricValue large number that is slightly too small for scientific notation still renders properly', () => {
+  const param = {
+    name: 'abc',
+    source: 'non-constant',
+    value: 2090128082190128
+  };
+
+  const value = JobListActions.getInputMetricValue(param, noMetric, columns);
+  expect(value).toBe('2.0901e+15');
+});
+
+it('getInputMetricValue 5 digit number is not trimmed or otherwise processed', () => {
+  const param = {
+    name: 'abc',
+    source: 'non-constant',
+    value: 20198
+  };
+
+  const value = JobListActions.getInputMetricValue(param, noMetric, columns);
+  expect(value).toBe('20198');
 });
 
 it('getBaseJobListingURL', () => {
@@ -741,8 +829,3 @@ it('isColumnFiltered, not filter', () => {
   const isFiltered = JobListActions.isColumnFiltered(columnFilter, nonExistingColumn);
   expect(isFiltered).toBe(false);
 });
-
-it('Redirect returns Redirect', () => {
-  const redirectOutput = JobListActions.redirect("/login");
-  expect(redirectOutput).toEqual(<Redirect push to="/login" />);
-})

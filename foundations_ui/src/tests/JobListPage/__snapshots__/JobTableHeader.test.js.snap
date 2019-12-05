@@ -10,41 +10,97 @@ exports[`Shallow Renders Job Table Header 1`] = `
   <div
     className="job-list-container"
   >
-    <TableStaticColumns
-      isDurationFiltered={false}
-      isJobIdFiltered={false}
-      isStartTimeFiltered={false}
-      isStatusFiltered={false}
-      isUserFiltered={false}
-      jobRows={Array []}
-      rowNumbers={Array []}
-      toggleDurationFilter={[Function]}
-      toggleJobIdFilter={[Function]}
-      toggleStartTimeFilter={[Function]}
-      toggleStatusFilter={[Function]}
-      toggleUserFilter={[Function]}
-    />
     <InputMetric
-      allInputParams={Array []}
+      allInputParams={
+        Array [
+          Object {
+            "name": "SelectAllCheckboxes",
+            "type": "string",
+          },
+          Object {
+            "name": "Job ID",
+            "type": "string",
+          },
+          Object {
+            "name": "Status",
+            "type": "string",
+          },
+          Object {
+            "name": "Launched",
+            "type": "string",
+          },
+          Object {
+            "name": "Duration",
+            "type": "string",
+          },
+          Object {
+            "name": "User",
+            "type": "string",
+          },
+          Object {
+            "name": "Tags",
+            "type": "string",
+          },
+        ]
+      }
+      allJobsSelected={false}
       cellWidths={Array []}
       filters={Array []}
-      header="hyperparameters"
+      header="Experiment Details"
       hiddenInputParams={Array []}
-      isMetric={false}
-      jobs={Array []}
-      searchText=""
-      toggleNumberFilter={[Function]}
-    />
-    <InputMetric
-      allInputParams={Array []}
-      cellWidths={Array []}
-      filters={Array []}
-      header="metrics"
-      hiddenInputParams={Array []}
+      isMetaData={true}
       isMetric={true}
       jobs={Array []}
+      onClickOpenModalJobDetails={[Function]}
+      onMetricRowClick={[Function]}
       searchText=""
+      selectAllJobs={[Function]}
+      selectedJobs={Array []}
+      sortTable={[Function]}
+      sortedColumn={Object {}}
       toggleNumberFilter={[Function]}
+    />
+    <InputMetric
+      allInputParams={Array []}
+      allJobsSelected={false}
+      cellWidths={Array []}
+      filters={Array []}
+      header="Parameters"
+      hiddenInputParams={Array []}
+      isMetaData={false}
+      isMetric={false}
+      jobs={Array []}
+      onClickOpenModalJobDetails={[Function]}
+      onMetricRowClick={[Function]}
+      searchText=""
+      selectAllJobs={[Function]}
+      selectedJobs={Array []}
+      sortTable={[Function]}
+      sortedColumn={Object {}}
+      toggleNumberFilter={[Function]}
+    />
+    <InputMetric
+      allInputParams={Array []}
+      allJobsSelected={false}
+      cellWidths={Array []}
+      filters={Array []}
+      header="Metrics"
+      hiddenInputParams={Array []}
+      isMetaData={false}
+      isMetric={true}
+      jobs={Array []}
+      onClickOpenModalJobDetails={[Function]}
+      onMetricRowClick={[Function]}
+      searchText=""
+      selectAllJobs={[Function]}
+      selectedJobs={Array []}
+      sortTable={[Function]}
+      sortedColumn={Object {}}
+      toggleNumberFilter={[Function]}
+    />
+    <PopUpRows
+      jobs={Array []}
+      onClickOpenModalJobDetails={[Function]}
     />
   </div>
 </ScrollSync>

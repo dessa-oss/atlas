@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ShowMoreFilters from '../common/filters/ShowMoreFilters';
 import CommonActions from '../../actions/CommonActions';
+import JobListActions from '../../actions/JobListActions';
 
 const borderSize = 3; // 1px per side + space between bubbles
 
@@ -20,8 +21,11 @@ class JobHeader extends Component {
     this.refsInFilters = this.refsInFilters.bind(this);
     this.getCurHiddenBubbles = this.getCurHiddenBubbles.bind(this);
     this.removeHiddenButtonCallback = this.removeHiddenButtonCallback.bind(this);
+    this.cancelJobs = this.cancelJobs.bind(this);
+    this.onDeletedJobs = props.onDeletedJobs.bind(this);
     this.state = {
       project: this.props.project,
+      jobs: this.props.jobs,
       filters: this.props.filters,
       bubbleRefs: [],
       isShowingMoreFilters: false,
@@ -31,24 +35,20 @@ class JobHeader extends Component {
     };
   }
 
+  onDeletedJobs() {
+    console.log('jobs deleted');
+  }
+
   async componentWillReceiveProps(nextProps) {
     this.setState({ filters: nextProps.filters, project: nextProps.project });
 
     const { hiddenBubbles } = this.state;
-    const { clientWidth } = this.bubbleContainer;
-
     const newRefs = this.refsInFilters(nextProps.filters);
 
-    let curWidth = 0;
+    const curWidth = 0;
     let curHiddenBubbles = CommonActions.deepCopyArray(hiddenBubbles);
     curHiddenBubbles = this.getCurHiddenBubbles(newRefs, curHiddenBubbles);
     newRefs.sort((a, b) => { return a.length - b.length; });
-    newRefs.forEach((id) => {
-      const showHideResults = this.showHideBubbles(id, curWidth, clientWidth, curHiddenBubbles);
-      curWidth = showHideResults.width;
-      curHiddenBubbles = showHideResults.hiddenBubbles;
-    });
-    await this.setState({ bubbleRefs: [], hiddenBubbles: curHiddenBubbles });
   }
 
   refsInFilters(filters) {
@@ -160,9 +160,18 @@ class JobHeader extends Component {
     this.clickRemoveFilter(filterToRemove);
   }
 
+  async cancelJobs() {
+    if (window.confirm('Are you sure you want to cancel all running and queued jobs?')) {
+      const jobIds = this.props.jobs
+        .filter(job => job.status === 'running' || job.status === 'queued')
+        .map(job => job.job_id);
+      return JobListActions.deleteAllJobs(jobIds, this.onDeletedJobs);
+    }
+  }
+
   render() {
     const {
-      project, filters, isShowingMoreFilters, clearFilters, hiddenBubbles,
+      project, jobs, filters, isShowingMoreFilters, clearFilters, hiddenBubbles,
     } = this.state;
 
     const filterBubbles = [];
@@ -213,53 +222,32 @@ class JobHeader extends Component {
     return (
       <div className="job-header-container">
         <div className="job-header-container-left">
-          <div className="job-header-logo-container">
-            <div className="i--icon-logo" />
-            <h2 className="font-bold">Foundations</h2>
-          </div>
-          <div className="job-header-info-container">
-            <div>
-              <div className="half-width inline-block">
-                <h1 className="blue-border-bottom font-bold">Job List</h1>
-              </div>
-            </div>
-          </div>
 
           <div className="job-summary-info-container">
-            <h2 className="font-bold">{project.name}</h2>
-            <p>Data Source: Unknown</p>
-            <p className="font-bold">
-              Project owner: <span>{project.owner}</span>
-            </p>
-            <p className="font-bold">
-              Created at: <span>{project.created_at}</span>
-            </p>
-          </div>
-          <div className="job-header-sorting-container">
-            <button
-              type="button"
-              onClick={clearFilters}
-              className={clearFiltersClass}
-            >
-              Clear Filters
-            </button>
-            <div>
-              <div ref={(e) => { this.bubbleContainer = e; }}>
-                {filterBubbles}
-              </div>
-              {moreBubbles}
-            </div>
-            <div>
-              <button
-                type="button"
-                onClick={this.toggleFilters}
-                className={viewFilterClass}
-              >
-                {filterButtonText}
-              </button>
-            </div>
+            <h2 className="font-bold project-list-name">{project.name}</h2>
+            <h3>Jobs List</h3>
+            <ul>
+              <li>
+                <p className="font-bold">Project owner: </p>
+                <p>Trial<span>{project.owner}</span></p>
+              </li>
+              <li>
+                <p className="font-bold">Created at: </p>
+                <p>Trial</p>
+              </li>
+            </ul>
           </div>
           {moreFilters}
+        </div>
+        <div className="deleteJobWrapper">
+          <button
+            className="deleteButton"
+            type="button"
+            onClick={this.cancelJobs}
+            onKeyDown={() => {}}
+          >
+            Delete Queued and Running Jobs
+          </button>
         </div>
       </div>
     );
@@ -275,7 +263,8 @@ JobHeader.propTypes = {
   clearFilters: PropTypes.func,
   removeFilter: PropTypes.func,
   hiddenBubbles: PropTypes.array,
-
+  jobs: PropTypes.array,
+  onDeletedJobs: PropTypes,
 };
 
 JobHeader.defaultProps = {
@@ -287,6 +276,8 @@ JobHeader.defaultProps = {
   clearFilters: () => {},
   removeFilter: () => {},
   hiddenBubbles: [],
+  jobs: [],
+  onDeletedJobs: () => { window.location.reload(); },
 };
 
 export default JobHeader;

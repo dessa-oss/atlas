@@ -1,0 +1,63 @@
+.edit-notificaiton-modal-container {
+  height: 375px;
+  white-space: nowrap;
+}
+
+.edit-notificaiton-multi-select-container {
+  div:nth-child(2) {
+    height: 40px !important; // overrides library css, 152 just seems to be the size they assign it
+  }
+
+  > div {
+    height: auto !important;
+  }
+
+  [class^="kn-selection_status__clear_all"] {
+    line-height: 40px;
+  }
+
+  [class^="kn-item_label__label"] {
+    height: 100%;
+  }
+
+}
+
+
+
+.edit-notification-multi-select {
+  height: $multi-select-height !important; // to override library css defaults
+  overflow-y: scroll !important;
+  white-space: nowrap;
+
+  input {
+    margin-left: 5px;
+  }
+}
+
+.ReactVirtualized__Grid{
+  height: $multi-select-height !important; // to override library css defaults
+  overflow-y: scroll !important;
+  white-space: nowrap; 
+}
+
+.kn-item_label__label___2fJ5p{
+  position: relative;
+  top: 10px;
+}
+
+.kn-multi_select__wrapper___30BEc, .kn-column__column___3Iwzx:nth-child(1), .ReactVirtualized__Grid .ReactVirtualized__List .kn-list__list___22Wuc
+.edit-notification-multi-select, .ReactVirtualized__Grid__innerScrollContainer, .ReactVirtualized__Grid,
+ .ReactVirtualized__List, .kn-list__list___22Wuc {
+  height: 250px !important;
+  overflow-y: scroll !important;
+  max-height: none;
+}
+
+.kn-multi_select__wrapper___30BEc {
+  height: 260px !important;
+  overflow: hidden !important;
+}
+
+.kn-column__column___3Iwzx:nth-child(1) {
+  overflow: hidden !important;
+}

@@ -1,0 +1,612 @@
+.inference-automation-container,
+.model-management-container {
+  background-color: white;
+  height: 70%;
+  overflow-x: scroll;
+  border-bottom: $border-width solid $color-border-bottom;
+  border-left: $border-width solid $color-border-bottom;
+  border-right: $border-width solid $color-border-bottom;
+  margin-left: $inference-automation-header-margin;
+  margin-right: $inference-automation-header-margin;
+  border: solid 1px #dcdcdc;;
+  border-radius: 4px;
+}
+
+.modal-performance-table-parent-container {
+  height: 70%;
+  overflow: scroll;
+}
+
+.modal-performance-table {
+  // height: 70%;
+  width: calc(100% - 80px);
+  overflow: scroll;
+  background: $color-dark-blue;
+  margin-left: $inference-automation-header-margin;
+  margin-right: $inference-automation-header-margin;
+  border-right: $border-width solid $color-border-bottom;
+  border-left: $border-width solid $color-border-bottom;
+  border-bottom: $border-width solid $color-border-bottom;
+  border-radius: 8px;
+
+  &.empty {
+    background: white;
+    border-right: none;
+    border-left: none;
+    height: 100%;
+  }
+}
+
+.modal-performance-header-container,
+.modal-performance-row-container {
+  white-space: nowrap;
+}
+
+.inference-automation-header-container,
+.inference-automation-row-container,
+.model-management-header-container,
+.model-management-row-container {
+  // margin-left: $inference-automation-header-margin;
+  // margin-right: $inference-automation-header-margin;
+  white-space: nowrap;
+}
+
+// .inference-automation-row,
+// .model-management-row {
+//   border-bottom: $border-width solid $color-border-bottom;
+// }
+
+.model-management-row {
+  .container-cell-buttons {
+    height: 100%;
+    margin-left: -10px;
+
+    .button-management {
+      margin-top: 8px;
+
+      span {
+        font-weight: normal;
+      }
+
+      &.recalibrate {
+        @extend .f--roboto;
+        background: #2bab89;
+        border-color: #2bab89;
+        color: white;
+        font-size: 9px;
+
+        &:hover {
+          background-color: #259678;
+          color: white;
+          border: solid 1px transparent;
+
+          i {
+            border-color: white;
+          }
+
+          span {
+            color: white;
+          }
+        }
+      }
+
+      &.deactivate {
+        @extend .f--roboto;
+        background: #dc5454;
+        border-color: #dc5454;
+        color: white;
+        font-size: 9px;
+
+        &:hover {
+          background-color: #b64747;
+          color: white;
+          border: solid 1px transparent;
+
+          i {
+            border-color: white;
+          }
+
+          span {
+            color: white;
+          }
+        }
+      }
+
+      &.activate {
+        @extend .f--roboto;
+        background: #71a0f6;
+        border-color: #71a0f6;
+        color: white;
+        font-size: 9px;
+
+        &:hover {
+          background-color: #5d83ca;
+          color: white;
+          border: solid 1px transparent;
+
+          i {
+            border-color: white;
+          }
+
+          span {
+            color: white;
+          }
+        }
+      }
+
+      &.details {
+        font-weight: normal !important;
+        font-size: 9px;
+
+        span {
+          font-size: 9px;
+        }
+      }
+    }
+  }
+}
+
+.inference-automation-header {
+  display: inline-block;
+  background-color: $color-light-blue;
+  width: $inference-automation-cell-width;
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: center;
+  border-right: $border-width solid $color-border-bottom;
+
+  // &:nth-of-type(6) {
+  //   border-right: none;
+  // }
+
+  &:nth-of-type(1) {
+    width: calc(#{$inference-automation-cell-width} + #{$border-width});
+  }
+
+  &.automation-width {
+    width: $inference-automation-automation-width;
+    text-align: left;
+
+    p {
+      margin-left: 100px;
+    }
+  }
+
+  &.edit-width {
+    width: $inference-automation-edit-cell-width;
+  }
+
+  &.populations-last-column {
+    width: $populations-last-column-width;
+  }
+
+  p {
+    color: $color-white;
+    font-size: 13px;
+    margin: 0px;
+    line-height: 30px;
+  }
+
+  @for $i from 1 through 6 {
+    $width: percentage(1 / $i);
+
+    &.column-#{$i} {
+      // width: calc(#{$width} - 10px - 10px);
+      width: $width;
+    }
+  }
+}
+
+.population-splitting-rule-header {
+  display: inline-block;
+  background-color: $color-light-blue;
+  width: $population-splitting-rule-cell-width;
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: center;
+  border-right: $border-width solid $color-border-bottom;
+
+  // &:nth-of-type(6) {
+  //   border-right: none;
+  // }
+
+  &:nth-of-type(1) {
+    width: calc(#{$population-splitting-rule-cell-width} + #{$border-width});
+  }
+
+  &.automation-width {
+    width: 50%;
+    text-align: left;
+
+    p {
+      margin-left: 100px;
+    }
+  }
+
+  &.edit-width {
+    width: $inference-automation-edit-cell-width;
+  }
+
+  p {
+    color: $color-white;
+    font-size: 13px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+  }
+}
+
+.adaptive-learning-table-header {
+  display: inline-block;
+  background-color: $color-light-blue;
+  width: 31.7%;
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: center;
+  border-right: $border-width solid $color-border-bottom;
+
+  &:nth-of-type(6) {
+    border-right: none;
+  }
+
+  &:nth-of-type(1) {
+    width: calc(#{$population-splitting-rule-cell-width} + #{$border-width});
+  }
+
+  &.automation-width {
+    width: 50%;
+    text-align: left;
+
+    p {
+      margin-left: 100px;
+    }
+  }
+
+  &.edit-width {
+    width: $inference-automation-edit-cell-width;
+  }
+
+  p {
+    color: $color-white;
+    font-size: 13px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+  }
+}
+
+.populations-header {
+  display: inline-block;
+  background-color: $color-light-blue;
+  width: $populations-cell-width;
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: center;
+  border-right: $border-width solid $color-border-bottom;
+
+  // &:nth-of-type(6) {
+  //   border-right: none;
+  // }
+
+  &:nth-of-type(1) {
+    width: calc(#{$populations-cell-width} + #{$border-width});
+  }
+
+  &.automation-width {
+    width: 50%;
+    text-align: left;
+
+    p {
+      margin-left: 100px;
+    }
+  }
+
+  &.edit-width {
+    width: $inference-automation-edit-cell-width;
+  }
+
+  p {
+    color: $color-white;
+    font-size: 13px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+  }
+}
+
+.inference-automation-row-container,
+.model-management-row-container {
+  height: 100%;
+  min-height: 100%;
+  // border-left: $border-width solid $color-border-bottom;
+  // border-right: $border-width solid $color-border-bottom;
+  // border-bottom: $border-width solid $color-border-bottom;
+  // overflow-y: scroll;
+  // overflow-x: hidden;
+}
+
+.inference-automation-cell {
+  display: inline-block;
+  padding-left: $inference-automation-cell-padding;
+  padding-right: $inference-automation-cell-padding;
+  width: calc(
+    #{$inference-automation-cell-width} - #{$inference-automation-cell-padding} -
+      #{$inference-automation-cell-padding}
+  );
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: left;
+  border-right: 1px solid $color-border-bottom;
+  border-bottom: 1px solid $color-border-bottom;
+
+  p {
+    margin: 0px;
+    margin-top: 7px;
+
+    &.active {
+      color: $color-status-green;
+    }
+  }
+
+  // &:nth-of-type(6) {
+  //   border-right: none;
+  // }
+
+  &.automation-width {
+    width: calc(
+      #{$inference-automation-automation-width} - #{$inference-automation-cell-padding} -
+        #{$inference-automation-cell-padding} + #{$border-width} * 2
+    );
+    text-align: left;
+  }
+
+  &.edit-width {
+    width: calc(
+      #{$inference-automation-edit-cell-width} - #{$inference-automation-cell-padding} -
+        #{$inference-automation-cell-padding} * 2
+    );
+  }
+
+  @for $i from 1 through 6 {
+    $width: percentage(1 / $i);
+
+    &.column-#{$i} {
+      width: calc(#{$width} - 10px - 10px);
+      // width: $width;
+    }
+  }
+}
+
+.adaptive-learning-last-cell {
+  display: inline-block;
+  padding-left: $inference-automation-cell-padding;
+  padding-right: $inference-automation-cell-padding;
+  width: calc(
+    31.7% - #{$inference-automation-cell-padding} - #{$inference-automation-cell-padding}
+  );
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: left;
+  border-right: 1px solid $color-border-bottom;
+  border-bottom: 1px solid $color-border-bottom;
+
+  p {
+    margin: 0px;
+    margin-top: 7px;
+
+    &.active {
+      color: $color-status-green;
+    }
+  }
+
+  // &:nth-of-type(6) {
+  //   border-right: none;
+  // }
+
+  &.automation-width {
+    width: calc(
+      #{$inference-automation-automation-width} - #{$inference-automation-cell-padding} -
+        #{$inference-automation-cell-padding} + #{$border-width} * 2
+    );
+    text-align: left;
+  }
+
+  &.edit-width {
+    width: calc(
+      #{$inference-automation-edit-cell-width} - #{$inference-automation-cell-padding} -
+        #{$inference-automation-cell-padding} * 2
+    );
+  }
+}
+
+.i--icon-edit-container {
+  background-color: $color-light-blue;
+  height: 25px;
+  width: 25px;
+  margin-left: 39%;
+  margin-top: 2px;
+  position: relative;
+
+  &:hover {
+    background: $color-hover-blue;
+  }
+}
+
+.model-management-header {
+  width: $model-management-cell-width;
+  display: inline-block;
+  background-color: #f5f5f5;
+  height: 45px;
+  vertical-align: middle;
+  clear: both;
+  text-align: center;
+  border-right: $border-width solid $color-input-border;
+  border-top: $border-width solid $color-input-border;
+
+  &:nth-of-type(1) {
+    width: calc(#{$model-management-cell-width} + #{$border-width});
+  }
+
+  &.automation-width {
+    width: 50%;
+    text-align: left;
+    p {
+      margin-left: 100px;
+    }
+  }
+
+  &.button-width {
+    width: calc(#{$button-cell-width} + #{$border-width} * 2);
+    border-right: none;
+  }
+
+  p {
+    @extend .f--roboto;
+    font-size: 13px;
+    margin: 0px;
+    line-height: 45px;
+  }
+}
+
+.model-management-cell {
+  display: inline-block;
+  width: calc(
+    #{$model-management-cell-width}
+  );
+  height: 45px;
+  vertical-align: middle;
+  clear: both;
+  text-align: center;
+  border-right: 1px solid $color-input-border;
+  border-bottom: 1px solid $color-input-border;
+
+  .model-status-circle {
+    width: 8px;
+    height: 8px;
+    border-radius: 100%;
+    z-index: 989;
+    display: inline-block;
+    vertical-align: middle;
+    background: #9c9c9c;
+    margin-top: 6px;
+    margin-left: 0px;
+
+    @media
+        (-webkit-min-device-pixel-ratio: 2),
+        (min-resolution: 192dpi) {
+          margin-top: 8px;
+          margin-left: 2px;
+        }
+
+    &.active {
+      background: $color-status-green;
+    }
+  }
+
+  &:last-child {
+    width: calc(23%);
+  }
+
+  &.last-child-details-open {
+    width: calc(23%);
+  }
+
+  .container-cell-buttons {
+    .b--secondary-text {
+      margin-right: 4px;
+      padding: 0px 0px;
+      width: 28%;
+    }
+  }
+
+  input {
+    height: 40%;
+    margin-top: 15px;
+  }
+
+  p {
+    margin: 0px;
+    margin-top: 7px;
+    line-height: 30px;
+    text-align: center;
+    display: inline-block;
+    width: calc(100% - 60px);
+    vertical-align: middle;
+
+    &.status-text {
+      width: calc(100% - 130px);
+      padding-left: 15px;
+    }
+
+    &.active {
+      color: $color-status-green;
+    }
+  }
+
+  // &:nth-of-type(1) {
+  //   width: calc(
+  //     #{$model-management-cell-width}
+  //   );
+  // }
+
+  &.button-width {
+    border-right: none;
+    width: calc(
+      #{$button-cell-width} + #{$border-width} - #{$inference-automation-cell-padding} -
+        #{$inference-automation-cell-padding}
+    );
+    margin: 0px;
+    vertical-align: middle;
+    text-align: right;
+
+    div {
+      background-color: $color-light-blue;
+      display: inline-block;
+      padding: 5px;
+      padding-top: 3px;
+      margin-top: 3px;
+      margin-left: 0px;
+      margin-bottom: 0px;
+      height: 15px;
+
+      &:hover {
+        background-color: $color-hover-blue;
+      }
+
+      div {
+        padding: 0px;
+        margin: 0px;
+      }
+    }
+
+    button {
+      display: inline-block;
+      margin-left: 3px;
+      margin-right: 0px;
+      margin-top: 3px;
+      width: 100px;
+      height: 25px;
+      vertical-align: top;
+      padding: 8px 13px;
+
+      i.arrow.up {
+        margin-right: 10px;
+        vertical-align: middle;
+      }
+      i.arrow.down {
+        margin-right: 10px;
+      }
+    }
+  }
+}
+
+.inference-error {
+  text-align: right;
+  color: red;
+}

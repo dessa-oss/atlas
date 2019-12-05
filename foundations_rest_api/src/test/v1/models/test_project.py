@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
+from unittest import skip
 from mock import patch, Mock
 from foundations_rest_api.v1.models.project import Project
 
@@ -21,14 +22,14 @@ class TestProject(unittest.TestCase):
             return self.list
 
     def tearDown(self):
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import config_manager
 
         keys = list(config_manager.config().keys())
         for key in keys:
             del config_manager.config()[key]
 
     def test_new_project_is_response(self):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         lazy_result = Project.new(name='my first project')
         self.assertTrue(isinstance(lazy_result, LazyResult))
@@ -46,7 +47,7 @@ class TestProject(unittest.TestCase):
         self.assertEqual('my favourite project', lazy_result.evaluate().name)
 
     def test_find_by_name_project_is_response(self):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         lazy_result = Project.find_by(name='my first project')
         self.assertTrue(isinstance(lazy_result, LazyResult))
@@ -62,33 +63,6 @@ class TestProject(unittest.TestCase):
     def test_find_by_name_project_has_name_different_name(self):
         lazy_result = Project.find_by(name='my favourite project')
         self.assertEqual('my favourite project', lazy_result.evaluate().name)
-
-    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
-    def test_find_by_name_project_has_completed_jobs(self, mock):
-        mock.return_value = 'some completed jobs'
-
-        lazy_result = Project.find_by(name='my favourite project')
-        self.assertEqual('some completed jobs',
-                         lazy_result.evaluate().completed_jobs)
-        mock.assert_called_with(project_name='my favourite project')
-
-    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
-    def test_find_by_name_project_has_completed_jobs_different_result(self, mock):
-        mock.return_value = 'some other completed jobs'
-
-        lazy_result = Project.find_by(name='my favourite project')
-        self.assertEqual('some other completed jobs',
-                         lazy_result.evaluate().completed_jobs)
-        mock.assert_called_with(project_name='my favourite project')
-
-    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
-    def test_find_by_name_project_has_completed_jobs_different_name(self, mock):
-        mock.return_value = 'some other completed jobs'
-
-        lazy_result = Project.find_by(name='my other favourite project')
-        self.assertEqual('some other completed jobs',
-                         lazy_result.evaluate().completed_jobs)
-        mock.assert_called_with(project_name='my other favourite project')
 
     @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
     def test_find_by_name_project_has_running_jobs(self, mock):
@@ -122,14 +96,10 @@ class TestProject(unittest.TestCase):
 
     @patch('foundations_rest_api.v1.models.queued_job.QueuedJob.all')
     @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
-    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
-    @patch('foundations_rest_api.v1.models.job.Job.all')
     @patch('foundations_contrib.models.project_listing.ProjectListing')
-    def test_all_returns_all_projects(self, mock_projects, mock_jobs, mock_completed, mock_running, mock_queued):
-        mock_completed.return_value = 'completed'
+    def test_all_returns_all_projects(self, mock_projects, mock_running, mock_queued):
         mock_running.return_value = 'running'
         mock_queued.return_value = 'queued'
-        mock_jobs.return_value = 'listed'
 
         mock_projects.list_projects.return_value = [{'name': 'project1'}]
 
@@ -138,23 +108,19 @@ class TestProject(unittest.TestCase):
             name='project1',
             created_at = None,
             owner = None,
-            completed_jobs='completed',
+            completed_jobs=None,
             running_jobs='running',
             queued_jobs='queued',
-            jobs = 'listed'
+            jobs = None
         )
         self.assertEqual(expected_project, project)
 
     @patch('foundations_rest_api.v1.models.queued_job.QueuedJob.all')
     @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
-    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
-    @patch('foundations_rest_api.v1.models.job.Job.all')
     @patch('foundations_contrib.models.project_listing.ProjectListing')
-    def test_all_returns_all_projects_multiple_projects(self, mock_projects, mock_jobs, mock_completed, mock_running, mock_queued):
-        mock_completed.return_value = 'completed'
+    def test_all_returns_all_projects_multiple_projects(self, mock_projects, mock_running, mock_queued):
         mock_running.return_value = 'running'
         mock_queued.return_value = 'queued'
-        mock_jobs.return_value = 'listed'
 
         mock_projects.list_projects.return_value = [{'name': 'project1'}, {'name': 'project2'}]
 
@@ -163,23 +129,23 @@ class TestProject(unittest.TestCase):
             name='project1',
             created_at = None,
             owner = None,
-            completed_jobs='completed',
+            completed_jobs=None,
             running_jobs='running',
             queued_jobs='queued',
-            jobs = 'listed'
+            jobs = None
         )
         expected_project_two = Project(
             name='project2',
             created_at = None,
             owner = None,
-            completed_jobs='completed',
+            completed_jobs=None,
             running_jobs='running',
             queued_jobs='queued',
-            jobs = 'listed'
+            jobs = None
         )
         self.assertEqual([expected_project, expected_project_two], project)
 
-    @patch('foundations.global_state.redis_connection')
+    @patch('foundations_contrib.global_state.redis_connection')
     @patch('foundations_contrib.models.project_listing.ProjectListing')
     def test_all_returns_all_projects_using_correct_redis(self, mock_projects, mock_redis):
         Project.all().evaluate()

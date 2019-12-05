@@ -3,30 +3,25 @@
 exports[`Shallow Renders Job Column Header 1`] = `
 <div
   className="job-column-header"
+  data-class=""
 >
   <div
     className=""
   >
     <h4
-      className="blue-border-bottom"
-    />
-    <Tooltip
-      message=""
-    />
-    <div
-      className="icon-container"
-    />
-    <div
-      className="arrow-container string not-metric"
-      onClick={[Function]}
-      onKeyPress={[Function]}
-      role="presentation"
+      className=""
+      data-tip=""
     >
-      <div
-        className="arrow-down float-right string not-metric"
-        id=""
+      <ReactTooltip
+        clickable={false}
+        effect="solid"
+        insecure={true}
+        place="top"
+        resizeHide={true}
+        type="dark"
+        wrapper="div"
       />
-    </div>
+    </h4>
   </div>
 </div>
 `;

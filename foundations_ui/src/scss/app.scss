@@ -1,5 +1,6 @@
 //base settings
-@import "vendor/normalize";
+// @import "vendor/normalize";
+@import "../../node_modules/normalize.css/normalize.css";
 @import "base/media-queries";
 @import "base/colors";
 @import "base/animation";
@@ -23,6 +24,8 @@
 @import "views/project-header";
 @import "views/job-header";
 @import "views/project-summary";
+@import "views/job-details";
+@import "views/par-coords-graph";
 @import "views/job-table-header";
 @import "views/job-column-header";
 @import "views/job-cell";
@@ -34,8 +37,18 @@
 @import "views/input-metric-cell";
 @import "views/checkbox";
 @import "views/filter-base";
-@import "views/select-column-filter";
 @import "views/show-more-filters";
 @import "views/tooltip";
 @import "views/error";
 @import "views/login-page";
+@import "views/contact";
+@import "views/job-sidebar.scss";
+@import "views/job-overview-page.scss";
+@import "views/job-overview-graph.scss";
+@import "views/modal";
+@import "views/select-job-cell.scss";
+@import "views/tag.scss";
+@import "views/popup-rows.scss";
+@import "views/job-table-buttons.scss";
+@import "views/common-footer";
+@import "views/support-page.scss";

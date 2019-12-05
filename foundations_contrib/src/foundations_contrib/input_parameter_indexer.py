@@ -12,15 +12,15 @@ class InputParameterIndexer(object):
     """
 
     @staticmethod
-    def index_input_parameters(project_name, jobs_data):
-        from foundations.global_state import redis_connection
+    def index_input_parameters(project_name, jobs_data, handle_duplicate_param_names=True):
+        from foundations_contrib.global_state import redis_connection
         from foundations_contrib.input_parameter_formatter import InputParameterFormatter
 
         stage_times = redis_connection.zrange('projects:{}:stage_time'.format(project_name), 0, -1, withscores=True)
         stage_rank = InputParameterIndexer._get_stage_rank(stage_times)
 
         for job in jobs_data:
-            job['input_params'] = InputParameterFormatter(job['input_params'], job['job_parameters'], stage_rank).format_input_parameters()
+            job['input_params'] = InputParameterFormatter(job['input_params'], job['job_parameters'], stage_rank, handle_duplicate_param_names=handle_duplicate_param_names).format_input_parameters()
         return jobs_data
 
     @staticmethod

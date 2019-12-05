@@ -1,5 +1,5 @@
 import foundations_internal.fast_serializer as pickle_serializer
-from foundations.utils import string_from_bytes
+from foundations_internal.utils import string_from_bytes
 import json
 
 HEADER_MAGIC = b'FNDS'

@@ -5,15 +5,21 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+import fakeredis
 import unittest
+from unittest import skip
 from mock import patch
 from foundations_contrib.models.completed_job_data_listing import CompletedJobDataListing
 from foundations_contrib.job_data_redis import JobDataRedis
 from foundations_contrib.job_data_shaper import JobDataShaper
 from foundations_contrib.input_parameter_formatter import InputParameterFormatter
+from foundations_spec import *
 
+class TestCompletedJobDataListing(Spec):
 
-class TestCompletedJobDataListing(unittest.TestCase):
+    @set_up
+    def set_up(self):
+        self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
 
     @patch.object(InputParameterFormatter, 'format_input_parameters')
     @patch.object(JobDataRedis, 'get_all_jobs_data')
@@ -37,8 +43,6 @@ class TestCompletedJobDataListing(unittest.TestCase):
     @patch.object(JobDataRedis, 'get_all_jobs_data')
     @patch.object(JobDataShaper, 'shape_output_metrics')
     def test_gets_completed_job_data_without_inputs(self, mock_shaper, mock, mock_input_param_formatter):
-        from foundations.global_state import redis_connection
-
         some_data = [{'input_params': [], 'job_parameters': 'something', 'output_metrics': 'idk'}]
         mock.return_value = some_data
         mock_shaper.return_value = 'idk'
@@ -49,7 +53,7 @@ class TestCompletedJobDataListing(unittest.TestCase):
         self.assertEqual(CompletedJobDataListing.completed_job_data(
             'project_name', False), some_shaped_data)
 
-        mock.assert_called_once_with('project_name', redis_connection, False)
+        mock.assert_called_once_with('project_name', self._redis, False)
         mock_shaper.assert_called_once()
         mock_input_param_formatter.assert_called_once()
 
@@ -57,8 +61,6 @@ class TestCompletedJobDataListing(unittest.TestCase):
     @patch.object(JobDataRedis, 'get_all_jobs_data')
     @patch.object(JobDataShaper, 'shape_output_metrics')
     def test_gets_completed_job_data_without_inputs_different_project(self, mock_shaper, mock, mock_input_param_formatter):
-        from foundations.global_state import redis_connection
-
         some_data = [{'input_params': [], 'job_parameters': 'something', 'output_metrics': 'idk'}]
         mock.return_value = some_data
         mock_shaper.return_value = 'idk'
@@ -69,7 +71,7 @@ class TestCompletedJobDataListing(unittest.TestCase):
         self.assertEqual(CompletedJobDataListing.completed_job_data(
             'different_project_name', False), some_shaped_data)
 
-        mock.assert_called_once_with('different_project_name', redis_connection, False)
+        mock.assert_called_once_with('different_project_name', self._redis, False)
         mock_shaper.assert_called_once()
         mock_input_param_formatter.assert_called_once()
 

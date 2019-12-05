@@ -10,8 +10,9 @@ from foundations_contrib.working_directory_stack import WorkingDirectoryStack
 
 class JobBundler(object):
 
-    def __init__(self, job_name, config, job, job_source_bundle):
+    def __init__(self, job_name, config, job, job_source_bundle, job_source_name='job.tgz'):
         import os
+        from tempfile import mkdtemp
 
         self._config = config
         self._config['job_name'] = job_name
@@ -19,6 +20,8 @@ class JobBundler(object):
         self._job_name = job_name
         self._job = job
         self._job_source_bundle = job_source_bundle
+        self._path = mkdtemp()
+        self._job_source_name = job_source_name
 
     def job_name(self):
         return self._job_name
@@ -46,7 +49,7 @@ class JobBundler(object):
         return self._job_name + ".tgz"
 
     def job_archive(self):
-        return "../" + self.job_archive_name()
+        return self._path + "/" + self.job_archive_name()
 
     def _job_binary(self):
         return self._job_name + ".bin"
@@ -55,7 +58,7 @@ class JobBundler(object):
         return self._job_name + ".results.tgz"
 
     def _job_config_yaml(self):
-        return self._job_name + ".config.yaml"
+        return self._path + "/" + self._job_name + ".config.yaml"
 
     def _save_job(self):
         with open(self._job_binary(), "w+b") as file:
@@ -75,17 +78,17 @@ class JobBundler(object):
 
     def _add_files_to_tarball(self, tar):
         self._tar_job_source_bundle_archive(tar)
-        self._tar_job_binary(tar)
+        # self._tar_job_binary(tar)
         self._tar_config_files(tar)
         self._tar_foundations_modules(tar)
         if 'run_script_environment' in self._config:
             self._tar_env(tar)
         self._tar_resources(tar)
-    
+
     def _tar_job_source_bundle_archive(self, tarfile):
         import os
 
-        tarfile.add(self._job_source_bundle.job_archive(), arcname=os.path.join(self._job_name, 'job.tgz'))
+        tarfile.add(self._job_source_bundle.job_archive(), arcname=os.path.join(self._job_name, self._job_source_name))
     
     def _tar_job_binary(self, tarfile):
         import os
@@ -127,5 +130,5 @@ class JobBundler(object):
                 tarfile.add(module_directory, arcname=self._job_name + '/' + module_name)
 
     def _log(self):
-        from foundations.global_state import log_manager
+        from foundations_contrib.global_state import log_manager
         return log_manager.get_logger(__name__)

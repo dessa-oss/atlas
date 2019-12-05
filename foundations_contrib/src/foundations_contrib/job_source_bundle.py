@@ -18,25 +18,30 @@ class JobSourceBundle(object):
     @staticmethod
     def for_deployment():
         from uuid import uuid4
+        from tempfile import mkdtemp
+
         bundle_name = str(uuid4())
-        return JobSourceBundle(bundle_name, '../')
+        return JobSourceBundle(bundle_name, mkdtemp() + '/')
 
     def bundle(self):
         import tarfile
+        import os
 
-        self._log().debug('Adding current directory to source bundle')
+        self._log().info('Preparing to bundle contents of {} for execution. Estimating bundle size.'.format(os.getcwd()))
+        size = self._get_size(os.getcwd())
+        for i in [500, 100, 50]:
+            if size/1024./1024. > i:
+                self._log().warn('Directory size is larger than {}MB!'.format(i))
+                self._log().warn('Please ensure you have the right job directory specified. If you have large artifacts in')
+                self._log().warn('your job directory, you can use other methods to retrieve artifacts during your job run')
+                self._log().warn('to avoid performance issues. Please see documentation for details.')
+                self._log().warn('Ctr-C to cancel the bundling and job submission process')
+                break
+        self._log().info('Bundling job contents.')
         with tarfile.open(self.job_archive(), "w:gz") as tar:
             tar.add(".")
             for item in tar:
                 self._log().debug('Added %s to source bundle', item.name)
-                self._protected_file_error_messages(item.name)
-
-    def _protected_file_error_messages(self, item_name):
-        if item_name == './main.py':
-            raise Exception('Cannot add main.py to job bundle - please rename!')
-        if item_name == './run.sh':
-            raise Exception('Cannot add run.sh to job bundle - please rename!')
-
 
     def unbundle(self, path_to_save):
         import tarfile
@@ -69,5 +74,17 @@ class JobSourceBundle(object):
                 yield tarinfo.name
 
     def _log(self):
-        from foundations.global_state import log_manager
+        from foundations_contrib.global_state import log_manager
         return log_manager.get_logger(__name__)
+
+    def _get_size(self, start_path):
+        import os
+        total_size = 0
+        for dirpath, dirnames, filenames in os.walk(start_path):
+            for f in filenames:
+                fp = os.path.join(dirpath, f)
+                # skip if it is symbolic link
+                if not os.path.islink(fp):
+                    total_size += os.path.getsize(fp)
+
+        return total_size

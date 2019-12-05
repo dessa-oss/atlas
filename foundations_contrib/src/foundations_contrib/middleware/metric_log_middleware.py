@@ -22,12 +22,10 @@ class MetricLogMiddleware(BasicStageMiddleware):
                 self._push_message_to_channel(metric['key'], metric['value'])
 
         def _push_message_to_channel(self, key, value):
-            message = {
-                    'project_name': self._project_name(), 
-                    'job_id': self._job_id(), 
-                    'key': key, 'value': value
-                    }
-            self._message_router.push_message('job_metrics', message)
+            from foundations_contrib.producers.metric_logged import MetricLogged
+
+            metrics_logged_producer = MetricLogged(self._message_router, self._project_name(), self._job_id(), key, value)
+            metrics_logged_producer.push_message()
 
         def _project_name(self):
             return self._pipeline_context.provenance.project_name
@@ -50,7 +48,7 @@ class MetricLogMiddleware(BasicStageMiddleware):
         Return:
             return_value - result from callback execution
         """
-        from foundations.global_state import message_router
+        from foundations_contrib.global_state import message_router
 
         return_value = callback(args, kwargs)
 

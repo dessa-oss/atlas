@@ -6,7 +6,7 @@ Written by Dariem Perez <d.perez@dessa.com>, 12 2018
 """
 import numpy as np
 import foundations
-from foundations import create_stage, set_project_name
+from foundations import set_project_name
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 from acceptance.v2beta.jobs_tests_helper_mixin_v2 import JobsTestsHelperMixinV2
 
@@ -24,7 +24,7 @@ class TestJobListingTrimCharacters(JobsTestsHelperMixinV2, APIAcceptanceTestCase
 
     @classmethod
     def tearDownClass(klass):
-        from foundations.global_state import redis_connection as redis
+        from foundations_contrib.global_state import redis_connection as redis
 
         redis.flushall()
 

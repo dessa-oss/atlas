@@ -1,17 +1,24 @@
 .project-page-container{
   background-color: $color-background-grey;
-}
+  margin: 50px;
+  min-height: calc(100% - #{$footer-height} - #{$header-height} - 101px);
 
-.projects-body-container{
-  width: 705px;
-  max-width: 705px;
-  margin: auto;
-  padding-top: 168px;
-  padding-bottom: 30px;
-  min-height: calc(100vh - 200px);
+  * {
+    font-family: DIN, Arial, sans-serif;
+  }
+
+  h1 {
+    color: #637081;
+    font-size: 24px;
+    margin-bottom: 25px;
+  }
 }
 
 .header{
   position: fixed;
   width: 100%;
+}
+
+.project-page-container .header {
+  position: absolute;
 }

@@ -1,57 +1,81 @@
+.jobDetails {
+  width: 300px;
+}
+
 .job-static-columns-container{
   display: inline-block;
-  vertical-align: middle;
-  min-width: $min-metric-param-columns-container;
-  max-width: $table-section-width;
-  height: 100%;
+  vertical-align: top;
+  width: 23.05%;
+  height: 98%;
   white-space: nowrap;
   margin: 0px;
   padding: 0px;
   position: relative;
+  overflow: hidden;
+  border-left: solid 1px #EDEDED;
+  border-right: solid 1px #EDEDED;
+  box-sizing: border-box;
 
-  &:first-of-type {
-    width: $table-section-width;
+  h2 {
+    text-align: center;
+    background: $color-dark-blue;
+    margin: 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: $color-secondary-text;
+    font-size: 16px;
+  }
+
+  &:first-child {
+    width: 50%;
+
+    .job-cell, .job-column-header {
+      &:first-child {
+        width: 50px;
+      }
+    }
+    .input-metric-column-container {
+      overflow-x: hidden;
+    }
+
+    .job-column-header, .job-cell {
+      width: calc(100% / 6 - 42px / 5);
+    }
+
+    .job-column-header:last-of-type(), .job-cell:last-of-type() {
+      width: calc(100% / 6 - 42px / 5 + 30px);
+    }
   }
 }
 
 .input-metric-header-row-container {
-  height: calc(100% - #{$metric-header-height});
   width: 100%;
-  overflow-y: scroll;
-  overflow-x: scroll;
-  border-left: 4px solid $color-border-bottom;
   position: relative;
-  margin-right: -6px;
+  overflow: hidden;
+  overflow-x: scroll;
+
+  .input-metric-column-container:nth-of-type(2) {
+    vertical-align: top;
+    min-height: 264px;
+  }
 }
 
 .input-metric-column-container {
-  height: calc(100% - #{$pagination-height} - #{$column-header-height});
   min-width: 100%;
   overflow-y: scroll;
   width: fit-content;
 
-  .empty-columns-message {
+  .empty-columns-message-no-jobs {
     padding-left: calc(2 * #{$margin-width});
   }
 
-  &.column-header {
-    height: $column-header-height;
-  }
-
   .job-column-header {
-    border-right: 1px solid $color-border-bottom;
+    height: 100%;
     display: inline-block;
     vertical-align: top;
     text-align: center;
-    min-width: calc(#{$standard-input-metric-cell-width} - (#{$standard-header-padding} * 2));
-    max-width: calc(#{$standard-input-metric-cell-width} - (#{$standard-header-padding} * 2));
-    padding-left: $standard-header-padding;
-    padding-right: $standard-header-padding;
     position: relative;
-
-    &:last-child {
-      border-right: 0px;
-    }
+    overflow: hidden;
 
     div {
       h4 {
@@ -69,6 +93,12 @@
         display: block;
       }
     }
+
+    input{
+      width: 28px;
+      height: 20px;
+      vertical-align: middle;
+    }
     
   }
 
@@ -76,12 +106,13 @@
     text-align: center;
     padding-left: 0px;
     padding-right: 0px;
-    width: $standard-input-metric-cell-width;
+    width: $column-width;
+    box-sizing: border-box;
     
-    p{
-      margin: 0px 15px;
+    p {
+      margin: 0px 10px;
       vertical-align: middle;
-      height: 26px;
+      height: $row-height;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -95,7 +126,7 @@
       }
 
       &.type-number, &.type-array {
-        text-align: right;
+        text-align: center;
 
         &.string {
           text-align: center;
@@ -107,19 +138,42 @@
 
 @media only screen and (max-width: $minimum-screen-width) {
   .job-summary-info-container {
-      width: calc(40% - 100px);
+      width: 400px;
   }
 
   .input-metric-column-container {
     .job-cell {
       p {
         margin: 0px;
-        display: inline-block;
         vertical-align: middle;
-        padding-right: 10px;
+        padding-right: 3px;
         padding-left: 5px; 
       }
     }
   }
 
+  }
+
+  .f9-active-row {
+    background-color: $color-job-row-select!important;
+    background: $color-job-row-select!important;
+  }
+
+  .no-rows-container {
+    text-align: center;
+    p, span {
+      font-size: 9px;
+      padding-left: 0px;
+    }
+
+    .underline {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    img {
+      width: 150px;
+      height: 150px;
+      margin-top: 10px;
+    }
   }

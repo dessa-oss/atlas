@@ -21,8 +21,8 @@ class ProjectHeader extends Component {
 
     if (pageTitle === 'Projects') {
       projectCount = (
-        <div className="half-width inline-block text-right">
-          <h2 className="blue-border-bottom font-bold">
+        <div>
+          <h2 className="font-bold">
               Total Projects: <span>{numProjects}</span>
           </h2>
         </div>
@@ -32,14 +32,10 @@ class ProjectHeader extends Component {
 
     return (
       <div className="project-header-container">
-        <div className="project-header-logo-container">
-          <div className="i--icon-logo" />
-          <h2 className="font-bold">Foundations</h2>
-        </div>
         <div className="project-header-info-container">
           <div className="project-header-total-projects-container">
             <div className="half-width inline-block">
-              <h1 className="blue-border-bottom font-bold">{pageTitle}</h1>
+              <h1 className="font-bold">{pageTitle}</h1>
             </div>
             {projectCount}
             <div className="project-header-sort-filter-container" />

@@ -6,8 +6,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
+from unittest import skip
 from mock import MagicMock, patch
 
+from foundations_spec import *
 
 class TestDeploymentManager(unittest.TestCase):
 
@@ -28,9 +30,11 @@ class TestDeploymentManager(unittest.TestCase):
     class MockListing(object):
 
         def __init__(self):
+            self.project_tracked = False
             self.value = None
 
         def track_pipeline(self, name):
+            self.project_tracked = True
             self.value = name
 
     def setUp(self):
@@ -84,6 +88,7 @@ class TestDeploymentManager(unittest.TestCase):
 
         self.assertEqual('my project', self._listing.value)
 
+    @quarantine
     @patch('foundations_internal.deployment.job_preparation.prepare_job')
     @patch('logging.Logger.info')
     def test_deployment_manager_deploy_info_log(self, mock, _):
@@ -92,17 +97,24 @@ class TestDeploymentManager(unittest.TestCase):
         mock.assert_called_with(
             "Job '{}' deployed.".format(deployment.job_name()))
 
+    @quarantine
     @patch('foundations_internal.deployment.job_preparation.prepare_job')
     @patch('foundations.job.Job')
-    def test_deployment_manager_prepares_job(self, job, job_preparation):
+    def test_deployment_manager_prepares_job_before_tracking_project(self, job, job_preparation):
         from foundations.global_state import message_router
 
         job_instance = MagicMock()
         job.return_value = job_instance
+        job_preparation.side_effect = self._job_preparation_checking_project_tracked
+
         deployment = self._deployment_manager.simple_deploy(
             self._stage, '', {})
         job_preparation.assert_called_with(
             message_router, job_instance, deployment.job_name())
+
+    def _job_preparation_checking_project_tracked(self, *args):
+        if self._listing.project_tracked:
+            raise AssertionError('project must be tracked after deployment, not before')
 
     def _mock_listing(self):
         return self._listing

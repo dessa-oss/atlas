@@ -5,36 +5,27 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
-from mock import patch
+from foundations_spec import *
 
-from foundations_rest_api.v1.controllers.projects_controller import ProjectsController
+class TestProjectsController(Spec):
 
-class TestProjectsController(unittest.TestCase):
+    def test_projects_controller_comes_from_core_rest_api_components_module(self):
+        import foundations_rest_api.v1.controllers.projects_controller as atlas
+        import foundations_core_rest_api_components.v1.controllers.projects_controller as core
+        self.assertEqual(core.ProjectsController, atlas.ProjectsController)
 
-    @patch('foundations_rest_api.v1.models.project.Project.all')
-    def test_index_returns_all_projects(self, mock):
-        mock.return_value = self._make_lazy_result('snowbork drones')
+    def test_projects_controller_registered_as_api_resource(self):
+        import importlib
+        import foundations_core_rest_api_components.v1.controllers.projects_controller as core
+        import foundations_rest_api.v1.controllers.projects_controller as atlas
 
-        controller = ProjectsController()
+        mock_api_resource = self.patch('foundations_core_rest_api_components.utils.api_resource.api_resource', ConditionalReturn())
+        class_decorator = ConditionalReturn()
+        decorated_class = Mock()
 
-        expected_result = [{'name': 'snowbork drones', 'created_at': None, 'owner': None}]
-        self.assertEqual(expected_result, controller.index().as_json())
+        mock_api_resource.return_when(class_decorator, '/api/v1/projects')
+        class_decorator.return_when(decorated_class, core.ProjectsController)
 
-    @patch('foundations_rest_api.v1.models.project.Project.all')
-    def test_index_returns_all_projects_different_projects(self, mock):
-        mock.return_value = self._make_lazy_result('space2vec')
+        importlib.reload(atlas)
 
-        controller = ProjectsController()
-
-        expected_result = [{'name': 'space2vec', 'created_at': None, 'owner': None}]
-        self.assertEqual(expected_result, controller.index().as_json())
-
-    def _make_lazy_result(self, name):
-        from foundations_rest_api.lazy_result import LazyResult
-        from foundations_rest_api.v1.models.project import Project
-
-        def _callback():
-            return [Project(name=name)]
-
-        return LazyResult(_callback)
+        self.assertEqual(decorated_class, atlas.ProjectsController)

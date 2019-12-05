@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.global_state import message_router, config_manager
+from foundations_contrib.global_state import message_router, config_manager
 from foundations_contrib.notifiers.slack_notifier import SlackNotifier
 from foundations_contrib.notifiers.job_notifier import JobNotifier
 
@@ -15,17 +15,26 @@ _job_notifier = JobNotifier(config_manager, SlackNotifier())
 def _add_consumers_for_stage_log_middleware(redis):
     from foundations_contrib.consumers.job_metric_consumer import JobMetricConsumer
     from foundations_contrib.consumers.job_metric_name_consumer import JobMetricNameConsumer
+    from foundations_contrib.consumers.project_metrics import ProjectMetrics
+    from foundations_contrib.consumers.single_project_metric import SingleProjectMetric
 
     _add_listener(JobMetricConsumer(redis), 'job_metrics')
     _add_listener(JobMetricNameConsumer(redis), 'job_metrics')
+    _add_listener(ProjectMetrics(redis), 'job_metrics')
+    _add_listener(SingleProjectMetric(redis), 'job_metrics')
 
+def _add_consumers_for_job_annotations(redis):
+    from foundations_contrib.consumers.annotate import Annotate
+
+    annotation_consumer = Annotate(redis)
+    _add_listener(annotation_consumer, 'job_tag')
 
 def _add_consumers_for_queue_job(redis):
     from foundations_contrib.consumers.jobs.queued.creation_time import CreationTime
     from foundations_contrib.consumers.jobs.queued.input_parameter_keys import InputParameterKeys
     from foundations_contrib.consumers.jobs.queued.input_parameters import InputParameters
     from foundations_contrib.consumers.jobs.queued.job_state import JobState
-    from foundations_contrib.consumers.jobs.queued.project_listing import ProjectListing
+    from foundations_contrib.consumers.jobs.queued.project_listing_for_queued_job import ProjectListingForQueuedJob
     from foundations_contrib.consumers.jobs.queued.global_listing import GlobalListing
     from foundations_contrib.consumers.jobs.queued.project_name import ProjectName
     from foundations_contrib.consumers.jobs.queued.run_data_keys import RunDataKeys
@@ -34,6 +43,7 @@ def _add_consumers_for_queue_job(redis):
     from foundations_contrib.consumers.jobs.queued.project_tracker import ProjectTracker
     from foundations_contrib.consumers.jobs.queued.stage_time import StageTime
     from foundations_contrib.consumers.jobs.queued.job_notifier import JobNotifier
+    from foundations_contrib.consumers.jobs.queued.project_listing import ProjectListing
     import foundations_internal.foundations_serializer as serializer
 
     import json
@@ -43,7 +53,7 @@ def _add_consumers_for_queue_job(redis):
     _add_listener(StageTime(redis), 'queue_job')
     _add_listener(InputParameters(redis, serializer), 'queue_job')
     _add_listener(JobState(redis), 'queue_job')
-    _add_listener(ProjectListing(redis), 'queue_job')
+    _add_listener(ProjectListingForQueuedJob(redis), 'queue_job')
     _add_listener(GlobalListing(redis), 'queue_job')
     _add_listener(ProjectName(redis), 'queue_job')
     _add_listener(RunDataKeys(redis), 'queue_job')
@@ -51,23 +61,21 @@ def _add_consumers_for_queue_job(redis):
     _add_listener(SetUser(redis), 'queue_job')
     _add_listener(ProjectTracker(redis), 'queue_job')
     _add_listener(JobNotifier(_job_notifier), 'queue_job')
-
+    _add_listener(ProjectListing(redis), 'queue_job')
 
 def _add_consumers_for_run_job(redis):
     from foundations_contrib.consumers.jobs.running.job_state import JobState
-    from foundations_contrib.consumers.jobs.running.project_listing import ProjectListing
     from foundations_contrib.consumers.jobs.running.remove_queued_job import RemoveQueuedJob
     from foundations_contrib.consumers.jobs.running.remove_global_queued_job import RemoveGlobalQueuedJob
     from foundations_contrib.consumers.jobs.running.start_time import StartTime
     from foundations_contrib.consumers.jobs.running.job_notifier import JobNotifier
+    from foundations_contrib.consumers.jobs.running.monitor_name import MonitorName
 
     _add_listener(JobState(redis), 'run_job')
-    _add_listener(ProjectListing(redis), 'run_job')
     _add_listener(RemoveQueuedJob(redis), 'run_job')
     _add_listener(RemoveGlobalQueuedJob(redis), 'run_job')
     _add_listener(StartTime(redis), 'run_job')
     _add_listener(JobNotifier(_job_notifier), 'run_job')
-
 
 def _add_consumers_for_complete_job(redis):
     from foundations_contrib.consumers.jobs.completed.completed_time import CompletedTime
@@ -95,13 +103,14 @@ def _add_consumers_for_fail_job(redis):
 
 
 def _create_redis_instance_and_add_consumers():
-    from foundations.global_state import redis_connection
+    from foundations_contrib.global_state import redis_connection
 
     _add_consumers_for_stage_log_middleware(redis_connection)
     _add_consumers_for_queue_job(redis_connection)
     _add_consumers_for_run_job(redis_connection)
     _add_consumers_for_complete_job(redis_connection)
     _add_consumers_for_fail_job(redis_connection)
+    _add_consumers_for_job_annotations(redis_connection)
 
 
 _create_redis_instance_and_add_consumers()

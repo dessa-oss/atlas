@@ -21,29 +21,28 @@ class DeploymentManager(object):
             job_name = str(uuid.uuid4())
         job = Job(stage, **job_params)
 
+        deployment = self.deploy({}, job_name, job)
         self._record_project(stage)
-
-        return self.deploy({}, job_name, job)
+        return deployment
 
     def deploy(self, deployment_config, job_name, job):
         from foundations import log_manager
         from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
-        from foundations.global_state import message_router
+        from foundations.global_state import message_router, current_foundations_context
         from foundations_internal.deployment.job_preparation import prepare_job
 
         logger = log_manager.get_logger(__name__)
 
         deployment = self._create_deployment(job_name, job)
         deployment.config().update(deployment_config)
-
-        prepare_job(message_router, job, job_name)
+        project_name = current_foundations_context().project_name()
 
         if isinstance(deployment, LocalShellJobDeployment):
-            logger.info("Job '{}' deployed.".format(job_name))
+            logger.info("Job submitted with ID '{}' in project '{}'.".format(job_name, project_name))
             deployment.deploy()
         else:
             deployment.deploy()
-            logger.info("Job '{}' deployed.".format(job_name))
+            logger.info("Job submitted with ID '{}' in project '{}'.".format(job_name, project_name))
 
         return deployment
 

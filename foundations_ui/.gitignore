@@ -10,6 +10,8 @@
 
 # production
 /build
+gui_Dockerfile
+gui_ce_Dockerfile
 
 # misc
 .DS_Store
@@ -20,6 +22,8 @@
 .vscode
 apiary.env.sh
 env.sh
+local_env.sh
+apiary_env.sh
 
 npm-debug.log*
 yarn-debug.log*

@@ -1,0 +1,64 @@
+.settings-add-user-modal-container {
+  width: 25%;
+  min-width: 480px;
+  margin-left: 35% !important; // important needed to override the reactstrap library
+  margin-top: 20% !important;
+  white-space: nowrap;
+
+  &.notification {
+    width: 740px;
+    min-width: 740px;
+    margin-left: 25% !important; // important needed to override the reactstrap library
+    margin-top: 20% !important;
+    white-space: nowrap;
+  }
+
+  button.b--mat {
+    margin-top: 20px;
+    float: right;
+    margin-right: 0;
+  }
+
+  p,
+  input {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  p {
+    margin: 0px;
+    margin-bottom: 20px;
+  }
+
+  .add-user-role-label {
+    margin-top: 10px;
+  }
+
+  input {
+    width: 50%;
+    float: right;
+    padding-left: 5px;
+  }
+}
+
+.add-user-modal-label {
+  font-size: 14px;
+}
+
+.edit-not-subtitle {
+  margin-top: 20px !important;
+}
+
+.add-user-select-role {
+  width: 52%;
+  float: right;
+  height: 30px;
+
+  div {
+    height: 30px;
+  }
+
+  > div > div > div > div {
+    padding-top: 4px;
+  }
+}

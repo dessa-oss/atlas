@@ -21,6 +21,12 @@ class TestPropertyModel(unittest.TestCase):
     class MockThree(PropertyModel):
         my_different_property = PropertyModel.define_property()
 
+    class MockFour(PropertyModel):
+        property_with_default = PropertyModel.define_property(default='asdf')
+
+    class MockFive(PropertyModel):
+        property_with_different_default = PropertyModel.define_property(default={})
+
     def test_defines_property(self):
         mock = self.Mock()
         mock.my_property = 5
@@ -41,6 +47,14 @@ class TestPropertyModel(unittest.TestCase):
         mock.my_property = 23
         mock.my_other_property = 14
         self.assertEqual(23, mock.my_property)
+
+    def test_defines_property_with_default(self):
+        mock = self.MockFour()
+        self.assertEqual('asdf', mock.property_with_default)
+
+    def test_defines_property_with_different_default(self):
+        mock = self.MockFive()
+        self.assertEqual({}, mock.property_with_different_default)
 
     def test_defines_property_different_class(self):
         mock = self.MockTwo()

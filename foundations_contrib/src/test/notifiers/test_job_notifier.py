@@ -8,10 +8,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from mock import Mock, call
 
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import *
-from foundations_internal.testing.helpers.conditional_return import ConditionalReturn
-from foundations_internal.testing.helpers.partial_callable_mock import PartialCallableMock
+from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers import *
+from foundations_spec.helpers.conditional_return import ConditionalReturn
+from foundations_spec.helpers.partial_callable_mock import PartialCallableMock
 
 def _create_retry_test(number_of_retries):
     def _callback(self):

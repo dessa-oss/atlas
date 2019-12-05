@@ -5,14 +5,16 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
+from foundations_spec import *
 
 from foundations_internal.cache import Cache
 from foundations_internal.fast_serializer import serialize, deserialize
 
 
-class TestCache(unittest.TestCase):
-    def setUp(self):
+class TestCache(Spec):
+
+    @set_up
+    def set_up(self):
         self.backend = MockBackend()
         self.cache = Cache(self.backend)
 

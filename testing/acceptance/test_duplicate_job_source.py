@@ -6,8 +6,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
+from unittest import skip
+
+from foundations_spec import *
 
 
+@quarantine
 class TestDuplicateJobSource(unittest.TestCase):
 
     def setUp(self):

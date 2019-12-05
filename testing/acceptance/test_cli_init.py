@@ -5,10 +5,23 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 02 2019
 """
 
-from foundations_internal.testing.helpers import set_up
-from foundations_internal.testing.helpers.spec import Spec
+from foundations_spec import *
+from foundations_spec.extensions import run_process
+from acceptance.mixins.run_local_job import RunLocalJob
 
-class TestCLIInit(Spec):
+class TestCLIInit(Spec, RunLocalJob):
+
+    @let
+    def job_root(self):
+        from foundations_contrib.utils import foundations_home
+        from os.path import expanduser
+
+        return expanduser(foundations_home() + '/job_data')
+
+    @let
+    def redis(self):
+        from foundations_contrib.global_state import redis_connection
+        return redis_connection
 
     @set_up
     def set_up(self):
@@ -17,51 +30,33 @@ class TestCLIInit(Spec):
         import os.path
 
         shutil.rmtree("test-cli-init", ignore_errors=True)
-        if os.path.isfile('~/.foundations/job_data/projects/my-foundations-project.tracker'):
-            os.remove('~/.foundations/job_data/projects/my-foundations-project.tracker')
+        if os.path.isfile(self.job_root + '/projects/my-foundations-project.tracker'):
+            os.remove(self.job_root + '/projects/my-foundations-project.tracker')
 
     def test_cli_can_deploy_job_created_by_init(self):
         import subprocess
 
-        subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
-        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy project_code/driver.py --env local"])
-
-        self.assertEqual(driver_deploy_exit_code, 0)
-
-    def test_cli_can_execute_results_created_by_init(self):
-        import subprocess
-
-        subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
-        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy post_processing/results.py --env local"])
-
-        self.assertEqual(driver_deploy_exit_code, 0)
-
-    def test_cli_can_run_job_with_default_configuration(self):
-        import subprocess
-
-        subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
-        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init/project_code && python driver.py"])
+        run_process(["python", "-m", "foundations", "init", "test-cli-init"], '.')
+        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python main.py"])
 
         self.assertEqual(driver_deploy_exit_code, 0)
 
     def test_cli_deployment_with_default_configuration_can_produce_results(self):
-        import subprocess
-        import re
+        run_process(["python", "-m", "foundations", "init", "test-cli-init"], '.')
+        self._append_redis_job_id_log_to_driver_file()
+        driver_deploy_output = self._deploy_job_file('test-cli-init', entrypoint='main.py')
+        job_id = self.redis.get('foundations_testing_job_id').decode()
 
-        subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
-        driver_deploy_output = subprocess.check_output(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy project_code/driver.py --env local"])
+        self._assert_job_file_exists(job_id, 'miscellaneous/job_artifact_listing.pkl')
 
-        job_id = re.search("Job\s+'([^']+)'\s+deployed", driver_deploy_output.decode(), re.MULTILINE)[1]
-
-        self._assert_file_exists('{}.tracker'.format(job_id))
-        self._assert_job_file_exists(job_id, 'job_source/{}.tgz'.format(job_id))
-        self._assert_job_file_exists(job_id, 'miscellaneous/stage_listing')
-        self._assert_job_file_exists(job_id, 'miscellaneous/stages/158903c052e1917e04b4de080ebb9ff636b37566/stage_context')
-        self._assert_job_file_exists(job_id, 'miscellaneous/stages/global/stage_context')
-        self._assert_job_file_exists(job_id, 'provenance')
-        self._assert_job_file_exists(job_id, 'stage_contexts/158903c052e1917e04b4de080ebb9ff636b37566/stage_log')
-        self._assert_job_file_exists(job_id, 'stage_contexts/global/stage_log')
-
+    def _append_redis_job_id_log_to_driver_file(self):
+        self.redis.delete('foundations_testing_job_id')
+        with open('test-cli-init/main.py', 'a') as file:
+            file.write(
+                '\nfrom foundations_contrib.global_state import redis_connection, current_foundations_context\n'
+                'redis_connection.set("foundations_testing_job_id", current_foundations_context().pipeline_context().job_id)\n'
+            )
+        
     def _assert_job_file_exists(self, job_id, relative_path):
         from os.path import join
 
@@ -73,7 +68,7 @@ class TestCLIInit(Spec):
         from os.path import join
         from os.path import expanduser
 
-        foundations_root = expanduser('~/.foundations/job_data/archive')
+        foundations_root = expanduser(self.job_root + '/archive')
         path = join(foundations_root, relative_path)
         if not exists(path):
             raise AssertionError('Expected file, `{}` to exist'.format(path))

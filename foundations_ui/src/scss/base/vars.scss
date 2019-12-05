@@ -3,6 +3,8 @@ $minimum-site-width: 860px;
 $minimum-site-height: 820px;
 $minimum-screen-width: 1280px;
 $minimum-job-header-screen-width: 675px;
+$footer-height: 80px;
+$header-height: 60px;
 
 // Common Vars
 $border-thin: 1px;
@@ -11,9 +13,10 @@ $general-form-input-height: 30px;
 $one-third-width: 33%;
 
 // Job Table Vars
-$row-height: 35px;
+$row-height: 50px;
+$column-width: 135px;
 $table-section-width: 33.3%;
-$status-cell-width: 30px;
+$status-cell-width: 41px;
 $overview-content-margin-horizontal: 40px;
 $standard-header-padding: 8px;
 $standard-cell-padding: 5px;
@@ -23,14 +26,16 @@ $standard-cell-width: calc( 25% - (#{$standard-cell-padding} * #{$static-standar
 $standard-header-width: $standard-cell-width;
 $standard-input-metric-cell-width: 125px;
 $min-metric-param-columns-container: $standard-input-metric-cell-width * 2;
-$minimum-table-width: 1600px;
+$minimum-table-width: 1200px;
 $header-nav-height: 45px;
 $header-control-height: 165px;
 $pagination-height: 30px;
-$column-header-height: 53px;
+$column-header-height: 35px;
 $metric-header-height: 36px;
-$static-status-width: 34px;
-$static-column-header-text-width: 80px;
+$static-status-width: 46px;
+$static-delete-job-width: 28px;
+$static-duration-width: calc( 20% - (5px * 4 + 0.25px));
+$static-column-header-text-width: 50px;
 $table-row-height: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$column-header-height} - #{$pagination-height});
 $table-row-height-with-headers: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$pagination-height});
 $row-number-height: calc(100% - #{$column-header-height} - #{$metric-header-height} - #{$pagination-height});
@@ -41,7 +46,7 @@ $job-header-sorting-filter-allowed-width: 535px;
 $job-header-sorting-filter-allowed-width-small-screen: 305px;
 
 // Toolbar Vars
-$toolbar-height: 25px;
+$toolbar-height: 45px;
 $toolbar-padding: 10px;
 
 // Filter Vars
@@ -54,3 +59,8 @@ $filter-body-height: 45px;
 $duration-filter-left: calc((#{$standard-cell-width} * 2 ) / #{$number-sections} + #{$status-cell-width} + (#{$standard-cell-padding} * 2) - (#{$border-thin} * 4));
 $job-id-filter-left: calc((#{$standard-cell-width} ) / #{$number-sections} + #{$status-cell-width} + (#{$standard-cell-padding} * 2) - (#{$border-thin}));
 $job-id-container-width: 380px;
+
+// Sidebar
+$sidebar-section-height: 49%;
+$section-header-height: 34px;
+$artifact-viewer-height: calc(100% - #{$section-header-height});

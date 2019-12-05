@@ -4,14 +4,51 @@ exports[`Shallow Renders Toolbar Home 1`] = `
 <div
   className="toolbar-container"
 >
-  <Link
-    replace={false}
-    to="/projects"
+  <div
+    className="job-header-logo-container"
   >
-    Home
-  </Link>
-  <p>
-    Support and Contact
-  </p>
+    <Link
+      replace={false}
+      to="/projects"
+    >
+      <div
+        className="i--icon-logo"
+      />
+    </Link>
+    <h2
+      className="font-bold"
+    >
+      Foundations
+    </h2>
+  </div>
+  <ul
+    className="header-links"
+  >
+    <li>
+      <Link
+        replace={false}
+        to="/projects"
+      >
+        Projects
+      </Link>
+    </li>
+    <li>
+      <a
+        href="https://www.atlas.dessa.com/docs"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Documentation
+      </a>
+    </li>
+    <li>
+      <Link
+        replace={false}
+        to="/contact"
+      >
+        Contact Support
+      </Link>
+    </li>
+  </ul>
 </div>
 `;

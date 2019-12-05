@@ -26,7 +26,7 @@ class CompletedJobDataListing(object):
         from foundations_contrib.job_data_redis import JobDataRedis
         from foundations_contrib.job_data_shaper import JobDataShaper
         from foundations_contrib.input_parameter_indexer import InputParameterIndexer  
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
 
         job_data = JobDataRedis.get_all_jobs_data(project_name, redis_connection, include_input_params)
         jobs_data = InputParameterIndexer.index_input_parameters(project_name, job_data)

@@ -57,8 +57,6 @@ class MiddlewareManager(object):
         self._append_middleware(
             'ContextAware', MiddlewareManager._create_context_aware_middleware)
         self._append_middleware(
-            'TimeStage', MiddlewareManager._create_time_stage_middleware)
-        self._append_middleware(
             'StageLogging', MiddlewareManager._create_stage_logging_middleware)
         self._append_middleware('MetricLog', MetricLogMiddleware)
         self._append_middleware(
@@ -93,7 +91,7 @@ class MiddlewareManager(object):
         return MiddlewareManager.NamedMiddleware(name, callback)
 
     def _log(self):
-        from foundations.global_state import log_manager
+        from foundations_contrib.global_state import log_manager
         return log_manager.get_logger(__name__)
 
     @staticmethod
@@ -122,11 +120,6 @@ class MiddlewareManager(object):
     def _create_context_aware_middleware(pipeline_context, stage_config, stage_context, stage):
         from foundations_contrib.middleware.context_aware_middleware import ContextAwareMiddleware
         return ContextAwareMiddleware(stage_context, stage)
-
-    @staticmethod
-    def _create_time_stage_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations_contrib.middleware.time_stage_middleware import TimeStageMiddleware
-        return TimeStageMiddleware(stage_context, stage)
 
     @staticmethod
     def _create_stage_logging_middleware(pipeline_context, stage_config, stage_context, stage):

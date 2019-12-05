@@ -10,11 +10,13 @@ It's important to understand the language used around deployment so that we can 
 
 **Driver Application**: this where your code exist for using Foundations for both setting up stages and running them.   
 
-**Execution Environment**: this is where models are computed (ie: where jobs run). This can be a variety of different locations such as local (where you run model code on your local machine), or on a remote server (Google Cloud Platorm, Amazon Web Services, other SSH servers). See below for more details on Types of Deployments.
+**Execution Environment**: this is the infrastrucre where models are actually computed (ie: where the actual jobs are run). This can be a variety of different locations such as local (where you run model code on your local machine), or on a remote server (Google Cloud Platorm, Amazon Web Services, other SSH servers). See below for more details on Types of Deployments.
+
+**Deployment Environment**: See *Execution Environment*
 
 **Job**: this is the unit used to describe the package that is the model, source code, and metadata that gets sent to be computed.  
 
-**Deployment**: you can think of deployment as how the job gets run (executed).  
+**Deployment**: the process of bundling, transfering and running (executing) a Foundations job on any environment.  
 
 **Queuing System**: a way for multiple jobs to be sent to the execution environment, where they'll be put in line before they get run.  
 
@@ -56,17 +58,17 @@ $ foundations info --env
 
 For more information on the Foundations CLI, please refer to the documentation [here](../project_creation/)
 
-**Note:** If your code contains adding the config path via the SDK below, this **will** override the selected environment by the deploy command.
+**Note:** If your code contains setting the environment via the notebook instructions below, this **will** override the selected environment by the deploy command.
 
-<h3>2. Foundations SDK</h3>
+<h3>2. Using Notebooks</h3>
 
-When writing your driver application, you can specify the `.config.yaml` configuration file for your script using the `add_config_path` method in the `config_manager` . 
+When using a notebook such as Jupyter to develop your model code, you can deploy jobs by running any stage that calls the `.run()` function. However, you will first need to specify the deployment environment for your notebook using the `set_environment` function. 
 ```
-from foundations import config_manager
+import foundations
 
-config_manager.add_config_path('config/local_default.config.yaml')
+foundations.set_environment('local')
 ```
-It is recommended that your `.config.yaml` file is not stored within the same directory as the script you're deploying. 
+If choosing to deploy this way, the notebook will have to be situated in the project root directory and any functions imported from relative files will need to be specified accordingly. For more information on setting environments, please refer documentation [here](../set_deployment_env/).
 
 ## Configuration Options
 
@@ -74,43 +76,56 @@ It is recommended that your `.config.yaml` file is not stored within the same di
 
 ### Define Environment 
 
-**job_deployment_env**: specifies what to label the environment as for deploying jobs. You can view all available all environments with the [Foundations CLI](../configs/) command: `foundations info --env`
+**job_deployment_env**: specifies what environment to use for deploying jobs. Currently the supported environments are `local`, `ssh`, `gcp`, `aws`. 
+
+For deployments to specifc versions of the job orchestrator (scheduler), `scheduler_plugin` is used instead. This will be advised by the Dessa team if deemed necessary.
 
 ### Results Configurations
 
-```json
-'results_config': {
-    'archive_end_point': '/path/to/archives',
-    'redis_end_point': 'redis://someredis'
+```yaml
+results_config: {
+    archive_end_point: /path/to/archives,
+    redis_end_point: redis://someredis,
+    artifact_path: /relative/path/to/artifact/tracking/directory
 },
 ```
 
-**archive_end_point**: defines full path to where to store results. The default is `local` which means it will use current project directory.
+**archive_end_point**: defines full path to where to store results. The default is `local` which means it will use current project directory. For AWS and GCP deployments, this path can be specified with the following format: `<bucket>/path/to/archives`. By specifying the job_deployment_env, Foundations will automatically determine the right endpoint. 
+
+Foundations also supports cross-environment storage for results. By specifying the URI schema of the desired endpoint, the job results can be stored in a different location from where the actual job was run. For example, if a job is deployed to GCP but you want to store the results in AWS, you can specify the full path with URI schema as: `s3://<bucket>/path/to/archives`
+
+Supported URI schemas are: `gcp://`, `s3://`, `sftp://`, `local://`
 
 **redis_end_point**: redis endpoint where we want to store results for faster reading
 
+**artifact_path**: relative path where users can define a directory for Foundations to track. Files or artifacts written to that directory during runtime will be stored in the archive endpoint once the job is completed. 
+
 ### Cache Configurations
 
-```json
-'cache_config': {
-    'end_point': '/path/to/the/cache'
+```yaml
+cache_config: {
+    end_point: /path/to/the/cache
 },
 ```
 
-**end_point**: defines full path to where to store cache files. The default is `local` which means it will use current project directory.
+**end_point**: defines full path to where to store cache files. The default is `local` which means it will use current project directory. For AWS and GCP deployments, this path can be specified with the following format: `<bucket>/path/to/cache`. By specifying the job_deployment_env, Foundations will automatically determine the right endpoint. 
+
+Foundations also supports cross-environment storage for the cache. By specifying the URI schema of the desired endpoint, the cached stages can be stored in a different location from where the actual job was run. For example, if a job is deployed to GCP but you want to store the cached stages in AWS, you can specify the full path with URI schema as: `s3://<bucket>/path/to/cache`
+
+Supported URI schemas are: `gcp://`, `s3://`, `sftp://`, `local://`
 
 ### Additional Configurations
 
 For any SSH deployment (including GCP and AWS) to remote addresses, you'll need to define some additional values so that Foundations is able to SSH into the execution environment. Here's an example usage:
 
-```json
-'ssh_config': {
-    'user': lou
-    'host': '11.22.33.44',
-    'port': 2222
-    'key_path': '/path/to/the/keys',
-    'code_path': '/path/to/the/code',
-    'result_path': '/path/to/the/result',
+```yaml
+ssh_config: {
+    user: lou
+    host: 11.22.33.44,
+    port: 2222
+    key_path: /path/to/the/keys,
+    code_path: /path/to/the/code,
+    result_path: /path/to/the/result,
 }
 ```
 **user** (*optional*): what user profile to access the remote server as. By default, it will use `foundations`.  
@@ -123,3 +138,92 @@ For any SSH deployment (including GCP and AWS) to remote addresses, you'll need 
 <h3>log_level</h3>
 
 Allowed values for `log_level` are `INFO`, `ERROR`, and `DEBUG`, just as in the `log_level` option described in the previous section.  Leaving it unset is the same as setting `INFO`.  Setting any other value will disable all logging for all non-job-related processes.
+
+## Sample Configurations
+```yaml
+job_deployment_env: local
+results_config: 
+    archive_end_point: /path/to/archives
+    redis_end_point: redis://someredis
+    artifact_path: files
+
+cache_config: 
+    end_point: /path/to/the/cache
+
+log_level: INFO
+```
+
+```yaml
+job_deployment_env: ssh
+results_config: 
+    archive_end_point: /path/to/archives
+    redis_end_point: redis://someredis
+
+cache_config: 
+    end_point: /path/to/the/cache
+
+ssh_config: 
+    host: 11.22.33.44
+    key_path: /path/to/the/keys
+    code_path: /path/to/the/code
+    result_path: /path/to/the/result
+
+log_level: DEBUG
+```
+
+```yaml
+job_deployment_env: gcp
+results_config: 
+    archive_end_point: /<gcp-bucket>/path/to/archives
+    redis_end_point: redis://someredis
+    artifact_path: artifacts/models
+
+cache_config: 
+    end_point: /<gcp-bucket>/path/to/cache
+
+ssh_config: 
+    host: 11.22.33.44
+    key_path: /path/to/the/keys
+    code_path: /path/to/the/code
+    result_path: /path/to/the/result
+
+log_level: ERROR
+```
+
+```yaml
+job_deployment_env: aws
+results_config: 
+    archive_end_point: /<s3-bucket>/path/to/archives
+    redis_end_point: redis://someredis
+
+cache_config: 
+    end_point: /<s3-bucket>/path/to/cache
+
+ssh_config: 
+    host: 11.22.33.44
+    key_path: /path/to/the/keys
+    code_path: /path/to/the/code
+    result_path: /path/to/the/result
+
+log_level: INFO
+```
+
+```yaml
+#Example config.yaml with storage to different remote location (gcp)
+
+job_deployment_env: aws
+results_config: 
+    archive_end_point: gs://<bucket>/path/to/archives
+    redis_end_point: redis://someredis
+
+cache_config: 
+    end_point: gs://<bucket>/path/to/cache
+
+ssh_config: 
+    host: 11.22.33.44
+    key_path: /path/to/the/keys
+    code_path: /path/to/the/code
+    result_path: /path/to/the/result
+
+log_level: INFO
+```

@@ -3,5 +3,9 @@
 exports[`Shallow Renders InputMetricRow 1`] = `
 <div
   className="job-table-row"
+  data-class="job-table-row"
+  onClick={[Function]}
+  onKeyDown={[Function]}
+  role="presentation"
 />
 `;

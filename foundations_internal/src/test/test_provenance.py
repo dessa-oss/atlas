@@ -5,11 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
 from foundations_internal.provenance import Provenance
+from foundations_spec import *
 
-
-class TestProvenance(unittest.TestCase):
+class TestProvenance(Spec):
 
     class MockArchive(object):
 
@@ -41,9 +40,10 @@ class TestProvenance(unittest.TestCase):
         def job_archive(self):
             return 'space'
 
-    def setUp(self):
+    @let
+    def config_manager(self):
         from foundations.config_manager import ConfigManager
-        self.config_manager = ConfigManager()
+        return ConfigManager()
 
     def test_fill_python_has_correct_values(self):
         import sys
@@ -88,23 +88,24 @@ class TestProvenance(unittest.TestCase):
     def test_fill_config_with_correct_value_from_config_manager(self):
         provenance = Provenance()
         self.config_manager['other_world'] = 'aliens'
-        config_return = {'other_world': 'aliens'}
 
         provenance.fill_config(self.config_manager)
-        self.assertDictEqual(provenance.config, config_return)
+        self.assertEqual(provenance.config['other_world'], 'aliens')
 
     def test_fill_config_with_correct_value_from_config_manager_with_multiple_keys(self):
         provenance = Provenance()
         self.config_manager['other'] = 'value'
         self.config_manager['next'] = 'one'
-        config_return = {'other': 'value', 'next': 'one'}
 
         provenance.fill_config(self.config_manager)
-        self.assertDictEqual(provenance.config, config_return)
+        self.assertEqual(provenance.config['other'], 'value')
+        self.assertEqual(provenance.config['next'], 'one')
 
     def test_fill_config_with_correct_value_from_config_manager_with_empty_config(self):
+        self.patch('os.environ', {})
+
         provenance = Provenance()
-        config_return = {}
+        config_return = {'run_script_environment': {}}
 
         provenance.fill_config(self.config_manager)
         self.assertDictEqual(provenance.config, config_return)
@@ -139,6 +140,7 @@ class TestProvenance(unittest.TestCase):
         self.assertNotEqual({}, provenance.module_versions)
         self.assertNotEqual(None, provenance.pip_freeze)
 
+    @quarantine
     def test_load_provenance_from_archive_with_empty_archive(self):
         provenance = Provenance()
         mock_archive = self.MockArchive()
@@ -154,7 +156,8 @@ class TestProvenance(unittest.TestCase):
         self.assertEqual(provenance.stage_hierarchy.entries, {})
         self.assertEqual(provenance.job_run_data, {})
         self.assertEqual(provenance.project_name, 'default')
-        self.assertEqual(provenance.user_name, 'default')
+        self.assertEqual(provenance.user_name, 'trial')
+        self.assertEqual(provenance.annotations, {})
 
     def test_load_provenance_from_archive_with_specific_value_persists(self):
         provenance = Provenance()
@@ -171,6 +174,7 @@ class TestProvenance(unittest.TestCase):
         provenance.job_run_data = {'layers': 99, 'neurons_per_layer': 9999}
         provenance.project_name = 'my wonderful project'
         provenance.user_name = 'Alan Turing'
+        provenance.annotations = {'model': 'mlp', 'layer': 'all of them'}
         provenance.save_to_archive(mock_archive)
 
         provenance_two = Provenance()
@@ -189,7 +193,9 @@ class TestProvenance(unittest.TestCase):
                          'layers': 99, 'neurons_per_layer': 9999})
         self.assertEqual(provenance_two.project_name, 'my wonderful project')
         self.assertEqual(provenance_two.user_name, 'Alan Turing')
+        self.assertEqual(provenance_two.annotations, {'model': 'mlp', 'layer': 'all of them'})
 
+    @quarantine
     def test_save_to_archive_with_no_job_source(self):
         provenance = Provenance()
         mock_archive = self.MockArchive()
@@ -204,7 +210,7 @@ class TestProvenance(unittest.TestCase):
                                        'tags': [],
                                        'job_run_data': {},
                                        'project_name': 'default',
-                                       'user_name': 'default',
+                                       'user_name': 'trial',
                                        }, mock_archive.archive_provenance)
         self.assertEqual(
             {}, mock_archive.archive_provenance['stage_hierarchy'].entries)
@@ -276,6 +282,7 @@ class TestProvenance(unittest.TestCase):
         provenance = Provenance()
         self.assertEqual(provenance.project_name, "default")
 
+    @quarantine
     def test_provenance_default_user_name(self):
         provenance = Provenance()
-        self.assertEqual(provenance.user_name, "default")
+        self.assertEqual(provenance.user_name, "trial")

@@ -8,8 +8,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from mock import Mock
 
-from foundations_internal.testing.helpers import let, let_patch_mock, let_patch_instance, set_up
-from foundations_internal.testing.helpers.spec import Spec
+from foundations_spec.helpers import let, let_patch_mock, let_patch_instance, set_up
+from foundations_spec.helpers.spec import Spec
 
 from foundations_contrib.models.queued_job import QueuedJob
 
@@ -20,7 +20,7 @@ class TestQueuedJob(Spec):
 
     mock_time = let_patch_mock('time.time')
 
-    mock_redis = let_patch_mock('foundations.global_state.redis_connection', FakeRedis())
+    mock_redis = let_patch_mock('foundations_contrib.global_state.redis_connection', FakeRedis())
 
     @let
     def mock_redis_pipeline(self):

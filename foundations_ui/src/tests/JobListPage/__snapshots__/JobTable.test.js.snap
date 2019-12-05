@@ -7,8 +7,22 @@ exports[`Shallow Renders Job Table 1`] = `
   <div
     className="job-table-container"
   >
+    <JobTableButtons
+      buttonTensorboardEnabled={false}
+      columns={Array []}
+      getJobs={[Function]}
+      hiddenColumns={Array []}
+      projectName=""
+      reload={[Function]}
+      selectAllJobs={[Function]}
+      selectNoJobs={[Function]}
+      selectedJobs={Array []}
+      updateHiddenColumns={[Function]}
+      updateSearchText={[Function]}
+    />
     <JobTableHeader
       allInputParams={Array []}
+      allJobsSelected={false}
       allMetrics={Array []}
       allUsers={Array []}
       boolCheckboxes={Array []}
@@ -26,18 +40,25 @@ exports[`Shallow Renders Job Table 1`] = `
       isShowingStatusFilter={false}
       isShowingUserFilter={false}
       jobIdFilters={Array []}
-      jobRows={
-        Array [
-          <p>
-            Loading Jobs
-          </p>,
-        ]
-      }
+      jobRows={Array []}
       jobs={Array []}
       metricClass="not-metric"
       numberFilterColumn=""
       numberFilters={Array []}
+      onClickOpenModalJobDetails={[Function]}
+      onDataUpdated={[Function]}
+      onMetricRowClick={[Function]}
       rowNumbers={Array []}
+      selectAllJobs={[Function]}
+      selectJob={[Function]}
+      selectedJobs={Array []}
+      sortTable={[Function]}
+      sortedColumn={
+        Object {
+          "column": "",
+          "isAscending": true,
+        }
+      }
       startTimeFilters={Array []}
       statuses={Array []}
       updateBoolFilter={[Function]}
@@ -48,9 +69,6 @@ exports[`Shallow Renders Job Table 1`] = `
       updateJobIdFilter={[Function]}
       updateNumberFilter={[Function]}
       updateStartTimeFilter={[Function]}
-    />
-    <div
-      className="pagination-controls"
     />
   </div>
 </div>

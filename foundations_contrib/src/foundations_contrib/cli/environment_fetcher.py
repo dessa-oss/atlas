@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class EnvironmentFetcher(object):
     """
     Checks the local and global config locations for environments
@@ -24,29 +25,32 @@ class EnvironmentFetcher(object):
         local_environments = self._get_local_environments()
 
         if local_environments == None:
-            return local_environments
+            local_environments = []
         global_environments = self._get_global_environments()
         all_environments = local_environments + global_environments
-        return [env for env in all_environments if file_name in env]
+        return list(self._environments_with_name(all_environments, file_name))
 
+    def _environments_with_name(self, environments, environment_file_name):
+        import os.path
+
+        for environment in environments:
+            if environment_file_name == os.path.basename(environment):
+                yield environment
 
     def _get_local_environments(self):
-        import os
         from glob import glob
+        from os.path import expanduser, join
+        from foundations_contrib.utils import foundations_home
 
-        cwd = os.getcwd()
-        directories = os.listdir()
+        config_directory = expanduser(join(foundations_home(), 'config', 'execution'))
+        search_path = join(config_directory, 'default.config.yaml')
+        return glob(search_path)
 
-        if 'config' not in directories:
-            return None
-
-        config_directory = os.path.join(cwd, 'config', '*.config.yaml')
-        return glob(config_directory)
-        
-    
     def _get_global_environments(self):
         from glob import glob
         from os.path import expanduser, join
-        global_config_directory = expanduser('~/.foundations/config')
+        from foundations_contrib.utils import foundations_home
+
+        global_config_directory = expanduser(join(foundations_home(), 'config', 'submission'))
         search_path = join(global_config_directory, '*.config.yaml')
         return glob(search_path)

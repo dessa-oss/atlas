@@ -10,4 +10,3 @@ from test.v1.controllers.test_running_jobs_controller import TestRunningJobsCont
 from test.v1.controllers.test_queued_jobs_controller import TestQueuedJobsController
 from test.v1.controllers.test_projects_controller import TestProjectsController
 from test.v1.controllers.test_jobs_controller import TestJobsController
-from test.v1.controllers.test_session_controller import TestSessionController

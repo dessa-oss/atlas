@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_internal.testing.helpers import let
+from foundations_spec import *
 
 class ConfigTranslates(object):
     
@@ -14,10 +14,17 @@ class ConfigTranslates(object):
         return {
             'results_config': {
                 'archive_end_point': '',
+                'artifact_path': 'results',
             },
             'cache_config': {
                 'end_point': '',
             },
+            'ssh_config': {
+                'host': '',
+                'key_path': '',
+                'code_path': '',
+                'result_path': '',
+            }
         }
 
     @let
@@ -31,22 +38,33 @@ class ConfigTranslates(object):
             'stage_log_archive_implementation',
         ]
     
-    def test_returns_archive_configurations_with_correct_type(self):
-        result_config = self.translator.translate(self._configuration)
-        for archive_type in self._archive_types:
-            config = result_config[archive_type]
-            self.assertEqual(config['archive_type'], self.archive_type)
+    @let
+    def fake_user(self):
+        return self.faker.last_name()
 
-    def test_returns_archive_listing_configurations_with_local_type(self):
-        self._configuration['results_config']['archive_end_point'] = '/path/to/foundations/home'
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['archive_listing_implementation']
-        self.assertEqual(config['archive_listing_type'], self.listing_type)
+    @let
+    def fake_ip(self):
+        return self.faker.ipv4()
 
-    def test_returns_project_listing_configurations_with_local_type(self):
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['project_listing_implementation']
-        self.assertEqual(config['project_listing_type'], self.listing_type)
+    @let
+    def fake_port(self):
+        return self.faker.random_number()
+
+    @let
+    def fake_key_path(self):
+        return self.faker.uri_path()
+    
+    @let
+    def fake_code_path(self):
+        return self.faker.uri_path()
+    
+    @let
+    def fake_result_path(self):
+        return self.faker.uri_path()
+    
+    @let
+    def fake_artifact_path(self):
+        return self.faker.uri_path()
 
     def test_returns_default_redis_url(self):
         result_config = self.translator.translate(self._configuration)
@@ -56,11 +74,6 @@ class ConfigTranslates(object):
         self._configuration['results_config']['redis_end_point'] = 'redis://11.22.33.44:9738'
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['redis_url'], 'redis://11.22.33.44:9738')
-
-    def test_returns_cache_configurations_with_local_type(self):
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['cache_implementation']
-        self.assertEqual(config['cache_type'], self.cache_type)
 
     @let
     def shell_command(self):
@@ -89,3 +102,103 @@ class ConfigTranslates(object):
         self._configuration['obfuscate_foundations'] = False
         result_config = self.translator.translate(self._configuration)
         self.assertFalse(result_config['obfuscate_foundations'])
+
+    def test_returns_enable_stages_false_if_not_set(self):
+        result_config = self.translator.translate(self._configuration)
+        self.assertFalse(result_config['enable_stages'])
+    
+    def test_returns_enable_stages_true_if_set_true(self):
+        self._configuration['enable_stages'] = True
+        result_config = self.translator.translate(self._configuration)
+        self.assertTrue(result_config['enable_stages'])
+    
+    def test_returns_enable_stages_false_if_set_false(self):
+        self._configuration['enable_stages'] = False
+        result_config = self.translator.translate(self._configuration)
+        self.assertFalse(result_config['enable_stages'])
+    
+    def test_returns_run_script_environment_with_enable_stages_false_if_not_set(self):
+        self._configuration['enable_stages'] = False
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['run_script_environment']['enable_stages'], False)
+
+    def test_returns_run_script_environment_with_enable_stages_true_if_set_true(self):
+        self._configuration['enable_stages'] = True
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['run_script_environment']['enable_stages'], True)
+    
+    def test_returns_run_script_environment_with_enable_stages_false_if_set_false(self):
+        self._configuration['enable_stages'] = False
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['run_script_environment']['enable_stages'], False)
+
+    def test_returns_run_script_environment_with_log_level_same_as_local_log_level(self):
+        self._configuration['log_level'] = 'DEBUG'
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['run_script_environment']['log_level'], 'DEBUG')
+
+    def test_returns_run_script_environment_with_log_level_same_as_local_log_level_different_level(self):
+        self._configuration['log_level'] = 'INFO'
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['run_script_environment']['log_level'], 'INFO')
+
+    def test_returns_ssh_user_default_user(self):
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['remote_user'], 'job-uploader')
+
+    def test_returns_ssh_user(self):
+        self._configuration['ssh_config']['user'] = self.fake_user
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['remote_user'], self.fake_user)
+    
+    def test_returns_host(self):
+        self._configuration['ssh_config']['host'] = self.fake_ip
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['remote_host'], self.fake_ip)
+    
+    def test_returns_port_default_port(self):
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['port'], 31222)
+    
+    def test_returns_port(self):
+        self._configuration['ssh_config']['port'] = self.fake_port
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['port'], self.fake_port)
+    
+    def test_returns_key_path(self):
+        self._configuration['ssh_config']['key_path'] = self.fake_key_path
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['key_path'], self.fake_key_path)
+
+    def test_returns_code_path(self):
+        self._configuration['ssh_config']['code_path'] = self.fake_code_path
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['code_path'], self.fake_code_path)
+    
+    def test_returns_result_path(self):
+        self._configuration['ssh_config']['result_path'] = self.fake_result_path
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['result_path'], self.fake_result_path)
+
+    def test_returns_log_level_configured_to_default(self):
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['log_level'], 'INFO')
+
+    def test_returns_log_level_configured(self):
+        self._configuration['log_level'] = 'DEBUG'
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['log_level'], 'DEBUG')
+
+    def test_no_result_artifact_returns_constructor_arguments_with_default_artifact_path(self):
+        from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
+
+        self._configuration['artifact_path'] = self.fake_artifact_path
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(self.fake_artifact_path, result_config['artifact_path'])
+
+    def test_no_result_artifact_returns_constructor_arguments_with_default_artifact_path(self):
+        from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
+
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual('results', result_config['artifact_path'])
+

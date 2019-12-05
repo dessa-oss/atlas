@@ -33,7 +33,7 @@ class Project(PropertyModel):
             Project -- The new instance of the project
         """
 
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def callback():
             return Project(name=name)
@@ -51,7 +51,7 @@ class Project(PropertyModel):
             Project -- The project
         """
 
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def callback():
             return Project._find_by_internal(name)
@@ -60,7 +60,7 @@ class Project(PropertyModel):
 
     @staticmethod
     def all():
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def callback():
             listing = Project._construct_project_listing()
@@ -72,14 +72,14 @@ class Project(PropertyModel):
     @staticmethod
     def _construct_project_listing():
         from foundations_contrib.models.project_listing import ProjectListing
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
 
         return ProjectListing.list_projects(redis_connection)
 
     @staticmethod
     def _find_by_internal(name):
         from foundations_rest_api.v2beta.models.job import Job
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
         from foundations_contrib.models.project_listing import ProjectListing
 
         project_info = ProjectListing.find_project(redis_connection, name)
@@ -89,7 +89,7 @@ class Project(PropertyModel):
         project = Project(name=name)
         project.created_at = None
         project.owner = None
-        project.jobs = Job.all(project_name=name)
+        project.jobs = Job.all(project_name=name, handle_duplicate_param_names=False)
 
         def _get_names_and_types(key):
             def _metric_filler_callback(jobs):

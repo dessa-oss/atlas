@@ -18,29 +18,32 @@ class Job(PropertyModel):
     status = PropertyModel.define_property()
     start_time = PropertyModel.define_property()
     completed_time = PropertyModel.define_property()
+    creation_time = PropertyModel.define_property()
     duration = PropertyModel.define_property()
+    tags = PropertyModel.define_property()
+    artifacts = PropertyModel.define_property()
 
     @staticmethod
-    def all(project_name=None):
-        from foundations_rest_api.lazy_result import LazyResult
+    def all(project_name=None, handle_duplicate_param_names=True):
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _all():
-            return Job._all_internal(project_name)
+            return Job._all_internal(project_name, handle_duplicate_param_names)
 
         return LazyResult(_all)
 
     @staticmethod
-    def _all_internal(project_name):
-        return list(Job._load_jobs(project_name))
+    def _all_internal(project_name, handle_duplicate_param_names):
+        return list(Job._load_jobs(project_name, handle_duplicate_param_names))
 
     @staticmethod
-    def _load_jobs(project_name):
+    def _load_jobs(project_name, handle_duplicate_param_names):
         from foundations_contrib.job_data_redis import JobDataRedis
         from foundations_contrib.input_parameter_indexer import InputParameterIndexer
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
 
         jobs = []
-        jobs_data = InputParameterIndexer.index_input_parameters(project_name, JobDataRedis.get_all_jobs_data(project_name, redis_connection, True))
+        jobs_data = InputParameterIndexer.index_input_parameters(project_name, JobDataRedis.get_all_jobs_data(project_name, redis_connection, True), handle_duplicate_param_names=handle_duplicate_param_names)
 
         for job_properties in list(jobs_data):
             job_properties['input_params'] = list(Job._filter_out_non_hyper_parameter_inputs(job_properties['input_params']))
@@ -61,15 +64,20 @@ class Job(PropertyModel):
         Job._reshape_output_metrics(job_data)
         Job._update_job_time_properties(job_data)
         Job._trim_metric_values(job_data)
+        Job._retrieve_artifacts(job_data)
         job_data['project'] = job_data['project_name']
         del job_data['project_name']
         return Job(**job_data)
 
     @staticmethod
     def _default_order(jobs):
+        infinite_date_string = '00000'
 
         def get_sort_key(job):
-            return job.start_time
+            if job.start_time:
+                return job.start_time
+            else:
+                return infinite_date_string + job.job_id
 
         jobs.sort(key=get_sort_key, reverse=True)
 
@@ -132,13 +140,16 @@ class Job(PropertyModel):
         else:
             end_time = datetime.now()
 
-        time_delta = end_time - datetime.fromtimestamp(start_time)
-        total_seconds = time_delta.total_seconds()
-        properties['duration'] = Job._total_seconds_to_duration(total_seconds)
+        if start_time:
+            time_delta = end_time - datetime.fromtimestamp(start_time)
+            total_seconds = time_delta.total_seconds()
+            properties['duration'] = Job._total_seconds_to_duration(total_seconds)
+        else:
+            properties['duration'] = None
 
     @staticmethod
     def _trim_metric_values(job_data):
-        from foundations.utils import is_string
+        from foundations_contrib.utils import is_string
         for metric in job_data['output_metrics']:
             if is_string(metric['value']):
                 metric['value'] = metric['value'][:100]
@@ -162,3 +173,9 @@ class Job(PropertyModel):
             return None
         date_time = datetime.utcfromtimestamp(time)
         return date_time.isoformat()
+
+    @staticmethod
+    def _retrieve_artifacts(job_data):
+        from foundations_rest_api.v2beta.models.job_artifact import JobArtifact
+        job_id = job_data['job_id']
+        job_data['artifacts'] = JobArtifact.all(job_id=job_id).evaluate()

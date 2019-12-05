@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import JobColumnHeader from '../components/common/JobColumnHeader';
 import InputMetricCell from '../components/common/InputMetricCell';
 import InputMetricRow from '../components/common/InputMetricRow';
@@ -11,23 +12,39 @@ const oneElement = 1;
 class CommonActions {
   // Helper Functions
   static getInputMetricColumnHeaders(
-    allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
+    allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
+    selectAllJobs, allJobsSelected, header,
   ) {
     if (allInputParams.length > 0) {
       return this.getInputParamHeaders(
-        allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
+        allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn,
+        sortTable, selectAllJobs, allJobsSelected, header,
       );
     }
     return null;
   }
 
-  static getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray) {
+  static getInputParamHeaders(
+    allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
+    selectAllJobs, allJobsSelected, header,
+  ) {
     const inputParams = [];
     allInputParams.forEach((input) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, input.name)) {
         const key = input.name;
         const colType = input.type;
         const isFiltered = JobListActions.isColumnFiltered(filteredArray, key);
+
+        let column = sortedColumn.column;
+        if (column.startsWith('input_params')) {
+          column = column.substring('input_params:'.length);
+        }
+        if (column.startsWith('output_metrics')) {
+          column = column.substring('output_metrics:'.length);
+        }
+
+        const isSorted = column === key || column === '';
+        const isAscending = column === '' ? null : sortedColumn.isAscending;
         inputParams.push(<JobColumnHeader
           key={key}
           title={key}
@@ -37,16 +54,33 @@ class CommonActions {
           colType={colType}
           isMetric={isMetric}
           isFiltered={isFiltered}
+          isSortedColumn={isSorted}
+          isAscending={isAscending}
+          sortTable={sortTable}
+          selectAllJobs={selectAllJobs}
+          allJobsSelected={allJobsSelected}
+          mainHeader={header}
         />);
       }
     });
     return inputParams;
   }
 
+  static formatAMPM(date) {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours %= 12;
+    hours = hours || 12;
+    minutes = minutes < 10 ? `0${minutes}` : minutes;
+    const strTime = `${hours}:${minutes} ${ampm}`;
+    return strTime;
+  }
+
   static getTableSectionHeaderDiv(header) {
     let divClass = 'table-section-header';
     if (this.isHeaderNotEmpty(header)) {
-      divClass = 'table-section-header blue-header';
+      divClass = 'table-section-header table-header';
     }
     return divClass;
   }
@@ -54,15 +88,15 @@ class CommonActions {
   static getTableSectionHeaderArrow(header) {
     let arrowClass = '';
     if (this.isHeaderNotEmpty(header)) {
-      arrowClass = 'blue-header-arrow border-input-metric-arrow';
+      arrowClass = 'table-header-arrow border-input-metric-arrow';
     }
     return arrowClass;
   }
 
   static getTableSectionHeaderText(header) {
-    let textClass = 'blue-header-text text-white no-margin';
+    let textClass = 'table-header-text text-white no-margin';
     if (this.isHeaderNotEmpty(header)) {
-      textClass = 'blue-header-text text-white';
+      textClass = 'table-header-text text-white';
     }
     return textClass;
   }
@@ -71,18 +105,22 @@ class CommonActions {
     return header !== '';
   }
 
-  static getInputMetricCells(job, isError, isMetric, columns, hiddenInputParams, rowNumber) {
+  static getInputMetricCells(job, isError, isMetric, columns, hiddenInputParams,
+    rowNumber, onClickOpenModalJobDetails, isSelected) {
     if (isMetric && job.output_metrics) {
-      return this.getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams, rowNumber);
+      return this.getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams,
+        rowNumber, onClickOpenModalJobDetails, isSelected);
     }
 
-    if (!isMetric && job.input_params && job.input_params.length > 0) {
-      return this.getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams, rowNumber);
+    if (!isMetric && job.input_params) {
+      return this.getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams,
+        rowNumber, onClickOpenModalJobDetails);
     }
     return null;
   }
 
-  static getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams, rowNumber) {
+  static getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams,
+    rowNumber, onClickOpenModalJobDetails) {
     let cells = [];
     cells = [];
     columns.forEach((col) => {
@@ -91,22 +129,34 @@ class CommonActions {
         const key = this.getInputMetricKey(input, col, isMetric);
         let inputValue = JobListActions.getInputMetricValue(input, isMetric, columns);
         const cellType = this.getInputMetricCellType(input);
+        const isHoverable = this.getInputMetricIsHoverable(input);
+
         if (cellType.match(/array*/)) {
           inputValue = this.transformArraysToString(inputValue);
         }
+
+        const openModalJobDetails = (jobID) => {
+          onClickOpenModalJobDetails(job);
+        };
+
         cells.push(<InputMetricCell
           key={key}
+          columnHeader={key}
           value={inputValue}
           isError={isError}
           cellType={cellType}
           rowNumber={rowNumber}
+          hoverable={isHoverable}
+          jobID={job.job_id}
+          onClickOpenModalJobDetails={openModalJobDetails}
         />);
       }
     });
     return cells;
   }
 
-  static getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams, rowNumber) {
+  static getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams,
+    rowNumber, onClickOpenModalJobDetails) {
     const cells = [];
     columns.forEach((col) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
@@ -114,15 +164,25 @@ class CommonActions {
         let inputValue = JobListActions.getInputMetricValue(input, isMetric, columns);
         const key = this.getInputMetricKey(input, col, isMetric);
         const cellType = this.getInputMetricCellType(input);
+        const isHoverable = this.getInputMetricIsHoverable(input);
         if (cellType.match(/array*/)) {
           inputValue = this.transformArraysToString(inputValue);
         }
+
+        const openModalJobDetails = (jobID) => {
+          onClickOpenModalJobDetails(job);
+        };
+
         cells.push(<InputMetricCell
           key={key}
+          columnHeader={key}
           value={inputValue}
           isError={isError}
           cellType={cellType}
           rowNumber={rowNumber}
+          hoverable={isHoverable}
+          jobID={job.job_id}
+          onClickOpenModalJobDetails={openModalJobDetails}
         />);
       } else {
         cells.push(null);
@@ -142,7 +202,8 @@ class CommonActions {
     return newValue;
   }
 
-  static getInputMetricRows(jobs, isMetric, allInputMetricColumn, hiddenInputParams) {
+  static getInputMetricRows(jobs, isMetric, allInputMetricColumn, hiddenInputParams,
+    onMetricRowClick, onClickOpenModalJobDetails) {
     let rows = null;
     let rowNumber = 0;
     if (jobs.length > 0) {
@@ -158,6 +219,8 @@ class CommonActions {
           allInputMetricColumn={allInputMetricColumn}
           hiddenInputParams={hiddenInputParams}
           rowNumber={rowNumber}
+          onMetricRowClick={onMetricRowClick}
+          onClickOpenModalJobDetails={onClickOpenModalJobDetails}
         />);
         rowNumber += 1;
       });
@@ -169,8 +232,8 @@ class CommonActions {
     return isError ? `error type-${cellType}` : `type-${cellType}`;
   }
 
-  static getInputMetricCellDivClass(isError, rowNumber) {
-    return isError ? `job-cell error row-${rowNumber}` : `job-cell row-${rowNumber}`;
+  static getInputMetricCellDivClass(isError, rowNumber, key) {
+    return isError ? `job-cell error row-${rowNumber} key-${key}` : `job-cell row-${rowNumber} key-${key}`;
   }
 
   static isError(status) {
@@ -228,6 +291,13 @@ class CommonActions {
       return inputMetric.type;
     }
     return 'not-available';
+  }
+
+  static getInputMetricIsHoverable(inputMetric) {
+    if (inputMetric && inputMetric.hoverable !== undefined) {
+      return inputMetric.hoverable;
+    }
+    return true;
   }
 
   static getFlatArray(array) {
@@ -348,10 +418,16 @@ class CommonActions {
     columns, changeLocalParams, showAllFilters, unsetClearFilters, hideAllFilters,
     statusCheckbox = false, unsetHideFilters = () => {},
   ) {
-    let checkboxes = null;
+    let checkboxes = [];
+    let hasSeenParams = false;
     if (columns.length > 0) {
       checkboxes = [];
+      checkboxes.push(<h3 className="column-filter-divider">Metrics</h3>);
       columns.forEach((col) => {
+        if (col.header === 'parameter' && !hasSeenParams) {
+          checkboxes.push(<h3 className="column-filter-divider">Parameters</h3>);
+          hasSeenParams = true;
+        }
         let statusCircle = null;
         if (statusCheckbox) {
           statusCircle = JobListActions.getStatusCircle(col.name);
@@ -375,6 +451,32 @@ class CommonActions {
 
   static deepCopyArray(originalArray) {
     return JSON.parse(JSON.stringify(originalArray));
+  }
+
+  static formatDate(date) {
+    date = new Date(date);
+    return `${moment(JobListActions.getFormatedDate(date)).format('MMM DD').toString()}
+            ${JobListActions.getFormatedTime(date)}`;
+  }
+
+  static getTagsFromJob(jobs) {
+    let set = new Set();
+    jobs.forEach((job) => {
+      if (job.tags) {
+        if (Array.isArray(job.tags)) {
+          job.tags.forEach((tag) => {
+            set.add(tag);
+          });
+        } else {
+          const keys = Object.keys(job.tags);
+          keys.forEach((tag) => {
+            set.add(tag);
+          });
+        }
+      }
+    });
+    const tags = Array.from(set);
+    return tags;
   }
 }
 

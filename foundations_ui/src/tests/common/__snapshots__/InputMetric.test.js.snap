@@ -4,16 +4,7 @@ exports[`Shallow Renders InputMetric 1`] = `
 <div
   className="job-static-columns-container"
 >
-  <TableSectionHeader
-    changeHiddenParams={[Function]}
-    columns={Array []}
-    header=""
-    hiddenInputParams={Array []}
-    isMetric={false}
-    isShowingFilter={false}
-    searchText=""
-    updateSearchText={[Function]}
-  />
+  <h2 />
   <div
     className="input-metric-header-row-container"
   >
@@ -27,12 +18,40 @@ exports[`Shallow Renders InputMetric 1`] = `
       <div
         className="input-metric-column-container"
       >
-        <p
-          className="empty-columns-message"
-          key="no-rows-message"
+        <div
+          className="no-rows-container"
         >
-          There are no columns selected.
-        </p>
+          <p
+            className="empty-columns-message"
+            key="no-rows-message-line-1"
+          >
+            No 
+            parameters
+             have been logged.
+          </p>
+          <p
+            className="empty-columns-message"
+            key="no-rows-message-line-2"
+          >
+            Check out the 
+            <span
+              className="underline"
+              onClick={[Function]}
+              onKeyPress={[Function]}
+              role="button"
+              tabIndex={0}
+            >
+              documentation
+            </span>
+             on how to log 
+            parameters
+            .
+          </p>
+          <img
+            alt=""
+            src="clipboards.svg"
+          />
+        </div>
       </div>
     </ScrollSyncPane>
   </div>

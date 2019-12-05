@@ -2,18 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 class HoverCell extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      text: this.props.textToRender,
-    };
-  }
-
   render() {
-    const { text } = this.state;
+    const { textToRender, onMouseLeave } = this.props;
     return (
-      <div className="job-cell-hover">
-        {text}
+      <div onMouseLeave={onMouseLeave} className="job-cell-hover" data-class="hover-cell">
+        {textToRender}
       </div>
     );
   }
@@ -21,10 +14,12 @@ class HoverCell extends Component {
 
 HoverCell.propTypes = {
   textToRender: PropTypes.object,
+  onMouseLeave: PropTypes.func,
 };
 
 HoverCell.defaultProps = {
   textToRender: <p />,
+  onMouseLeave: () => {},
 };
 
 export default HoverCell;

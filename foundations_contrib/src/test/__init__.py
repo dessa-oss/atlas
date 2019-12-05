@@ -12,10 +12,12 @@ from test.producers import *
 from test.consumers import *
 from test.middleware import *
 from test.cli import *
+from test.archiving import *
 
 from test.test_config_manager import TestConfigManager
 from test.test_bucket_pipeline_listing import TestBucketPipelineListing
 from test.test_bucket_cache_backend import TestBucketCacheBackend
+from test.test_bucket_cache_backend_for_config import TestBucketCacheBackendForConfig
 from test.test_constant_parameter import TestConstantParameter
 from test.test_list_parameter import TestListParameter
 from test.test_dict_parameter import TestDictParameter
@@ -23,8 +25,6 @@ from test.test_dynamic_parameter import TestDynamicParameter
 from test.test_local_file_system_bucket import TestLocalFileSystemBucket
 from test.test_local_file_system_pipeline_listing import TestLocalFileSystemPipelineListing
 from test.test_local_shell_job_deployment import TestLocalShellJobDeployment
-from test.test_message_route_listener import TestMessageRouteListener
-from test.test_message_router import TestMessageRouter
 from test.test_middleware_manager import TestMiddlewareManager
 from test.test_null_cache_backend import TestNullCacheBackend
 from test.test_null_pipeline_archive_listing import TestNullPipelineArchiveListing
@@ -48,8 +48,16 @@ from test.test_job_source_bundle import TestJobSourceBundle
 from test.test_module_obfuscation_controller import TestModuleObfuscationController
 from test.test_obfuscation_detection_mixin import TestObfuscationDetectionMixin
 from test.test_resources_obfuscation_controller import TestResourcesObfuscationController
+from test.test_set_job_resources import TestSetJobResources
+from test.test_global_metric_logger import TestGlobalMetricLogger
+from test.test_bucket_pipeline_archive import TestBucketPipelineArchive
+from test.test_null_archive import TestNullArchive
+from test.test_deployment_wrapper import TestDeploymentWrapper
+from test.test_job_deployer import TestJobDeployer
 
 from test.test_log_manager import TestLogManager
 
 from test.config import *
 from test.notifiers import *
+from test.jobs import *
+from test.utils import *

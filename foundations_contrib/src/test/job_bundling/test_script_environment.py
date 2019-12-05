@@ -5,19 +5,20 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
-from mock import Mock
+from foundations_spec import *
 
 from foundations_contrib.job_bundling.script_environment import ScriptEnvironment
 
+class TestScriptEnvironment(Spec):
 
-class TestScriptEnvironment(unittest.TestCase):
+    mock_environ = let_patch_mock('os.environ', {})
 
     def setUp(self):
         self._config = {}
         self._environment = ScriptEnvironment(self._config)
         self._written_lines = []
         self._file = Mock(**{'write.side_effect': self._write})
+        self.mock_environ.clear()
 
     def test_write_environment_writes_empty_export(self):
         self._environment.write_environment(self._file)

@@ -1,4 +1,10 @@
-FROM node:8.14.0-jessie
+# Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+# Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+# Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+
+
+FROM node:10.16-jessie
 
 RUN mkdir -p /var/foundations_ui
 WORKDIR /var/foundations_ui
@@ -22,7 +28,8 @@ RUN openssl genrsa -des3 -passout pass:x -out /etc/nginx/localhost.pass.key \
     && openssl x509 -req -days 365 -in /etc/nginx/localhost.csr -signkey /etc/nginx/localhost.key -out /etc/nginx/localhost.crt
 
 ENV REACT_APP_API_URL=/foundations_rest_api/api/v1/
-ENV REACT_APP_BETA_API_URL=/foundations_rest_api/api/v2beta/
+ENV REACT_APP_API_STAGING_URL=/foundations_rest_api/api/v2beta/
+ENV REACT_APP_APIARY_URL=http://private-d03986-iannelladessa.apiary-mock.com/
 ENV SERVER_NAME=localhost
 
 COPY ./ /var/foundations_ui/

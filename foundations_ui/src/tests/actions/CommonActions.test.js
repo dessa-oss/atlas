@@ -135,29 +135,30 @@ it('getTableSectionHeaderArrow empty header', () => {
 it('getTableSectionHeaderText empty header', () => {
   const header = '';
   const className = CommonActions.getTableSectionHeaderText(header);
-  expect(className).toBe('blue-header-text text-white no-margin');
+  expect(className).toBe('table-header-text text-white no-margin');
 });
 
 it('getTableSectionHeaderDiv with header', () => {
   const header = 'header';
   const className = CommonActions.getTableSectionHeaderDiv(header);
-  expect(className).toBe('table-section-header blue-header');
+  expect(className).toBe('table-section-header table-header');
 });
 
 it('getTableSectionHeaderArrow with header', () => {
   const header = 'header';
   const className = CommonActions.getTableSectionHeaderArrow(header);
-  expect(className).toBe('blue-header-arrow border-input-metric-arrow');
+  expect(className).toBe('table-header-arrow border-input-metric-arrow');
 });
 
 it('getTableSectionHeaderText with header', () => {
   const header = 'header';
   const className = CommonActions.getTableSectionHeaderText(header);
-  expect(className).toBe('blue-header-text text-white');
+  expect(className).toBe('table-header-text text-white');
 });
 
-it('get InputMetricColumnHeaders', () => {
-  const headers = CommonActions.getInputMetricColumnHeaders(inputParams, hiddenParams, emptyFunc, noMetric, emptyArray);
+xit('get InputMetricColumnHeaders', () => {
+  const headers = CommonActions.getInputMetricColumnHeaders(inputParams, hiddenParams, emptyFunc, noMetric, emptyArray,
+    emptyFunc, emptyFunc, emptyFunc);
   expect(headers.length).toBe(2);
 });
 
@@ -225,16 +226,17 @@ it('get InputMetricCellPClass error', () => {
 
 it('get InputMetricCellDivClass', () => {
   const metricClass = CommonActions.getInputMetricCellDivClass(noError, rowNumber);
-  expect(metricClass).toBe('job-cell row-1');
+  expect(metricClass).toBe('job-cell row-1 key-undefined');
 });
 
 it('get InputMetricCellDivClass error', () => {
   const metricClass = CommonActions.getInputMetricCellDivClass(error, rowNumber);
-  expect(metricClass).toBe('job-cell error row-1');
+  expect(metricClass).toBe('job-cell error row-1 key-undefined');
 });
 
-it('get InputParamHeaders', () => {
-  const headers = CommonActions.getInputParamHeaders(inputParams, hidden, emptyFunc, noMetric, emptyArray);
+xit('get InputParamHeaders', () => {
+  const headers = CommonActions.getInputParamHeaders(inputParams, hidden, emptyFunc, noMetric, emptyArray,
+    emptyFunc, emptyFunc, emptyFunc);
   expect(headers.length).toBe(2);
 });
 

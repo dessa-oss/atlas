@@ -22,6 +22,7 @@ class TestProducerQueueJob(unittest.TestCase):
         self.message = None
 
         self._pipeline_context = PipelineContext()
+        self._pipeline_context.file_name = 'some_project'
         self._router = Mock()
         self._router.push_message.side_effect = self._push_message
         self._producer = QueueJob(self._router, self._pipeline_context)
@@ -55,6 +56,12 @@ class TestProducerQueueJob(unittest.TestCase):
         self._pipeline_context.provenance.user_name = user_name
         self._producer.push_message()
         self.assertEqual(user_name, self.message['user_name'])
+
+    def test_push_message_send_queue_job_message_with_annotations(self):
+        annotations = self._faker.name()
+        self._pipeline_context.provenance.annotations = annotations
+        self._producer.push_message()
+        self.assertEqual(annotations, self.message['annotations'])
 
     def test_push_message_send_queue_job_message_with_empty_stage_arg(self):
         stage_id = self._make_string_uuid()

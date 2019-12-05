@@ -5,4 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_rest_api.common.models.property_model import PropertyModel
+from foundations_core_rest_api_components.common.models.property_model import PropertyModel

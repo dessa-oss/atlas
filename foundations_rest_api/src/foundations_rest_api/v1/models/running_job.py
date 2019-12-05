@@ -24,10 +24,10 @@ class RunningJob(PropertyModel):
         Returns:
             list<RunningJob> -- All queued jobs
         """
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _all():
-            from foundations.global_state import deployment_manager
+            from foundations_contrib.global_state import deployment_manager
 
             jobs = []
             for info in deployment_manager.scheduler().get_job_information('RUNNING'):
@@ -47,11 +47,7 @@ class RunningJob(PropertyModel):
 
     @staticmethod
     def contexts():
-        from foundations.job_persister import JobPersister
-
-        with JobPersister.load_archiver_fetch() as archiver_fetch:
-            for archiver in archiver_fetch.fetch_archivers():
-                yield archiver.pipeline_name(), RunningJob.load_context(archiver)
+        raise NotImplementedError()
 
     @staticmethod
     def load_context(archiver):

@@ -1,0 +1,132 @@
+.job-sidebar {
+    border-style: solid;
+    background: #F7F7F7;
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: 0px;
+    height: 97.5%;
+    width: 32%;
+    box-shadow: -10px 10px 5px -4px rgba(0,0,0,0.19);
+    -webkit-box-shadow: -10px 10px 5px -4px rgba(0,0,0,0.19);
+    -moz-box-shadow: -10px 10px 5px -4px rgba(0,0,0,0.19);
+    -webkit-transition: -webkit-transform 2s;
+    transition: transform 2s;
+}
+.sidebar-section {
+    position: relative;
+    height: $sidebar-section-height;
+    padding-bottom: 0px;
+}
+
+.sidebar-section-header {
+    display: flex;
+    position: static;
+    background-color: $color-sidebar-header;
+    height: $section-header-height;
+    align-items: center;
+    .sidebar-section-header-text {
+        padding-left: 13px;
+        font-size: 14px;
+    }
+}
+
+.sidebar-section-close-button{
+    margin-right: 5px;
+    margin-bottom: 11px;
+}
+
+.sidebar-section-close-button-container{
+    text-align: right;
+    padding-top: 5px;
+    flex: 1;
+}
+
+.artifact-viewer {
+    background: #F7F7F7;
+    overflow: auto;
+    position: relative;
+    height: $artifact-viewer-height;
+    padding: 0px 15px 15px 15px; 
+    text-align: center;
+    .job {
+        position: sticky;
+        display: block;
+        top: 0px;
+        width: 100%;
+        background: #F7F7F7;
+        margin: 0px 0px 0px 0px;
+        padding: 5px 0px 5px 0px;
+        font-family: 'Roboto', monospace;
+        font-size: 13px;
+        z-index: 1;
+    }
+}
+
+.media {
+    position: relative;
+    padding: 5px 0px 20px 0px;
+    text-align: center;
+    max-width: 100%;
+    top: 60px;
+
+    span {
+      display: block;
+      span {
+        color: $color-light-blue;
+        text-decoration: underline;
+        display: inline-block;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+}
+
+.artifact-list {
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    height: $artifact-viewer-height;
+    li {
+        margin: 0;
+        height: 1.4em;
+        border-bottom: 1px solid #999;
+        background-color: #fff;
+        padding-bottom: 8px;
+        padding-top: 7px;
+        padding-left: 13px;
+        padding-right: 13px;
+        &:hover {
+            background-color: rgb(220, 220, 220);
+        }
+        p {
+            display: inline-block;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            max-width: 80%;
+            font-size: 13px;
+            margin: auto;
+            padding-top: 5px;
+            
+        }
+        button {
+            float: right;
+            height: 26px;
+            border-radius: 4px;
+            border: none;
+            &:hover {
+                background-color: #fff;
+            }
+        }
+        .download-button {
+            display: inline;
+        }
+    }
+}
+
+.artifact-active-row {
+    background-color: $color-artifact-row-select!important;
+    background: $color-artifact-row-select!important;
+}

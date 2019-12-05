@@ -11,7 +11,14 @@ class AWSBucket(object):
         from foundations_aws.global_state import connection_manager
 
         self._connection = connection_manager.bucket_connection()
-        self._bucket_name = name
+
+        split_name = name.split('/', 1)
+        self._bucket_name = split_name[0]
+
+        if len(split_name) > 1:
+            self._key_prefix = split_name[1] + '/'
+        else:
+            self._key_prefix = ''
 
     def upload_from_string(self, name, data):
         self._upload_object(name, data)
@@ -23,7 +30,7 @@ class AWSBucket(object):
         from botocore.exceptions import ClientError
 
         try:
-            self._connection.head_object(Bucket=self._bucket_name, Key=name)
+            self._connection.head_object(Bucket=self._bucket_name, Key=self._object_key(name))
             return True
         except ClientError:
             return False
@@ -53,7 +60,7 @@ class AWSBucket(object):
             prefix = ''
 
         object_responses = self._connection.list_objects_v2(
-            Bucket=self._bucket_name, Prefix=prefix, Delimiter='/')
+            Bucket=self._bucket_name, Prefix=self._object_key(prefix), Delimiter='/')
         
         if 'Contents' in object_responses:
             object_names = [bucket_object['Key'] for bucket_object in object_responses['Contents']]
@@ -67,21 +74,24 @@ class AWSBucket(object):
                 yield new_prefix['Prefix']
 
     def remove(self, name):
-        self._connection.delete_object(Bucket=self._bucket_name, Key=name)
+        self._connection.delete_object(Bucket=self._bucket_name, Key=self._object_key(name))
     
     def move(self, source, destination):
         if source != destination:
-            source_info = {'Bucket': self._bucket_name, 'Key': source}
+            source_info = {'Bucket': self._bucket_name, 'Key': self._object_key(source)}
 
-            self._connection.copy_object(Bucket=self._bucket_name, CopySource=source_info, Key=destination)
+            self._connection.copy_object(Bucket=self._bucket_name, CopySource=source_info, Key=self._object_key(destination))
             self.remove(source)
 
+    def _object_key(self, name):
+        return self._key_prefix + name
+
     def _get_object_body(self, name):
-        response = self._connection.get_object(Bucket=self._bucket_name, Key=name)
+        response = self._connection.get_object(Bucket=self._bucket_name, Key=self._object_key(name))
         return response['Body']
 
     def _upload_object(self, name, to_upload):
-        self._connection.put_object(Bucket=self._bucket_name, Key=name, Body=to_upload)
+        self._connection.put_object(Bucket=self._bucket_name, Key=self._object_key(name), Body=to_upload)
 
     def _log(self):
         from foundations.global_state import log_manager

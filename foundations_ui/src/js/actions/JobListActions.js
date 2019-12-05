@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import BaseActions from './BaseActions';
 import CommonActions from './CommonActions';
 
@@ -11,15 +12,32 @@ const statusText = 'Status';
 
 class JobListActions {
   // API Calls
-  static getJobs(projectName) {
-    const url = this.getBaseJobListingURL(projectName);
-    // TODO get Jobs is currently in Beta
-    return BaseActions.getBetaFromAPI(url)
-      .then(([status, result]) => {
-        return {
-          status,
-          result,
+  static getJobs(projectName, sortedColumn) {
+    let url = this.getBaseJobListingURL(projectName);
+
+    if (sortedColumn && sortedColumn.column) {
+      let translatedColumnName = sortedColumn.column;
+
+      if (!sortedColumn.column.startsWith('input_params') && !sortedColumn.column.startsWith('output_metrics')) {
+        const columNameTranslator = {
+          Status: 'status',
+          Launched: 'start_time',
+          Duration: 'duration',
+          User: 'user',
         };
+
+        translatedColumnName = columNameTranslator[translatedColumnName];
+      }
+
+      const isAscending = sortedColumn.isAscending ? 'asc' : 'desc';
+
+      url = `${url}/${translatedColumnName}/${isAscending}`;
+    }
+
+    // TODO get Jobs is currently in Beta
+    return BaseActions.getFromStaging(url)
+      .then((results) => {
+        return results;
       });
   }
 
@@ -41,7 +59,7 @@ class JobListActions {
     url = url.concat('?').concat(filterURL);
 
     // TODO get Jobs is currently in Beta
-    return BaseActions.getBetaFromAPI(url)
+    return BaseActions.getFromApiary(url)
       .then(([status, result]) => {
         return {
           status,
@@ -55,12 +73,12 @@ class JobListActions {
     if (!duration) return 0;
 
     const oneSecond = 1000;
-    let match = duration.match(/(\d+)d(\d+)h(\d+)m(\d+)s/);
-    let secondDuration = parseInt(match[1], 10) * 86400
+    const match = duration.match(/(\d+)d(\d+)h(\d+)m(\d+)s/);
+    const secondDuration = parseInt(match[1], 10) * 86400
       + parseInt(match[2], 10) * 3600
       + parseInt(match[3], 10) * 60
       + parseInt(match[4], 10);
-    let millisecondDuration = secondDuration * oneSecond;
+    const millisecondDuration = secondDuration * oneSecond;
 
     return millisecondDuration || 1000;
   }
@@ -71,9 +89,9 @@ class JobListActions {
     }
     // API Format is '2018-08-23T09:30:00'
     // Desired Format is 'YYYY/MM/DD'
-    const onlyDate = startTime.split('T')[0];
-    const formatedDate = onlyDate.replace(/-/g, '/');
-    return formatedDate;
+    const newDate = new Date(startTime);
+    newDate.setHours(newDate.getHours() - 4);
+    return moment(newDate).format('YYYY/MM/DD');
   }
 
   static getFormatedTime(startTime) {
@@ -81,8 +99,10 @@ class JobListActions {
       return '';
     }
     // API Format is '2018-08-23T09:30:00'
-    // Desired Format is 'HH:mm:ss'
-    return startTime.split('T')[1];
+    // Desired Format is 'HH:mm:ss AM/PM'
+    const newDate = new Date(startTime);
+    newDate.setHours(newDate.getHours() - 4);
+    return `${CommonActions.formatAMPM(newDate)}`;
   }
 
   static getDurationDays(durationTime) {
@@ -109,15 +129,17 @@ class JobListActions {
   }
 
   static getStatusCircle(status) {
-    let statusCircle = 'status-green';
+    let statusCircle = 'i--icon-status-completed';
 
-    if (status.toLowerCase() === 'running') {
+    if (status.toLowerCase() === 'queued') {
       statusCircle = 'status-yellow';
+    } else if (status.toLowerCase() === 'running') {
+      statusCircle = 'status-running';
     } else if (CommonActions.isError(status)) {
       statusCircle = 'status-red';
     }
 
-    return 'status '.concat(statusCircle);
+    return 'status-icon '.concat(statusCircle);
   }
 
   static getDurationClass(desiredTime, days, hours, minutes, seconds, isError) {
@@ -181,23 +203,47 @@ class JobListActions {
     return constantParams;
   }
 
-  static getInputMetricValue(inputParam, isMetric, columns) {
-    if (isMetric && inputParam !== null && inputParam.value !== null) {
-      return inputParam.value;
+  static roundToSigFigs(number, precision) {
+    let value = number.toString();
+
+    if (value.length >= precision + 1) {
+      value = number.toExponential(precision - 1);
     }
 
-    if (inputParam && columns.includes(inputParam.name)
-      && inputParam.value !== null) {
-      return inputParam.value;
+    if (value.endsWith('e+0')) {
+      value = value.slice(0, -3);
+    }
+
+    return value;
+  }
+
+  static roundToSigFigsIfNumber(value, precision) {
+    if (typeof value === 'number') {
+      return this.roundToSigFigs(value, precision);
+    }
+    return value;
+  }
+
+  static isValidMetricValue(isMetric, inputParam) {
+    return isMetric && inputParam !== null && inputParam.value !== null;
+  }
+
+  static isValidParameter(inputParam, columns) {
+    return inputParam && columns.includes(inputParam.name) && inputParam.value !== null;
+  }
+
+  static getInputMetricValue(inputParam, isMetric, columns) {
+    if (this.isValidMetricValue(isMetric, inputParam) || this.isValidParameter(inputParam, columns)) {
+      return this.roundToSigFigsIfNumber(inputParam.value, 5);
     }
     return 'not available';
   }
 
   static getJobColumnHeaderH4Class(isStatus) {
     if (isStatus === isStatusField) {
-      return 'blue-border-bottom status-header';
+      return 'status-header';
     }
-    return 'blue-border-bottom';
+    return '';
   }
 
   static getJobColumnHeaderArrowClass(isStatus, colType, isMetric) {
@@ -231,23 +277,23 @@ class JobListActions {
 
   static getTableSectionHeaderDivClass(header) {
     if (header !== '') {
-      return 'table-section-header blue-header';
+      return 'table-section-header table-header';
     }
     return 'table-section-header';
   }
 
   static getTableSectionHeaderArrowClass(header) {
     if (header !== '') {
-      return 'arrow-down blue-header-arrow';
+      return 'arrow-down table-header-arrow';
     }
     return '';
   }
 
   static getTableSectionHeaderTextClass(header) {
     if (header !== '') {
-      return 'blue-header-text';
+      return 'table-header-text';
     }
-    return 'blue-header-text no-margin';
+    return 'table-header-text no-margin';
   }
 
   static getFilterURL(
@@ -693,8 +739,14 @@ class JobListActions {
     return filteredArrayMapped.includes(columnName);
   }
 
-  static redirect(url) {
-    return BaseActions.redirectRoute(url);
+  static deleteAllJobs(jobIds, callback) {
+    const deletedJobRequests = jobIds.map(
+      (jobId) => {
+        const uri = `projects/dummy_project_name/job_listing/${jobId}`;
+        return BaseActions.deleteBetaFromAPI(uri);
+      },
+    );
+    return Promise.all(deletedJobRequests).then(callback);
   }
 }
 

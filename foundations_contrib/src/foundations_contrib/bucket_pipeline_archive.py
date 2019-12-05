@@ -5,8 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.utils import file_archive_name
-from foundations.utils import file_archive_name_with_additional_prefix
+from foundations_contrib.utils import file_archive_name
+from foundations_contrib.utils import file_archive_name_with_additional_prefix
 
 
 class BucketPipelineArchive(object):
@@ -53,15 +53,31 @@ class BucketPipelineArchive(object):
         else:
             return None
 
-    def fetch_to_file(self, file_prefix, file_path, prefix=None, target_name=None):
+    def fetch_file_path(self, file_prefix, file_path, prefix=None):
         from os.path import basename
-        name = target_name or basename(file_path)
+
         arcname = file_archive_name_with_additional_prefix(
-            prefix, file_prefix, name)
+            prefix, file_prefix, basename(file_path))
 
+        return self._download_file_from_archive(arcname, file_path)
+
+    def fetch_file_path_to_target_file_path(self, file_prefix, file_path, prefix, target_file_path):
+        arcname = file_archive_name_with_additional_prefix(
+            prefix, file_prefix, file_path)
+
+        return self._download_file_from_archive(arcname, target_file_path)
+
+    def list_files(self, pathname, prefix):
+        arcname = file_archive_name(prefix, pathname)
+        return self._bucket.list_files(arcname)
+
+    def exists(self, name, prefix=None):
+        name_in_archive = file_archive_name(prefix, name)
+        return self._bucket.exists(name_in_archive)
+
+    def _download_file_from_archive(self, arcname, target_file_path):
         if self._bucket.exists(arcname):
-            with open(file_path, 'w+b') as file:
-                self._bucket.download_to_file(arcname, file)
+            with open(target_file_path, 'w+b') as target_file:
+                self._bucket.download_to_file(arcname, target_file)
             return True
-
         return False

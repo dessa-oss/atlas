@@ -8,8 +8,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from mock import Mock
 
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import let, let_mock, set_up
+from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers import let, let_mock, set_up
 
 class TestDeploymentContextBucket(Spec):
 
@@ -18,7 +18,7 @@ class TestDeploymentContextBucket(Spec):
         from foundations.config_manager import ConfigManager
 
         config_manager = ConfigManager()
-        return self.patch('foundations.global_state.config_manager', config_manager)
+        return self.patch('foundations_contrib.global_state.config_manager', config_manager)
 
     @set_up
     def set_up(self):

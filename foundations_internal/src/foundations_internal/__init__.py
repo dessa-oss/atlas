@@ -11,5 +11,8 @@ def _append_module():
 
     module_manager.append_module(sys.modules[__name__])
 
+def root():
+    from pathlib import Path
+    return Path(__file__).parents[0]
 
 _append_module()

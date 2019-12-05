@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="15px" height="16px" viewBox="0 0 15 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.2 (78181) - https://sketchapp.com -->
+    <title>Shape</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="selected-jobs" transform="translate(-1354.000000, -462.000000)" fill="#838383" fill-rule="nonzero">
+            <g id="job-detail-page" transform="translate(1354.000000, 462.000000)">
+                <g id="baseline-launch-24px">
+                    <path d="M13.3333333,14.2222222 L1.66666667,14.2222222 L1.66666667,1.77777778 L7.5,1.77777778 L7.5,0 L1.66666667,0 C0.741666667,0 0,0.8 0,1.77777778 L0,14.2222222 C0,15.2 0.741666667,16 1.66666667,16 L13.3333333,16 C14.25,16 15,15.2 15,14.2222222 L15,8 L13.3333333,8 L13.3333333,14.2222222 Z M9.16666667,0 L9.16666667,1.77777778 L12.1583333,1.77777778 L3.96666667,10.5155556 L5.14166667,11.7688889 L13.3333333,3.03111111 L13.3333333,6.22222222 L15,6.22222222 L15,0 L9.16666667,0 Z" id="Shape"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

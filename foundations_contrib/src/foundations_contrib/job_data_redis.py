@@ -35,12 +35,24 @@ class JobDataRedis(object):
 
         job_ids = JobDataRedis._fetch_project_job_ids(
             project_name, redis_connection)
+        return JobDataRedis.all_jobs_by_list_of_job_ids(job_ids, redis_connection, include_input_params)
 
+    @staticmethod
+    def all_jobs_by_list_of_job_ids(job_ids, redis_connection, include_input_params):
         pipe = JobDataRedis._create_redis_pipeline(redis_connection)
         futures = JobDataRedis._get_data_for_each_job(
             job_ids, pipe, include_input_params)
         pipe.execute()
         return [future.get() for future in futures]
+
+    @staticmethod
+    def list_all_completed_jobs(redis_connection):
+        completed_job_keys = redis_connection.keys('jobs:*:completed_time')
+        return [key.decode().split(':')[1] for key in completed_job_keys]
+    
+    @staticmethod
+    def is_job_completed(job_id, redis_connection):
+        return job_id in JobDataRedis.list_all_completed_jobs(redis_connection)
 
     @staticmethod
     def _create_redis_pipeline(redis_connection):
@@ -82,6 +94,8 @@ class JobDataRedis(object):
         start_time = self._add_decoded_get_to_pipe('start_time').then(self._make_float)
         completed_time = self._add_decoded_get_to_pipe(
             'completed_time').then(self._make_float)
+        creation_time = self._add_decoded_get_to_pipe('creation_time').then(self._make_float)
+        tags = self._add_decoded_hgetall_to_pipe('annotations')
 
         list_of_properties = Promise.all(
             [
@@ -92,11 +106,68 @@ class JobDataRedis(object):
                 output_metrics,
                 status,
                 start_time,
-                completed_time
+                completed_time,
+                creation_time,
+                tags
             ]
         )
 
         return list_of_properties.then(self._seperate_args)
+
+    def get_formatted_job_data(self):
+        promise = self.get_job_data(False)
+        self._pipe.execute()
+        job_details = promise.get()
+        self._format_job_details(job_details)
+
+        return job_details
+
+    def _format_job_details(self, job_details):
+        from datetime import datetime
+
+        if job_details:
+            if 'input_params' in job_details:
+                del job_details['input_params']
+            if 'output_metrics' in job_details:
+                job_details['metrics'] = self._format_all_metrics(job_details.pop('output_metrics'))
+            if 'job_parameters' in job_details:
+                job_details['parameters'] = job_details.pop('job_parameters')
+            if 'start_time' in job_details:
+                job_details['start_time'] = datetime.utcfromtimestamp(job_details['start_time'])
+            if 'completed_time' in job_details:
+                job_details['completed_time'] = datetime.utcfromtimestamp(job_details['completed_time'])
+            if 'tags' in job_details:
+                job_details['tags'] = list(job_details['tags'].keys())
+
+    @staticmethod
+    def _format_all_metrics(metrics):
+        return {metric[1]: metric[2] for metric in metrics}
+
+    def get_job_metric(self, metric_name):
+        promise = self._add_lrange_to_pipe_and_deserialize('metrics')
+        self._pipe.execute()
+        all_metrics = promise.get()
+
+        metric = self._filter_metric_from_all_metrics(all_metrics, metric_name)
+        return metric
+
+    @staticmethod
+    def _filter_metric_from_all_metrics(metrics, metric_to_find):
+        filtered_metric = [m for m in metrics if m[1] == metric_to_find]
+        if filtered_metric:
+            return filtered_metric[0][2]
+        else:
+            raise KeyError(f"Metric '{metric_to_find}' does not exist.")
+
+    def get_job_param(self, param_name):
+        promise = self._add_decoded_get_to_pipe('parameters').then(self._deserialize_dict)
+        self._pipe.execute()
+        all_params = promise.get()
+
+        if param_name in all_params:
+            return all_params[param_name]
+        else:
+            raise KeyError(f"Parameter '{param_name}' does not exist.")
 
     def _seperate_args(self, args):
         def seperate_args_inner(project_name,
@@ -106,7 +177,9 @@ class JobDataRedis(object):
                                 output_metrics,
                                 status,
                                 start_time,
-                                completed_time):
+                                completed_time,
+                                creation_time,
+                                tags):
             return {
                 'project_name': project_name,
                 'job_id': self._job_id,
@@ -116,7 +189,9 @@ class JobDataRedis(object):
                 'output_metrics': output_metrics,
                 'status': status,
                 'start_time': start_time,
-                'completed_time': completed_time
+                'completed_time': completed_time,
+                'creation_time': creation_time,
+                'tags': tags
             }
         return seperate_args_inner(*args)
 
@@ -143,10 +218,19 @@ class JobDataRedis(object):
     def _add_get_to_pipe(self, parameter):
         return self._pipe.get('jobs:{}:{}'.format(self._job_id, parameter))
 
+    def _add_decoded_hgetall_to_pipe(self, parameter):
+        return self._add_hgetall_to_pipe(parameter).then(self._decode_dict)
+
+    def _add_hgetall_to_pipe(self, parameter):
+        return self._pipe.hgetall(f'jobs:{self._job_id}:{parameter}')
+
     def _decode_bytes(self, data):
         if data is None:
             return data
         return data.decode()
+
+    def _decode_dict(self, data):
+        return {key.decode(): value.decode() for key, value in data.items()}
 
     def _deserialize_list(self, data):
         return self._deserialize_or_default(data, [])

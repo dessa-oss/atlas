@@ -5,15 +5,16 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_rest_api.v2beta.models.extract_type import extract_type
+from foundations_contrib.models.extract_type import extract_type
 
 
 class InputParameterFormatter(object):
 
-    def __init__(self, input_parameters, job_parameters, stage_rank):
+    def __init__(self, input_parameters, job_parameters, stage_rank, handle_duplicate_param_names=True):
         self._stage_rank = stage_rank
         self._input_parameters = input_parameters
         self._job_parameters = job_parameters
+        self._handle_duplicate_param_names = handle_duplicate_param_names
 
     def format_input_parameters(self):
         return list(self._valid_parameter_infos())
@@ -55,8 +56,11 @@ class InputParameterFormatter(object):
             self._update_stage_rank(param['stage_uuid'], stage_ranks)
 
         stage_rank = stage_ranks[param['stage_uuid']]
-        name = '{}-{}'.format(param['argument']['name'], str(stage_rank))
-        return name
+        param_name = param['argument']['name']
+
+        if self._handle_duplicate_param_names:
+            return '{}-{}'.format(param_name, str(stage_rank))
+        return param_name
 
     def _update_stage_rank(self, stage_uuid, stage_ranks):
         index = max(stage_ranks.values(), default=0) + 1

@@ -16,6 +16,7 @@ if sys.version[0] == '2':
 
 import foundations
 import foundations.prototype
+import foundations_contrib
 
 
 EXCLUDE = {
@@ -53,12 +54,13 @@ PAGES = [
         'functions': [
             foundations.stage_logging.log_metric,
         ]
+    }, ]
     },
     {
-        'page': 'stage_creation.md',
-        'all_module_classes': [foundations.staging],
+        'page': 'set_resources.md',
+        'all_module_classes': [foundations.foundations_contrib.set_job_resources],
         'functions': [
-            foundations.staging.create_stage,
+            foundations.set_job_resources,
         ]
     },
     {
@@ -66,7 +68,16 @@ PAGES = [
         'all_module_classes': [foundations.prototype.jobs],
         'functions': [
             foundations.prototype.jobs.get_queued_jobs,
-            foundations.prototype.jobs.archive_jobs,
+            foundations.prototype.jobs.cancel_queued_jobs,
+            foundations.prototype.jobs.archive_jobs
+        ]
+    },
+    {
+        'page': 'tag_jobs.md',
+        'all_module_classes': [foundations.prototype.projects],
+        'functions': [
+            foundations.prototype.projects.set_tag,
+            foundations.prototype.projects.get_metrics_for_all_jobs
         ]
     },
     {
@@ -80,13 +91,20 @@ PAGES = [
     },
     {
         'page': 'tracking_deployment.md',
-        'all_module_classes': [foundations.deployment_wrapper],
+        'all_module_classes': [foundations_contrib.deployment_wrapper],
         'functions': [
-            foundations.deployment_wrapper.DeploymentWrapper.job_name,
-            foundations.deployment_wrapper.DeploymentWrapper.is_job_complete,
-            foundations.deployment_wrapper.DeploymentWrapper.fetch_job_results,
-            foundations.deployment_wrapper.DeploymentWrapper.wait_for_deployment_to_complete,
-            foundations.deployment_wrapper.DeploymentWrapper.get_job_status,
+            foundations_contrib.deployment_wrapper.DeploymentWrapper.job_name,
+            foundations_contrib.deployment_wrapper.DeploymentWrapper.is_job_complete,
+            foundations_contrib.deployment_wrapper.DeploymentWrapper.fetch_job_results,
+            foundations_contrib.deployment_wrapper.DeploymentWrapper.wait_for_deployment_to_complete,
+            foundations_contrib.deployment_wrapper.DeploymentWrapper.get_job_status,
+        ]
+    },
+    {
+        'page': 'job_logs.md',
+        'all_module_classes': [foundations_contrib.deployment_wrapper],
+        'functions': [
+            foundations_contrib.deployment_wrapper.DeploymentWrapper.get_job_logs
         ]
     },
     {
@@ -101,6 +119,21 @@ PAGES = [
         'all_module_classes': [foundations.projects],
         'functions': [
             foundations.projects.set_project_name,
+        ]
+    },
+    {
+        'page': 'stage_search.md',
+        'all_module_classes': [foundations.stage_connector_wrapper],
+        'functions': [
+            foundations.stage_connector_wrapper.StageConnectorWrapper.random_search,
+            foundations.stage_connector_wrapper.StageConnectorWrapper.grid_search,
+        ]
+    },
+        {
+        'page': 'set_deployment_env.md',
+        'all_module_classes': [foundations.config],
+        'functions': [
+            foundations.config.set_environment
         ]
     }
 ]
@@ -185,7 +218,7 @@ def class_to_source_link(cls):
 
 def function_to_source_link(fn):
     module_name = fn.__module__
-    assert module_name.startswith(ROOT_MODULE_NAME)
+    #assert module_name.startswith(ROOT_MODULE_NAME)
     path = module_name.replace('.', '/')
     path += '.py'
     line = inspect.getsourcelines(fn)[-1]

@@ -5,14 +5,21 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
+from foundations_spec import *
 from foundations.config_manager import ConfigManager
 from mock import patch
 
-from foundations_internal.testing.helpers import let, let_patch_mock
-from foundations_internal.testing.helpers.spec import Spec
-
 class TestConfigManager(Spec):
+
+    mock_file = let_mock()
+    
+    @let_now
+    def mock_os_environ(self):
+        return self.patch('os.environ', self.environment)
+
+    @let
+    def environment(self):
+        return self.faker.pydict()
 
     @let
     def config_manager(self):
@@ -22,26 +29,114 @@ class TestConfigManager(Spec):
     def config(self):
         return self.config_manager.config()    
 
-    def test_config_returns_empty(self):
-        config = ConfigManager().config()
-        self.assertEqual({}, config)
+    @let
+    def config_file_path(self):
+        return self.faker.file_path()
+
+    @let
+    def config_file_path_list(self):
+        import random
+
+        path_list_length = random.randint(2, 10)
+        path_list = []
+
+        for _ in range(path_list_length):
+            path_list.append(self.faker.file_path())
+
+        return path_list
+
+    @let
+    def run_script_environment(self):
+        return self.faker.pydict()
+
+    @let
+    def random_key(self):
+        return self.faker.sentence()
+
+    @let
+    def random_value(self):
+        return self.faker.sentence()
+
+    @set_up
+    def set_up(self):
+        self.mock_file.__enter__ = lambda *args: self.mock_file
+        self.mock_file.__exit__ = lambda *args: None
+        self.mock_file.read.return_value = ''
+
+    def test_push_config_stores_current_config_and_resets_when_popped(self):
+        new_value = self.faker.sentence()
+
+        self.config_manager[self.random_key] = self.random_value
+        self.config_manager.push_config()
+        self.config_manager[self.random_key] = new_value
+        self.config_manager.pop_config()
+
+        self.assertEqual(self.random_value, self.config_manager[self.random_key])
+
+    def test_push_config_maintains_previous_values(self):
+        self.config_manager[self.random_key] = self.random_value
+        self.config_manager.push_config()
+
+        self.assertEqual(self.random_value, self.config_manager[self.random_key])
+
+    def test_push_config_supports_multiple_levels(self):
+        new_value = self.faker.sentence()
+        new_value2 = self.faker.sentence()
+
+        self.config_manager[self.random_key] = self.random_value
+        self.config_manager.push_config()
+        self.config_manager[self.random_key] = new_value
+        self.config_manager.push_config()
+        self.config_manager[self.random_key] = new_value2
+        self.config_manager.pop_config()
+        self.config_manager.pop_config()
+
+        self.assertEqual(self.random_value, self.config_manager[self.random_key])
+
+    def test_push_config_supports_nested_values(self):
+        new_value = self.faker.sentence()
+
+        self.config_manager[self.random_key] = {'key': self.random_value}
+        self.config_manager.push_config()
+        self.config_manager[self.random_key]['key'] = new_value
+        self.config_manager.pop_config()
+
+        self.assertEqual(self.random_value, self.config_manager[self.random_key]['key'])
+
+    def test_should_include_foundations_environment(self):
+        config_manager = ConfigManager()
+        self.environment['FOUNDATIONS_hello'] = 'world'
+        self.assertEqual('world', config_manager['hello'])
+
+    def test_should_include_foundations_environment_with_different_values(self):
+        config_manager = ConfigManager()
+        self.environment['FOUNDATIONS_world'] = 'hello'
+        self.assertEqual('hello', config_manager['world'])
+
+    def test_archive_host_defaults_to_empty_string_if_not_set_in_environment(self):
+        config_manager = ConfigManager()
+        self.assertEqual('', config_manager['ARCHIVE_HOST'])
+
+    def test_should_be_empty_by_default(self):
+        config_manager = ConfigManager()
+        self.assertEqual({'run_script_environment': {}}, config_manager.config())
 
     def test_persist_config(self):
         config_manager = ConfigManager()
         config_manager.config()['hello'] = 'goodbye'
-        self.assertEqual({'hello': 'goodbye'}, config_manager.config())
+        self._assert_is_subset({'hello': 'goodbye'}, config_manager.config())
 
     def test_persist_config_with_different_values(self):
         config_manager = ConfigManager()
         config_manager.config()['foo'] = 'bar'
-        self.assertEqual({'foo': 'bar'}, config_manager.config())
+        self._assert_is_subset({'foo': 'bar'}, config_manager.config())
 
     def test_load_config_from_yaml(self):
         from foundations_contrib.change_directory import ChangeDirectory
 
         with ChangeDirectory('test/fixtures/single_config'):
             config = ConfigManager().config()
-            self.assertEqual(
+            self._assert_is_subset(
                 {'title': 'test config', 'value': 'this exists as a test'}, config)
 
     def test_load_multiple_config_from_yaml(self):
@@ -49,7 +144,7 @@ class TestConfigManager(Spec):
 
         with ChangeDirectory('test/fixtures/multiple_configs'):
             config = ConfigManager().config()
-            self.assertEqual(
+            self._assert_is_subset(
                 {'title': 'test config', 'value': 'different value'}, config)
 
     def test_add_config_path(self):
@@ -57,7 +152,7 @@ class TestConfigManager(Spec):
         config_manager.add_config_path(
             'test/fixtures/multiple_configs/second.config.yaml')
         config = config_manager.config()
-        self.assertEqual({'value': 'different value'}, config)
+        self._assert_is_subset({'value': 'different value'}, config)
 
     config_translator = let_patch_mock('foundations_internal.global_state.config_translator')
 
@@ -65,13 +160,28 @@ class TestConfigManager(Spec):
         self.config_translator.translate.return_value = {'some configuration': 'some value for the configuration'}
         self.config_manager.add_simple_config_path('test/fixtures/multiple_configs/first.config.yaml')
         self.config_translator.translate.assert_called_with({'title': 'test config'})
-        self.assertEqual({'some configuration': 'some value for the configuration'}, self.config)
+        self._assert_is_subset({'some configuration': 'some value for the configuration'}, self.config)
 
     def test_add_simple_config_path_uses_translated_config_different_config(self):
         self.config_translator.translate.return_value = {'some different configuration': 'a value of great importance'}
         self.config_manager.add_simple_config_path('test/fixtures/multiple_configs/second.config.yaml')
         self.config_translator.translate.assert_called_with({'value': 'different value'})
-        self.assertEqual({'some different configuration': 'a value of great importance'}, self.config)
+        self._assert_is_subset({'some different configuration': 'a value of great importance'}, self.config)
+
+    def test_add_simple_config_path_uses_translator_passed_in_as_parameter_avoids_calling_config_translator(self):
+        translator = lambda yaml: yaml
+        self.config_manager.add_simple_config_path('test/fixtures/multiple_configs/second.config.yaml', translator=translator)
+        self.config_translator.translate.assert_not_called()
+
+    def test_add_simple_config_path_uses_translator_passed_in_as_parameter_translate_using_passed_translator(self):
+        self.config_manager.add_simple_config_path('test/fixtures/single_config/test.config.yaml', translator=self._config_transformer)
+        config = self.config_manager.config()
+        self._assert_is_subset({'title': 'modified title'}, config)
+
+    @staticmethod
+    def _config_transformer(config_data):
+        config_data['title'] = 'modified title'
+        return config_data
 
     def test_add_config_path_after_configured(self):
         config_manager = ConfigManager()
@@ -80,8 +190,31 @@ class TestConfigManager(Spec):
         config = config_manager.config()
         config_manager.add_config_path(
             'test/fixtures/multiple_configs/second.config.yaml')
-        self.assertEqual(
+        self._assert_is_subset(
             {'title': 'test config', 'value': 'different value'}, config)
+
+    def test_config_paths_returns_empty_list_if_no_paths_added(self):
+        config_manager = ConfigManager()
+        self.assertEqual([], config_manager.config_paths())
+
+    def test_config_paths_returns_singleton_list_with_added_path(self):
+        mock_open = self.patch('builtins.open')
+        mock_open.return_value = self.mock_file
+
+        config_manager = ConfigManager()
+        config_manager.add_simple_config_path(self.config_file_path)
+        self.assertEqual([self.config_file_path], config_manager.config_paths())
+
+    def test_config_paths_returns_list_with_added_paths(self):
+        mock_open = self.patch('builtins.open')
+        mock_open.return_value = self.mock_file
+
+        config_manager = ConfigManager()
+
+        for config_file_path in self.config_file_path_list:
+            config_manager.add_simple_config_path(config_file_path)
+
+        self.assertEqual(self.config_file_path_list, config_manager.config_paths())
 
     def test_indexer(self):
         config_manager = ConfigManager()
@@ -123,14 +256,14 @@ class TestConfigManager(Spec):
         config_manager['hello'] = 'goodbye'
         config_manager.freeze()
         config_manager['second'] = 'changed thing'
-        self.assertEqual({'hello': 'goodbye'}, config_manager.config())
+        self.assertEqual({'hello': 'goodbye', 'run_script_environment': {}}, config_manager.config())
 
     def test_config_returns_copy_after_freeze(self):
         config_manager = ConfigManager()
         config_manager['hello'] = 'goodbye'
         config_manager.freeze()
         config_manager.config()['second'] = 'changed thing'
-        self.assertEqual({'hello': 'goodbye'}, config_manager.config())
+        self.assertEqual({'hello': 'goodbye', 'run_script_environment': {}}, config_manager.config())
 
     def test_reflect_instance_creates_default_implementation(self):
         config_manager = ConfigManager()
@@ -233,6 +366,33 @@ class TestConfigManager(Spec):
         }
         instance = config_manager.reflect_instance('box', 'cat', lambda: None)
         self.assertEqual('socks', instance)
+    
+    def test_config_manager_get_run_script_environment_defaults_to_empty_dict(self):
+        config_manager = ConfigManager()
+        self.assertEqual({}, config_manager.config()['run_script_environment'])
+
+    def test_config_manager_run_script_environment_is_not_lost_if_modified_directly(self):
+        config_manager = ConfigManager()
+        config_manager.config()['run_script_environment'].update(self.run_script_environment)
+        self.assertEqual(self.run_script_environment, config_manager.config()['run_script_environment'])
+
+    def test_reset_allows_for_reloading_from_environment_variables_when_config_called(self):
+        config_manager = ConfigManager()
+        config_manager['FOUNDATIONS_TEST'] = "test_string"
+        self.assertEqual('test_string', config_manager['FOUNDATIONS_TEST'])
+        config_manager.reset()
+        self.assertIsNone(config_manager.config().get('FOUNDATIONS_TEST'))
+
+    def test_reset_clears_config_paths(self):
+        from foundations_contrib.change_directory import ChangeDirectory
+
+        config_manager = ConfigManager()
+
+        with ChangeDirectory('test/fixtures/single_config'):
+            config_manager.config()
+
+        config_manager.reset()
+        self.assertEqual([], config_manager.config_paths())
 
     def call_reflect_constructor(self, metric):
         config_manager = ConfigManager()
@@ -240,6 +400,7 @@ class TestConfigManager(Spec):
                        '_implementation'] = {metric + '_type': 'some_' + metric}
         config_manager.reflect_constructor(metric, metric, lambda: 'socks')
 
+    @quarantine
     @patch('logging.Logger.info')
     def test_reflect_constructor_info(self, mock):
         self.call_reflect_constructor('deployment')
@@ -251,3 +412,10 @@ class TestConfigManager(Spec):
         self.call_reflect_constructor('archive')
         mock.assert_called_with(
             'Configured with {\'archive_type\': \'some_archive\'}')
+
+    def _assert_is_subset(self, subset, superset):
+        is_not_subset_exception = AssertionError('{} is not a subset of {}'.format(subset, superset))
+
+        for key in subset:
+            if key not in superset or subset[key] != superset[key]:
+                raise is_not_subset_exception

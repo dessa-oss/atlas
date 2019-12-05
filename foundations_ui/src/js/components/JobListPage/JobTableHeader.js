@@ -1,23 +1,30 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ScrollSync } from 'react-scroll-sync';
-import TableStaticColumns from './TableStaticColumns';
 import InputMetric from '../common/InputMetric';
 import UserFilter from '../common/filters/UserFilter';
 import StatusFilter from '../common/filters/StatusFilter';
 import DurationFilter from '../common/filters/DurationFilter';
 import NumberFilter from '../common/filters/NumberFilter';
 import ContainsFilter from '../common/filters/ContainsFilter';
-import BooleanFilter from '../common/filters/BooleanFilter';
 import DateTimeFilter from '../common/filters/DateTimeFilter';
 import CommonActions from '../../actions/CommonActions';
 import JobListActions from '../../actions/JobListActions';
+import SelectJobCell from './cells/SelectJobCell';
+import StatusCell from './cells/StatusCell';
+import StartTimeCell from './cells/StartTimeCell';
+import DurationCell from './cells/DurationCell';
+import JobIDCell from './cells/JobIDCell';
+import PopUpRows from './PopUpRows';
 
 const isMetric = true;
+const isMetaData = true;
 
 class JobTableHeader extends Component {
   constructor(props) {
     super(props);
+    this.onMetricRowClick = props.onMetricRowClick.bind(this);
+    this.onDataUpdated = props.onDataUpdated.bind(this);
     this.toggleUserFilter = this.toggleUserFilter.bind(this);
     this.searchUserFilter = this.searchUserFilter.bind(this);
     this.toggleStatusFilter = this.toggleStatusFilter.bind(this);
@@ -66,6 +73,12 @@ class JobTableHeader extends Component {
       updateStartTimeFilter: this.props.updateStartTimeFilter,
       startTimeFilters: this.props.startTimeFilters,
       filters: this.props.filters,
+      sortedColumn: this.props.sortedColumn,
+      sortTable: this.props.sortTable,
+      selectJob: this.props.selectJob,
+      selectAllJobs: this.props.selectAllJobs,
+      selectedJobs: this.props.selectedJobs,
+      allJobsSelected: this.props.allJobsSelected,
     };
   }
 
@@ -87,6 +100,9 @@ class JobTableHeader extends Component {
         jobIdFilters: nextProps.jobIdFilters,
         startTimeFilters: nextProps.startTimeFilters,
         filters: nextProps.filters,
+        sortedColumn: nextProps.sortedColumn,
+        selectedJobs: nextProps.selectedJobs,
+        allJobsSelected: nextProps.allJobsSelected,
       },
     );
   }
@@ -165,9 +181,9 @@ class JobTableHeader extends Component {
     const {
       numberFilterColumn,
     } = this.state;
-    let columnName = this.getColumnName(e);
-    let columnType = this.getColumnType(e);
-    let metricClass = this.getMetricClass(e);
+    const columnName = this.getColumnName(e);
+    const columnType = this.getColumnType(e);
+    const metricClass = this.getMetricClass(e);
 
     if (columnType === 'number') {
       this.hideOtherFilters('Number');
@@ -284,6 +300,71 @@ class JobTableHeader extends Component {
     }
   }
 
+  getStaticJobsInputParams() {
+    return [
+      { name: 'SelectAllCheckboxes', type: 'string' },
+      { name: 'Job ID', type: 'string' },
+      { name: 'Status', type: 'string' },
+      { name: 'Launched', type: 'string' },
+      { name: 'Duration', type: 'string' },
+      { name: 'User', type: 'string' },
+      { name: 'Tags', type: 'string' },
+    ];
+  }
+
+  generateStaticJobs(jobs) {
+    const { selectJob, selectedJobs } = this.state;
+    return jobs.map((el) => {
+      const neededColums = [];
+      const isSelectedJob = selectedJobs.includes(el.job_id);
+      neededColums.push({
+        name: 'SelectAllCheckboxes',
+        value: SelectJobCell({
+          job: el, onSuccessfullDeletion: this.onDataUpdated, selectJob, isSelectedJob,
+        }),
+        type: 'string',
+        hoverable: false,
+      });
+      neededColums.push({
+        name: 'Job ID',
+        value: new JobIDCell({ jobID: el.job_id }).render(),
+        type: 'string',
+      });
+      neededColums.push({
+        name: 'Status',
+        value: new StatusCell(el).render(),
+        type: 'string',
+        hoverable: false,
+      });
+      neededColums.push({
+        name: 'Launched',
+        value: new StartTimeCell({ startTime: el.start_time, status: el.status }).render(),
+        type: 'string',
+      });
+      neededColums.push({
+        name: 'Duration',
+        value: new DurationCell({
+          duration: JobListActions.parseDuration(el.duration),
+        }).render(),
+        type: 'string',
+        hoverable: false,
+      });
+      neededColums.push({
+        name: 'User',
+        value: el.user,
+        type: 'string',
+      });
+      neededColums.push({
+        name: 'Tags',
+        value: el.tags,
+        type: 'tag',
+      });
+      const job = Object.assign({}, el);
+      job.output_metrics = neededColums;
+      return job;
+    });
+  }
+
   render() {
     const {
       allInputParams,
@@ -320,7 +401,14 @@ class JobTableHeader extends Component {
       updateStartTimeFilter,
       startTimeFilters,
       filters,
+      sortedColumn,
+      sortTable,
+      selectAllJobs,
+      selectedJobs,
+      allJobsSelected,
     } = this.state;
+
+    const { onClickOpenModalJobDetails } = this.props;
 
     let userFilter = null;
     if (isShowingUserFilter) {
@@ -412,7 +500,7 @@ class JobTableHeader extends Component {
       );
     }
 
-    let booleanFilter = null;
+    const booleanFilter = null;
     let changedBoolParams = [];
     let boolColumns = CommonActions.deepCopyArray(boolCheckboxes);
     if (isShowingBooleanFilter) {
@@ -421,16 +509,16 @@ class JobTableHeader extends Component {
         boolColumns = existingFilter.boolCheckboxes;
         changedBoolParams = JobListActions.boolFilterGetHidden(existingFilter.boolCheckboxes);
       }
-      booleanFilter = (
-        <BooleanFilter
-          toggleShowingFilter={this.toggleInputMetricFilter}
-          columnName={numberFilterColumn}
-          changeHiddenParams={updateBoolFilter}
-          metricClass={metricClass}
-          columns={boolColumns}
-          changedParams={changedBoolParams}
-        />
-      );
+      // booleanFilter = (
+      //   <BooleanFilter
+      //     toggleShowingFilter={this.toggleInputMetricFilter}
+      //     columnName={numberFilterColumn}
+      //     changeHiddenParams={updateBoolFilter}
+      //     metricClass={metricClass}
+      //     columns={boolColumns}
+      //     changedParams={changedBoolParams}
+      //   />
+      // );
     }
 
     let jobIDFilter = null;
@@ -474,38 +562,53 @@ class JobTableHeader extends Component {
       return hiddenParam !== undefined;
     });
 
+    const jobsInputParams = this.getStaticJobsInputParams();
+
+    const jobsMetaData = this.generateStaticJobs(jobs);
+
     return (
       <ScrollSync>
         <div className="job-list-container">
-          <TableStaticColumns
-            jobRows={jobRows}
-            rowNumbers={rowNumbers}
-            toggleUserFilter={this.toggleUserFilter}
-            toggleStatusFilter={this.toggleStatusFilter}
-            toggleDurationFilter={this.toggleDurationFilter}
-            toggleJobIdFilter={this.toggleJobIdFilter}
-            toggleStartTimeFilter={this.toggleStartTimeFilter}
-            isStartTimeFiltered={startTimeFilters.length > 0}
-            isStatusFiltered={hiddenInputParams.length > 0}
-            isJobIdFiltered={jobIdFilters.length > 0}
-            isDurationFiltered={durationFilters.length > 0}
-            isUserFiltered={hiddenUsers.length > 0}
+          <InputMetric
+            header="Experiment Details"
+            allInputParams={jobsInputParams}
+            jobs={jobsMetaData}
+            isMetric={isMetric}
+            toggleNumberFilter={this.toggleInputMetricFilter}
+            filters={filters}
+            onMetricRowClick={this.onMetricRowClick}
+            isMetaData={isMetaData}
+            onClickOpenModalJobDetails={onClickOpenModalJobDetails}
+            sortedColumn={sortedColumn}
+            sortTable={sortTable}
+            selectAllJobs={selectAllJobs}
+            selectedJobs={selectedJobs}
+            allJobsSelected={allJobsSelected}
           />
           <InputMetric
-            header="hyperparameters"
+            header="Parameters"
             allInputParams={allInputParams}
             jobs={jobs}
             toggleNumberFilter={this.toggleInputMetricFilter}
             filters={filters}
+            onMetricRowClick={this.onMetricRowClick}
+            onClickOpenModalJobDetails={onClickOpenModalJobDetails}
+            sortedColumn={sortedColumn}
+            sortTable={sortTable}
           />
           <InputMetric
-            header="metrics"
+            header="Metrics"
             allInputParams={allMetrics}
             jobs={jobs}
             isMetric={isMetric}
             toggleNumberFilter={this.toggleInputMetricFilter}
             filters={filters}
+            onMetricRowClick={this.onMetricRowClick}
+            onClickOpenModalJobDetails={onClickOpenModalJobDetails}
+            sortedColumn={sortedColumn}
+            sortTable={sortTable}
           />
+          <PopUpRows jobs={jobs} onClickOpenModalJobDetails={onClickOpenModalJobDetails} />
           {userFilter}
           {statusFilter}
           {durationFilter}
@@ -521,6 +624,8 @@ class JobTableHeader extends Component {
 }
 
 JobTableHeader.propTypes = {
+  onMetricRowClick: PropTypes.func,
+  onDataUpdated: PropTypes.func,
   allInputParams: PropTypes.array,
   jobs: PropTypes.array,
   allMetrics: PropTypes.array,
@@ -555,9 +660,19 @@ JobTableHeader.propTypes = {
   updateStartTimeFilter: PropTypes.func,
   startTimeFilters: PropTypes.array,
   filters: PropTypes.array,
+  onClickOpenModalJobDetails: PropTypes.func,
+  sortedColumn: PropTypes.object,
+  sortTable: PropTypes.func,
+  selectJob: PropTypes.func,
+  selectAllJobs: PropTypes.func,
+  selectedJobs: PropTypes.array,
+  allJobsSelected: PropTypes.bool,
 };
 
+const defaultFunc = () => console.warn('JobTableHeader: Missing onMetricRowClick prop.');
 JobTableHeader.defaultProps = {
+  onMetricRowClick: defaultFunc,
+  onDataUpdated: () => window.location.reload(),
   allInputParams: [],
   jobs: [],
   allMetrics: [],
@@ -592,6 +707,13 @@ JobTableHeader.defaultProps = {
   updateStartTimeFilter: () => {},
   startTimeFilters: [],
   filters: [],
+  onClickOpenModalJobDetails: () => null,
+  sortedColumn: {},
+  sortTable: () => {},
+  selectJob: () => {},
+  selectAllJobs: () => {},
+  selectedJobs: [],
+  allJobsSelected: false,
 };
 
 export default JobTableHeader;

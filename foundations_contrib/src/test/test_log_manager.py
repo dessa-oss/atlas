@@ -5,113 +5,138 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
+from foundations_spec import *
 from foundations_contrib.log_manager import LogManager
+import logging
 
+class TestLogManager(Spec):
 
-class TestLogManager(unittest.TestCase):
-
-    def setUp(self):
+    @let
+    def config_manager(self):
         from foundations.config_manager import ConfigManager
-        self.config_manager = ConfigManager()
+        return ConfigManager()
+
+    @let
+    def log_manager(self):
+        return LogManager(self.config_manager)
         
+    @let
+    def result_logger(self):
+        return self.log_manager.get_logger('namespaced_log_levels')
+
+    @let
+    def root_logger(self):
+        return logging.getLogger()
+
+    @let
+    def console_log_handler(self):
+        return self.root_logger.handlers[0]
   
+    @let
+    def file_log_handler(self):
+        return self.root_logger.handlers[1]
+
+    @let
+    def file_log_path(self):
+        import os.path
+        return os.path.expanduser('~/.foundations/logs/system.log')
+
+    def test_root_logger_has_no_level_set(self):
+        self._setup_logger()
+        self.assertEqual(logging.NOTSET, self.root_logger.level)
+
     def test_logger_return_logging_type(self):
-        import logging
-        
-        log_manager = LogManager(self.config_manager)
-        result_logger = log_manager.get_logger('namespaced_log_levels')
-        self.assertTrue(isinstance(result_logger, logging.Logger))
-    
+        self.assertTrue(isinstance(self.result_logger, logging.Logger))
 
     def test_logger_returns_log_level_info(self):
-        import logging
-
-        log_manager = LogManager(self.config_manager)
-        result_logger = log_manager.get_logger('namespaced_log_levels')
-        self.assertEqual(logging.INFO, result_logger.level)
-    
+        self.assertEqual(logging.INFO, self.console_log_handler.level)
 
     def test_logger_return_log_level_override(self):
-        import logging
-
         self.config_manager['log_level'] = 'DEBUG'
-        log_manager = LogManager(self.config_manager)
-        result_logger = log_manager.get_logger('namespaced_log_levels')
-        self.assertEqual(logging.DEBUG, result_logger.level)
+        self._setup_logger()
+        self.assertEqual(logging.DEBUG, self.console_log_handler.level)
 
     def test_logger_return_namespace_override(self):
-        import logging
-
         self.config_manager['namespaced_log_levels'] = {'a': 'DEBUG'}
-        log_manager = LogManager(self.config_manager)
-        result_logger = log_manager.get_logger('a')
+        result_logger = self.log_manager.get_logger('a')
         self.assertEqual(logging.DEBUG, result_logger.level)
 
-    def test_logger_return_namespace_override_does_not_match(self):
-        import logging
-
-        self.config_manager['namespaced_log_levels'] = {'a': 'DEBUG'}
-        log_manager = LogManager(self.config_manager)
-        result_logger = log_manager.get_logger('b')
-        self.assertEqual(logging.INFO, result_logger.level)
-
     def test_logger_return_namespace_override_matches_with_longer_value(self):
-        import logging
-
         self.config_manager['namespaced_log_levels'] = {'foundations': 'DEBUG'}
-        log_manager = LogManager(self.config_manager)
-        result_logger = log_manager.get_logger('foundations.config_manager')
+        result_logger = self.log_manager.get_logger('foundations.config_manager')
         self.assertEqual(logging.DEBUG, result_logger.level)
     
     def test_logger_return_namespace_override_matches_with_longest_match(self):
-        import logging
-
         self.config_manager['namespaced_log_levels'] = {'foundations': 'DEBUG', 'foundations.config_manager': 'ERROR'}
-        log_manager = LogManager(self.config_manager)
-        result_logger = log_manager.get_logger('foundations.config_manager')
+        result_logger = self.log_manager.get_logger('foundations.config_manager')
         self.assertEqual(logging.ERROR, result_logger.level)
 
     def test_logger_return_when_clears_default_handlers(self):
-        import logging
+        self.log_manager.get_logger('foundations.config_manager')
+        self.assertEqual(2, len(self.root_logger.handlers))
 
-        log_manager = LogManager(self.config_manager)
-        log_manager.get_logger('foundations.config_manager')
-        root_logger = logging.getLogger()
-        self.assertEquals(1, len(root_logger.handlers))
+    def test_logger_return_when_clears_default_handlers(self):
+        self.log_manager.get_logger('foundations.config_manager')
+        self.assertEqual(2, len(self.root_logger.handlers))
 
-    def test_log_handler_return_format(self):
-        import logging
+    @quarantine
+    def test_console_log_handler_return_format(self):
+        self.log_manager.get_logger('foundations.config_manager')
+        formatter = self.console_log_handler.formatter
+        self.assertEqual('%(asctime)s - %(name)s - %(levelname)s - %(message)s', formatter._fmt)
 
-        log_manager = LogManager(self.config_manager)
-        log_manager.get_logger('foundations.config_manager')
-        root_logger = logging.getLogger()
-        log_handler = root_logger.handlers[0]
-        formatter = log_handler.formatter
-        self.assertEquals('%(asctime)s - %(name)s - %(levelname)s - %(message)s', formatter._fmt)
-
-    def test_log_handler_return_stdout(self):
-        import logging
+    def test_console_log_handler_return_stdout(self):
         from sys import stdout
 
-        log_manager = LogManager(self.config_manager)
-        log_manager.get_logger('foundations.config_manager')
-        root_logger = logging.getLogger()
-        log_handler = root_logger.handlers[0]
-        self.assertEquals(stdout, log_handler.stream)
+        self.log_manager.get_logger('foundations.config_manager')
+        self.assertEqual(stdout, self.console_log_handler.stream)
+
+    @quarantine
+    def test_file_log_handler_return_format(self):
+        self.log_manager.get_logger('foundations.config_manager')
+        formatter = self.file_log_handler.formatter
+        self.assertEqual('%(asctime)s - %(name)s - %(levelname)s - %(message)s', formatter._fmt)
+
+    def test_file_log_handler_log_level_is_debug(self):
+        self.log_manager.get_logger('foundations.config_manager')
+        self.assertEqual(logging.DEBUG, self.file_log_handler.level)
+
+    def test_file_log_handler_return_system_log(self):
+        from sys import stdout
+
+        self.log_manager.get_logger('foundations.config_manager')
+        self.assertEqual(self.file_log_path, self.file_log_handler.baseFilename)
 
     def test_logger_return_cached_logger(self):
-        import logging
-        
-        log_manager = LogManager(self.config_manager)
-        first_logger = log_manager.get_logger('namespaced_log_levels')
-        second_logger = log_manager.get_logger('namespaced_log_levels')
+        first_logger = self.log_manager.get_logger('namespaced_log_levels')
+        second_logger = self.log_manager.get_logger('namespaced_log_levels')
         self.assertEqual(id(first_logger), id(second_logger))
     
     def test_logger_return_different_loggers(self):
-        import logging
-        
-        log_manager = LogManager(self.config_manager)
-        first_logger = log_manager.get_logger('namespaced_log_levels')
-        second_logger = log_manager.get_logger('namespaced_log_levels_two')
+        first_logger = self.log_manager.get_logger('namespaced_log_levels')
+        second_logger = self.log_manager.get_logger('namespaced_log_levels_two')
         self.assertNotEqual(first_logger, second_logger)
+
+    def test_foundations_not_running_warning_printed_false_by_default(self):
+        self.assertFalse(self.log_manager.foundations_not_running_warning_printed())
+
+    def test_foundations_not_running_warning_printed_true_after_flag_set(self):
+        self.log_manager.set_foundations_not_running_warning_printed()
+        self.assertTrue(self.log_manager.foundations_not_running_warning_printed())
+
+    def test_foundations_not_running_warning_printed_false_after_flag_reset(self):
+        self.log_manager.set_foundations_not_running_warning_printed()
+        self.log_manager.set_foundations_not_running_warning_printed(False)
+        self.assertFalse(self.log_manager.foundations_not_running_warning_printed())
+
+    def test_silences_paramiko_logs(self):
+        self.assertEqual(logging.ERROR, self.log_manager.get_logger('paramiko').level)
+
+    def test_silences_paramiko_transport_logs(self):
+        self.assertEqual(logging.ERROR, self.log_manager.get_logger('paramiko.transport').level)
+
+    def test_silences_paramiko_sftp_logs(self):
+        self.assertEqual(logging.ERROR, self.log_manager.get_logger('paramiko.transport.sftp').level)
+
+    def _setup_logger(self):
+        self.log_manager.get_logger('test')

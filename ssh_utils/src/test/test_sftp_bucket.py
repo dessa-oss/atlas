@@ -5,18 +5,17 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
-from mock import patch
+from foundations_spec import *
 
 from foundations_ssh.sftp_bucket import SFTPBucket
 
-class TestSFTPBucket(unittest.TestCase):
-    class MockConnection(object):
-        @classmethod
-        def __init__(cls, remote_host, remote_user, private_key, port):
-            cls.port = port
+class TestSFTPBucket(Spec):
+    
+    mock_connection_class = let_patch_mock_with_conditional_return('pysftp.Connection')
+    mock_connection = let_mock()
 
-    def setUp(self):
+    @set_up
+    def set_up(self):
         from foundations.global_state import config_manager
         
         self.config_manager = config_manager
@@ -24,28 +23,34 @@ class TestSFTPBucket(unittest.TestCase):
         self.config_manager["remote_user"] = "remote_user"
         self.config_manager["key_path"] = "key_path"
 
-    def tearDown(self):
-        self.MockConnection.port = None
+        mock_cd_object = Mock()
+        mock_cd_object.__enter__ = lambda *args: None
+        mock_cd_object.__exit__ = lambda *args: None
+
+        self.mock_connection.cd.return_value = mock_cd_object
+
+    @tear_down
+    def tear_down(self):
         self.config_manager.config().pop("port", None)
 
-    @patch('pysftp.Connection')
-    def test_upload_from_string_supports_strings(self, mock):
+    def _set_up_connection(self, port=22):
+        self.mock_connection_class.return_when(self.mock_connection, self.config_manager['remote_host'], self.config_manager['remote_user'], private_key=self.config_manager['key_path'], port=port)
+
+    def test_upload_from_string_supports_strings(self):
+        self._set_up_connection()
         bucket = SFTPBucket('path')
         bucket.upload_from_string('/path/to/some/file', 'some string')
 
-    @patch('pysftp.Connection', MockConnection)
     def test_set_port_24(self):
+        self._set_up_connection(port=24)
         self.config_manager["port"] = 24
         SFTPBucket("path")
-        self.assertEqual(24, self.MockConnection.port)
 
-    @patch('pysftp.Connection', MockConnection)
     def test_set_port_23(self):
+        self._set_up_connection(port=23)
         self.config_manager["port"] = 23
         SFTPBucket("path")
-        self.assertEqual(23, self.MockConnection.port)
 
-    @patch('pysftp.Connection', MockConnection)
     def test_set_port_unset(self):
+        self._set_up_connection()
         SFTPBucket("path")
-        self.assertEqual(22, self.MockConnection.port)

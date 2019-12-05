@@ -5,11 +5,17 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_contrib.cli.command_line_interface import CommandLineInterface
+def _run_command_line():
+    import sys
+    from foundations_contrib.cli.command_line_interface import CommandLineInterface
+
+    CommandLineInterface(sys.argv[1:]).execute()
 
 def main():
-    import sys
-    CommandLineInterface(sys.argv[1:]).execute()
+    import os
+
+    os.environ['FOUNDATIONS_COMMAND_LINE'] = 'True'
+    _run_command_line()
 
 if __name__ == '__main__':
     main()

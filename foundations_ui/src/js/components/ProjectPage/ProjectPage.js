@@ -1,95 +1,109 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import Toolbar from '../common/Toolbar';
-import ProjectActions from '../../actions/ProjectActions';
-import Header from '../common/Header';
+import ProjectHeader from './ProjectHeader';
 import Loading from '../common/Loading';
-import ErrorMessage from '../common/ErrorMessage';
+import BaseActions from '../../actions/BaseActions';
+import CommonActions from '../../actions/CommonActions';
+import ProjectSummary from './ProjectSummary';
+import CommonHeader from '../common/CommonHeader';
+import CommonFooter from '../common/CommonFooter';
 
-class ProjectPage extends Component {
-  constructor(props) {
-    super(props);
-    this.getAllProjects = this.getAllProjects.bind(this);
-    this.setProjectList = this.setProjectList.bind(this);
-    this.state = {
-      isLoaded: false,
-      projects: [],
-      isMount: false,
-      queryStatus: 200,
-    };
-  }
+const ProjectPage = (props) => {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [projects, setProjects] = React.useState([]);
 
-  async componentDidMount() {
-    await this.setState({ isMount: true });
-    this.getAllProjects();
-  }
+  const setTagsForProjects = (fetchedProjects) => {
+    let newProjects = [];
+    const promises = fetchedProjects.map((fetchedProject) => {
+      let newProject = fetchedProject;
+      return BaseActions.getFromStaging(`projects/${fetchedProject.name}/job_listing`)
+        .then((result) => {
+          if (result && result.jobs) {
+            const tags = CommonActions.getTagsFromJob(result.jobs);
+            newProject.tags = tags;
+            return newProject;
+          }
+        });
+    });
 
-  componentWillUnmount() {
-    this.setState({ isMount: false });
-  }
+    return Promise.all(promises).then((result) => {
+      return result;
+    });
+  };
 
-  async getAllProjects() {
-    const [queryStatus, apiProjects] = await ProjectActions.getProjects();
-    // use is mount for async as when it returns may have been unmounted
-    const { isMount } = this.state;
-    if (isMount) {
-      if (apiProjects != null) {
-        this.setState({ projects: apiProjects, isLoaded: true, queryStatus });
-      } else {
-        this.setState({ projects: [], isLoaded: true, queryStatus });
+  const reload = () => {
+    setIsLoading(true);
+
+    BaseActions.get('projects').then((result) => {
+      if (result != null) {
+        result.sort((a, b) => {
+          const dateA = new Date(a.created_at);
+          const dateB = new Date(b.created_at);
+
+          return dateB - dateA;
+        });
+        setTagsForProjects(result).then((updatedProjects) => {
+          setProjects(updatedProjects);
+          setIsLoading(false);
+        });
       }
-    }
-  }
+    }).catch(() => {
+      setIsLoading(false);
+    });
+  };
 
-  setProjectList() {
-    const { projects, queryStatus } = this.state;
-    if (queryStatus !== 200) {
-      return <ErrorMessage errorCode={queryStatus} />;
+  React.useEffect(() => {
+    reload();
+  }, []);
+
+  const renderProjects = () => {
+    if (isLoading) {
+      return <Loading loadingMessage="We are currently loading your projects" />;
     }
     if (projects.length === 0) {
       return <p>No projects available</p>;
     }
-    return ProjectActions.getAllProjects(projects);
-  }
+    return projects.map((project) => {
+      const newProject = project;
+      const key = newProject.name.concat('-').concat(newProject.created_at);
+      const formattedDate = moment(newProject.created_at)
+        .format('YYYY-MM-DD HH:mm')
+        .toString();
+      newProject.created_at = formattedDate;
+      return (
+        <ProjectSummary
+          key={key}
+          project={newProject}
+          selectProject={props.selectProject}
+          changePage={props.changePage}
+        />
+      );
+    });
+  };
 
-  render() {
-    const { isLoaded, projects, queryStatus } = this.state;
-    let projectList;
-    if (isLoaded) {
-      if (queryStatus === 401) {
-        return ProjectActions.redirect('/login');
-      }
-      projectList = this.setProjectList();
-    } else {
-      projectList = <Loading loadingMessage="We are currently loading your projects" />;
-    }
-
-    return (
+  return (
+    <div>
+      <CommonHeader isProject />
       <div className="project-page-container">
-        <div className="header">
-          <Toolbar />
-          <Header pageTitle="Projects" numProjects={projects.length} />
-        </div>
-        <div className="projects-body-container">
-          {projectList}
-        </div>
+        <h1>Project Directory</h1>
+        <div className="projects-body-container">{renderProjects()}</div>
       </div>
-    );
-  }
-}
+      <CommonFooter />
+    </div>
+  );
+};
+
 
 ProjectPage.propTypes = {
-  isMount: PropTypes.bool,
-  isLoaded: PropTypes.bool,
-  queryStatus: PropTypes.number,
-  projects: PropTypes.array,
+  selectProject: PropTypes.func,
+  changePage: PropTypes.func,
 };
 
 ProjectPage.defaultProps = {
-  isMount: false,
-  isLoaded: false,
-  queryStatus: 200,
-  projects: [],
+  selectProject: () => null,
+  changePage: () => null,
 };
 
 export default ProjectPage;

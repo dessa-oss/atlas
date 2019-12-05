@@ -9,7 +9,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class LocalShellJobDeployment(object):
 
     def __init__(self, job_name, job, job_source_bundle):
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import config_manager
         from foundations_contrib.job_bundler import JobBundler
 
         self._config = {}
@@ -71,13 +71,19 @@ class LocalShellJobDeployment(object):
         import glob
         from foundations_contrib.change_directory import ChangeDirectory
         from foundations_internal.serializer import deserialize_from_file
+        import os
 
         self._job_bundler.unbundle()
+
+        environment = dict(os.environ)
+
+        if 'PYTHONPATH' in environment:
+            del environment['PYTHONPATH']
 
         with ChangeDirectory(self._job_name):
             script = './run.sh'
             args = self._command_in_shell_command(script)
-            subprocess.call(args)
+            subprocess.call(args, env=environment)
 
         results = glob.glob(self._job_name + '/*.pkl')
         if results:

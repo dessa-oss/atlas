@@ -1,0 +1,173 @@
+.settings-page-container {
+  margin-left: 30px;
+  width: 70%;
+  height: 100%;
+}
+
+.settings-title {
+  color: $color-dark-blue;
+  display: inline-block;
+  font-size: 16px;
+  margin: 0px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.settings-user-search-container {
+  display: inline-block;
+  width: 55%;
+  vertical-align: top;
+  margin-top: 10px;
+
+}
+
+.settings-user-search {
+  margin-left: 20px;
+  height: 24px;
+  width: calc(90% - 5px - #{$magnifying-glass-size});
+  padding-left: 5px;
+}
+
+.settings-user-search-magnifying-glass {
+  border-color: $color-9c-grey;
+  display: inline-block;
+  position: relative;
+  left: -40px;
+  top: -3px;
+}
+.settings-user-search-magnifying-glass::before {
+  background: $color-9c-grey;
+}
+
+.settings-add-user-container {
+  width: calc(45% - 5px);
+  display: inline-block;
+  margin-left: 5px;
+  vertical-align: top;
+  margin-top: 10px;
+  button {
+    width: 120px;
+    height: 30px;
+    font-size: 12px;
+  }
+}
+
+.settings-user-button-container {
+  height: 50px;
+  margin-top: 20px;
+  background: white;
+  border: solid 1px #dcdcdc;
+  border-bottom: none;
+  width: 100%;
+}
+
+.settings-user-container,
+.settings-notifications-container {
+  background-color: $color-background;
+  border: $border-width solid $color-border-bottom;
+  width: calc(100% + #{$border-width} * 2);
+  height: calc(35% - 20px);
+  min-height: 200px;
+  overflow-y: scroll;
+
+  .container-users-empty {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+  }
+}
+
+.settings-user-column-container,
+.settings-notifications-column-container {
+  p {
+    min-height: 25px;
+    margin: 0px;
+    vertical-align: top;
+    text-align: center;
+    padding-top: 10px;
+    font-size: 13px;
+  }
+}
+.settings-user-column-container {
+  p:nth-of-type(1) {
+    width: calc(30% - #{$border-width});
+    border-right: $border-width solid $color-border-bottom;
+  }
+  p:nth-of-type(2) {
+    width: calc(15% - #{$border-width});
+    border-right: $border-width solid $color-border-bottom;
+  }
+  p:nth-of-type(3) {
+    width: calc(30% - #{$border-width});
+    border-right: $border-width solid $color-border-bottom;
+  }
+  p:nth-of-type(4) {
+    width: calc(15% - #{$border-width});
+    border-right: $border-width solid $color-border-bottom;
+  }
+  p:nth-of-type(5) {
+    width: 10%;
+    min-width: 10%;
+  }
+}
+
+.settings-user-container {
+  .table {
+    height: 100%;
+    max-height: calc(100% - 50px - 29px);
+    overflow: hidden;
+  }
+
+  .select-frequency {
+    width: 100%;
+    border: none;
+    background-color: white;
+    height: 100%;
+    padding: 0px;
+    padding-left: 15px;
+    outline: none;
+  }
+}
+
+.settings-user-column,
+.settings-notifications-column {
+  display: inline-block;
+  background-color: $color-light-blue;
+  color: $color-background;
+}
+
+.settings-user-rows,
+.settings-notifications-rows {
+}
+
+.settings-user-rows {
+  height: calc(100% - 35px - 70px);
+}
+
+.settings-notifications-rows {
+  height: calc(100% - 35px);
+}
+
+.settings-user-rows > div,
+.settings-notifications-rows > div {
+  border-bottom: $border-width solid $color-border-bottom;
+}
+
+.settings-notifications-column-container {
+  p:nth-of-type(1) {
+    width: calc(30% - #{$border-width});
+    border-right: $border-width solid $color-border-bottom;
+  }
+  p:nth-of-type(2) {
+    width: calc(60% - #{$border-width});
+    border-right: $border-width solid $color-border-bottom;
+  }
+  p:nth-of-type(3) {
+    width: 10%;
+    min-width: 10%;
+  }
+}
+
+.settings-loading-users {
+  margin-left: 20px;
+}

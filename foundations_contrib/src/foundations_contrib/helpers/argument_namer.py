@@ -37,7 +37,7 @@ class ArgumentNamer(object):
             elif argument_index < len(self._arguments):
                 result.append((argument_name, self._arguments[argument_index]))
                 argument_index += 1
-            else:
+            elif defaults.get(argument_name, False):
                 result.append((argument_name, defaults[argument_name]))
             filled_arguments.add(argument_name)
 

@@ -5,11 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
 from foundations_contrib.helpers.argument_namer import ArgumentNamer
+from foundations_spec import *
 
-
-class TestArgumentNamer(unittest.TestCase):
+class TestArgumentNamer(Spec):
 
     def test_function_no_arguments(self):
         def function_no_arguments():
@@ -144,12 +143,32 @@ class TestArgumentNamer(unittest.TestCase):
     def test_function_with_instance_and_args(self):
         namer = ArgumentNamer(self._function_with_instance_and_args, (5,), {})
         self.assertEqual([('self', self), ('a', 5)], namer.name_arguments())
+    
+    def test_argument_namer_handles_self_in_class_init(self):
+        namer = ArgumentNamer(self.TestClass, (), {})
+        self.assertEqual([], namer.name_arguments())
+    
+    def test_argument_namer_handles_self_in_class_init_that_takes_args(self):
+        namer = ArgumentNamer(self.TestClassWithArgs, (), self._fake_keyword_args)
+        self.assertEqual(list(self._fake_keyword_args.items()), namer.name_arguments())
 
     def _function_with_instance(self):
         pass
 
     def _function_with_instance_and_args(self, a):
         pass
+    class TestClass(object):
+
+        def __init__(self):
+            pass
+    
+    @let
+    def _fake_keyword_args(self):
+        return self.faker.pydict()
+    class TestClassWithArgs(object):
+
+        def __init__(self, **kwargs):
+            pass
 
     def _assert_list_contains_items(self, expected, result):
         has_items = True

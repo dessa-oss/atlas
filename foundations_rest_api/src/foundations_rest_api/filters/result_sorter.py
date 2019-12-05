@@ -42,4 +42,12 @@ class ResultSorter(APIFilterMixin):
 
     def _sort_by_column_data(self, result, column_data):
         descending, column_name = column_data
-        result.sort(reverse=descending, key=lambda item: getattr(item, column_name))
+        result.sort(reverse=descending, key=lambda item: self._custom_sorter_helper(item, column_name))
+
+    def _custom_sorter_helper(self, item, column_name):
+        val = getattr(item, column_name)
+        if val:
+            return val
+        else:
+            infinite_string = 'ZZZZ'
+            return infinite_string + getattr(item, 'job_id')

@@ -1,0 +1,49 @@
+---
+
+- name: Upload files needed for the installation
+  hosts: localhost
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Copy python and yaml files
+      copy: src={{ item.src }} dest={{ item.dest }}
+      with_items:
+        - { src: 'local_scheduler_instance/gen_default_config.py', dest: '/home/ubuntu' }
+        - { src: 'local_scheduler_instance/manifest.yaml', dest: '/home/ubuntu' }
+
+- name: Login and Pull Docker Images
+  hosts: localhost
+  become: yes
+  tasks:
+    - name : Generating Configuration Files
+      shell: python3 /home/ubuntu/gen_default_config.py
+
+    - name : Login Docker
+      shell: docker login docker.shehanigans.net -u {{ NEXUS_USER }} -p {{ NEXUS_PASSWORD }}
+    
+    - name : Pull Orbit Worker Images
+      shell: docker pull docker.shehanigans.net/orbit-team-dev/worker:latest
+    - name : Retag Orbit Worker Images
+      shell: docker tag docker.shehanigans.net/orbit-team-dev/worker:latest orbit/worker:latest
+    - name : Retag Orbit worker Image to us.gcr.io
+      shell: docker tag docker.shehanigans.net/orbit-team-dev/worker:latest us.gcr.io/orbit-team-dev/worker:latest:latest
+      
+    - name : Pull Atlas Worker Images
+      shell: docker pull docker.shehanigans.net/atlas-ce/worker:latest
+    - name : Retag Atlas Worker Images
+      shell: docker pull docker.shehanigans.net/atlas-ce/worker:latest atlas-ce/worker:latest
+
+    - name : Pull Scheduler
+      shell: docker pull docker.shehanigans.net/orbit-team-dev/scheduler:latest
+
+    - name : Pull Tracker
+      shell: docker pull docker.shehanigans.net/orbit-team-dev/tracker:latest
+
+    - name : Pull Orbit REST API
+      shell: docker pull docker.shehanigans.net/orbit-team-dev/orbit-rest-api
+
+    - name : Pull Atlas REST API
+      shell: docker pull docker.shehanigans.net/orbit-team-dev/rest-api
+
+    - name: Pull Orbit GUI
+      shell: docker pull docker.shehanigans.net/orbit-team-dev/orbit-gui

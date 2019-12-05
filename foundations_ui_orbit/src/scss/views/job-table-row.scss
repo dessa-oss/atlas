@@ -1,0 +1,19 @@
+.job-table-row{
+  margin: 0px;
+  padding: 0px;
+  height: $row-height;
+  white-space: nowrap;
+  background: $color-white;
+
+  &:last-child() {
+    border-bottom: 1px solid $color-border-bottom;
+  }
+
+  // &:hover {
+  //   @for $i from 0 through 100 {
+  //     .row-#{$i} {
+  //       background: $color-background-grey;
+  //     }
+  //   }
+  // }
+}

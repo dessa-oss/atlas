@@ -1,0 +1,39 @@
+.table-section-header{
+  display: inline-block;
+  vertical-align: middle;
+  width: $table-section-width;
+  height: 36px;
+
+  .arrow-container {
+    width: 36px;
+    height: 36px;
+    float: right;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    cursor: pointer;
+  }
+}
+
+.blue-header {
+  text-align: center;
+  background-color: $color-medium-blue;
+  height: 36px;
+  width: 100%;
+}
+
+.blue-header-text {
+  color: $color-white;
+  text-transform: uppercase;
+  margin: 0px;
+  line-height: 36px;
+}
+
+.blue-header-arrow {
+  border-top: 6px solid $color-white;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  position: absolute;
+  top: 15px;
+  right: 12px;
+}
