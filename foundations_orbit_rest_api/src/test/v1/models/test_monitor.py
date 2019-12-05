@@ -45,6 +45,7 @@ class TestMonitor(Spec):
                 'project': 'so',
                 'job_id': self.job_id,
                 'user': 'pairing',
+                'creation_time': 1571931153.0313132,
                 'start_time': 1571931153.0313132,
                 'completed_time': 1571931153.6426458,
                 'state': 'completed'
@@ -53,6 +54,7 @@ class TestMonitor(Spec):
                 'project': 'so',
                 'job_id': self.job_id_2,
                 'user': 'pairing',
+                'creation_time': 1571931156.550436,
                 'start_time': 1571931156.550436,
                 'state': 'running'
             }
@@ -62,38 +64,40 @@ class TestMonitor(Spec):
         return [
             {
                 'project_name': 'so',
-                'job_id': self.job_id,
-                'user': 'pairing',
-                'job_parameters': {},
-                'input_params': [],
-                'output_metrics': [],
-                'status': 'completed',
-                'start_time': 1571931153.0313132,
-                'completed_time': 1571931153.6426458,
-                'tags': {}
-            }
-            , {
-                'project_name': 'so',
                 'job_id': self.job_id_2,
                 'user': 'pairing',
                 'job_parameters': {},
                 'input_params': [],
                 'output_metrics': [],
                 'status': 'running',
+                'creation_time': 1571931156.550436,
                 'start_time': 1571931156.550436,
                 'completed_time': None,
+                'tags': {}
+            },
+            {
+                'project_name': 'so',
+                'job_id': self.job_id,
+                'user': 'pairing',
+                'job_parameters': {},
+                'input_params': [],
+                'output_metrics': [],
+                'status': 'completed',
+                'creation_time': 1571931153.0313132,
+                'start_time': 1571931153.0313132,
+                'completed_time': 1571931153.6426458,
                 'tags': {}
             }
         ]
     
     def test_jobs_ids_from_monitors_dictionary_returns_none_if_monitor_does_not_exist(self):
-        promise = Monitor.job_ids_from_monitors_dictionary(self.project_name, self.monitor_name)
+        promise = Monitor.job_ids_from_monitors_dictionary(self.project_name, self.monitor_name, 'desc')
         self.assertEqual(None, promise.evaluate())
 
     def test_jobs_ids_from_monitors_dictionary_returns_data_from_redis(self):
         self._create_job_information_for_monitor(self.project_name, self.monitor_name, self._data_to_set())
 
-        promise = Monitor.job_ids_from_monitors_dictionary(self.project_name, self.monitor_name)
+        promise = Monitor.job_ids_from_monitors_dictionary(self.project_name, self.monitor_name, 'desc')
 
         expected_result = self._expected_data()
         expected_result = sorted(expected_result, key=lambda data: data['job_id'])
@@ -108,10 +112,16 @@ class TestMonitor(Spec):
         delete_promise = Monitor.delete_job(self.project_name, self.monitor_name, self.job_id)
         delete_promise.evaluate()
 
-        promise = Monitor.job_ids_from_monitors_dictionary(self.project_name, self.monitor_name)
+        promise = Monitor.job_ids_from_monitors_dictionary(self.project_name, self.monitor_name, 'desc')
 
         expected_result = self._expected_data()
-        del expected_result[0]
+        index_to_delete = 0
+        for index, result in enumerate(expected_result):
+            if result['job_id'] == self.job_id:
+                index_to_delete = index
+                break
+
+        del expected_result[index_to_delete]
 
         self.assertEqual(expected_result, promise.evaluate())
 

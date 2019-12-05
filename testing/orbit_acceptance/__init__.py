@@ -5,9 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import foundations
+from orbit_acceptance.config import setup_orbit_home_config
+setup_orbit_home_config()
 
-from orbit_acceptance.test_orbit_deploy_model_via_cli import TestOrbitDeployModelViaCli
 from orbit_acceptance.test_data_validation import TestDataValidation
 from orbit_acceptance.test_data_contract_summary import TestDataContractSummary
 from orbit_acceptance.test_data_contract_with_monitor import TestDataContractWithMonitor
+from orbit_acceptance.test_schedule_monitor_package_via_cli import TestScheduleMonitorPackageViaCli
+from orbit_acceptance.test_scheduler_monitor_package_via_rest_api import TestSchedulerMonitorPackageViaRESTAPI

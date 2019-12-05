@@ -10,8 +10,8 @@ Google Cloud Storage, Requests, SQLite Dict, Tensorboard, TensorFlow,
 boto3, Docker, Kubectl, OpenSSL, Kubernetes, Freezegun, Python
 Dateutil, long, ansi-html, aria-query, aws-sign, axobject-query, bser,
 caseless, detect-libc, doctrine, eslint-visitor-keys, fb-watchman,
-forever-agent, oauth-sign, rxjs, spdx-correct, tslib, and
-tunnel-agent. 
+forever-agent, oauth-sign, rxjs, spdx-correct, tslib, tunnel-agent, 
+and Keycloak. 
 
 The file LICENSE-BSD.txt contains the BSD license, which applies to
 the following software packages: bzip2, Click, Flask, itsdangerous,

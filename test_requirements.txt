@@ -1,6 +1,0 @@
--r ./dev_requirements.txt
-mock==2.0.0
-Faker==1.0.0
-ifaddr==0.1.6
-twine==1.13.0
-beautifulsoup4==4.8.0

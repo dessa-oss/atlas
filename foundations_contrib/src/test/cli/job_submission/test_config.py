@@ -48,9 +48,8 @@ class TestJobSubmissionConfig(Spec):
         load(self.config_name)
         self.print_mock.assert_not_called()
 
-    @quarantine
     def test_loads_config_into_config_manager_when_config_present(self):
-        from foundations_scheduler_plugin.config.scheduler import translate
+        from foundations_local_docker_scheduler_plugin.config.scheduler import translate
 
         self._set_up_config()
         load(self.config_name)

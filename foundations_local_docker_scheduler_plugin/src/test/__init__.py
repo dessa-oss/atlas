@@ -4,6 +4,5 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
-
 from test.test_bundle_deployment import TestBundleDeployment
 from test.test_cron_job_scheduler import TestCronJobScheduler

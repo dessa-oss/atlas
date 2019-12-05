@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 from foundations.local_run import *
+import fakeredis
 import sys
 
 class TestSetDefaultEnvironment(Spec):
@@ -118,6 +119,8 @@ class TestSetDefaultEnvironment(Spec):
         self.mock_failed_job_klass.return_when(self.mock_failed_job, self.mock_message_router, self.pipeline_context, self.exception_data)
 
         self.mock_config_listing_klass.return_when(self.mock_config_listing, 'execution')
+
+        self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
 
         sys.excepthook = sys.__excepthook__
 

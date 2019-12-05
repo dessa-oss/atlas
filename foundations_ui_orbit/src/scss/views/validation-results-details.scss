@@ -64,6 +64,7 @@
       width: 45%;
       display: flex;
       align-items: center;
+      flex-direction: column;
 
       .empty-overview-graph-container {
         width: 100%;
@@ -85,6 +86,21 @@
 
       .overview-graph-stats-center {
         width: 80%;
+      }
+
+      .attribute-data-toggle-container {
+        display: flex;
+        align-items: center;
+
+        span {
+          font-size: inherit;
+          color: rgb(130, 130, 130);
+        }
+        label {
+          display: inline-block;
+          margin-left: 15px;
+          margin-bottom: 0;
+        }
       }
 
       .attribute-select {

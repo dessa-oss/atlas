@@ -3,6 +3,7 @@
 exports[`Shallow Renders Job Column Header 1`] = `
 <div
   className="job-column-header"
+  data-class=""
 >
   <div
     className=""

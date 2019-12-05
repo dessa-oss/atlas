@@ -17,8 +17,9 @@ class MonitorJobsController(object):
 
         project_name = self.params.pop('project_name')
         monitor_name = self.params.pop('monitor_name')
+        sort_kind = self.params.get('sort', 'desc')
 
-        response_body = Monitor.job_ids_from_monitors_dictionary(project_name, monitor_name)
+        response_body = Monitor.job_ids_from_monitors_dictionary(project_name, monitor_name, sort_kind)
 
         failure_response_data = {
             'project_name': project_name,

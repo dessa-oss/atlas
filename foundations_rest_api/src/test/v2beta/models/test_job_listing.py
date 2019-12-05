@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
+
 from foundations_spec import *
 from mock import patch
 from foundations_rest_api.v2beta.models.job import Job
@@ -27,14 +28,13 @@ class TestJobListingV2(Spec):
 
     @set_up
     def set_up(self):
+        import fakeredis
         from foundations_internal.pipeline import Pipeline
         from foundations_internal.pipeline_context import PipelineContext
-        from foundations_contrib.global_state import redis_connection
-
-        redis_connection.flushall()
 
         self._pipeline_context = PipelineContext()
         self._pipeline = Pipeline(self._pipeline_context)
+        self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
 
     def test_has_job_id(self):
         from uuid import uuid4

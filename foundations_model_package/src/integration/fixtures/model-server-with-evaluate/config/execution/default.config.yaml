@@ -1,2 +1,0 @@
-results_config: {archive_end_point: /archive, artifact_path: '/artifacts'}
-cache_config: {}

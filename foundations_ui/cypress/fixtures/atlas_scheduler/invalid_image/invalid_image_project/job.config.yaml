@@ -1,0 +1,2 @@
+worker:
+        image: invalid-repo/python

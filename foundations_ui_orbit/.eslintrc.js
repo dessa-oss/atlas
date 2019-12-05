@@ -10,6 +10,14 @@ module.exports = {
       jsx: true
     }
   },
+  plugins: [
+    "react-hooks"
+  ],
+  parserOptions: {
+    "ecmaFeatures": {
+        "jsx": true
+    }
+  },
   rules: {
     "class-methods-use-this": 0,
     "no-unused-vars": 1,

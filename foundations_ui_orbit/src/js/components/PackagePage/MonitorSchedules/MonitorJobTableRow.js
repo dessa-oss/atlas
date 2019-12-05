@@ -31,16 +31,16 @@ class MonitorJobTableRow extends Component {
   render() {
     const {
       status,
-      launched,
-      duration,
+      completed,
+      started,
       jobID
     } = this.props;
 
     const selectedClass = this.isSelectedRow() ? "selected-row" : "";
-    const formattedLaunchedTime = launched ? moment.unix(launched).format("YYYY-MM-DD HH:mm:ss") : "Not available";
-    const launchTime = moment(launched);
-    const endTime = moment(duration);
-    const timeDiff = duration ? `${endTime.diff(launchTime)}s` : "Not available";
+    const formattedLaunchedTime = completed ? moment.unix(completed).format("YYYY-MM-DD HH:mm:ss") : "Not available";
+    const launchTime = moment(started);
+    const endTime = moment(completed);
+    const timeDiff = completed ? `${endTime.diff(launchTime)}s` : "Not available";
 
     function addStatus(rowStatus) {
       if (rowStatus === "completed") {
@@ -73,8 +73,8 @@ class MonitorJobTableRow extends Component {
 MonitorJobTableRow.propTypes = {
   jobID: PropTypes.string,
   status: PropTypes.string,
-  launched: PropTypes.number,
-  duration: PropTypes.number,
+  completed: PropTypes.number,
+  started: PropTypes.number,
   onSelect: PropTypes.func,
   selectedRows: PropTypes.object,
   onClickLogs: PropTypes.func
@@ -83,8 +83,8 @@ MonitorJobTableRow.propTypes = {
 MonitorJobTableRow.defaultProps = {
   jobID: "Invalid job ID",
   status: "Missing",
-  launched: "Missing",
-  duration: "Missing",
+  completed: "Missing",
+  started: "Missing",
   onSelect: () => {},
   selectedRows: new Set(),
   onClickLogs: () => {}

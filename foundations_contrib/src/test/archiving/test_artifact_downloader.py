@@ -67,8 +67,6 @@ class TestArtifactDownloader(Spec):
             'foundations_scheduler_core/w',
             'foundations_scheduler_deployment/v',
             'foundations_scheduler_deployment/w',
-            'foundations_scheduler_plugin/v',
-            'foundations_scheduler_plugin/w',
             'foundations_ssh/v',
             'foundations_ssh/w',
         ]

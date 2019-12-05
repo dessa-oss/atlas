@@ -29,7 +29,10 @@ def bin_current_values_categorical(column_values, ref_column_bin_stats):
     current_category_percentages['other_bins'] = column_value_counts[current_unique_values_not_in_ref].sum()
     remaining_values_in_current_unique_values = set(current_unique_values) - set(current_unique_values_not_in_ref)
 
-    dict_of_remaining_current_category_pct =  column_value_counts[remaining_values_in_current_unique_values].to_dict()
+    if remaining_values_in_current_unique_values:
+        dict_of_remaining_current_category_pct =  column_value_counts.loc[remaining_values_in_current_unique_values].to_dict()
+    else:
+        dict_of_remaining_current_category_pct = {}
     current_category_percentages = {**dict_of_remaining_current_category_pct, **current_category_percentages}
 
     return current_category_percentages
@@ -82,7 +85,7 @@ def distribution_check(distribution_check_config, column_names, bin_stats, curre
                 ref_bin_percentages.append(ref_value_percentage)
                 current_bin_percentages.append(current_value_percentage)
         else:
-            current_values = current_df[col].copy()
+            current_values = current_df[col]
             n_current_vals = len(current_values)
             dist_check_results[col] = {}
             # bin the col in current_df using edges from reference
@@ -92,7 +95,6 @@ def distribution_check(distribution_check_config, column_names, bin_stats, curre
             ref_bin_stats = bin_stats[col]
 
             if ref_bin_stats:
-                print(ref_bin_stats)
                 for bin in ref_bin_stats:
                     # special value
                     if 'upper_edge' in bin and bin['upper_edge'] is None:

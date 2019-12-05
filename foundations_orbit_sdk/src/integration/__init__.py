@@ -6,3 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from .test_track_production_metrics import TestTrackProductionMetrics
+from .test_data_contract import TestDataContract

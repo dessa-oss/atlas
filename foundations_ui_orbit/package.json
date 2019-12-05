@@ -57,6 +57,7 @@
     "react-select": "^2.4.3",
     "react-test-renderer": "^16.6.1",
     "react-testing-library": "^5.2.3",
+    "react-toggle": "^4.1.1",
     "reactstrap": "^8.0.0",
     "resolve": "1.8.1",
     "style-loader": "0.23.0",
@@ -143,6 +144,7 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react-hooks": "^2.3.0",
     "node-sass": "^4.10.0",
     "sass-loader": "^7.1.0"
   },

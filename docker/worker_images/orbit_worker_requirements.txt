@@ -1,6 +1,6 @@
 wheel
-request
-jsonschema
+requests==2.22.0
+jsonschema==3.0.2
 dill==0.2.8.2
 redis==3.3.11
 pandas==0.25.2

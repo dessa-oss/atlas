@@ -5,5 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 from test.test_connection_manager import TestConnectionManager
 from test.test_gcp_bucket import TestGCPBucket

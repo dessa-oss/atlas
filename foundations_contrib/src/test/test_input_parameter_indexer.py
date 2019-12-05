@@ -7,20 +7,19 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest, fakeredis
 from mock import Mock, patch, call
+from foundations_spec import *
 
 from foundations_contrib.input_parameter_indexer import InputParameterIndexer
 from foundations_contrib.input_parameter_formatter import InputParameterFormatter
 
-class TestInputParameterIndexer(unittest.TestCase):
-
+class TestInputParameterIndexer(Spec):
     def setUp(self):
-        from foundations_contrib.global_state import redis_connection
-
-        self._redis = redis_connection
+        fake_redis = fakeredis.FakeRedis()
+        self._redis = self.patch('foundations_contrib.global_state.redis_connection', fake_redis)
         self._redis.flushall()
 
     def _zadd_to_redis(self, project_name, timestamp, key):
-        self._redis.execute_command('ZADD', 'projects:{}:{}'.format(project_name, 'stage_time'), 'NX', timestamp, key)
+        self._redis.zadd('projects:{}:{}'.format(project_name, 'stage_time'), key, timestamp ,nx=True)
 
     def _del_from_redis(self, project_name):
         self._redis.delete('projects:{}:stage_time'.format(project_name))

@@ -90,6 +90,7 @@ dist
 **/htmlcov
 
 !foundations_ui/package.json
+!foundations_ui/cypress.json
 !foundations_ui_orbit/package.json
 !foundations_ui_orbit/package-lock.json
 !examples/example_configs/*.config.yaml
@@ -112,3 +113,16 @@ Pipfile*
 
 reference_data.pkl
 test_data_contract_with_monitor.pkl
+
+.coverage
+coverage_results/
+htmlcov/
+
+obfuscated_dist/*
+
+foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/logs/system.log
+foundations_ui/cypress/videos/*
+foundations_ui/cypress/screenshots/*
+foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/config/submission/scheduler.config.yaml
+foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/config/execution/default.config.yaml
+foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/job_data

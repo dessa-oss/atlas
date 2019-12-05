@@ -19,12 +19,12 @@ ReactDOM.render(
   <div className="App">
     <Router>
       <Switch>
-        <Route path="/projects/:name/deployment" component={NewDeployment} />
+        {/* <Route path="/projects/:name/deployment" component={NewDeployment} /> */}
         {/* <Route path="/performance" component={Performance} /> */}
         <Route path="/projects/:name/health" component={SystemHealth} />
-        <Route path="/projects/:name/timeline" component={Timeline} />
-        <Route path="/projects/:name/management" component={ModelManagement} />
-        <Route path="/projects/:name/settings" component={Settings} />
+        {/* <Route path="/projects/:name/timeline" component={Timeline} /> */}
+        {/* <Route path="/projects/:name/management" component={ModelManagement} /> */}
+        {/* <Route path="/projects/:name/settings" component={Settings} /> */}
         <Route path="/projects/:name/evaluation" component={ModelEvaluation} />
         <Route path="/projects/:name/schedules" component={MonitorSchedules} />
         <Route path="/projects" component={ProjectPage} />

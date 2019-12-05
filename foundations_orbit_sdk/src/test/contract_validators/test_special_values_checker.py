@@ -277,6 +277,193 @@ class TestSpecialValuesChecker(Spec):
         results = checker.validate(dataframe_to_validate)
         self.assertEqual(expected_check_results, results)
 
+    def test_special_values_checker_for_category_input_returns_expected_result_with_special_value_string_and_nan(self):
+
+        data = {
+            self.column_name: ["a", "b", "a", "e"] + [numpy.nan],
+            self.column_name_2: ["c", "d", "e", "e", "c"]
+        }
+
+        ref_data = {
+            self.column_name: ["a", "b", "a", "d", "d"],
+            self.column_name_2: ["c", "d", "d", "d"] + [numpy.nan]
+        }
+
+        ref_dataframe = pandas.DataFrame(ref_data, dtype='category')
+        test_dataframe = pandas.DataFrame(data, dtype='category')
+
+        checker = SpecialValuesChecker([self.column_name, self.column_name_2], {self.column_name: 'category',
+                                                                                self.column_name_2: 'category'},
+                                       self.reference_categorical_attributes_two_columns)
+
+        expected_check_results = {
+            self.column_name: {
+                "e": {
+                    'percentage_diff': 0.2,
+                    'ref_percentage': 0,
+                    'current_percentage': 0.2,
+                    'passed': False
+                },
+                "f": {
+                    'percentage_diff': 0,
+                    'ref_percentage': 0,
+                    'current_percentage': 0,
+                    'passed': True
+                }
+            },
+            self.column_name_2: {
+                "e": {
+                    'percentage_diff': 0.4,
+                    'ref_percentage': 0,
+                    'current_percentage': 0.4,
+                    'passed': False
+                },
+                numpy.nan: {
+                    'percentage_diff': 0.2,
+                    'ref_percentage': 0.2,
+                    'current_percentage': 0,
+                    'passed': False
+                }
+            }
+        }
+
+        checker.configure(attributes=[self.column_name], thresholds={"e": 0.1, "f": 0.1})
+        checker.configure(attributes=[self.column_name_2], thresholds={"e": 0.1, numpy.nan: 0.1})
+
+        checker.create_and_set_special_value_percentages(ref_dataframe)
+        results = checker.validate(test_dataframe)
+        self.assertEqual(expected_check_results, results)
+
+
+    def test_special_values_checker_for_category_input_returns_expected_result_with_special_value_string(self):
+        data = {
+            self.column_name: ["a", "b", "a", "e"] + [numpy.nan],
+            self.column_name_2: ["c", "d", "e", "e"] + [numpy.nan]
+        }
+
+        ref_data = {
+            self.column_name: ["a", "b", "a", "d"] + [numpy.nan],
+            self.column_name_2: ["c", "d", "d", "d"] + [numpy.nan]
+        }
+
+        ref_dataframe = pandas.DataFrame(ref_data, dtype='category')
+        test_dataframe = pandas.DataFrame(data, dtype='category')
+
+        checker = SpecialValuesChecker([self.column_name, self.column_name_2], {self.column_name: 'category',
+                                                                                self.column_name_2: 'category'},
+                                       self.reference_categorical_attributes_two_columns)
+
+        expected_check_results = {
+            self.column_name: {
+              "e": {
+                    'percentage_diff': 0.2,
+                    'ref_percentage': 0,
+                    'current_percentage': 0.2,
+                    'passed': False
+                }
+            },
+            self.column_name_2: {
+                "e": {
+                    'percentage_diff': 0.4,
+                    'ref_percentage': 0,
+                    'current_percentage': 0.4,
+                    'passed': False
+                }
+            }
+        }
+
+        checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={"e": 0.1})
+        checker.create_and_set_special_value_percentages(ref_dataframe)
+        results = checker.validate(test_dataframe)
+        self.assertEqual(expected_check_results, results)
+
+    def test_special_values_checker_for_int_input_returns_expected_result_with_special_value_string(self):
+        data = {
+            self.column_name: [1, 2, 3, 4, 5],
+            self.column_name_2: [5, 6, 7, 8] + [numpy.nan]
+        }
+
+        ref_data = {
+            self.column_name: [1, 3, 5, 7, 9],
+            self.column_name_2: [9, 11, 13, 15] + [numpy.nan]
+        }
+
+        ref_dataframe = pandas.DataFrame(ref_data, dtype='category')
+        test_dataframe = pandas.DataFrame(data, dtype='category')
+
+        checker = SpecialValuesChecker([self.column_name, self.column_name_2], {self.column_name: 'float',
+                                                                                self.column_name_2: 'float'},
+                                       self.reference_categorical_attributes_two_columns)
+
+        expected_check_results = {
+            self.column_name: {
+              "e": {
+                    'percentage_diff': 0,
+                    'ref_percentage': 0,
+                    'current_percentage': 0,
+                    'passed': True
+                }
+            },
+            self.column_name_2: {
+                numpy.nan: {
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.2,
+                    'current_percentage': 0.2,
+                    'passed': True
+                }
+            }
+        }
+
+        checker.configure(attributes=[self.column_name], thresholds={"e": 0.1,})
+        checker.configure(attributes=[self.column_name_2], thresholds={numpy.nan: 0.1})
+
+        checker.create_and_set_special_value_percentages(ref_dataframe)
+        results = checker.validate(test_dataframe)
+        self.assertEqual(expected_check_results, results)
+
+
+    def test_special_values_checker_for_category_input_returns_expected_result_with_special_value_nan(self):
+        data = {
+            self.column_name: ["a", "b", "a", "e"] + [numpy.nan],
+            self.column_name_2: ["c", "d", "e"] + [numpy.nan, numpy.nan]
+        }
+
+        ref_data = {
+            self.column_name: ["a", "b", "a", "d"],
+            self.column_name_2: ["c", "d", "d", "d"]
+        }
+
+        ref_dataframe = pandas.DataFrame(ref_data, dtype='category')
+        test_dataframe = pandas.DataFrame(data, dtype='category')
+
+        checker = SpecialValuesChecker([self.column_name, self.column_name_2], {self.column_name: 'category',
+                                                                                self.column_name_2: 'category'},
+                                       self.reference_categorical_attributes_two_columns)
+
+        expected_check_results = {
+            self.column_name: {
+                numpy.nan: {
+                    'percentage_diff': 0.2,
+                    'ref_percentage': 0,
+                    'current_percentage': 0.2,
+                    'passed': False
+                }
+            },
+            self.column_name_2: {
+                numpy.nan: {
+                    'percentage_diff': 0.4,
+                    'ref_percentage': 0,
+                    'current_percentage': 0.4,
+                    'passed': False
+                }
+            }
+        }
+
+        checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.NAN: 0.1})
+        checker.create_and_set_special_value_percentages(ref_dataframe)
+        results = checker.validate(test_dataframe)
+        self.assertEqual(expected_check_results, results)
+
     def test_special_values_checker_for_bool_input_returns_expected_result(self):
         data = {
             self.column_name: [True, False, False] + [numpy.nan],
@@ -581,7 +768,6 @@ class TestSpecialValuesChecker(Spec):
         self.assertEqual(expected_check_results, results)
 
     def test_single_column_with_two_special_characters_produce_two_special_value_results(self):
-        special_values = [numpy.nan, -1]
         data = {
             self.column_name: [5, 10, 15, 7, 7, 6, 8, numpy.nan]
         }

@@ -102,7 +102,7 @@ class DataContract(object):
 
         self.special_value_test.exclude(attributes=attributes)# TODO change this to columns for consistency
         self.distribution_test.exclude(attributes=attributes)# TODO change this to columns for consistency
-        self.min_max_test.exclude(columns=attributes)
+        self.min_max_test.exclude(attributes=attributes)
 
     def _exclude_from_current_validation(self, attributes):
         if type(attributes) == str:
@@ -169,6 +169,7 @@ class DataContract(object):
 
         from foundations_orbit.report_formatter import ReportFormatter
         from foundations_orbit.utils.get_column_types import get_column_types
+        from foundations_contrib.utils import save_project_to_redis
 
         if not self._bin_stats:
             self.set_bin_stats()
@@ -205,6 +206,7 @@ class DataContract(object):
         self.summary.validate(dataframe_to_validate, report_formatter.formatted_report())
 
         try:
+            save_project_to_redis(project_name)
             self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, self.summary.serialized_output())
         except ConnectionError as e:
             self._log().warn('WARNING: Unable to connect to redis. Data contract results will not be saved')

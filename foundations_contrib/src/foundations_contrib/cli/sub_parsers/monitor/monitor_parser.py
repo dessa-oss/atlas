@@ -69,6 +69,10 @@ class MonitorParser(object):
 
             print(f'Unable to create monitor {name} in project {project_name}')
             sys.exit(f'Command failed with error: Could not connect to scheduler at {self._scheduler_url()}')
+        except Exception as e:
+            import sys
+            print(f'Unable to create monitor {name} in project {project_name}')
+            sys.exit(f'Command Failed: {e}')
 
     def _get_name_and_project_name_for_error(self, name, project_name, command):
         from os import path, getcwd

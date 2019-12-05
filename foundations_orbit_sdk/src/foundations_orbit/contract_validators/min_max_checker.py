@@ -66,7 +66,6 @@ class MinMaxChecker(object):
         self._columns_to_bounds_temp = {}
 
     def validate(self, dataframe_to_validate):
-
         if not self.columns_to_bounds or len(dataframe_to_validate) == 0:
             return {}
 
@@ -79,9 +78,6 @@ class MinMaxChecker(object):
         return data_to_return
 
     def _apply_min_max_test(self, column, dataframe_to_validate, bounds):
-
-        attribute_data_type = dataframe_to_validate[column].dtype.kind
-
         min_value = dataframe_to_validate[column].min()
         max_value = dataframe_to_validate[column].max()
 

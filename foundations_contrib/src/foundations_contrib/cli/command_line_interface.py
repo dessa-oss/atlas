@@ -42,7 +42,6 @@ class CommandLineInterface(object):
         self._initialize_info_parser()
         self._initialize_login_parser()
 
-
     def add_sub_parser(self, name, help=None):
         sub_parser = self._subparsers.add_parser(name, help=help)
         sub_parser.add_argument('--debug', action='store_true', help='Sets debug mode for the CLI')
@@ -94,8 +93,6 @@ class CommandLineInterface(object):
         serving_deploy_parser.set_defaults(function=self._model_serving_stop)
 
     def execute(self):
-        from foundations_contrib.global_state import log_manager
-
         self._arguments = self._argument_parser.parse_args(self._input_arguments)
         try:
             self._arguments.function()
@@ -176,7 +173,7 @@ class CommandLineInterface(object):
 
     def _format_environment_printout(self, environment_array):
         from tabulate import tabulate
-        return tabulate(environment_array, headers = ['env_name', 'env_path'])
+        return tabulate(environment_array, headers=['env_name', 'env_path'])
 
     def _create_environment_list(self, available_environments):
         import os
@@ -202,27 +199,3 @@ class CommandLineInterface(object):
 
         print(message)
         sys.exit(1)
-
-    def _deploy_model_package(self):
-        from foundations_contrib.global_state import user_token
-        import requests
-        import sys
-
-        response = requests.post('http://{}/v1/{}/'.format(self._arguments.domain, self._arguments.slug), json={'model_id': self._arguments.model_id}, headers={"Authorization": f"bearer {user_token()}"})
-        if response.status_code == 201:
-            print('Model package was deployed successfully to model server.')
-        else:
-            print('Failed to deploy model package to model server.', file=sys.stderr)
-            sys.exit(11)
-
-    def _kubernetes_model_serving_deploy(self):
-        from foundations_contrib.cli.model_package_server import deploy
-        from foundations_contrib.global_state import message_router
-
-        message_router.push_message('model_served', {'job_id': self._arguments.job_id, 'project_name': self._arguments.project_name})
-        deploy(self._arguments.project_name, self._arguments.job_id)
-
-    def _kubernetes_model_serving_destroy(self):
-        from foundations_contrib.cli.model_package_server import destroy
-        destroy(self._arguments.project_name, self._arguments.model_name)
-

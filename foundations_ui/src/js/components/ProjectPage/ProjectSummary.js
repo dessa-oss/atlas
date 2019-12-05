@@ -38,6 +38,7 @@ const ProjectSummary = (props) => {
   return (
     <div
       className="project-summary-container"
+      data-class="project-summary"
     >
       <div className="project-summary-info-container">
         <h2

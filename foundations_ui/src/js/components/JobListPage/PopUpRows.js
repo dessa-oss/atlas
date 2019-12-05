@@ -41,6 +41,7 @@ class PopUpRows extends React.Component {
     jobs.forEach((job) => {
       rows.push(<div
         className="job-cell pop-up-cell i--icon-open-link"
+        data-class="job-details-button"
         key={'job-pop-up'.concat(job.job_id)}
         role="button"
         aria-label="Close"

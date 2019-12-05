@@ -12,11 +12,7 @@ class JobColumnHeader extends Component {
       isStatus: this.props.isStatus,
       offsetDivClass: this.props.className,
       containerDivClass: this.props.containerClass,
-      toggleFilter: this.props.toggleFilter,
-      colType: this.props.colType,
-      isMetric: this.props.isMetric,
       mainHeader: this.props.mainHeader,
-      isFiltered: this.props.isFiltered,
       isSortedColumn: this.props.isSortedColumn,
       isAscending: this.props.isAscending,
       sortTable: this.props.sortTable,
@@ -29,7 +25,6 @@ class JobColumnHeader extends Component {
     this.setState(
       {
         title: nextProps.title,
-        isFiltered: nextProps.isFiltered,
         isSortedColumn: nextProps.isSortedColumn,
         isAscending: nextProps.isAscending,
         allJobsSelected: nextProps.allJobsSelected,
@@ -45,8 +40,8 @@ class JobColumnHeader extends Component {
 
   render() {
     const {
-      title, isStatus, offsetDivClass, containerDivClass, toggleFilter, colType, isMetric, isFiltered, isSortedColumn,
-      isAscending, selectAllJobs, allJobsSelected,
+      title, isStatus, offsetDivClass, containerDivClass, isSortedColumn,
+      isAscending, selectAllJobs, allJobsSelected, mainHeader,
     } = this.state;
     const headerClassName = JobListActions.getJobColumnHeaderH4Class(isStatus);
     let divClassName = JobListActions.getJobColumnHeaderDivClass(containerDivClass, isStatus);
@@ -87,10 +82,19 @@ class JobColumnHeader extends Component {
       );
     }
 
+    let dataClass = '';
+
+    if (mainHeader === 'Metrics') {
+      dataClass = 'metric-header';
+    } else if (mainHeader === 'Parameters') {
+      dataClass = 'param-header';
+    }
+
     return (
       <div
-        className={`${divClassName}`}
+        className={divClassName}
         ref={(c) => { this.headerContainer = c; }}
+        data-class={dataClass}
       >
         <div className={offsetDivClass}>
           <h4
@@ -116,7 +120,6 @@ JobColumnHeader.propTypes = {
   toggleFilter: PropTypes.func,
   colType: PropTypes.string,
   isMetric: PropTypes.bool,
-  isFiltered: PropTypes.bool,
   isSortedColumn: PropTypes.bool,
   isAscending: PropTypes.bool,
   sortTable: PropTypes.func,
@@ -133,7 +136,6 @@ JobColumnHeader.defaultProps = {
   toggleFilter: () => {},
   colType: 'string',
   isMetric: false,
-  isFiltered: false,
   isSortedColumn: false,
   isAscending: false,
   sortTable: () => {},

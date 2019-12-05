@@ -46,6 +46,7 @@ class InputMetricRow extends Component {
       <div
         role="presentation"
         className="job-table-row"
+        data-class="job-table-row"
         onClick={() => onMetricRowClick(job, key)}
         onKeyDown={() => onMetricRowClick(job, key)}
       >
