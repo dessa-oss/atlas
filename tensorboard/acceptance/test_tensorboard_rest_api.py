@@ -36,11 +36,11 @@ class TestTensorboardRestAPI(Spec, ContainerTestMixin):
         }
 
         with cd('docker/tensorboard_rest_api'):
-            run_command(f'./build_image.sh {self.repo} {self.tag}')
+            run_command(f'tensorboard/docker/tensorboard_rest_api/build_image.sh {self.repo} {self.tag}', cwd='../../..')
         super().set_up_container(self.API_IMAGE_NAME, name=self.API_CONTAINER_NAME, ports={5000: 5000}, volumes=volumes_binds)
 
         with cd('docker/tensorboard_server'):
-            run_command(f'./build_image.sh {self.repo} {self.tag}')
+            run_command(f'tensorboard/docker/tensorboard/build_image.sh {self.repo} {self.tag}', cwd='../../..')
         super().set_up_container(self.SERVER_IMAGE_NAME, name=self.SERVER_CONTAINER_NAME, ports={6006: 5959}, volumes=volumes_binds)
 
     @tear_down
