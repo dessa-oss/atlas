@@ -16,7 +16,7 @@ pipeline{
         }
       }
     }
-    stage('Foundations Install Test Requirements') {
+    stage('Foundations Install Requirements') {
       steps {
         container("python3") {
           dir('f9s') {

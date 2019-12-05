@@ -14,7 +14,7 @@ pipeline{
             }
         }
     }
-    stage('Foundations Install Test Requirements') {
+    stage('Foundations Install Requirements') {
       steps {
         container("python3") {
           sh "./ci_install_requirements.sh"
@@ -31,15 +31,15 @@ pipeline{
     stage('Build Orbit Team GUI and Rest API Images'){
       steps {
         container("python3"){
-          sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
-          sh "NEXUS_DOCKER_REGISTRY=docker-staging.shehanigans.net ./devops/build_scripts/gui_and_rest_apis/build_gui_orbit_team.sh"
+          sh 'docker login $NEXUS_DOCKER_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD'
+          sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./devops/build_scripts/gui_and_rest_apis/build_gui_orbit_team.sh"
         }
       }
     }
     stage('Push Orbit Team GUI and Rest API Images to Staging'){
       steps {
         container("python3"){
-          sh "NEXUS_DOCKER_REGISTRY=docker-staging.shehanigans.net ./devops/build_scripts/gui_and_rest_apis/push_gui_orbit_team_images.sh"
+          sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./devops/build_scripts/gui_and_rest_apis/push_gui_orbit_team_images.sh"
         }
       }
     }
