@@ -86,6 +86,8 @@ site/
 build
 dist
 **/.eggs/
+**/.coverage
+**/htmlcov
 
 !foundations_ui/package.json
 !foundations_ui_orbit/package.json
