@@ -21,7 +21,6 @@ pipeline{
         container("python3") {
           dir('f9s') {
             sh "./ci_install_requirements.sh"
-            sh 'export NEXUS_DOCKER_REGISTRY_STAGING=docker-staging.shehanigans.net'
           }
         }
       }
@@ -39,8 +38,8 @@ pipeline{
       steps {
         container("python3"){
           dir('f9s') {
-            sh 'docker login $NEXUS_DOCKER_REGISTRY_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD'
-            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_REGISTRY_STAGING ./devops/build_scripts/gui_and_rest_apis/build_gui_ce.sh"
+            sh 'docker login $NEXUS_DOCKER_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD'
+            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./devops/build_scripts/gui_and_rest_apis/build_gui_ce.sh"
           }
         }
       }
@@ -49,7 +48,7 @@ pipeline{
       steps {
         container("python3"){
           dir('f9s') {
-            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_REGISTRY_STAGING ./devops/build_scripts/gui_and_rest_apis/push_gui_atlas_ce_images.sh"
+            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./devops/build_scripts/gui_and_rest_apis/push_gui_atlas_ce_images.sh"
           }
         }
       }
@@ -58,8 +57,8 @@ pipeline{
       steps {
         container("python3"){
           dir('f9s') {
-            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_REGISTRY_STAGING ./tensorboard/docker/tensorboard_rest_api/build_image.sh"
-            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_REGISTRY_STAGING ./tensorboard/docker/tensorboard_server/build_image.sh"
+            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./tensorboard/docker/tensorboard_rest_api/build_image.sh"
+            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./tensorboard/docker/tensorboard_server/build_image.sh"
           }
         }
       }
@@ -68,13 +67,12 @@ pipeline{
       steps {
         container("python3"){
           dir('f9s') {
-            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_REGISTRY_STAGING ./tensorboard/docker/tensorboard_rest_api/push_image.sh"
-            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_REGISTRY_STAGING ./tensorboard/docker/tensorboard_server/push_image.sh"
+            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./tensorboard/docker/tensorboard_rest_api/push_image.sh"
+            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./tensorboard/docker/tensorboard_server/push_image.sh"
           }
         }
       }
     }
-    
     stage("Calculate Recovery Metrics") {
       steps {
         script {
@@ -95,29 +93,29 @@ pipeline{
       }
     }
   }
-  post {
-    always {
-      script {
-            customMetricsMap["jenkins_data"] = customMetrics
-      }
-      influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
-    }
-    failure {
-        script {
-            def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
-            def attachments = [
-                [
-                    pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
-                    text: output_logs,
-                    fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
-                    color: '#FF0000'
-                ]
-            ]
-            slackSend(channel: '#f9s-builds', attachments: attachments)
-        }
-    }
-    success {
-        slackSend color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.'
-    }
-  }
+  // post {
+  //   always {
+  //     script {
+  //           customMetricsMap["jenkins_data"] = customMetrics
+  //     }
+  //     influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
+  //   }
+  //   failure {
+  //       script {
+  //           def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
+  //           def attachments = [
+  //               [
+  //                   pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+  //                   text: output_logs,
+  //                   fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+  //                   color: '#FF0000'
+  //               ]
+  //           ]
+  //           slackSend(channel: '#f9s-builds', attachments: attachments)
+  //       }
+  //   }
+  //   success {
+  //       slackSend color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.'
+  //   }
+  // }
 }

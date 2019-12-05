@@ -1,44 +1,18 @@
-import docker 
+# Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+# Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+# Written by Susan Davis <s.davis@dessa.com>, 12 2019
+
 import os
-
-
-build_version = os.environ['docker_build_version']
-nexus_password = os.environ['NEXUS_PASSWORD']
-nexus_username = os.environ['NEXUS_USER']
-nexus_registry = os.environ.get('NEXUS_DOCKER_REGISTRY', 'docker.shehanigans.net')
-
-client = docker.from_env()
-client.login(username=nexus_username, password=nexus_password, registry=nexus_registry)
-
-
-# TODO Pull from single source (repeated for now to experiment with functionality)
-
-
-def build_worker_tags_for_local_development():
-    return ['orbit/worker', 'atlas-ce/worker', 'atlas-ce/worker-gpu']
-
-
-def build_worker_tags_for_release():
-    local_worker_tags = build_worker_tags_for_local_development()
-    return list(map(lambda worker: f'{nexus_registry}/{worker}:{build_version}', local_worker_tags))
-
-
-def push_image_with_tag(image_name, tag):
-    full_image_name=f'{nexus_registry}/{image_name}'
-    push_logs = client.images.push(repository=full_image_name, tag=tag, stream=True, decode=True)
-
-    for log_line in push_logs:
-        print(log_line)
-        if 'error' in log_line:
-            raise RuntimeError(log_line)
-
-
-def push_image_to_repository(image_name):
-    push_image_with_tag(image_name, tag=build_version)
-    push_image_with_tag(image_name, tag='latest')
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(sys.modules[__name__].__file__), "..")))
 
 
 if __name__ == '__main__':
+    from build_worker_images import  build_worker_tags_for_local_development
+    from helpers.docker_utils import push_image_to_repository
+    
     workers = build_worker_tags_for_local_development()
     for worker in workers:
+        # the push image will add the registry and build version
         push_image_to_repository(worker)

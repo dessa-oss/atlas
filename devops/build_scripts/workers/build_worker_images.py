@@ -1,15 +1,13 @@
-import docker
+# Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+# Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+# Written by Susan Davis <s.davis@dessa.com>, 12 2019
+
 import os
 import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(sys.modules[__name__].__file__), "..")))
 
-build_version = os.environ['docker_build_version']
 to_be_released = os.environ.get('RELEASED', False)
-
-
-def print_logs(logs):
-    for line in logs:
-        if 'stream' in line:
-            print(line['stream'].strip())
 
 
 def build_worker_tags_for_local_development():
@@ -17,14 +15,16 @@ def build_worker_tags_for_local_development():
 
 
 def build_worker_tags_for_release():
-    nexus_registry = os.environ['NEXUS_DOCKER_REGISTRY']
+    from helpers.docker_utils import build_version, nexus_registry
+
     local_worker_tags = build_worker_tags_for_local_development()
     return list(map(lambda worker: f'{nexus_registry}/{worker}:{build_version}', local_worker_tags))
 
 
 def build_worker_images():
+    from helpers.docker_utils import run_docker_build
+    
     worker_tags = build_worker_tags_for_release() if to_be_released else build_worker_tags_for_local_development()
-    client = docker.from_env()
     worker_file_path = './docker/worker_images/'
     non_gpu_dockerfile = 'worker_Dockerfile'
     gpu_dockerfile = 'worker_tensorflow_gpu_Dockerfile'
@@ -32,32 +32,8 @@ def build_worker_images():
     for worker_tag in worker_tags:
         dockerfile = gpu_dockerfile if 'gpu' in worker_tag else non_gpu_dockerfile
         print(f'Building {worker_tag} with dockerfile {dockerfile}')
-        if to_be_released:
-            latest_tag=f"{worker_tag.split(':')[:-1][0]}:latest"
-        else:
-            latest_tag=f"{worker_tag}:latest"
-        
-        try:
-            client = docker.APIClient(base_url='unix://var/run/docker.sock')
-            streamer = client.build(
-                path=worker_file_path,
-                tag=worker_tag,
-                dockerfile=dockerfile,
-                decode=True,
-                network_mode='host',
-                buildargs=None
-            )
-            print_logs(streamer)
-
-            print(f'Tagging image {worker_tag} to {latest_tag}')
-            image = client.tag(worker_tag, latest_tag)
-            if image == False:
-                sys.exit('Unable to tag image')
-            else:
-                print('Successfully tagged image')
-        except docker.errors.BuildError as ex:
-            print_logs(ex.build_log)
-            raise
+        latest_tag = f"{worker_tag.split(':')[:-1][0]}:latest" if to_be_released else f"{worker_tag}:latest"
+        run_docker_build(worker_file_path, dockerfile, worker_tag, latest_tag, None)
 
 
 if __name__ == '__main__':

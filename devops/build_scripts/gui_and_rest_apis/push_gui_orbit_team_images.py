@@ -1,11 +1,16 @@
-
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(sys.modules[__name__].__file__), "..")))
 
 
 def retag_to_alias_for_installer(image_name=None, new_tag_name=None):
-    from push_gui_atlas_ce_images import docker, client, nexus_registry
+    import docker
+    from helpers.docker_utils import get_authenticated_docker_py_client, nexus_registry
+
+    client = get_authenticated_docker_py_client()
     low_level_client = docker.APIClient(base_url='unix://var/run/docker.sock')
     full_image_name = f'{nexus_registry}/{image_name}'
-    gui_image=client.images.get(full_image_name)
+    gui_image = client.images.get(full_image_name)
 
     for gui_tag in gui_image.tags:
         tag = gui_tag.split(':')[-1]
@@ -16,7 +21,7 @@ def retag_to_alias_for_installer(image_name=None, new_tag_name=None):
 
 if __name__ == '__main__':
     # authentication handled in the push_gui_images.py
-    from push_gui_atlas_ce_images import push_image_to_repository
+    from helpers.docker_utils import push_image_to_repository
 
     retag_to_alias_for_installer('foundations-orbit-rest-api', 'orbit-rest-api')
     retag_to_alias_for_installer('foundations-orbit-gui', 'orbit-gui')

@@ -7,5 +7,5 @@ source "$script_location/build_common.sh"
 
 if [ $? -eq 0 ]
 then
-    python $script_location/gui_and_rest_apis/push_gui_images.py
+    python $script_location/gui_and_rest_apis/push_gui_atlas_ce_images.py
 fi
