@@ -11,3 +11,5 @@ mock==2.0.0
 Faker==1.0.0
 ifaddr==0.1.6
 twine==1.13.0
+awscli==1.16.297
+setuptools_scm==3.3.3
