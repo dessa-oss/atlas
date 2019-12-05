@@ -532,18 +532,11 @@ class TestDataContract(Spec):
                         'pct_in_reference_data': 0.0,
                         'validation_outcome': 'healthy',
                         'value': 'nan',
-                    },{
-                        'attribute_name': f'{self.column_name_2}',
-                        'difference_in_pct': 0.0,
-                        'pct_in_current_data': 0.0,
-                        'pct_in_reference_data': 0.0,
-                        'validation_outcome': 'healthy',
-                        'value': 'nan'
                     }
                 ],
                 'summary': {
                     'critical': 0,
-                    'healthy': 2,
+                    'healthy': 1,
                     'warning': 0
                 }
             },
@@ -992,6 +985,17 @@ class TestDataContract(Spec):
         contract = DataContract(self.contract_name, df=reference_dataframe)
 
         self.assertIsInstance(contract, DataContract)
+
+    def test_data_contract_works_without_any_errors_when_current_dataframe_has_missing_columns(self):
+        import pandas as pd
+        import numpy
+
+        df1 = pd.DataFrame(data={'A': [1, 2], 'B': [3, 4]})
+        df2 = pd.DataFrame(data={'A': [1, 2]})
+
+        dc = DataContract("my_contract", df1)
+        dc.special_value_test.configure(attributes=df1.columns, thresholds={numpy.nan: 0.1})
+        dc.validate(df2)
 
     def _test_special_values_checker_for_datatype_input_returns_expected_results(self, data):
         import pandas, numpy
