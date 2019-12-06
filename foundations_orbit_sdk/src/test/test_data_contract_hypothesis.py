@@ -25,7 +25,7 @@ class TestDataContractHypothesis(Spec):
     @given(dataframes(st.booleans()))
     @example(DataFrame({"a": [False] * 100 + [True]}))  # 99:1 bug
     @settings(deadline=None)
-    def test_validation_with_categorical_data_does_not_blow_up(self, df: DataFrame):
+    def test_validation_with_booleans_does_not_blow_up(self, df: DataFrame):
         assume(not df.empty)
         with self.assert_does_not_raise():
             DataContract("my_contract", df).validate(df)
