@@ -5,9 +5,11 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 11 2018
 """
 
+# TODO: change back to "auth-server-url": "http://atlas-ce-authentication-server:8080/auth",
+
 ATLAS = {
     "realm": "Atlas",
-    "auth-server-url": "http://atlas-ce-authentication-server:8080/auth",
+    "auth-server-url": "http://localhost:8080/auth",
     "ssl-required": "none",
     "resource": "foundations",
     "public-client": True,
