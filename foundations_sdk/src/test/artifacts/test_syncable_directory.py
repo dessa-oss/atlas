@@ -278,6 +278,7 @@ class TestSyncableDirectory(Spec):
         instance = self._mock_syncable_directory(self.remote_job_id)
         self.assertEqual(instance, create_syncable_directory(self.key, self.directory_path, self.remote_job_id))        
 
+    @skip('Flaky Test')
     def test_foundations_create_syncable_directory_without_any_job_ids(self):
         from foundations import create_syncable_directory
 
