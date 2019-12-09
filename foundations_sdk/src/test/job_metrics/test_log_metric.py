@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 from foundations.job_metrics import log_metric
 
-
+@skip
 class TestLogMetric(Spec):
 
     class MockMessageRouter(object):

@@ -16,7 +16,7 @@ class TestLogParam(Spec):
     @let_now
     def mock_get_logger(self):
         mock = self.patch('foundations_contrib.log_manager.LogManager.get_logger', ConditionalReturn())
-        mock.return_when(self.mock_logger, 'foundations.job_parameters')
+        mock.return_when(self.mock_logger, 'foundations.utils')
         return mock
 
     @let
@@ -134,12 +134,6 @@ class TestLogParam(Spec):
 
         actual_params = json.loads(self.redis_connection.get('jobs:{}:{}'.format(self.job_id, 'parameters')))
         self.assertEqual(expected_params, actual_params)
-
-    def test_log_param_outside_job_gives_warning_only_once(self):
-        log_param(self.fake_key, self.fake_value)
-        log_param(self.fake_key_two, self.fake_value_two)
-
-        self.mock_logger.warning.assert_called_once_with('Script not run with Foundations.')
 
     def _set_job_running(self):
         self.foundations_context.job_id.side_effect = lambda: self.job_id

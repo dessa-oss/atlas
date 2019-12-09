@@ -20,6 +20,7 @@ class TestLogParam(Spec):
     def tear_down(self):
         self._set_job_id(None)
 
+    @skip
     def test_log_param_writes_params_to_redis(self):
         self._set_job_id('my_id')
 

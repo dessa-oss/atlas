@@ -31,22 +31,19 @@ def flatten_parameter_dictionary(param_dictionary):
     return flattened_output
 
 def log_param(key, value):
-    from foundations_contrib.global_state import redis_connection, current_foundations_context, log_manager
+    from foundations.utils import log_warning_if_not_running_in_job
+    log_warning_if_not_running_in_job(_log_param_in_running_job, key, value)
 
-    foundations_context = current_foundations_context()
+def _log_param_in_running_job(key, value):
+    from foundations_contrib.global_state import current_foundations_context, redis_connection
 
-    if foundations_context.is_in_running_job():
-        project_name = foundations_context.project_name()
-        job_id = foundations_context.job_id()
+    project_name = current_foundations_context().project_name()
+    job_id = current_foundations_context().job_id()
 
-        _insert_parameter_name_into_projects_params_set(redis_connection, project_name, key)
-        _insert_input_parameter_name_into_projects_input_params_set(redis_connection, project_name, key)
-        _insert_parameter_value_into_job_run_data(redis_connection, job_id, key, value)
-        _insert_input_parameter_name_into_job_input_parameter_data(redis_connection, job_id, key)
-    elif not log_manager.foundations_not_running_warning_printed():
-        logger = log_manager.get_logger(__name__)
-        logger.warning('Script not run with Foundations.')
-        log_manager.set_foundations_not_running_warning_printed()
+    _insert_parameter_name_into_projects_params_set(redis_connection, project_name, key)
+    _insert_input_parameter_name_into_projects_input_params_set(redis_connection, project_name, key)
+    _insert_parameter_value_into_job_run_data(redis_connection, job_id, key, value)
+    _insert_input_parameter_name_into_job_input_parameter_data(redis_connection, job_id, key)
 
 def log_params(parameters):
     for key, value in flatten_parameter_dictionary(parameters).items():

@@ -104,10 +104,3 @@ def save_project_to_redis(project_name):
 
     timestamp = time()
     redis_connection.execute_command('ZADD', 'projects', 'NX', timestamp, project_name)
-
-
-def is_job_running(pipeline_context):
-    try:
-        return pipeline_context.file_name is not None
-    except ValueError:
-        return False

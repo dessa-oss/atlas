@@ -227,3 +227,14 @@ def datetime_string(time):
     date_time = datetime.fromtimestamp(time)
     return date_time.isoformat()
 
+
+def log_warning_if_not_running_in_job(function_if_running_in_job, *args):
+    from foundations_contrib.global_state import log_manager, current_foundations_context
+
+    if current_foundations_context().is_in_running_job():
+        function_if_running_in_job(*args)
+    elif not log_manager.foundations_not_running_warning_printed():
+        logger = log_manager.get_logger(__name__)
+        logger.warning('Script not run with Foundations.')
+        log_manager.set_foundations_not_running_warning_printed()
+
