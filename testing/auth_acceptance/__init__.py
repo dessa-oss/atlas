@@ -6,3 +6,4 @@ Written by Susan Davis <s.davis@dessa.com>, 11 2019
 """
 
 from auth_acceptance.test_auth_via_cli import TestAuthViaClient
+from auth_acceptance.test_submit_with_auth import TestSubmitWithAuth

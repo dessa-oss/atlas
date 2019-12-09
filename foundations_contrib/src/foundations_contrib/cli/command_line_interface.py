@@ -4,7 +4,7 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 06 2018
 """
-
+import sys
 
 class CommandLineInterface(object):
 
@@ -102,9 +102,8 @@ class CommandLineInterface(object):
         except Exception as error:
             if self._arguments.debug == True:
                 raise
-            else:
-                print(f'Error running command: {error}')
-                exit(1)
+            print(f'Error running command: {error}')
+            sys.exit(1)
 
     def arguments(self):
         return self._arguments
