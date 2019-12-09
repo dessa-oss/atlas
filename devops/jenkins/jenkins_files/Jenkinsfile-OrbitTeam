@@ -10,7 +10,7 @@ pipeline{
     stage('Preparation') {
         steps {
             container("python3") {
-              git branch: 'el-local-docker-scheduler-plugin', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations.git'
+              git branch: 'master', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations.git'
             }
         }
     }
@@ -63,29 +63,29 @@ pipeline{
       }
     }
   }
-  // post {
-  //   always {
-  //     script {
-  //           customMetricsMap["jenkins_data"] = customMetrics
-  //     }
-  //     influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
-  //   }
-  //   failure {
-  //       script {
-  //           def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
-  //           def attachments = [
-  //               [
-  //                   pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
-  //                   text: output_logs,
-  //                   fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
-  //                   color: '#FF0000'
-  //               ]
-  //           ]
-  //           slackSend(channel: '#f9s-builds', attachments: attachments)
-  //       }
-  //   }
-  //   success {
-  //       slackSend color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.'
-  //   }
-  // }
+  post {
+    always {
+      script {
+            customMetricsMap["jenkins_data"] = customMetrics
+      }
+      influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
+    }
+    failure {
+        script {
+            def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
+            def attachments = [
+                [
+                    pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+                    text: output_logs,
+                    fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+                    color: '#FF0000'
+                ]
+            ]
+            slackSend(channel: '#f9s-builds', attachments: attachments)
+        }
+    }
+    success {
+        slackSend color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.'
+    }
+  }
 }

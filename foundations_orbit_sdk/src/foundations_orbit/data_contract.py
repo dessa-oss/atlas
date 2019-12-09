@@ -221,10 +221,17 @@ class DataContract(object):
         validation_report = {
             'schema_check_results': self.schema_test.validate(dataframe_to_validate)
         }
-
-        if not validation_report['schema_check_results']['passed'] and validation_report['schema_check_results'].get('cols', None):
-            for column_to_ignore in validation_report['schema_check_results']['cols'].keys():
-                attributes_to_ignore.append(column_to_ignore)
+        if not validation_report['schema_check_results']['passed']:
+            if validation_report['schema_check_results'].get('cols', None):
+                for column_to_ignore in validation_report['schema_check_results']['cols'].keys():
+                    attributes_to_ignore.append(column_to_ignore)
+            if 'missing_in_current' in validation_report['schema_check_results']:
+                for column_to_ignore in validation_report['schema_check_results']['missing_in_current']:
+                    attributes_to_ignore.append(column_to_ignore)
+            if 'missing_in_ref' in validation_report['schema_check_results']:
+                for column_to_ignore in validation_report['schema_check_results']['missing_in_ref']:
+                    attributes_to_ignore.append(column_to_ignore)
+                
             self._exclude_from_current_validation(attributes=attributes_to_ignore)
 
         if self.options.check_row_count:

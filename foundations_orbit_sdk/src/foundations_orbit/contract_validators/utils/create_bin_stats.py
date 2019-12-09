@@ -49,6 +49,9 @@ def create_bin_stats_categorical(col_values, min_category_threshold=0.01):
     bin_dicts = []
     n_vals = col_values.size
 
+    if col_values.dtype == bool:
+        min_category_threshold = 0
+
     if n_vals == 0:
         return bin_dicts
 

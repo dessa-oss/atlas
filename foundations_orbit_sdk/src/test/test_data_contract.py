@@ -551,18 +551,11 @@ class TestDataContract(Spec):
                         'pct_in_reference_data': 0.0,
                         'validation_outcome': 'healthy',
                         'value': 'nan',
-                    },{
-                        'attribute_name': f'{self.column_name_2}',
-                        'difference_in_pct': 0.0,
-                        'pct_in_current_data': 0.0,
-                        'pct_in_reference_data': 0.0,
-                        'validation_outcome': 'healthy',
-                        'value': 'nan'
                     }
                 ],
                 'summary': {
                     'critical': 0,
-                    'healthy': 2,
+                    'healthy': 1,
                     'warning': 0
                 }
             },
@@ -1011,6 +1004,28 @@ class TestDataContract(Spec):
         contract = DataContract(self.contract_name, df=reference_dataframe)
 
         self.assertIsInstance(contract, DataContract)
+
+    def test_data_contract_works_without_any_errors_when_dataframe_to_validate_has_missing_columns(self):
+        import numpy
+        data_contract = DataContract("my_contract", self.two_column_dataframe)
+        data_contract.special_value_test.configure(attributes=self.two_column_dataframe.columns, thresholds={numpy.nan: 0.1})
+
+        dataframe_to_validate = self.two_column_dataframe.drop(columns=[self.column_name_2])
+        try:
+            data_contract.validate(dataframe_to_validate)
+        except Exception as ex:
+            raise ex
+    
+    def test_data_contract_works_without_any_errors_when_reference_dataframe_has_missing_columns(self):
+        import numpy
+        reference_dataframe = self.two_column_dataframe.drop(columns=[self.column_name_2])
+        data_contract = DataContract("my_contract", reference_dataframe)
+        data_contract.special_value_test.configure(attributes=self.two_column_dataframe.columns, thresholds={numpy.nan: 0.1})
+
+        try:
+            data_contract.validate(self.two_column_dataframe)
+        except Exception as ex:
+            raise ex
 
     def _test_special_values_checker_for_datatype_input_returns_expected_results(self, data):
         import pandas, numpy
