@@ -105,7 +105,7 @@ def get_metrics_for_all_jobs(project_name, include_input_params=False):
     from foundations_contrib.redis_pipeline_wrapper import RedisPipelineWrapper
     from pandas import DataFrame
 
-    metrics = _get_metrics_for_all_jobs(project_name,include_input_params)
+    metrics = _get_metrics_for_all_jobs(project_name, include_input_params)
 
     if 'job_id' not in metrics:
         return metrics
@@ -151,20 +151,17 @@ def set_tag(key, value=''):
         model.run()
         ```
     """
-    from foundations_contrib.global_state import log_manager, current_foundations_context, message_router
+    from foundations.utils import log_warning_if_not_running_in_job
+    log_warning_if_not_running_in_job(_set_tag_in_running_jobs, key, value)
+
+def _set_tag_in_running_jobs(key, value):
+    from foundations_contrib.global_state import message_router, current_foundations_context
     from foundations_contrib.producers.tag_set import TagSet
-    from foundations_contrib.utils import is_job_running
 
-    pipeline_context = current_foundations_context().pipeline_context()
+    job_id = current_foundations_context().job_id()
 
-    if is_job_running(pipeline_context):
-        tag_set_producer = TagSet(message_router, pipeline_context.file_name, key, value)
-        tag_set_producer.push_message()
-    elif not log_manager.foundations_not_running_warning_printed():
-        logger = log_manager.get_logger(__name__)
-        logger.warning('Script not run with Foundations.')
-        log_manager.set_foundations_not_running_warning_printed()
-
+    tag_set_producer = TagSet(message_router, job_id, key, value)
+    tag_set_producer.push_message()
 
 def _flattened_job_metrics(project_name, include_input_params):
     from pandas import DataFrame, concat

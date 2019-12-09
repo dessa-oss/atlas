@@ -109,7 +109,7 @@ class TestProjects(Spec):
 
         mock = self.patch('foundations_contrib.log_manager.LogManager.get_logger', ConditionalReturn())
         mock.return_when(Mock(), 'foundations_contrib.consumers.annotate')
-        mock.return_when(self.mock_logger, 'foundations.projects')
+        mock.return_when(self.mock_logger, 'foundations.utils')
         return mock
 
     @set_up
@@ -124,11 +124,6 @@ class TestProjects(Spec):
 
         self.foundations_context.pipeline_context().provenance.annotations = self.provenance_annotations
         self.redis.flushall()
-
-    @tear_down
-    def tear_down(self):
-        from foundations_contrib.global_state import log_manager
-        log_manager.set_foundations_not_running_warning_printed(False)
 
     # @let
     # def foundations_context(self):
@@ -396,24 +391,10 @@ class TestProjects(Spec):
         expected_data_frame = pandas.concat([self.annotations_data_frame, self.annotations_data_frame_two], ignore_index=True)
         assert_frame_equal(expected_data_frame, job_annotations)
 
-    def test_set_tag_when_not_in_job_gives_warning(self):
-        set_tag(self.random_tag, self.random_tag_value)
-        self.mock_logger.warning.assert_called_with('Script not run with Foundations.')
-
-    def test_set_tag_twice_when_not_in_job_gives_warning_once(self):
-        set_tag(self.random_tag, self.random_tag_value)
-        set_tag(self.random_tag, self.random_tag_value)
-        self.mock_logger.warning.assert_called_once_with('Script not run with Foundations.')
-
     def test_set_tag_when_in_job_sets_tag(self):
-        self._pipeline_context.file_name = self.job_id
+        self.foundations_context.job_id.return_value = self.job_id
         set_tag(self.random_tag, self.random_tag_value)
         self.message_router.push_message.assert_called_with('job_tag', {'job_id': self.job_id, 'key': self.random_tag, 'value': self.random_tag_value})
-
-    def test_set_tag_does_not_give_warning_when_in_job(self):
-        self._pipeline_context.file_name = self.job_id
-        set_tag(self.random_tag, self.random_tag_value)
-        self.mock_logger.warning.assert_not_called()
 
     def test_get_metrics_for_all_jobs_is_global(self):
         import foundations.projects
