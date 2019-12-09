@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source dev_env.sh
+source activate_dev_env.sh
 export FOUNDATIONS=${FOUNDATIONS_HOME:-~/.foundations}
 
 export ATLAS_PORT=37722
@@ -24,6 +24,7 @@ export NUM_WORKERS=0
 
 export REACT_APP_ATLAS_URL="http://127.0.0.1:${AUTH_PROXY_PORT}/api/v2beta/"
 export REACT_APP_APIARY_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v1/"
+export REACT_APP_API_STAGING_URL="http://localhost:5558/api/v2beta/"
 
 ./devops/teardown_frontend_dev_atlas.sh
 
