@@ -51,6 +51,8 @@ cd foundations_ui && \
   echo "Starting the UI in development mode with yarn" && \
   yarn start > $FOUNDATIONS/logs/yarn.log 2>&1 &
 
+./foundations_contrib/src/foundations_contrib/authentication/launch.sh
+
 echo "Running UI on port 3000"
 
 echo "Check log files for status of programs:"

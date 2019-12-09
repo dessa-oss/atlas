@@ -10,3 +10,4 @@ echo "Attempting to kill proccess for the UI"
 kill -9 $(lsof -i:3000 -t) >/dev/null 2>&1
 echo "Attempting to kill proccess for the Auth Proxy"
 kill -9 $(lsof -i:5558 -t) >/dev/null 2>&1
+docker stop keycloak
