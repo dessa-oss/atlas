@@ -4,6 +4,10 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 11 2019
 """
+import subprocess
+import requests
+import os
+import time
 
 from foundations_spec import *
 
@@ -16,13 +20,7 @@ class TestAuthViaClient(Spec):
         import os.path as path
         return path.realpath('../foundations_contrib/src/')
         
-    @staticmethod
-    def start_and_wait_for_keycloak(klass):
-        import subprocess
-        import requests
-        import os
-        import time
-
+    def start_and_wait_for_keycloak(self, klass):
         full_path = os.path.join(klass.resolve_f9s_auth(), "foundations_contrib/authentication")
 
         subprocess.run(
@@ -39,3 +37,7 @@ class TestAuthViaClient(Spec):
             except Exception as e:
                 time.sleep(1)
         self.fail('auth server never started')
+
+    def test_cli_login(self):
+        with self.assert_does_not_raise():
+            subprocess.run('foundations login http://localhost:5558 -u test -p test', shell=True, check=True)
