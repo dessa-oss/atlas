@@ -74,6 +74,9 @@ describe('Test Job Submission', () => {
     describe(state.testName, () => {
       before(() => {
         cy.exec(`redis-cli -h ${schedulerIP} -p ${schedulerRedisPort} flushall`);
+        cy.request('GET', `http://${guiHost}:${guiPort}/api/v2beta/cli_login`, {
+          headers: {Authorization: "Basic dGVzdDp0ZXN0Cg=="}
+        })
         cy.exec(state.command);
       });
 
