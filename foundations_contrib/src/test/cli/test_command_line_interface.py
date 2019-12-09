@@ -306,6 +306,10 @@ class TestCommandLineInterface(Spec):
         self.mock_input.assert_called_once()
         self.mock_getpass.assert_called_once()
 
+    def test_login_with_username_password_makes_token_request_basic_auth(self):
+        CommandLineInterface(f'login {self.hostname} -u {self.username} -p {self.password}'.split()).execute()
+        self.mock_get.assert_called_once_with(self.hostname + '/api/v2beta/auth/cli_login', auth=(self.username, self.password))
+
     def test_login_makes_token_request_using_basic_auth(self):
         self.mock_input.return_value = self.username
         self.mock_getpass.return_value = self.password

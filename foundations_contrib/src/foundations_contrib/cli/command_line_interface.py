@@ -70,8 +70,11 @@ class CommandLineInterface(object):
         info_parser.set_defaults(function=self._info)
 
     def _initialize_login_parser(self):
+        import sys
         login_parser = self.add_sub_parser('login', help='Login to either an Atlas or Orbit cluster')
         login_parser.add_argument('host', help="The address of the instance to login to (e.g. http://0.0.0.0:3333)")
+        login_parser.add_argument('-u', '--username', required=False, type=str, help='Username as plain text')
+        login_parser.add_argument('-p', '--password', type=str, required='--username' in sys.argv, help='Password in plain text')
         login_parser.set_defaults(function=self._login)
 
     def _initialize_model_serve_parser(self):
@@ -147,11 +150,15 @@ class CommandLineInterface(object):
         import requests
         from os.path import expanduser, join
         import yaml
-        
         from foundations_contrib.utils import foundations_home
+        
+        username = self._arguments.username
+        password = self._arguments.password
 
-        username = input("Username: ")
-        password = getpass.getpass(prompt="Password: ", stream=False)
+        if username is None or password is None:
+            username = input("Username: ")
+            password = getpass.getpass(prompt="Password: ", stream=False)
+
         resp = requests.get(f'{self._arguments.host}/api/v2beta/auth/cli_login', auth=(username, password))
         if resp.status_code == 200:
             credential_filepath = expanduser(join(foundations_home(), "credentials.yaml"))
