@@ -6,7 +6,10 @@ labels: Engineering Task, Foundations
 assignees: ''
 
 ---
+**What's the issue?**
+<description>
 
-Issue this is a subtask for: <issue number>
+**Issue this is a subtask for:**
+<issue number>
 
-<describe what we have to do>
+**Estimate**

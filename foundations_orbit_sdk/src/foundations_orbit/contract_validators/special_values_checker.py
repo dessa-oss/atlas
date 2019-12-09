@@ -28,13 +28,13 @@ class SpecialValuesChecker(object):
         return self._special_value_thresholds
 
     def validate(self, dataframe_to_validate):
-        self._config_columns = set(self._config_columns).union(set(self.temp_attributes_to_exclude))
-        self.temp_attributes_to_exclude = []
-
         if self._special_value_thresholds:
             self._update_nans_in_thresholds()
 
         special_values_results = self._special_values_check(dataframe_to_validate)
+
+        self._config_columns = set(self._config_columns).union(set(self.temp_attributes_to_exclude))
+        self.temp_attributes_to_exclude = []
 
         return special_values_results
 
@@ -89,8 +89,10 @@ class SpecialValuesChecker(object):
         import numpy as np
 
         special_value_percentages = {}
-
         for column, threshold_dictionary in self._special_value_thresholds.items():
+            if column in self.temp_attributes_to_exclude or column not in dataframe:
+                continue
+
             column_value_counts = dataframe[column].value_counts(sort=False, dropna=False, normalize=True)
             special_values = pd.Series(list(self._special_value_thresholds[column].keys()))
 

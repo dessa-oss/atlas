@@ -109,6 +109,8 @@ class TestDataContractWithMonitor(Spec):
         return output
 
     def test_data_contract_with_monitor_using_smaller_dataset(self):
+        #TODO: passing datetime64-dtype data to TimedeltaIndex is deprecated
+        #will raise a TypeError in a future version <--
         contract = DataContract(self.contract_name, self.reference_dataframe_with_10_rows)
         contract.save(self.project_dir)
         self.reference_dataframe_with_10_rows.to_pickle(f'{self.project_dir}/reference_data.pkl')
