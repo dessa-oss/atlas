@@ -1,6 +1,9 @@
 describe('Test Authentication', function() {
-
-    const page = 'http://54.84.19.116:5555'
+    const schedulerIP = Cypress.env('SCHEDULER_IP');
+    const schedulerRedisPort = Cypress.env('SCHEDULER_REDIS_PORT');
+    const guiHost = Cypress.env('GUI_HOST');
+    const guiPort = Cypress.env('GUI_PORT');
+    const page = `http://${guiHost}:${guiPort}`;
 
     it('test unsuccessful login does not have tokens', function() {
         cy.visit(page)
