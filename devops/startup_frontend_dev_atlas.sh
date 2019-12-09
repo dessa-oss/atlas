@@ -43,7 +43,7 @@ cd ../local-docker-scheduler \
 
 cd ../foundations-auth-proxy \
 && pip install -r requirements.txt \
-&& python -m auth_proxy -n -p 5558 --dev > $FOUNDATIONS/logs/auth_proxy.log 2>&1 &
+&& python -m auth_proxy -p 5558 --dev > $FOUNDATIONS/logs/auth_proxy.log 2>&1 &
 
 cd foundations_ui && \
   echo "Install UIs dependencies" && \
