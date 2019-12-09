@@ -97,9 +97,17 @@ def cd(path):
     finally:
         os.chdir(prev_path)
 
+
 def save_project_to_redis(project_name):
     from time import time
     from foundations_contrib.global_state import redis_connection
 
     timestamp = time()
     redis_connection.execute_command('ZADD', 'projects', 'NX', timestamp, project_name)
+
+
+def is_job_running(pipeline_context):
+    try:
+        return pipeline_context.file_name is not None
+    except ValueError:
+        return False
