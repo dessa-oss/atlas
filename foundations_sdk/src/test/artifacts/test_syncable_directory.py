@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 from foundations_spec.extensions import let_fake_redis
-
+from unittest import skip
 class TestSyncableDirectory(Spec):
 
     mock_artifact_file_listing = let_patch_mock_with_conditional_return(

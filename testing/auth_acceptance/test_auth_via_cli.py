@@ -39,8 +39,3 @@ class TestAuthViaClient(Spec):
             except Exception as e:
                 time.sleep(1)
         self.fail('auth server never started')
-    
-    def test_login_with_correct_credentials_displays_confirmation(self):
-        self.start_and_wait_for_keycloak(self)
-        
-        "foundations login"
