@@ -1,15 +1,12 @@
 #!/bin/bash
 
 source dev_env.sh
-
 export FOUNDATIONS=${FOUNDATIONS_HOME:-~/.foundations}
 
 export ATLAS_PORT=37722
 export AUTH_PROXY_PORT=5558
 export SCHEDULER_PORT=5000
-
 export FOUNDATIONS_SCHEDULER_URL=http://localhost:${SCHEDULER_PORT}
-
 export REDIS_HOST=localhost
 export REDIS_PORT=6379
 export REDIS_URL="redis://$REDIS_HOST:$REDIS_PORT"
@@ -43,7 +40,7 @@ cd ../local-docker-scheduler \
 
 cd ../foundations-auth-proxy \
 && pip install -r requirements.txt \
-&& python -m auth_proxy -p 5558 --dev > $FOUNDATIONS/logs/auth_proxy.log 2>&1 &
+&& python -m auth_proxy -n -p 5558 --dev > $FOUNDATIONS/logs/auth_proxy.log 2>&1 &
 
 cd foundations_ui && \
   echo "Install UIs dependencies" && \
@@ -52,6 +49,7 @@ cd foundations_ui && \
   yarn start > $FOUNDATIONS/logs/yarn.log 2>&1 &
 
 ./foundations_contrib/src/foundations_contrib/authentication/launch.sh
+docker run --name redis --rm -d -p 6379:6379 redis
 
 echo "Running UI on port 3000"
 
