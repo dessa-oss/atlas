@@ -41,6 +41,7 @@ pipeline{
           sh 'python -m pip install ./dist/*.whl'
           sh 'docker login $NEXUS_DOCKER_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD'
           sh 'RELEASED=True NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./devops/build_scripts/workers/build_worker_images.sh'
+
         }
       }
     }
