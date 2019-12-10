@@ -248,7 +248,7 @@ pipeline{
                 container("python3") {
                     script {
                         echo "Triggering job for building Atlas CE Artifacts"
-                        f9s_commit_hash = sh(script: "echo $(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
+                        f9s_commit_hash = sh(script: "echo \$(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
                         println("Attempting to trigger pipeline with version of ${f9s_commit_hash}")
                         build job: "build-artifacts-foundations", wait: false, parameters: [
                             [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: "${f9s_commit_hash}"]
