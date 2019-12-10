@@ -79,8 +79,8 @@ pipeline{
           dir('f9s') {
             script {
               echo "Triggering job for building Atlas CE Artifacts"
-              version = sh('python get_version.py')
-              println(version)
+              sh('export version=$(python get_version.py)')
+              println('Attempting to trigger pipeline with version of ${version}')
               build job: "build-installer-atlas-ce", wait: false, parameters: [
                 [$class: 'StringParameterValue', name: 'atlas_ce_rest_api', value: 'docker-staging.shehanigans.net/atlas-ce-dev/foundations-rest-api:${version}'],
                 [$class: 'StringParameterValue', name: 'atlas_ce_gui', value: 'docker-staging.shehanigans.net/atlas-ce-dev/foundations-gui:${version}'],
