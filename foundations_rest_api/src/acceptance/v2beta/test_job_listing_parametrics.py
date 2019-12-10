@@ -53,10 +53,12 @@ class TestJobListingParametrics(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
             return '{} {}'.format(str(value1), str(value2))
 
         def stage2(value1, value2, value3, value4, dummy_value):
-            foundations.log_metric('metric_1', value1)
-            foundations.log_metric('metric_2', value2)
-            foundations.log_metric('metric_3', value3)
-            foundations.log_metric('metric_4', value4)
+            from foundations.stage_logging import log_metric
+            
+            log_metric('metric_1', value1)
+            log_metric('metric_2', value2)
+            log_metric('metric_3', value3)
+            log_metric('metric_4', value4)
 
         def run_first_job():
             make_pipeline_context()

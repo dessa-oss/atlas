@@ -32,7 +32,8 @@ class TestJobListingTrimCharacters(JobsTestsHelperMixinV2, APIAcceptanceTestCase
     def _run_stages(klass):
 
         def stage0(value1):
-            foundations.log_metric('int_metric', value1)
+            from foundations.stage_logging import log_metric
+            log_metric('int_metric', value1)
 
         job_name = 'test job'
         klass._pipeline_context.file_name = job_name
