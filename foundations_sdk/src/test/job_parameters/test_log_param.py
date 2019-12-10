@@ -65,7 +65,7 @@ class TestLogParam(Spec):
         self.foundations_context.project_name.return_value = 'default'
         foundations_context_function.return_value = self.foundations_context
 
-        self.redis_connection = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeStrictRedis())
+        self.redis_connection = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
 
     def test_log_param_inserts_parameter_key_into_input_params_keys_set(self):
         self.foundations_context.project_name.return_value = self.project_name
