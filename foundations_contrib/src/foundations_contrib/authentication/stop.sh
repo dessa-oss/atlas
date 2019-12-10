@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker rm -f keycloak
+docker rm -f keycloak || true;

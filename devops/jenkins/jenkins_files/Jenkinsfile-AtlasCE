@@ -12,6 +12,7 @@ pipeline{
         container("python3") {
           dir('f9s') {
             git branch: 'master', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations.git'
+            sh "git checkout ${params.f9s_commit_hash}"
           }
         }
       }
@@ -39,7 +40,7 @@ pipeline{
         container("python3"){
           dir('f9s') {
             sh 'docker login $NEXUS_DOCKER_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD'
-            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./devops/build_scripts/gui_and_rest_apis/build_gui_ce.sh"
+            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-ce-dev ./devops/build_scripts/gui_and_rest_apis/build_gui_ce.sh"
           }
         }
       }
@@ -48,7 +49,7 @@ pipeline{
       steps {
         container("python3"){
           dir('f9s') {
-            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./devops/build_scripts/gui_and_rest_apis/push_gui_atlas_ce_images.sh"
+            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-ce-dev ./devops/build_scripts/gui_and_rest_apis/push_gui_atlas_ce_images.sh"
           }
         }
       }
@@ -57,8 +58,8 @@ pipeline{
       steps {
         container("python3"){
           dir('f9s') {
-            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./tensorboard/docker/tensorboard_rest_api/build_image.sh"
-            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./tensorboard/docker/tensorboard_server/build_image.sh"
+            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-ce-dev ./tensorboard/docker/tensorboard_rest_api/build_image.sh"
+            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-ce-dev ./tensorboard/docker/tensorboard_server/build_image.sh"
           }
         }
       }
@@ -67,31 +68,31 @@ pipeline{
       steps {
         container("python3"){
           dir('f9s') {
-            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./tensorboard/docker/tensorboard_rest_api/push_image.sh"
-            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./tensorboard/docker/tensorboard_server/push_image.sh"
+            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-ce-dev ./tensorboard/docker/tensorboard_rest_api/push_image.sh"
+            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-ce-dev ./tensorboard/docker/tensorboard_server/push_image.sh"
           }
         }
       }
     }
-    stage('Trigger Orbit Team Build Pipeline') {
+    stage('Trigger Atlas CE Build Pipeline') {
       steps {
         container("python3"){
           dir('f9s') {
             script {
-              echo "Triggering job for building Orbit Team Artifacts"
-              version = sh('python get_version.py')
-              println(version)
+              echo "Triggering job for building Atlas CE Artifacts"
+              version = sh(script: 'python get_version.py', returnStdout: true).trim()
+              println("Attempting to trigger pipeline with version of ${version}")
               build job: "build-installer-atlas-ce", wait: false, parameters: [
-                [$class: 'StringParameterValue', name: 'atlas_ce_rest_api', value: 'docker-staging.shehanigans.net/atlas-ce-dev/foundations-rest-api:${version}'],
-                [$class: 'StringParameterValue', name: 'atlas_ce_gui', value: 'docker-staging.shehanigans.net/foundations-gui:${version}'],
-                [$class: 'StringParameterValue', name: 'atlas_ce_tracker', value: 'docker-staging.shehanigans.net/atlas-ce-dev/${version}'],
-                [$class: 'StringParameterValue', name: 'scheduler', value: 'docker-staging.shehanigans.net/scheduler:latest'],
-                [$class: 'StringParameterValue', name: 'atlas_ce_worker', value: 'docker-staging.shehanigans.net/atlas-ce/worker:${version}'],
-                [$class: 'StringParameterValue', name: 'archive_server', value: 'docker-staging.shehanigans.net/atlas-ce/archive_server:latest'],
-                [$class: 'StringParameterValue', name: 'tensorboard_server', value: 'docker-staging.shehanigans.net/atlas-ce/tensorboard-server:${version}'],
-                [$class: 'StringParameterValue', name: 'tensorboard_rest_api', value: 'docker-staging.shehanigans.net/atlas-ce/tensorboard-rest-api:${version}'],
+                [$class: 'StringParameterValue', name: 'atlas_ce_rest_api', value: "docker-staging.shehanigans.net/atlas-ce-dev/foundations-rest-api:${version}"],
+                [$class: 'StringParameterValue', name: 'atlas_ce_gui', value: "docker-staging.shehanigans.net/atlas-ce-dev/foundations-gui:${version}"],
+                [$class: 'StringParameterValue', name: 'atlas_ce_tracker', value: "docker-staging.shehanigans.net/atlas-ce-dev/tracker:${version}"],
+                [$class: 'StringParameterValue', name: 'scheduler', value: "docker-staging.shehanigans.net/atlas-ce-dev/scheduler:latest"],
+                [$class: 'StringParameterValue', name: 'atlas_ce_worker', value: "docker-staging.shehanigans.net/atlas-ce-dev/worker:${version}"],
+                [$class: 'StringParameterValue', name: 'archive_server', value: "docker-staging.shehanigans.net/atlas-ce-dev/archive_server:latest"],
+                [$class: 'StringParameterValue', name: 'tensorboard_server', value: "docker-staging.shehanigans.net/atlas-ce-dev/tensorboard-server:${version}"],
+                [$class: 'StringParameterValue', name: 'tensorboard_rest_api', value: "docker-staging.shehanigans.net/atlas-ce-dev/tensorboard-rest-api:${version}"],
                 [$class: 'StringParameterValue', name: 'atlas_server', value: '0.2.4.dev2'],
-                [$class: 'StringParameterValue', name: 'foundations_atlas_ce_pi_py', value: '${version}'],
+                [$class: 'StringParameterValue', name: 'foundations_atlas_ce_pi_py', value: "${version}"],
                 [$class: 'StringParameterValue', name: 'ATLAS_CE_VERSION', value: 'test_to_release']
               ]
             }
@@ -119,29 +120,29 @@ pipeline{
       }
     }
   }
-  // post {
-  //   always {
-  //     script {
-  //           customMetricsMap["jenkins_data"] = customMetrics
-  //     }
-  //     influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
-  //   }
-  //   failure {
-  //       script {
-  //           def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
-  //           def attachments = [
-  //               [
-  //                   pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
-  //                   text: output_logs,
-  //                   fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
-  //                   color: '#FF0000'
-  //               ]
-  //           ]
-  //           slackSend(channel: '#f9s-builds', attachments: attachments)
-  //       }
-  //   }
-  //   success {
-  //       slackSend color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.'
-  //   }
-  // }
+  post {
+    always {
+      script {
+            customMetricsMap["jenkins_data"] = customMetrics
+      }
+      influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
+    }
+    failure {
+        script {
+            def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
+            def attachments = [
+                [
+                    pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+                    text: output_logs,
+                    fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+                    color: '#FF0000'
+                ]
+            ]
+            slackSend(channel: '#f9s-builds', attachments: attachments)
+        }
+    }
+    success {
+        slackSend color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.'
+    }
+  }
 }

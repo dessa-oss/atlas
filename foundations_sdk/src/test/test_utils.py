@@ -145,5 +145,13 @@ class TestUtils(Spec):
         log_warning_if_not_running_in_job(_some_function, some_dict)
         self.assertTrue(some_dict['result'])
 
+    def test_log_warning_if_not_running_in_job_does_not_run_function_if_not_in_job(self):
+        from foundations.utils import log_warning_if_not_running_in_job
+
+        self.foundations_context.is_in_running_job.return_value = False
+        some_dict = {'result': False}
+        log_warning_if_not_running_in_job(_some_function, some_dict)
+        self.assertFalse(some_dict['result'])
+
 def _some_function(arg):
     arg['result'] = True

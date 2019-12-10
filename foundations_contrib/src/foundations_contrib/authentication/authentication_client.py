@@ -11,7 +11,7 @@ import webbrowser
 
 from jose import jwt
 
-from keycloak import KeycloakOpenID, KeycloakAdmin
+from keycloak import KeycloakOpenID
 
 
 class AuthenticationClient:
@@ -136,10 +136,3 @@ def keycloak_client(config: dict) -> KeycloakOpenID:
         client_id=config["resource"],
         client_secret_key=secret_key,
     )
-
-
-# Here for development purposes
-
-# from foundations_contrib.authentication.configs import ATLAS
-
-# user_client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth/login")
