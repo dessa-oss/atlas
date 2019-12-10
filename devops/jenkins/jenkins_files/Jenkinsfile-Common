@@ -89,7 +89,7 @@ pipeline{
     stage('Trigger Orbit Team Build Pipeline') {
       steps {
         script {
-          f9s_commit_hash = sh(script: "echo $(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
+          f9s_commit_hash = sh(script: "echo \$(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
           echo "Attempting to trigger pipeline for building Orbit Team Artifacts with version of ${f9s_commit_hash}"
           build job: "build-artifacts-orbit-team", wait: false, parameters: [
             [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: "${f9s_commit_hash}"]
