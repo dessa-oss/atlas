@@ -54,9 +54,11 @@ def _get_user_name_from_token() -> str:
         f"{scheduler_url}/api/v2beta/auth/verify", headers=headers
     )
 
-    if decoded_token.status_code != 200:
+    if decoded_token.status_code == 500:
         raise Exception('Not Authorized')
-    else:
+    elif decoded_token.status_code == 200:
         user_name = decoded_token.json()["preferred_username"]
+    else:
+        decoded_token.raise_for_status()
 
     return user_name

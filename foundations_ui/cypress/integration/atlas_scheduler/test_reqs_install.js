@@ -3,8 +3,9 @@ describe('Test Requirements Install', () => {
   const schedulerRedisPort = Cypress.env('SCHEDULER_REDIS_PORT');
   const guiHost = Cypress.env('GUI_HOST');
   const guiPort = Cypress.env('GUI_PORT');
+  const loginCommand = `foundations login http://${schedulerIP}:5558 -u test -p test`
 
-  const command = `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/reqs_install && foundations submit scheduler reqs_install_project main.py testarg1 testarg2`
+  const command = `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && ${loginCommand} && cd cypress/fixtures/atlas_scheduler/reqs_install && foundations submit scheduler reqs_install_project main.py testarg1 testarg2`
   const projectName = 'reqs_install_project';
   const expectedLogs = 'xgboost';
   

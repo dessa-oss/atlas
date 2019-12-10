@@ -20,7 +20,7 @@ mkdir -p WORKING_DIR
 export JOB_BUNDLE_STORE_DIR=$FOUNDATIONS/job_bundle_store_dir
 mkdir -p $JOB_BUNDLE_STORE_DIR
 
-export NUM_WORKERS=0
+export NUM_WORKERS=1
 
 export REACT_APP_ATLAS_URL="http://127.0.0.1:${AUTH_PROXY_PORT}/api/v2beta/"
 export REACT_APP_APIARY_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v1/"
