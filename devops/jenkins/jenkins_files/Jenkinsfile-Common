@@ -51,20 +51,25 @@ pipeline{
         }
       }
     }
-    stage('Build Tracker Image') {
+    stage('Build Tracker Images') {
       steps {
         container("python3") {
           sh "docker pull redis:5 "
-          sh "docker tag redis:5 $NEXUS_DOCKER_STAGING/tracker:5"
-          sh "docker tag $NEXUS_DOCKER_STAGING/tracker:5 $NEXUS_DOCKER_STAGING/tracker:latest"
+          sh "docker tag redis:5 $NEXUS_DOCKER_STAGING/atlas-ce-dev/tracker:5"
+          sh "docker tag $NEXUS_DOCKER_STAGING/atlas-ce-dev/tracker:5 $NEXUS_DOCKER_STAGING/atlas-ce-dev/tracker:latest"
+          sh "docker tag redis:5 $NEXUS_DOCKER_STAGING/orbit-team/tracker:5"
+          sh "docker tag $NEXUS_DOCKER_STAGING/orbit-team/tracker:5 $NEXUS_DOCKER_STAGING/orbit-team/tracker:latest"
+
         }
       }
     }
     stage('Push Tracker Image') {
       steps {
         container("python3") {
-          sh "docker push $NEXUS_DOCKER_STAGING/tracker:5"
-          sh "docker push $NEXUS_DOCKER_STAGING/tracker:latest"
+          sh "docker push $NEXUS_DOCKER_STAGING/atlas-ce-dev/tracker:5"
+          sh "docker push $NEXUS_DOCKER_STAGING/atlas-ce-dev/tracker:latest"
+          sh "docker push $NEXUS_DOCKER_STAGING/orbit-team/tracker:5"
+          sh "docker push $NEXUS_DOCKER_STAGING/orbit-team/tracker:latest"
         }
       }
     }
