@@ -28,7 +28,8 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
 
     @classmethod
     def _prepare_job_input_data(klass, **kwargs):
-        from foundations import log_metric, Hyperparameter
+        from foundations import Hyperparameter
+        from foundations.stage_logging import log_metric
 
         def callback(arg1, arg2, kwarg1=None, kwarg2=None):
             log_metric('hello', 20)
