@@ -37,25 +37,3 @@ class TestDefaultStageLogging(Spec):
         from foundations_internal.stage_logging_context import StageLoggingContext
 
         self.assertTrue(isinstance(stage_logging_context, StageLoggingContext))
-
-    def test_log_metric_forwards_to_context(self):
-        self.patch('foundations.stage_logging.stage_logging_context', self.MockLoggingContext())
-        from foundations import log_metric
-        from foundations.stage_logging import stage_logging_context
-
-        log_metric('loss', 9.44)
-        self.assertEqual({'loss': 9.44}, stage_logging_context.metric)
-
-    def test_log_metric_forwards_to_context_different_metric(self):
-        self.patch('foundations.stage_logging.stage_logging_context', self.MockLoggingContext())
-        from foundations import log_metric
-        from foundations.stage_logging import stage_logging_context
-
-        log_metric('rocauc', 343434)
-        self.assertEqual({'rocauc': 343434}, stage_logging_context.metric)
-
-    def test_global_log_metric_uses_log_metric(self):
-        import foundations
-        from foundations.stage_logging import log_metric
-
-        self.assertEqual(foundations.log_metric, log_metric)
