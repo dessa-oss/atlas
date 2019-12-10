@@ -11,6 +11,7 @@ import time
 
 from foundations_spec import *
 
+
 class TestAuthViaClient(Spec):
 
     max_time_out_in_sec = 60
@@ -18,26 +19,34 @@ class TestAuthViaClient(Spec):
     @staticmethod
     def resolve_f9s_auth():
         import os.path as path
-        return path.realpath('../foundations_contrib/src/')
-        
-    def start_and_wait_for_keycloak(self, klass):
-        full_path = os.path.join(klass.resolve_f9s_auth(), "foundations_contrib/authentication")
 
-        subprocess.run(
-            ['bash', 'launch.sh'],
-            cwd=full_path, 
-            stdout=subprocess.PIPE)
-        
+        return path.realpath("../foundations_contrib/src/")
+
+    def start_and_wait_for_keycloak(self, klass):
+        full_path = os.path.join(
+            klass.resolve_f9s_auth(), "foundations_contrib/authentication"
+        )
+
+        subprocess.run(["bash", "launch.sh"], cwd=full_path, stdout=subprocess.PIPE)
+
         start_time = time.time()
         while time.time() - start_time < klass.max_time_out_in_sec:
             try:
-                res = requests.get('http://localhost:8080/auth/')
+                res = requests.get("http://localhost:8080/auth/")
                 if res.status_code == 200:
                     return
             except Exception as e:
                 time.sleep(1)
-        self.fail('auth server never started')
+        self.fail("auth server never started")
 
     def test_cli_login(self):
         with self.assert_does_not_raise():
-            subprocess.run('foundations login http://localhost:5558 -u test -p test', shell=True, check=True)
+            result = subprocess.run(
+                "foundations login http://localhost:5558 -u test -p test",
+                stdout=subprocess.PIPE,
+                shell=True,
+                check=True,
+            )
+            self.assertEqual(result.stdout.decode().strip(), 'Login Succeeded!')
+
+
