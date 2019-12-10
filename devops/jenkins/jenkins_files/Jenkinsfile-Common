@@ -11,6 +11,7 @@ pipeline{
       steps {
         container("python3") {
           git branch: 'master', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations.git'
+          sh "git checkout ${params.f9s_commit_hash}"
         }
       }
     }
@@ -41,6 +42,7 @@ pipeline{
           sh 'python -m pip install ./dist/*.whl'
           sh 'docker login $NEXUS_DOCKER_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD'
           sh 'RELEASED=True NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./devops/build_scripts/workers/build_worker_images.sh'
+
         }
       }
     }
@@ -76,16 +78,22 @@ pipeline{
     stage('Trigger Atlas CE Build Pipeline') {
       steps {
         script {
-          echo "Triggering job for building Atlas CE Artifacts"
-          build job: "build-artifacts-atlas-ce", wait: false
+          f9s_commit_hash = sh(script: "echo $(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
+          echo "Attempting to trigger pipeline for building Atlas CE Artifacts with version of ${f9s_commit_hash}"
+          build job: "build-artifacts-atlas-ce", wait: false, parameters: [
+            [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: "${f9s_commit_hash}"]
+          ]
         }
       }
     }
     stage('Trigger Orbit Team Build Pipeline') {
       steps {
         script {
-          echo "Triggering job for building Orbit Team Artifacts"
-          build job: "build-artifacts-orbit-team", wait: false
+          f9s_commit_hash = sh(script: "echo $(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
+          echo "Attempting to trigger pipeline for building Orbit Team Artifacts with version of ${f9s_commit_hash}"
+          build job: "build-artifacts-orbit-team", wait: false, parameters: [
+            [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: "${f9s_commit_hash}"]
+          ]
         }
       }
     }
