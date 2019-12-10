@@ -15,6 +15,7 @@ build_module () {
     module_name=$2
     cwd=$3
     wheel_path=${directory}/dist/${module_name}-${wheel_name_tail}
+    cli=$4
 
     unset BUILD_FOUNDATIONS_OBFUSCATED
 

@@ -2,10 +2,9 @@
 
 cli=$1
 
+unset FOUNDATIONS_CLI
 script_location="$(pwd)/devops/build_scripts"
 source "$script_location/build_common.sh"
-
-
 
 cwd=`pwd`
 

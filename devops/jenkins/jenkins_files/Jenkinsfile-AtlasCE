@@ -75,21 +75,27 @@ pipeline{
     }
     stage('Trigger Orbit Team Build Pipeline') {
       steps {
-        script {
-          echo "Triggering job for building Orbit Team Artifacts"
-          build job: "build-installer-atlas-ce", wait: false, parameters: [
-            [$class: 'StringParameterValue', name: 'atlas_ce_rest_api', value: 'docker-staging.shehanigans.net/atlas-ce-dev/foundations-rest-api:latest'],
-            [$class: 'StringParameterValue', name: 'atlas_ce_gui', value: 'docker-staging.shehanigans.net/foundations-gui:latest'],
-            [$class: 'StringParameterValue', name: 'atlas_ce_tracker', value: 'docker-staging.shehanigans.net/atlas-ce-dev/tracker'],
-            [$class: 'StringParameterValue', name: 'scheduler', value: 'docker-staging.shehanigans.net/scheduler'],
-            [$class: 'StringParameterValue', name: 'atlas_ce_worker', value: 'docker-staging.shehanigans.net/atlas-ce/worker'],
-            [$class: 'StringParameterValue', name: 'archive_server', value: 'docker-staging.shehanigans.net/atlas-ce/archive_server'],
-            [$class: 'StringParameterValue', name: 'tensorboard_server', value: 'docker-staging.shehanigans.net/atlas-ce/tensorboard-server'],
-            [$class: 'StringParameterValue', name: 'tensorboard_rest_api', value: 'docker-staging.shehanigans.net/atlas-ce/tensorboard-rest-api'],
-            [$class: 'StringParameterValue', name: 'atlas_server', value: '0.2.4.dev2'],
-            [$class: 'StringParameterValue', name: 'foundations_atlas_ce_pi_py', value: '0.2.3.dev281'],
-            [$class: 'StringParameterValue', name: 'ATLAS_CE_VERSION', value: 'test_to_release']
-          ]
+        container("python3"){
+          dir('f9s') {
+            script {
+              echo "Triggering job for building Orbit Team Artifacts"
+              version = sh('python get_version.py')
+              println(version)
+              build job: "build-installer-atlas-ce", wait: false, parameters: [
+                [$class: 'StringParameterValue', name: 'atlas_ce_rest_api', value: 'docker-staging.shehanigans.net/atlas-ce-dev/foundations-rest-api:${version}'],
+                [$class: 'StringParameterValue', name: 'atlas_ce_gui', value: 'docker-staging.shehanigans.net/foundations-gui:${version}'],
+                [$class: 'StringParameterValue', name: 'atlas_ce_tracker', value: 'docker-staging.shehanigans.net/atlas-ce-dev/${version}'],
+                [$class: 'StringParameterValue', name: 'scheduler', value: 'docker-staging.shehanigans.net/scheduler:latest'],
+                [$class: 'StringParameterValue', name: 'atlas_ce_worker', value: 'docker-staging.shehanigans.net/atlas-ce/worker:${version}'],
+                [$class: 'StringParameterValue', name: 'archive_server', value: 'docker-staging.shehanigans.net/atlas-ce/archive_server:latest'],
+                [$class: 'StringParameterValue', name: 'tensorboard_server', value: 'docker-staging.shehanigans.net/atlas-ce/tensorboard-server:${version}'],
+                [$class: 'StringParameterValue', name: 'tensorboard_rest_api', value: 'docker-staging.shehanigans.net/atlas-ce/tensorboard-rest-api:${version}'],
+                [$class: 'StringParameterValue', name: 'atlas_server', value: '0.2.4.dev2'],
+                [$class: 'StringParameterValue', name: 'foundations_atlas_ce_pi_py', value: '${version}'],
+                [$class: 'StringParameterValue', name: 'ATLAS_CE_VERSION', value: 'test_to_release']
+              ]
+            }
+          }
         }
       }
     }
@@ -113,29 +119,29 @@ pipeline{
       }
     }
   }
-  post {
-    always {
-      script {
-            customMetricsMap["jenkins_data"] = customMetrics
-      }
-      influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
-    }
-    failure {
-        script {
-            def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
-            def attachments = [
-                [
-                    pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
-                    text: output_logs,
-                    fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
-                    color: '#FF0000'
-                ]
-            ]
-            slackSend(channel: '#f9s-builds', attachments: attachments)
-        }
-    }
-    success {
-        slackSend color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.'
-    }
-  }
+  // post {
+  //   always {
+  //     script {
+  //           customMetricsMap["jenkins_data"] = customMetrics
+  //     }
+  //     influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
+  //   }
+  //   failure {
+  //       script {
+  //           def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
+  //           def attachments = [
+  //               [
+  //                   pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+  //                   text: output_logs,
+  //                   fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+  //                   color: '#FF0000'
+  //               ]
+  //           ]
+  //           slackSend(channel: '#f9s-builds', attachments: attachments)
+  //       }
+  //   }
+  //   success {
+  //       slackSend color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.'
+  //   }
+  // }
 }
