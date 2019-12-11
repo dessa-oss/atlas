@@ -1,6 +1,6 @@
 {
     "realm": "Atlas",
-    "auth-server-url": "http://localhost:8080/auth",
+    "auth-server-url": "http://keycloak-http.ci-pipeline.svc.cluster.local:8080/auth",
     "ssl-required": "external",
     "resource": "foundations",
     "public-client": true,
