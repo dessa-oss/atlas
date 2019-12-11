@@ -65,6 +65,15 @@ pipeline{
         }
       }
     }
+    stage('Build Archive Server') {
+      steps {
+        container("python3") {
+          sh "docker pull $NEXUS_DOCKER_REGISTRY/archive_server:latest"
+          sh "docker tag $NEXUS_DOCKER_REGISTRY/archive_server:latest $NEXUS_DOCKER_STAGING/atlas-ce-dev/archive_server:latest"
+          sh "docker tag $NEXUS_DOCKER_REGISTRY/archive_server:latest $NEXUS_DOCKER_STAGING/orbit-team/archive_server:latest"
+        }
+      }
+    }
     stage('Push Tracker Image') {
       steps {
         container("python3") {
@@ -72,6 +81,14 @@ pipeline{
           sh "docker push $NEXUS_DOCKER_STAGING/atlas-ce-dev/tracker:latest"
           sh "docker push $NEXUS_DOCKER_STAGING/orbit-team/tracker:5"
           sh "docker push $NEXUS_DOCKER_STAGING/orbit-team/tracker:latest"
+        }
+      }
+    }
+    stage('Push Archive Server Image') {
+      steps {
+        container("python3") {
+          sh "docker push $NEXUS_DOCKER_STAGING/atlas-ce-dev/archive_server:latest"
+          sh "docker push $NEXUS_DOCKER_STAGING/orbit-team/archive_server:latest"
         }
       }
     }
