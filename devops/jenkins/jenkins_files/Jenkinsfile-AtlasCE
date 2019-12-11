@@ -11,6 +11,7 @@ pipeline{
       steps {
         container("python3") {
           dir('f9s') {
+            customMetricsMap["jenkins_data"] = customMetrics
             git branch: 'master', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations.git'
             sh "git checkout ${params.f9s_commit_hash}"
           }
