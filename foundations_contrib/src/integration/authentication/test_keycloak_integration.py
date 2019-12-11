@@ -19,21 +19,21 @@ class TestKeycloakIntegration(Spec):
     conf_file = "integration/authentication/fixtures/atlas.json"
     user = "test"
 
-    @set_up_class
-    def set_up_class(cls):
-        # subprocess.run(f"{root()}/authentication/stop.sh", shell=True, check=True)
-        # subprocess.run(f"{root()}/authentication/launch.sh", shell=True, check=True)
+    # @set_up_class
+    # def set_up_class(cls):
+    #     # subprocess.run(f"{root()}/authentication/stop.sh", shell=True, check=True)
+    #     # subprocess.run(f"{root()}/authentication/launch.sh", shell=True, check=True)
 
-        def condition() -> bool:
-            try:
-                res = requests.get("http://keycloak-http.ci-pipeline.svc.cluster.local:8080/auth/")
-            except requests.exceptions.ConnectionError:
-                return False
-            if res.status_code == 200:
-                return True
-            return False
+    #     def condition() -> bool:
+    #         try:
+    #             res = requests.get("http://keycloak-http.ci-pipeline.svc.cluster.local:8080/auth/", timeout=60)
+    #         except requests.exceptions.ConnectionError:
+    #             return False
+    #         if res.status_code == 200:
+    #             return True
+    #         return False
 
-        wait_for_condition(condition, 60)
+    #     # wait_for_condition(condition, 60)
 
     @set_up
     def set_up(self):
