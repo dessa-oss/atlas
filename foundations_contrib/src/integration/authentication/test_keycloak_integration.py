@@ -11,6 +11,7 @@ from foundations_contrib.utils import wait_for_condition
 
 import requests
 from typing import Callable
+import os
 
 
 class TestKeycloakIntegration(Spec):
@@ -18,28 +19,30 @@ class TestKeycloakIntegration(Spec):
     redirect_url = "some_redirect"
     conf_file = "integration/authentication/fixtures/atlas.json"
     user = "test"
+    auth_server_host = 'keycloak-http.ci-pipeline.svc.cluster.local' if os.environ.get('RUNNING_ON_CI', False) else 'localhost'
 
-    # @set_up_class
-    # def set_up_class(cls):
-    #     # subprocess.run(f"{root()}/authentication/stop.sh", shell=True, check=True)
-    #     # subprocess.run(f"{root()}/authentication/launch.sh", shell=True, check=True)
+    @set_up_class
+    def set_up_class(cls):
+        if not os.environ.get('RUNNING_ON_CI', False):
+            subprocess.run(f"{root()}/authentication/stop.sh", shell=True, check=True)
+            subprocess.run(f"{root()}/authentication/launch.sh", shell=True, check=True)
 
-    #     def condition() -> bool:
-    #         try:
-    #             res = requests.get("http://keycloak-http.ci-pipeline.svc.cluster.local:8080/auth/", timeout=60)
-    #         except requests.exceptions.ConnectionError:
-    #             return False
-    #         if res.status_code == 200:
-    #             return True
-    #         return False
+            def condition() -> bool:
+                try:
+                    res = requests.get(f"http://localhost:8080/auth/")
+                except requests.exceptions.ConnectionError:
+                    return False
+                if res.status_code == 200:
+                    return True
+                return False
 
-    #     # wait_for_condition(condition, 60)
+            wait_for_condition(condition, 60)
 
     @set_up
     def set_up(self):
         self.config = load_json(self.conf_file)
         self.realm = self.config["realm"]
-        self.auth_url = self.config["auth-server-url"]
+        self.auth_url = f'http://{self.auth_server_host}:8080/auth'
         self.client_name = self.config["resource"]
         self.auth_client = AuthenticationClient(self.config, self.redirect_url)
 
