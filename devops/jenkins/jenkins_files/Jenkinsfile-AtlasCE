@@ -93,7 +93,7 @@ pipeline{
                 [$class: 'StringParameterValue', name: 'tensorboard_rest_api', value: "docker-staging.shehanigans.net/atlas-ce-dev/tensorboard-rest-api:${version}"],
                 [$class: 'StringParameterValue', name: 'atlas_server', value: '0.2.4.dev2'],
                 [$class: 'StringParameterValue', name: 'foundations_atlas_ce_pi_py', value: "${version}"],
-                [$class: 'StringParameterValue', name: 'ATLAS_CE_VERSION', value: 'test_to_release'],
+                [$class: 'StringParameterValue', name: 'ATLAS_CE_VERSION', value: version],
                 [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: params.f9s_commit_hash]
               ]
             }
