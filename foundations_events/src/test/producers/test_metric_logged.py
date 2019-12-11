@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations_contrib.producers.metric_logged import MetricLogged
+from foundations_events.producers.metric_logged import MetricLogged
 
 class TestMetricLogged(Spec):
     

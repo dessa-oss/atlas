@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations_contrib.producers.tag_set import TagSet
+from foundations_events.producers.tag_set import TagSet
 
 class TestTagSet(Spec):
 
