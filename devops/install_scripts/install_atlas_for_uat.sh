@@ -1,5 +1,7 @@
 #!/bin/bash
 
+docker login $NEXUS_DOCKER_REGISTRY -u $NEXUS_USER -p $NEXUS_PASSWORD
+docker login $NEXUS_DOCKER_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD
 mkdir atlas_install
 cd atlas_install
 conda update -n base -c defaults conda --yes
