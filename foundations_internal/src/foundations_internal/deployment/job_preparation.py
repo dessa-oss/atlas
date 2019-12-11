@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 def prepare_job(message_router, job, job_id):
-    from foundations_contrib.producers.jobs.queue_job import QueueJob
+    from foundations_events.producers.jobs import QueueJob
     from foundations_contrib.global_state import config_manager
 
     if not 'deployment_implementation' in config_manager.config():

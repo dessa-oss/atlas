@@ -23,7 +23,7 @@ class TestAnnotateWithoutStage(Spec, MetricsFetcher):
     @set_up
     def set_up(self):
         from uuid import uuid4
-        from foundations_contrib.producers.jobs.queue_job import QueueJob
+        from foundations_events.producers.jobs import QueueJob
         from foundations_contrib.global_state import message_router, current_foundations_context
         from acceptance.cleanup import cleanup
 

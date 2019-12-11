@@ -6,7 +6,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from mock import Mock
 from foundations_spec import *
 
 @quarantine
@@ -49,10 +48,8 @@ class TestConsumers(unittest.TestCase):
     def test_queue_job_consumers(self):
         from foundations_contrib.utils import byte_string
         from foundations_contrib.models.project_listing import ProjectListing
-        from foundations_contrib.producers.jobs.queue_job import QueueJob
+        from foundations_events.producers.jobs import QueueJob
         from time import time
-        import json
-        import pickle
 
         def callback(random_input_data):
             pass
@@ -137,9 +134,7 @@ class TestConsumers(unittest.TestCase):
         return 'projects:{}:stage_time'.format(project_name)
 
     def test_running_job_consumers(self):
-        from foundations_contrib.global_state import message_router
-        from foundations_contrib.utils import byte_string
-        from foundations_contrib.producers.jobs.run_job import RunJob
+        from foundations_events.producers.jobs import RunJob
         from time import time
 
         queued_job_key = 'project:{}:jobs:queued'.format(self._project_name)
@@ -280,7 +275,6 @@ class TestConsumers(unittest.TestCase):
         return str(uuid.uuid4())
 
     def _slack_message_for_job(self):
-        import time
 
         notification_messages = self._slack_client.api_call('conversations.history', channel=self._testing_channel_id, limit=20)['messages']
         notification_messages = [message['text'] for message in notification_messages]

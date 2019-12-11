@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from mock import Mock
 
-from foundations_events.producers.jobs import QueueJob
+from foundations_events.producers.jobs.queue_job import QueueJob
 
 
 class TestProducerQueueJob(unittest.TestCase):

@@ -30,7 +30,6 @@ def set_up_default_environment_if_present():
                 'Without a default configuration file, no foundations code will be executed.')
 
 def load_execution_environment():
-    from foundations.config import set_environment
     from foundations_contrib.cli.typed_config_listing import TypedConfigListing
     from foundations_internal.config.execution import translate
 
@@ -42,11 +41,10 @@ def load_execution_environment():
     return False
 
 def set_up_job_environment():
-    from foundations_contrib.producers.jobs.queue_job import QueueJob
-    from foundations_contrib.producers.jobs.run_job import RunJob
-    from foundations_contrib.global_state import current_foundations_context, message_router, config_manager, log_manager
+    from foundations_events.producers.jobs import QueueJob
+    from foundations_events.producers.jobs import RunJob
+    from foundations_contrib.global_state import current_foundations_context, message_router, config_manager
     import atexit
-    import redis
 
     config_manager['_is_deployment'] = True
     _get_logger().debug(f'Foundations has been run with the following configuration:\n'
@@ -85,8 +83,8 @@ def _handle_exception(exception_type, value, traceback):
 def _at_exit_callback():
     from foundations_contrib.global_state import current_foundations_context, message_router
     from foundations_contrib.archiving.upload_artifacts import upload_artifacts
-    from foundations_contrib.producers.jobs.complete_job import CompleteJob
-    from foundations_contrib.producers.jobs.failed_job import FailedJob
+    from foundations_events.producers.jobs import CompleteJob
+    from foundations_events.producers.jobs import FailedJob
     
     global _exception_happened
 
@@ -108,7 +106,6 @@ def _set_job_state(pipeline_context):
     pipeline_context.provenance.project_name = os.environ.get('FOUNDATIONS_PROJECT_NAME', os.environ.get('PROJECT_NAME', _default_project_name()))
 
 def _default_project_name():
-    import os
     import os.path
 
     return os.path.basename(os.getcwd())

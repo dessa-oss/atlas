@@ -11,7 +11,7 @@ from foundations_spec import *
 
 class TestJobTagsController(Spec):
 
-    mock_tag_set_klass = let_patch_mock_with_conditional_return('foundations_contrib.producers.tag_set.TagSet')
+    mock_tag_set_klass = let_patch_mock_with_conditional_return('foundations_events.producers.tag_set.TagSet')
     mock_tag_set = let_mock()
     mock_message_router = let_patch_mock('foundations_contrib.global_state.message_router')
 
