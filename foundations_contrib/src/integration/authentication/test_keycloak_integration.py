@@ -19,7 +19,7 @@ class TestKeycloakIntegration(Spec):
     redirect_url = "some_redirect"
     conf_file = "integration/authentication/fixtures/atlas.json"
     user = "test"
-    auth_server_host = 'keycloak-http.ci-pipeline.svc.cluster.local' if os.environ.get('RUNNING_ON_CI', False) else 'localhost'
+    auth_server_host = 'keycloak-http.ci-pipeline.svc.cluster.local' if os.environ.get('RUNNING_ON_CI', False) == 'TRUE' else 'localhost'
 
     @set_up_class
     def set_up_class(cls):
@@ -43,6 +43,7 @@ class TestKeycloakIntegration(Spec):
         self.config = load_json(self.conf_file)
         self.realm = self.config["realm"]
         self.auth_url = f'http://{self.auth_server_host}:8080/auth'
+        self.config['auth-server-url'] = self.auth_url
         self.client_name = self.config["resource"]
         self.auth_client = AuthenticationClient(self.config, self.redirect_url)
 
