@@ -5,11 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
-from mock import Mock
-
 from foundations_spec.helpers.spec import Spec
-from foundations_spec.helpers import let, let_patch_mock, let_mock, let_now, set_up
+from foundations_spec.helpers import let, let_mock, let_now, set_up
 from foundations_spec.helpers.conditional_return import ConditionalReturn
 from foundations_spec.helpers.partial_callable_mock import PartialCallableMock
 
@@ -17,7 +14,7 @@ class TestSlackNotifier(Spec):
 
     @let
     def notifier(self):
-        from foundations_contrib.notifiers.slack_notifier import SlackNotifier
+        from foundations_events.notifiers import SlackNotifier
         return SlackNotifier()
 
     @let

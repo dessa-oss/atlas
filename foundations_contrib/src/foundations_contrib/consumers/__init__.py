@@ -6,8 +6,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_contrib.global_state import message_router, config_manager
-from foundations_contrib.notifiers.slack_notifier import SlackNotifier
-from foundations_contrib.notifiers.job_notifier import JobNotifier
+from foundations_events.notifiers import SlackNotifier
+from foundations_events.notifiers import JobNotifier
 
 _add_listener = message_router.add_listener
 _job_notifier = JobNotifier(config_manager, SlackNotifier())

@@ -5,12 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
-from mock import Mock, call
-
 from foundations_spec.helpers.spec import Spec
 from foundations_spec.helpers import *
-from foundations_spec.helpers.conditional_return import ConditionalReturn
 from foundations_spec.helpers.partial_callable_mock import PartialCallableMock
 
 def _create_retry_test(number_of_retries):
@@ -44,7 +40,7 @@ class TestJobNotifier(Spec):
 
     @let_now
     def notifier(self):
-        from foundations_contrib.notifiers.job_notifier import JobNotifier
+        from foundations_events.notifiers import JobNotifier
         return JobNotifier(self.config_manager, self.slack_notifier)
 
     def test_sends_message_to_slack_notifier(self):
