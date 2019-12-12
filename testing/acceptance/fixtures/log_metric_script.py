@@ -6,7 +6,6 @@ Written by Katherine Bancroft <k.bancroft@dessa.com>, 06 2018
 """
 
 import foundations
-import foundations_contrib.consumers
 
 foundations.log_metric('key', 'value')
 print('Hello World!')
