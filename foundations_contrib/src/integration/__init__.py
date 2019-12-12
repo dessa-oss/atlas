@@ -10,7 +10,5 @@ import integration.config
 
 import foundations
 
-from integration.test_consumers import TestConsumers
-from integration.test_consumer_compatibility import TestConsumerCompatibility
 from integration.test_run_stageless_job import TestRunStagelessJob
 from integration.authentication import TestKeycloakIntegration
