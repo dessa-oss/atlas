@@ -14,7 +14,7 @@ class TestConsumers(unittest.TestCase):
     def setUp(self):
         from foundations_contrib.global_state import redis_connection
         from foundations_contrib.global_state import message_router
-        from foundations_contrib.global_state import config_manager
+        # from foundations_contrib.global_state import config_manager
         from foundations_internal.pipeline_context import PipelineContext
         from foundations_internal.pipeline import Pipeline
         # from slackclient import SlackClient
@@ -43,7 +43,7 @@ class TestConsumers(unittest.TestCase):
         # self._check_slack_tokens_set_properly()
         # self._slack_client = SlackClient(os.environ['FOUNDATIONS_TESTING_SLACK_TOKEN'])
 
-        self._testing_channel_id = config_manager['job_notification_channel_id']
+        # self._testing_channel_id = config_manager['job_notification_channel_id']
 
     def test_queue_job_consumers(self):
         from foundations_contrib.utils import byte_string
@@ -63,7 +63,7 @@ class TestConsumers(unittest.TestCase):
             {'argument': expected_argument, 'stage_uuid': stage.uuid()}
         ]
         self._pipeline_context.provenance.job_run_data = expected_job_parameters
-    
+
         QueueJob(self._message_router, self._pipeline_context).push_message()
         current_time = time()
 
@@ -283,12 +283,12 @@ class TestConsumers(unittest.TestCase):
     #             return message
     #     return None
 
-    def _check_slack_tokens_set_properly(self):
-        self._check_environment_variable_set('FOUNDATIONS_SLACK_TOKEN')
-        self._check_environment_variable_set('FOUNDATIONS_TESTING_SLACK_TOKEN')
-
-    def _check_environment_variable_set(self, environment_variable_name):
-        import os
-
-        if environment_variable_name not in os.environ:
-            self.fail('{} environment variable not set'.format(environment_variable_name))
+    # def _check_slack_tokens_set_properly(self):
+    #     self._check_environment_variable_set('FOUNDATIONS_SLACK_TOKEN')
+    #     self._check_environment_variable_set('FOUNDATIONS_TESTING_SLACK_TOKEN')
+    #
+    # def _check_environment_variable_set(self, environment_variable_name):
+    #     import os
+    #
+    #     if environment_variable_name not in os.environ:
+    #         self.fail('{} environment variable not set'.format(environment_variable_name))
