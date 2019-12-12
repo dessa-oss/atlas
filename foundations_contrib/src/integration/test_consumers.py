@@ -17,7 +17,7 @@ class TestConsumers(unittest.TestCase):
         from foundations_contrib.global_state import config_manager
         from foundations_internal.pipeline_context import PipelineContext
         from foundations_internal.pipeline import Pipeline
-        from slackclient import SlackClient
+        # from slackclient import SlackClient
         import faker
         import os
 
@@ -40,8 +40,8 @@ class TestConsumers(unittest.TestCase):
 
         self._message_router = message_router
 
-        self._check_slack_tokens_set_properly()
-        self._slack_client = SlackClient(os.environ['FOUNDATIONS_TESTING_SLACK_TOKEN'])
+        # self._check_slack_tokens_set_properly()
+        # self._slack_client = SlackClient(os.environ['FOUNDATIONS_TESTING_SLACK_TOKEN'])
 
         self._testing_channel_id = config_manager['job_notification_channel_id']
 
@@ -123,9 +123,9 @@ class TestConsumers(unittest.TestCase):
         input_parameters = self._get_and_deserialize(input_parameters_key)
         self.assertEqual(expected_input_parameters, input_parameters)
 
-        notification = self._slack_message_for_job()
-        self.assertIsNotNone(notification)
-        self.assertIn('Queued', notification)
+        # notification = self._slack_message_for_job()
+        # self.assertIsNotNone(notification)
+        # self.assertIn('Queued', notification)
 
     def _input_parameter_key(self, project_name):
         return 'projects:{}:input_parameter_names'.format(project_name)
@@ -161,9 +161,9 @@ class TestConsumers(unittest.TestCase):
         start_time = float(string_start_time.decode())
         self.assertLess(current_time - start_time, 1)
 
-        notification = self._slack_message_for_job()
-        self.assertIsNotNone(notification)
-        self.assertIn('Running', notification)
+        # notification = self._slack_message_for_job()
+        # self.assertIsNotNone(notification)
+        # self.assertIn('Running', notification)
 
     def test_completed_job_consumers(self):
         from foundations_contrib.global_state import message_router
@@ -187,9 +187,9 @@ class TestConsumers(unittest.TestCase):
         completed_time = float(string_completed_time.decode())
         self.assertLess(current_time - completed_time, 5)
 
-        notification = self._slack_message_for_job()
-        self.assertIsNotNone(notification)
-        self.assertIn('Completed', notification)
+        # notification = self._slack_message_for_job()
+        # self.assertIsNotNone(notification)
+        # self.assertIn('Completed', notification)
 
         completed_jobs_key = 'projects:global:jobs:completed'
         running_and_completed_jobs = self._redis.smembers(completed_jobs_key)
@@ -223,9 +223,9 @@ class TestConsumers(unittest.TestCase):
         completed_time = float(string_completed_time.decode())
         self.assertLess(current_time - completed_time, 5)
 
-        notification = self._slack_message_for_job()
-        self.assertIsNotNone(notification)
-        self.assertIn('Failed', notification)
+        # notification = self._slack_message_for_job()
+        # self.assertIsNotNone(notification)
+        # self.assertIn('Failed', notification)
 
     def test_job_metric_consumers(self):
         from foundations_contrib.global_state import message_router
@@ -274,14 +274,14 @@ class TestConsumers(unittest.TestCase):
         import uuid
         return str(uuid.uuid4())
 
-    def _slack_message_for_job(self):
-
-        notification_messages = self._slack_client.api_call('conversations.history', channel=self._testing_channel_id, limit=20)['messages']
-        notification_messages = [message['text'] for message in notification_messages]
-        for message in notification_messages:
-            if self._job_id in message:
-                return message
-        return None
+    # def _slack_message_for_job(self):
+    #
+    #     notification_messages = self._slack_client.api_call('conversations.history', channel=self._testing_channel_id, limit=20)['messages']
+    #     notification_messages = [message['text'] for message in notification_messages]
+    #     for message in notification_messages:
+    #         if self._job_id in message:
+    #             return message
+    #     return None
 
     def _check_slack_tokens_set_properly(self):
         self._check_environment_variable_set('FOUNDATIONS_SLACK_TOKEN')
