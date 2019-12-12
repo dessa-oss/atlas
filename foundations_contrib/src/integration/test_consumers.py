@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from foundations_spec import *
 
-@quarantine
+
 class TestConsumers(unittest.TestCase):
 
     def setUp(self):
