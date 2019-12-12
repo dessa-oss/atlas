@@ -9,12 +9,6 @@ import fakeredis
 from foundations_orbit.data_contract import DataContract
 from foundations_spec import *
 
-# A hack so that we can use execute command with our out of date fakeredis
-def do_nothing(*args):
-    return
-fake_redis = fakeredis.FakeRedis()
-fake_redis.execute_command = do_nothing
-
 
 class TestDataContract(Spec):
 
@@ -234,7 +228,7 @@ class TestDataContract(Spec):
         mock_environ['PROJECT_NAME'] = self.project_name
         mock_environ['MONITOR_NAME'] = self.model_name
 
-        self._redis = self.patch('foundations_contrib.global_state.redis_connection', fake_redis)
+        self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
 
     @tear_down
     def tear_down(self):
@@ -435,27 +429,10 @@ class TestDataContract(Spec):
         self._test_exclusion_of_columns([self.column_name, self.column_name_2])
 
     def test_data_contract_validate_check_distributions_by_default(self):
-
-        mock_report_validator = self.patch('foundations_orbit.report_formatter.ReportFormatter')
-        mock_bin_create_stats = self.patch('foundations_orbit.contract_validators.utils.create_bin_stats.create_bin_stats')
-        mock_bin_create_stats.return_value = self.bin_return_value
-        mock_distribution_checker = Mock()
-        mock_distribution_check_results = Mock()
-
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
-
-        self.patch('foundations_orbit.contract_validators.special_values_checker.SpecialValuesChecker')
-        mock_distribution_checker_class = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker', ConditionalReturn())
-        mock_distribution_checker_class.return_when(mock_distribution_checker, [self.column_name, self.column_name_2], self.two_column_dataframe_reference_types, self.two_column_dataframe_categories)
-
-        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
-        
-        mock_distribution_checker.validate = ConditionalReturn()
-        mock_distribution_checker.validate.return_when(mock_distribution_check_results, self.two_column_dataframe)
-
         validation_report = contract.validate(self.two_column_dataframe)
 
-        self.assertEqual(mock_distribution_check_results, validation_report['dist_check_results'])
+        self.assertIsNotNone(validation_report.get('dist_check_results'))
 
     def test_data_contract_validate_does_not_check_distribution_if_option_set_to_false(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
