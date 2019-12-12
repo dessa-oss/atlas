@@ -8,5 +8,5 @@ conda activate atlas_ce_env && \
 aws s3 cp --quiet $1 ./atlas_ce_installer.sh && \
 echo 'Downloaded successfully' && \
 chmod +x atlas_ce_installer.sh && \
-yes | ./atlas_ce_installer.sh && \
+yes | ./atlas_ce_installer.sh
 atlas-server start > /dev/null 2>&1 &
