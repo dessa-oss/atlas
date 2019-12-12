@@ -85,15 +85,18 @@ pipeline{
               build job: "build-installer-atlas-ce", wait: false, parameters: [
                 [$class: 'StringParameterValue', name: 'atlas_ce_rest_api', value: "docker-staging.shehanigans.net/atlas-ce-dev/foundations-rest-api:${version}"],
                 [$class: 'StringParameterValue', name: 'atlas_ce_gui', value: "docker-staging.shehanigans.net/atlas-ce-dev/foundations-gui:${version}"],
-                [$class: 'StringParameterValue', name: 'atlas_ce_tracker', value: "docker-staging.shehanigans.net/atlas-ce-dev/tracker:${version}"],
+                [$class: 'StringParameterValue', name: 'atlas_ce_tracker', value: "docker-staging.shehanigans.net/atlas-ce-dev/tracker:latest"],
                 [$class: 'StringParameterValue', name: 'scheduler', value: "docker-staging.shehanigans.net/atlas-ce-dev/scheduler:latest"],
                 [$class: 'StringParameterValue', name: 'atlas_ce_worker', value: "docker-staging.shehanigans.net/atlas-ce-dev/worker:${version}"],
                 [$class: 'StringParameterValue', name: 'archive_server', value: "docker-staging.shehanigans.net/atlas-ce-dev/archive_server:latest"],
                 [$class: 'StringParameterValue', name: 'tensorboard_server', value: "docker-staging.shehanigans.net/atlas-ce-dev/tensorboard-server:${version}"],
                 [$class: 'StringParameterValue', name: 'tensorboard_rest_api', value: "docker-staging.shehanigans.net/atlas-ce-dev/tensorboard-rest-api:${version}"],
+                [$class: 'StringParameterValue', name: 'auth-proxy', value: "docker-staging.shehanigans.net/atlas-ce-dev/auth-proxy:latest"],
+                [$class: 'StringParameterValue', name: 'auth-server', value: "docker.shehanigans.net/atlas-ce-dev/auth-server:latest"],
                 [$class: 'StringParameterValue', name: 'atlas_server', value: '0.2.4.dev2'],
                 [$class: 'StringParameterValue', name: 'foundations_atlas_ce_pi_py', value: "${version}"],
-                [$class: 'StringParameterValue', name: 'ATLAS_CE_VERSION', value: 'test_to_release']
+                [$class: 'StringParameterValue', name: 'ATLAS_CE_VERSION', value: version],
+                [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: params.f9s_commit_hash]
               ]
             }
           }

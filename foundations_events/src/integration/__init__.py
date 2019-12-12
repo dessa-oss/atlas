@@ -1,0 +1,4 @@
+import foundations
+
+from integration.test_consumer_compatibility import TestConsumerCompatibility
+from integration.test_consumers import TestConsumers

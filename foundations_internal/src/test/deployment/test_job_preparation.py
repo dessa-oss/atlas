@@ -15,7 +15,7 @@ class TestJobPreparation(Spec):
 
     @let_now
     def queue_job(self):
-        queue_job = self.patch('foundations_contrib.producers.jobs.queue_job.QueueJob', ConditionalReturn())
+        queue_job = self.patch('foundations_events.producers.jobs.QueueJob', ConditionalReturn())
         queue_job.return_when(self.queue_job_instance, self.message_router, self.pipeline_context)
         return queue_job
 

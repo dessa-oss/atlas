@@ -51,7 +51,7 @@ class TestCompletedJobHelpers(Spec):
         self.assertEqual(self.listing, list_jobs(self.redis))
 
     def test_job_project_names_returns_project_names(self):
-        from foundations_contrib.consumers.jobs.queued.project_name import ProjectName
+        from foundations_events.consumers.jobs.queued.project_name import ProjectName
         from foundations.helpers.completed import job_project_names
 
         consumer = ProjectName(self.redis)
@@ -75,7 +75,7 @@ class TestCompletedJobHelpers(Spec):
         self.assertEqual(self.listing - {self.random_job_id}, list_jobs(self.redis))
 
     def test_remove_jobs_removes_all_completed_jobs_from_projects(self):
-        from foundations_contrib.consumers.jobs.queued.project_listing import ProjectListing
+        from foundations_events.consumers.jobs.queued.project_listing import ProjectListing
         from foundations.helpers.completed import remove_jobs, list_jobs
 
         ProjectListing(self.redis).call({'project_name': self.project_name, 'job_id': self.random_job_id}, None, {})

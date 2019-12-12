@@ -108,7 +108,7 @@ class TestProjects(Spec):
         from foundations_spec.helpers.conditional_return import ConditionalReturn
 
         mock = self.patch('foundations_contrib.log_manager.LogManager.get_logger', ConditionalReturn())
-        mock.return_when(Mock(), 'foundations_contrib.consumers.annotate')
+        mock.return_when(Mock(), 'foundations_events.consumers.annotate')
         mock.return_when(self.mock_logger, 'foundations.utils')
         return mock
 
@@ -362,7 +362,7 @@ class TestProjects(Spec):
         assert_frame_equal(self.metrics, metric_subset)
 
     def test_returns_stored_annotations(self):
-        from foundations_contrib.consumers.annotate import Annotate
+        from foundations_events.consumers.annotate import Annotate
         self.get_metrics_mock
 
         annotator = Annotate(self.redis)
@@ -376,7 +376,7 @@ class TestProjects(Spec):
         assert_frame_equal(self.annotations_data_frame, job_annotations)
     
     def test_returns_stored_annotations_multiple_annotations(self):
-        from foundations_contrib.consumers.annotate import Annotate
+        from foundations_events.consumers.annotate import Annotate
         import pandas
         
         self.get_metrics_mock

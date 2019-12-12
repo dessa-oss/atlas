@@ -14,7 +14,7 @@ from foundations_rest_api.v2beta.controllers.project_metrics_controller import P
 class TestProjectMetricsController(Spec):
 
     mock_redis = let_fake_redis()
-    mock_tag_set_klass = let_patch_mock_with_conditional_return('foundations_contrib.producers.tag_set.TagSet')
+    mock_tag_set_klass = let_patch_mock_with_conditional_return('foundations_events.producers.tag_set.TagSet')
     mock_tag_set = let_mock()
     mock_message_router = let_patch_mock('foundations_contrib.global_state.message_router')
 
@@ -32,12 +32,12 @@ class TestProjectMetricsController(Spec):
 
     @let
     def project_metric_logger(self):
-        from foundations_contrib.consumers.project_metrics import ProjectMetrics
+        from foundations_events.consumers.project_metrics import ProjectMetrics
         return ProjectMetrics(self.mock_redis)
 
     @let
     def single_project_metric_logger(self):
-        from foundations_contrib.consumers.single_project_metric import SingleProjectMetric
+        from foundations_events.consumers.single_project_metric import SingleProjectMetric
         return SingleProjectMetric(self.mock_redis)
 
     @set_up
@@ -93,7 +93,6 @@ class TestProjectMetricsController(Spec):
         self.assertEqual(expected_output, self.controller.index().as_json())
 
     def _log_metric(self, timestamp, job_id, key, value):
-        from foundations_contrib.consumers.single_project_metric import SingleProjectMetric
 
         message = {'project_name': self.project_name, 'job_id': job_id, 'key': key, 'value': value}
         self.project_metric_logger.call(message, timestamp, None)

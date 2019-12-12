@@ -12,7 +12,7 @@ class GlobalMetricLogger(object):
     
     def log_metric(self, key, value):
         from foundations_contrib.global_state import log_manager
-        from foundations_contrib.producers.metric_logged import MetricLogged
+        from foundations_events.producers.metric_logged import MetricLogged
 
         if self._is_job_running():
             metric_logged_producer = MetricLogged(self._message_router, self._project_name(), self._job_id(), key, value)

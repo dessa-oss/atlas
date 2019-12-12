@@ -99,10 +99,8 @@ def get_metrics_for_all_jobs(project_name, include_input_params=False):
         print_metrics(all_metrics)
         ```
     """
-    import foundations
     from foundations_contrib.global_state import redis_connection
     from foundations.helpers.annotate import annotations_for_multiple_jobs
-    from foundations_contrib.redis_pipeline_wrapper import RedisPipelineWrapper
     from pandas import DataFrame
 
     metrics = _get_metrics_for_all_jobs(project_name, include_input_params)
@@ -156,7 +154,7 @@ def set_tag(key, value=''):
 
 def _set_tag_in_running_jobs(key, value):
     from foundations_contrib.global_state import message_router, current_foundations_context
-    from foundations_contrib.producers.tag_set import TagSet
+    from foundations_events.producers.tag_set import TagSet
 
     job_id = current_foundations_context().job_id()
 

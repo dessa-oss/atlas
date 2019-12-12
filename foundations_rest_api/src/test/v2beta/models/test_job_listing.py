@@ -9,7 +9,6 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 from foundations_spec import *
 from mock import patch
 from foundations_rest_api.v2beta.models.job import Job
-from foundations_rest_api.v2beta.models.property_model import PropertyModel
 from foundations_core_rest_api_components.lazy_result import LazyResult
 
 from foundations_rest_api.v2beta.models.job_artifact import JobArtifact
@@ -421,8 +420,8 @@ class TestJobListingV2(Spec):
 
     def _make_job(self):
         from foundations_contrib.global_state import message_router
-        from foundations_contrib.producers.jobs.queue_job import QueueJob
-        from foundations_contrib.producers.jobs.run_job import RunJob
+        from foundations_events.producers.jobs import QueueJob
+        from foundations_events.producers.jobs import RunJob
 
         QueueJob(message_router, self._pipeline_context).push_message()
         RunJob(message_router, self._pipeline_context).push_message()

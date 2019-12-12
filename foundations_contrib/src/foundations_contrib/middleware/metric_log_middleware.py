@@ -22,7 +22,7 @@ class MetricLogMiddleware(BasicStageMiddleware):
                 self._push_message_to_channel(metric['key'], metric['value'])
 
         def _push_message_to_channel(self, key, value):
-            from foundations_contrib.producers.metric_logged import MetricLogged
+            from foundations_events.producers.metric_logged import MetricLogged
 
             metrics_logged_producer = MetricLogged(self._message_router, self._project_name(), self._job_id(), key, value)
             metrics_logged_producer.push_message()

@@ -43,19 +43,19 @@ class TestAnnotate(Spec):
         return self.faker.sentence()
 
     def test_job_annotations_returns_stored_annotations_for_single_job(self):
-        from foundations_contrib.consumers.annotate import Annotate
+        from foundations_events.consumers.annotate import Annotate
         
         Annotate(self.redis).call({'job_id': self.job_id, 'key': self.key, 'value': self.value}, None, {})
         self.assertEqual({self.key: self.value}, job_annotations(self.redis, self.job_id))
 
     def test_annotations_for_multiple_jobs_returns_annotations_for_single_job(self):
-        from foundations_contrib.consumers.annotate import Annotate
+        from foundations_events.consumers.annotate import Annotate
         
         Annotate(self.redis).call({'job_id': self.job_id, 'key': self.key, 'value': self.value}, None, {})
         self.assertEqual({self.job_id: {self.key: self.value}}, annotations_for_multiple_jobs(self.redis, [self.job_id]))
 
     def test_annotations_for_multiple_jobs_returns_annotations_for_multiple_jobs(self):
-        from foundations_contrib.consumers.annotate import Annotate
+        from foundations_events.consumers.annotate import Annotate
         
         annotate = Annotate(self.redis)
         annotate.call({'job_id': self.job_id, 'key': self.key, 'value': self.value}, None, {})

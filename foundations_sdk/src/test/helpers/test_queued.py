@@ -88,7 +88,7 @@ class TestQueuedJobHelpers(Spec):
         self.assertEqual(self.listing, list_jobs(self.redis))
 
     def test_job_project_names_returns_project_names(self):
-        from foundations_contrib.consumers.jobs.queued.project_name import ProjectName
+        from foundations_events.consumers.jobs.queued.project_name import ProjectName
         from foundations.helpers.queued import job_project_names
 
         consumer = ProjectName(self.redis)
@@ -112,7 +112,7 @@ class TestQueuedJobHelpers(Spec):
         self.assertEqual(self.listing - {self.random_job_id}, list_jobs(self.redis))
 
     def test_remove_jobs_removes_all_queued_jobs_from_projects(self):
-        from foundations_contrib.consumers.jobs.queued.project_listing_for_queued_job import ProjectListingForQueuedJob
+        from foundations_events.consumers.jobs.queued.project_listing_for_queued_job import ProjectListingForQueuedJob
         from foundations.helpers.queued import remove_jobs, list_jobs
 
         ProjectListingForQueuedJob(self.redis).call({'project_name': self.project_name, 'job_id': self.random_job_id}, None, {})

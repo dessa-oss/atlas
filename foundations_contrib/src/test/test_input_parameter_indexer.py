@@ -19,7 +19,7 @@ class TestInputParameterIndexer(Spec):
         self._redis.flushall()
 
     def _zadd_to_redis(self, project_name, timestamp, key):
-        self._redis.zadd('projects:{}:{}'.format(project_name, 'stage_time'), key, timestamp ,nx=True)
+        self._redis.zadd('projects:{}:{}'.format(project_name, 'stage_time'), {key: timestamp} ,nx=True)
 
     def _del_from_redis(self, project_name):
         self._redis.delete('projects:{}:stage_time'.format(project_name))

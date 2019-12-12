@@ -5,9 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 from test.datetime_faker import fake_current_datetime, restore_real_current_datetime
-from foundations_contrib.producers.jobs.queue_job import QueueJob
-from foundations_contrib.producers.jobs.run_job import RunJob
-from foundations_contrib.producers.jobs.complete_job import CompleteJob
+from foundations_events.producers.jobs import QueueJob
+from foundations_events.producers.jobs import RunJob
+from foundations_events.producers.jobs import CompleteJob
 
 
 class JobsTestsHelperMixinV2(object):

@@ -8,8 +8,6 @@ Written by Katherine Bancroft <k.bancroft@dessa.com>, 11 2018
 from test.helpers import *
 from test.models import *
 from test.job_bundling import *
-from test.producers import *
-from test.consumers import *
 from test.middleware import *
 from test.cli import *
 from test.archiving import *
@@ -59,6 +57,5 @@ from test.test_job_deployer import TestJobDeployer
 from test.test_log_manager import TestLogManager
 
 from test.config import *
-from test.notifiers import *
 from test.jobs import *
 from test.utils import *

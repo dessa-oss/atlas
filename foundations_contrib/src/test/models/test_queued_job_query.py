@@ -43,13 +43,13 @@ class TestQueuedJobQuery(Spec):
         return {'job_id': self.job_id, 'project_name': self.project_name}
 
     def test_returns_queued_time(self):
-        from foundations_contrib.consumers.jobs.queued.creation_time import CreationTime
+        from foundations_events.consumers.jobs.queued.creation_time import CreationTime
 
         CreationTime(self.mock_redis).call(self.queue_message, self.queued_time, {})
         self.assertEqual(self.queued_time, float(self.query.queued_time()))
 
     def test_returns_project_name(self):
-        from foundations_contrib.consumers.jobs.queued.project_name import ProjectName
+        from foundations_events.consumers.jobs.queued.project_name import ProjectName
 
         ProjectName(self.mock_redis).call(self.queue_message, self.queued_time, {})
         self.assertEqual(self.project_name, self.query.project_name().decode())
@@ -58,7 +58,7 @@ class TestQueuedJobQuery(Spec):
         self.assertFalse(self.query.exists())
 
     def test_exists_returns_true_when_queued(self):
-        from foundations_contrib.consumers.jobs.queued.global_listing import GlobalListing
+        from foundations_events.consumers.jobs.queued.global_listing import GlobalListing
 
         GlobalListing(self.mock_redis).call(self.queue_message, self.queued_time, {})
         self.assertTrue(self.query.exists())

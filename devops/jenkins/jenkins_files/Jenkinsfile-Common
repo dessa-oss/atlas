@@ -65,6 +65,15 @@ pipeline{
         }
       }
     }
+    stage('Build Archive Server') {
+      steps {
+        container("python3") {
+          sh "docker pull $NEXUS_DOCKER_REGISTRY/archive_server:latest"
+          sh "docker tag $NEXUS_DOCKER_REGISTRY/archive_server:latest $NEXUS_DOCKER_STAGING/atlas-ce-dev/archive_server:latest"
+          sh "docker tag $NEXUS_DOCKER_REGISTRY/archive_server:latest $NEXUS_DOCKER_STAGING/orbit-team/archive_server:latest"
+        }
+      }
+    }
     stage('Push Tracker Image') {
       steps {
         container("python3") {
@@ -75,10 +84,18 @@ pipeline{
         }
       }
     }
+    stage('Push Archive Server Image') {
+      steps {
+        container("python3") {
+          sh "docker push $NEXUS_DOCKER_STAGING/atlas-ce-dev/archive_server:latest"
+          sh "docker push $NEXUS_DOCKER_STAGING/orbit-team/archive_server:latest"
+        }
+      }
+    }
     stage('Trigger Atlas CE Build Pipeline') {
       steps {
         script {
-          f9s_commit_hash = sh(script: "echo $(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
+          f9s_commit_hash = sh(script: "echo \$(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
           echo "Attempting to trigger pipeline for building Atlas CE Artifacts with version of ${f9s_commit_hash}"
           build job: "build-artifacts-atlas-ce", wait: false, parameters: [
             [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: "${f9s_commit_hash}"]
@@ -89,7 +106,7 @@ pipeline{
     stage('Trigger Orbit Team Build Pipeline') {
       steps {
         script {
-          f9s_commit_hash = sh(script: "echo $(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
+          f9s_commit_hash = sh(script: "echo \$(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
           echo "Attempting to trigger pipeline for building Orbit Team Artifacts with version of ${f9s_commit_hash}"
           build job: "build-artifacts-orbit-team", wait: false, parameters: [
             [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: "${f9s_commit_hash}"]
