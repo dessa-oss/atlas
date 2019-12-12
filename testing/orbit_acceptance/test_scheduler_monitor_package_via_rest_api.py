@@ -260,7 +260,7 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         # paused to attempt to reduce the occurrence of other jobs running between evaluating outputs of the jobs
         self._pause_monitor()
         # give job time to complete
-        time.sleep(5)
+        time.sleep(15)
 
         jobs_list_response = self._get_monitor_jobs(self.monitor_name)
         self.assertEqual(200, jobs_list_response.status_code)
