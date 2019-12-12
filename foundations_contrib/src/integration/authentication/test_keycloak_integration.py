@@ -13,7 +13,6 @@ import requests
 from typing import Callable
 import os
 
-
 class TestKeycloakIntegration(Spec):
 
     redirect_url = "some_redirect"
