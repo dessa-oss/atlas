@@ -144,18 +144,18 @@ class TestQueuedJob(Spec):
         self.assert_list_contains_items([self.queued_job, self.queued_job_two], jobs)
 
     def _store_job_data(self):
-        from foundations_contrib.consumers.jobs.queued.creation_time import CreationTime
-        from foundations_contrib.consumers.jobs.queued.project_name import ProjectName
-        from foundations_contrib.consumers.jobs.queued.global_listing import GlobalListing
+        from foundations_events.consumers.jobs.queued.creation_time import CreationTime
+        from foundations_events.consumers.jobs.queued.project_name import ProjectName
+        from foundations_events.consumers.jobs.queued.global_listing import GlobalListing
 
         CreationTime(self.mock_redis).call(self.queue_message, self.queued_time, {})
         ProjectName(self.mock_redis).call(self.queue_message, self.queued_time, {})
         GlobalListing(self.mock_redis).call(self.queue_message, self.queued_time, {})
 
     def _store_job_data_two(self):
-        from foundations_contrib.consumers.jobs.queued.creation_time import CreationTime
-        from foundations_contrib.consumers.jobs.queued.project_name import ProjectName
-        from foundations_contrib.consumers.jobs.queued.global_listing import GlobalListing
+        from foundations_events.consumers.jobs.queued.creation_time import CreationTime
+        from foundations_events.consumers.jobs.queued.project_name import ProjectName
+        from foundations_events.consumers.jobs.queued.global_listing import GlobalListing
 
         CreationTime(self.mock_redis).call(self.queue_message_two, self.queued_time_two, {})
         ProjectName(self.mock_redis).call(self.queue_message_two, self.queued_time_two, {})

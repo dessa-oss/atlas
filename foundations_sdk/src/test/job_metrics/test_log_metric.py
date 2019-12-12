@@ -90,10 +90,10 @@ class TestLogMetric(Spec):
         self._set_up_routes()
 
     def _set_up_routes(self):
-        from foundations_contrib.consumers.job_metric_consumer import JobMetricConsumer
-        from foundations_contrib.consumers.job_metric_name_consumer import JobMetricNameConsumer
-        from foundations_contrib.consumers.project_metrics import ProjectMetrics
-        from foundations_contrib.consumers.single_project_metric import SingleProjectMetric
+        from foundations_events.consumers.job_metric_consumer import JobMetricConsumer
+        from foundations_events.consumers.job_metric_name_consumer import JobMetricNameConsumer
+        from foundations_events.consumers.project_metrics import ProjectMetrics
+        from foundations_events.consumers.single_project_metric import SingleProjectMetric
 
         self._message_router.add_listener(JobMetricConsumer(self._redis), 'job_metrics')
         self._message_router.add_listener(JobMetricNameConsumer(self._redis), 'job_metrics')
