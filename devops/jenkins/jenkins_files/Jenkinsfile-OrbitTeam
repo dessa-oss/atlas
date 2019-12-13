@@ -33,14 +33,14 @@ pipeline{
       steps {
         container("python3"){
           sh 'docker login $NEXUS_DOCKER_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD'
-          sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/orbit-team ./devops/build_scripts/gui_and_rest_apis/build_gui_orbit_team.sh"
+          sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING PACKAGE_NAME=orbit-team ./devops/build_scripts/gui_and_rest_apis/build_gui_orbit_team.sh"
         }
       }
     }
     stage('Push Orbit Team GUI and Rest API Images to Staging'){
       steps {
         container("python3"){
-          sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/orbit-team ./devops/build_scripts/gui_and_rest_apis/push_gui_orbit_team_images.sh"
+          sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING PACKAGE_NAME=orbit-team ./devops/build_scripts/gui_and_rest_apis/push_gui_orbit_team_images.sh"
         }
       }
     }
