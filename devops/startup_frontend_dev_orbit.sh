@@ -31,6 +31,14 @@ echo "Generating database.config.yaml at $FOUNDATIONS/config/local_docker_schedu
   && pip install -r requirements_dev.txt \
   && python -m local_docker_scheduler -p ${SCHEDULER_PORT} > $FOUNDATIONS/logs/scheduler.log 2>&1 &
 
+echo 'Starting up the auth proxy' \
+  && cd ../foundations-auth-proxy \
+  && pip install -r requirements.txt \
+  && python -m auth_proxy -n -p 5558 --dev > $FOUNDATIONS/logs/auth_proxy.log 2>&1 &
+
+echo "Starting the Auth Server (keycloak)" \
+  && ./foundations_contrib/src/foundations_contrib/authentication/launch.sh
+
 cd foundations_ui_orbit && \
   echo "Install UI dependencies" && \
   yarn install && \
