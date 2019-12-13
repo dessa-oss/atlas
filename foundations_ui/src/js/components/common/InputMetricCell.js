@@ -121,6 +121,7 @@ class InputMetricCell extends Component {
           <HoverCell
             onMouseLeave={this.toggleExpand}
             textToRender={expandedValue}
+            data-class={hoverDataClass}
           />
         );
       }
