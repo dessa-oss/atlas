@@ -4,18 +4,17 @@ describe('Test Fast Job', () => {
   const guiHost = Cypress.env('GUI_HOST');
   const guiPort = Cypress.env('GUI_PORT');
   const projectName = 'fast_job_project';
-  const loginCommand = `foundations login http://${schedulerIP}:5558 -u test -p test`
 
   const states = [
     {
       testName: 'Test Ten Fast Jobs through CLI',
       projectName: projectName,
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations &&  ${loginCommand} && cd cypress/fixtures/atlas_scheduler/fast_job/ && foundations submit scheduler ${projectName} main.py &`
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/fast_job/ && foundations submit scheduler ${projectName} main.py &`
     },
     {
       testName: 'Test Ten Fast Jobs through SDK',
       projectName: projectName,
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations &&  ${loginCommand} && cd cypress/fixtures/atlas_scheduler/fast_job/${projectName}/ && python main.py &`
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/fast_job/${projectName}/ && python main.py &`
     }
   ];
 

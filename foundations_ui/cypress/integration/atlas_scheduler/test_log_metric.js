@@ -4,7 +4,6 @@ describe('Test Log Metric', () => {
   const guiHost = Cypress.env('GUI_HOST');
   const guiPort = Cypress.env('GUI_PORT');
   const projectName = 'log_metric_project';
-  const loginCommand = `foundations login http://${schedulerIP}:5558 -u test -p test`
 
   const states = [
     {
@@ -47,7 +46,7 @@ describe('Test Log Metric', () => {
           hasHover: true
         }
       ],
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && ${loginCommand} && cd cypress/fixtures/atlas_scheduler/log_metric/ && foundations submit scheduler ${projectName} ints.py`
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_metric/ && foundations submit scheduler ${projectName} ints.py`
     },
     {
       testName: `Test Logging Metrics of Type Float`,
@@ -89,7 +88,7 @@ describe('Test Log Metric', () => {
           hasHover: true
         },
       ],
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && ${loginCommand} && cd cypress/fixtures/atlas_scheduler/log_metric/ && foundations submit scheduler ${projectName} floats.py`
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_metric/ && foundations submit scheduler ${projectName} floats.py`
     },
     {
       testName: `Test Logging Metrics of Type Str`,
@@ -121,7 +120,7 @@ describe('Test Log Metric', () => {
           hasHover: true
         },
       ],
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && ${loginCommand} && cd cypress/fixtures/atlas_scheduler/log_metric/ && foundations submit scheduler ${projectName} strs.py`
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_metric/ && foundations submit scheduler ${projectName} strs.py`
     },
   ];
 

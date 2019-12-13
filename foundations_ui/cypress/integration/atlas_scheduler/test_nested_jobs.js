@@ -3,10 +3,9 @@ describe.skip('Test Nested Jobs', () => {  // wait_for_deployment_to_complete do
   const schedulerRedisPort = Cypress.env('SCHEDULER_REDIS_PORT');
   const guiHost = Cypress.env('GUI_HOST');
   const guiPort = Cypress.env('GUI_PORT');
-  const loginCommand = `foundations login http://${schedulerIP}:5558 -u test -p test`
 
   const projectName = 'nested_jobs_project';
-  const command = `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && ${loginCommand} && cd cypress/fixtures/atlas_scheduler/nested_jobs/ && foundations submit scheduler ${projectName} main.py`;
+  const command = `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/nested_jobs/ && foundations submit scheduler ${projectName} main.py`;
 
   before(() => {
     cy.exec(`redis-cli -h ${schedulerIP} -p ${schedulerRedisPort} flushall`);
