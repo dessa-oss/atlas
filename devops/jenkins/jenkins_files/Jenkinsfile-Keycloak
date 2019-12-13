@@ -18,7 +18,8 @@ pipeline{
       steps {
         container("python3"){
           sh 'docker login $NEXUS_DOCKER_REGISTRY -u $NEXUS_USER -p $NEXUS_PASSWORD'
-          sh "./foundations_contrib/src/foundations_contrib/authentication/build_and_push.sh"
+          sh 'docker login $NEXUS_DOCKER_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD'
+          sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./foundations_contrib/src/foundations_contrib/authentication/build_and_push.sh"
         }
       }
     }
