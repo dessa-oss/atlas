@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export build_version=`python get_version.py | sed 's/+/_/g'`
-registry=${NEXUS_DOCKER_REGISTRY:-docker.shehanigans.net}
+registry=${NEXUS_DOCKER_REGISTRY:-docker.shehanigans.net}/atlas-ce
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 docker build --network=host -t "$registry/auth-server:$build_version" $DIR \
