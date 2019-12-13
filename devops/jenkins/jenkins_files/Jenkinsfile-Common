@@ -46,7 +46,7 @@ pipeline{
         }
       }
     }
-    stage('Push Images To Staging') {
+    stage('Push Worker Images To Staging') {
       steps {
         container("python3") {
           sh 'RELEASED=True NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING ./devops/build_scripts/workers/push_worker_images.sh'
@@ -77,8 +77,8 @@ pipeline{
     stage('Push Tracker Image') {
       steps {
         container("python3") {
-          sh "docker push $NEXUS_DOCKER_STAGING/atlas-ce-dev/tracker:5"
-          sh "docker push $NEXUS_DOCKER_STAGING/atlas-ce-dev/tracker:latest"
+          sh "docker push $NEXUS_DOCKER_STAGING/atlas-common/tracker:5"
+          sh "docker push $NEXUS_DOCKER_STAGING/atlas-common/tracker:latest"
           sh "docker push $NEXUS_DOCKER_STAGING/orbit-team/tracker:5"
           sh "docker push $NEXUS_DOCKER_STAGING/orbit-team/tracker:latest"
         }
@@ -87,7 +87,7 @@ pipeline{
     stage('Push Archive Server Image') {
       steps {
         container("python3") {
-          sh "docker push $NEXUS_DOCKER_STAGING/atlas-ce-dev/archive_server:latest"
+          sh "docker push $NEXUS_DOCKER_STAGING/atlas-common/archive_server:latest"
           sh "docker push $NEXUS_DOCKER_STAGING/orbit-team/archive_server:latest"
         }
       }
