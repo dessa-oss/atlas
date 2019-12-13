@@ -39,6 +39,11 @@ echo 'Starting up the auth proxy' \
 echo "Starting the Auth Server (keycloak)" \
   && ./foundations_contrib/src/foundations_contrib/authentication/launch.sh
 
+echo "Ensuring that the docker network is configured for the orbit workers"
+docker network create foundations-orbit || true \
+  && redis_docker_id=$(docker ps --filter "name=redis" --quiet) \
+  && docker network connect foundations-orbit $redis_docker_id || true
+
 cd foundations_ui_orbit && \
   echo "Install UI dependencies" && \
   yarn install && \
