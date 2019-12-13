@@ -11,7 +11,7 @@ to_be_released = os.environ.get('RELEASED', False)
 
 
 def build_worker_tags_for_local_development():
-    return ['orbit/worker', 'atlas-ce/worker', 'atlas-ce/worker-gpu']
+    return ['orbit/worker', 'orbit-team/worker', 'atlas-ce/worker', 'atlas-ce/worker-gpu']
 
 
 def build_worker_tags_for_release():
