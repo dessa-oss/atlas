@@ -126,6 +126,7 @@ foundations_ui/cypress/screenshots/*
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/config/submission/scheduler.config.yaml
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/config/execution/default.config.yaml
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/job_data
+testing/orbit_acceptance/fixtures/end-to-end-acceptance/foundations_home/local_docker_scheduler/work_dir
 
 # We should investigate why this is happening
 foundations_ui/cypress/**/foundations_ui
