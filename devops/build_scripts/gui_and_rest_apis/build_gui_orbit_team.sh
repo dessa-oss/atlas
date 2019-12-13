@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PACKAGE_NAME=${PACKAGE_NAME:-orbit-team-dev}
+export PACKAGE_NAME=${PACKAGE_NAME:-orbit-team}
 
 # convert the NEXUS_DOCKER_REGISTRY to the project specific domain if not converted before
 if [[ $NEXUS_DOCKER_REGISTRY != *"$PACKAGE_NAME"* ]]; then

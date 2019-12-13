@@ -217,7 +217,7 @@ def _get_monitor_job_spec(project_name, monitor_name, username, job_config, conf
         _orbit_spec['runtime'] = 'nvidia'
 
     else:
-        _orbit_spec['image'] = 'docker.shehanigans.net/orbit-team-dev/worker:latest'
+        _orbit_spec['image'] = 'docker.shehanigans.net/orbit-team/worker:latest'
         _orbit_spec['runtime'] = 'runc'
 
     for override_key in ['image', 'working_dir', 'entrypoint', 'mem_limit']:
