@@ -10,7 +10,7 @@ pipeline{
     stage('Preparation') {
       steps {
         container("python3") {
-          git branch: 'am-authentication', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations.git'
+          git branch: 'master', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations.git'
         }
       }
     }
