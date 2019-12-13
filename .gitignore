@@ -86,6 +86,8 @@ site/
 build
 dist
 **/.eggs/
+**/.coverage
+**/htmlcov
 
 !foundations_ui/package.json
 !foundations_ui/cypress.json
@@ -95,6 +97,8 @@ dist
 !foundations_contrib/src/foundations_contrib/resources/template/*.config.yaml
 !**/fixtures/**/*.config.yaml
 !**/fixtures/**/*.json
+!**/authentication/*.json
+!**/authentication/keycloak/*.json
 testing/test-cli-init
 test_pod.yaml
 
@@ -122,3 +126,6 @@ foundations_ui/cypress/screenshots/*
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/config/submission/scheduler.config.yaml
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/config/execution/default.config.yaml
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/job_data
+
+# We should investigate why this is happening
+foundations_ui/cypress/**/foundations_ui

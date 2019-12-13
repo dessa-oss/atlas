@@ -10,3 +10,4 @@ from acceptance.v2beta.test_job_listing_ui_friendly import TestJobsListingUIFrie
 from acceptance.v2beta.test_job_listing_trim_characters import TestJobListingTrimCharacters
 from acceptance.v2beta.test_job_listing_parametrics import TestJobListingParametrics
 from acceptance.v2beta.test_artifact_loading import TestArtifactLoading
+# from acceptance.v2beta.test_authentication_endpoints import TestAuthenticationEndpoints # TODO Update when Keycloak part of jenkins

@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import Cookies from 'js-cookie';
 import JobColumnHeader from '../components/common/JobColumnHeader';
 import InputMetricCell from '../components/common/InputMetricCell';
 import InputMetricRow from '../components/common/InputMetricRow';
@@ -477,6 +478,16 @@ class CommonActions {
     });
     const tags = Array.from(set);
     return tags;
+  }
+
+  static getAccessCookie() {
+    return Cookies.get('atlas_access_token');
+  }
+
+  static checkStatusResponse(response) {
+    if (response.status === 401) {
+      window.location = '/login';
+    }
   }
 }
 

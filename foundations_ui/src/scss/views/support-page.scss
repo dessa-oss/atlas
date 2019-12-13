@@ -3,6 +3,9 @@
   height: calc(100% - #{$header-height} - #{$footer-height} - 1px);
   box-sizing: border-box;
   overflow-y: scroll;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
 
   .support-container {
     width: 900px;

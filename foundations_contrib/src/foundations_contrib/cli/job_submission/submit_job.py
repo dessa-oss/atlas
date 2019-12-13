@@ -10,7 +10,7 @@ import foundations_contrib
 import yaml
 
 with open(f'{foundations_contrib.root()}/resources/config_validation/job.yaml') as file:
-    _job_schema = yaml.load(file.read())
+    _job_schema = yaml.load(file.read(), Loader=yaml.FullLoader)
 
 def submit(arguments):
     from foundations_contrib.cli.job_submission.config import load
@@ -30,7 +30,7 @@ def submit(arguments):
         job_config = {}
         if os.path.exists('job.config.yaml'):
             with open('job.config.yaml') as file:
-                job_config = yaml.load(file.read())
+                job_config = yaml.load(file.read(), Loader=yaml.FullLoader)
 
         # validate(instance=job_config, schema=_job_schema)
 

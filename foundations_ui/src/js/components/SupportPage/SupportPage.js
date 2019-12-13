@@ -1,6 +1,8 @@
 /* eslint-disable max-len */
 /* eslint-disable no-trailing-spaces */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Cookies from 'js-cookie';
 import CommonHeader from '../common/CommonHeader';
 import CommonFooter from '../common/CommonFooter';
 
@@ -9,6 +11,7 @@ class SupportPage extends Component {
     super(props);
 
     this.state = {
+      isLoggedIn: Cookies.get('atlas_refresh_token') !== undefined,
     };
 
     this.onClickStackOverflow = this.onClickStackOverflow.bind(this);
@@ -29,9 +32,10 @@ class SupportPage extends Component {
   }
 
   render() {
+    const { isLoggedIn } = this.state;
     return (
       <div>
-        <CommonHeader />
+        <CommonHeader {...this.props} isLoggedIn={isLoggedIn} />
         <div className="support-page-container">
           <div className="support-container">
             <h1>How can we help?</h1>
@@ -60,5 +64,13 @@ class SupportPage extends Component {
     );
   }
 }
+
+SupportPage.propTypes = {
+  isLoggedIn: PropTypes.bool,
+};
+
+SupportPage.defaultProps = {
+  isLoggedIn: false,
+};
 
 export default SupportPage;

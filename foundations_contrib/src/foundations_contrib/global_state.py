@@ -15,6 +15,7 @@ from foundations_internal.cache_manager import CacheManager
 from foundations_contrib.config_manager import ConfigManager
 
 from foundations_internal.global_state import module_manager
+from foundations_contrib.authentication.user_token import user_token
 
 import concurrent.futures
 import redis
@@ -30,6 +31,8 @@ default_executor = concurrent.futures.ThreadPoolExecutor()
 message_router = MessageRouter()
 redis_connection = LazyRedis(RedisConnector(
     config_manager, redis.Redis.from_url, os.environ))
+
+
 
 def push_state():
     config_manager.push_config()

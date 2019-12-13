@@ -45,6 +45,22 @@ class TestProvenance(Spec):
         from foundations.config_manager import ConfigManager
         return ConfigManager()
 
+    @let
+    def token(self):
+        return self.faker.word()
+
+    @let
+    def user_name(self):
+        return self.faker.word()
+
+    @let_now
+    def auth_client(self):
+        constructor = self.patch(
+            "foundations_contrib.authentication.authentication_client.AuthenticationClient",
+            autospec=True,
+        )
+        return constructor("conf", "redirect")
+
     def test_fill_python_has_correct_values(self):
         import sys
         provenance = Provenance()
@@ -286,3 +302,23 @@ class TestProvenance(Spec):
     def test_provenance_default_user_name(self):
         provenance = Provenance()
         self.assertEqual(provenance.user_name, "trial")
+
+    def test_user_name_is_set_correctly_when_foundations_user_variable_set(self):
+        mock_environ = self.patch('os.getenv', ConditionalReturn())
+        mock_environ.return_when(self.user_name, 'MONITOR_NAME', None)
+        mock_environ.return_when(self.user_name, 'FOUNDATIONS_USER', None)
+
+        provenance = Provenance()
+
+        self.assertEqual(self.user_name, provenance.user_name)
+
+    def test_user_name_is_set_correctly_when_foundations_user_variable_not_set(self):
+        mock_environ = self.patch('os.getenv')
+        mock_environ.return_value = None
+
+        mock_get_user = self.patch('getpass.getuser')
+        mock_get_user.return_value = self.user_name
+
+        provenance = Provenance()
+
+        self.assertEqual(self.user_name, provenance.user_name)

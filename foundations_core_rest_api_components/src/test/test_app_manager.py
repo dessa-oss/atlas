@@ -53,3 +53,10 @@ class TestAppManager(unittest.TestCase):
         app_manager = AppManager()
         api = app_manager.api()
         self.assertEqual(api.app, app_manager.app())
+
+    def test_app_handles_auth_error(self):
+        from foundations_core_rest_api_components.exceptions import AuthError
+
+        app = AppManager().app()
+        exceptions = app.error_handler_spec[None][None]
+        self.assertIn(AuthError, exceptions)

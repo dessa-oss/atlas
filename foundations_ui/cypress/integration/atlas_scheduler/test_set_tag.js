@@ -3,16 +3,18 @@ describe('Test Set Tag', () => {
   const schedulerRedisPort = Cypress.env('SCHEDULER_REDIS_PORT');
   const guiHost = Cypress.env('GUI_HOST');
   const guiPort = Cypress.env('GUI_PORT');
+  const loginCommand = `foundations login http://${schedulerIP}:5558 -u test -p test`
+
   const states = [
     {
       testName: 'Test Set Tag Local',
       projectName: 'set_tag_project',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/set_tag/set_tag_project && python main.py`
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && ${loginCommand} && cd cypress/fixtures/atlas_scheduler/set_tag/set_tag_project && python main.py`
     },
     {
       testName: 'Test Set Tag with Scheduler',
       projectName: 'set_tag_with_scheduler_project',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/set_tag_with_scheduler && foundations submit scheduler set_tag_with_scheduler_project main.py`
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && ${loginCommand} && cd cypress/fixtures/atlas_scheduler/set_tag_with_scheduler && foundations submit scheduler set_tag_with_scheduler_project main.py`
     }
   ];
 

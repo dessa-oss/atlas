@@ -1,6 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
+import Cookies from 'js-cookie';
+import jwt from 'jwt-decode';
 import ProfilePlaceholder from '../../../assets/images/icons/person-with-outline.png';
 import BaseActions from '../../actions/BaseActions';
 import NoCommentsImage from '../../../assets/svgs/empty-notes.svg';
@@ -66,9 +68,13 @@ class Notes extends React.Component {
     const { projectName } = this.props.match.params;
     let selectedProjectName = location.state.project ? location.state.project.name : projectName;
 
+    const atlasAccessToken = Cookies.get('atlas_access_token');
+    const decodeToken = jwt(atlasAccessToken);
+    const tokenUserID = decodeToken.sub;
+
     const body = {
       message,
-      author: 'CE User',
+      author: tokenUserID,
     };
 
     BaseActions.postStaging(`projects/${projectName}/note_listing`, body).then(() => {
@@ -109,7 +115,7 @@ class Notes extends React.Component {
               <div key={note.date} className="notes-blocks">
                 <div className="container-note-profile">
                   <img alt="" src={ProfilePlaceholder} />
-                  <p><span className="font-bold">CE User </span>
+                  <p><span className="font-bold">{note.author} </span>
                     <span>{moment(note.date).format('MMMM Do, YYYY').toString()}</span>
                   </p>
                 </div>

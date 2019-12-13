@@ -16,7 +16,6 @@ class Provenance(object):
 
     def __init__(self):
         import os
-        from getpass import getuser
 
         self.job_source_bundle = None
         self.environment = {}
@@ -30,13 +29,20 @@ class Provenance(object):
         self.job_run_data = {}
         self.project_name = 'default'
         self.monitor_name = os.getenv('MONITOR_NAME', None)
-        self.user_name = os.getenv("FOUNDATIONS_USER", None)
-        if self.user_name is None:
-            try:
-                self.user_name = getuser()
-            except KeyError:
-                self.user_name = ""
+        self.user_name = self.get_user_name_from_system()
         self.annotations = {}
+
+    def get_user_name_from_system(self):
+        from getpass import getuser
+
+        user_name = os.getenv("FOUNDATIONS_USER", None)
+        if user_name is None:
+            try:
+                user_name = getuser()
+            except KeyError:
+                user_name = ""
+
+        return user_name
 
     def fill_python_version(self):
         import sys

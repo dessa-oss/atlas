@@ -14,6 +14,11 @@ class TestJobTagsController(Spec):
     mock_tag_set_klass = let_patch_mock_with_conditional_return('foundations_events.producers.tag_set.TagSet')
     mock_tag_set = let_mock()
     mock_message_router = let_patch_mock('foundations_contrib.global_state.message_router')
+    
+    @let_now
+    def redis(self):
+        import fakeredis
+        return self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
 
     @let
     def job_id(self):

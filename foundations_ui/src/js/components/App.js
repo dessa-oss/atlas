@@ -11,19 +11,22 @@ import 'react-toastify/dist/ReactToastify.css';
 import ProjectOverview from './JobOverviewPage/ProjectOverview';
 import JobDetails from './JobOverviewPage/JobDetails';
 import SupportPage from './SupportPage/SupportPage';
+import Loading from './common/Loading';
+import BaseActions from '../actions/BaseActions';
+import LoginActions from '../actions/LoginActions';
 
 toast.configure(); // single instance to improve rendering of toast
 
 class App extends Component {
   render() {
-    return (
+    const app = (
       <div className="App">
         <Router>
           <Switch>
             <Route exact path="/login" component={LoginPage} />
             <Route exact path="/projects" component={ProjectPage} />
             <Route exact path="/contact" component={ContactPage} />
-            <Redirect exact from="/" to="/projects" />
+            <Redirect exact from="/" to="/login" />
             <Route
               path="/projects/:projectName/job_listing"
               component={JobDetails}
@@ -38,6 +41,7 @@ class App extends Component {
         </Router>
       </div>
     );
+    return app;
   }
 }
 

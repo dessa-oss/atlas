@@ -3,17 +3,18 @@ describe('Test Job Submission that Fails', () => {
   const schedulerRedisPort = Cypress.env('SCHEDULER_REDIS_PORT');
   const guiHost = Cypress.env('GUI_HOST');
   const guiPort = Cypress.env('GUI_PORT');
+  const loginCommand = `foundations login http://${schedulerIP}:5558 -u test -p test`
 
   const states = [
     {
       testName: `Test Job Submission that Fails with CLI with project job_submission_project`,
       projectName: 'job_submission_project',
-      command: 'export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit scheduler job_submission_project main.py 0 "Complete_Failed_Task_1"'
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && ${loginCommand} && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit scheduler job_submission_project main.py 0 "Complete_Failed_Task_1"`
     },
     {
       testName: `Test Job Submission that Fails with CLI with project job_submission_project_with_foundations`,
       projectName: 'job_submission_project_with_foundations',
-      command: 'export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit scheduler job_submission_project_with_foundations main.py 0 "Complete_Failed_Task_2"'
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && ${loginCommand} && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit scheduler job_submission_project_with_foundations main.py 0 "Complete_Failed_Task_2"`
     }
   ];
 

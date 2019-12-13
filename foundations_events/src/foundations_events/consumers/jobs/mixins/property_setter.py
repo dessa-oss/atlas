@@ -32,13 +32,13 @@ class PropertySetter(object):
         self._redis.set('{}:{}:{}'.format(listing_name, listing_value, property_key), property_value)
 
     def _listing_name(self):
-        pass
+        raise NotImplementedError
 
     def _listing_value(self, message):
-        pass
+        raise NotImplementedError
 
     def _property_name(self):
-        pass
+        raise NotImplementedError
 
     def _property_value(self, message, timestamp, meta_data):
-        pass
+        raise NotImplementedError

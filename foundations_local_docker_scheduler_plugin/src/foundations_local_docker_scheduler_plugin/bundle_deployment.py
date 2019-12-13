@@ -24,10 +24,11 @@ def submit_job_bundle(bundle):
     return _post_job_archive(bundle, scheduler_url)
 
 def _post_job_archive(bundle, scheduler_url):
+    from foundations_contrib.global_state import user_token
     import requests
 
     with _request_payload(bundle) as request_payload:
-        return requests.post(f'{scheduler_url}/job_bundle', files=request_payload)
+        return requests.post(f'{scheduler_url}/job_bundle', files=request_payload, headers={"Authorization": f"Bearer {user_token()}"})
 
 @contextmanager
 def _request_payload(bundle):

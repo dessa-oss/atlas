@@ -17,6 +17,13 @@ class TestDataContractWithMonitor(Spec):
         return pandas.DataFrame(self._create_rows(10))
 
     @let
+    def dataframe_with_mixed_data_types(self):
+        import pandas
+        df = pandas.DataFrame(self._create_rows(100))
+        df['object'] = [True] * 50 + ['hello'] * 50
+        return df
+
+    @let
     def contract_name(self):
         return 'test_data_contract_with_monitor'
 

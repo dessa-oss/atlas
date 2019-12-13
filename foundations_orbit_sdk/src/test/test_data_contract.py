@@ -12,7 +12,6 @@ from foundations_spec import *
 
 class TestDataContract(Spec):
 
-    mock_open = let_patch_mock_with_conditional_return('builtins.open')
     mock_file_for_write = let_mock()
     mock_file_for_read = let_mock()
 
@@ -221,9 +220,6 @@ class TestDataContract(Spec):
         self.mock_file_for_read.__enter__ = lambda *args: self.mock_file_for_read
         self.mock_file_for_read.__exit__ = lambda *args: None
 
-        self.mock_open.return_when(self.mock_file_for_write, self.data_contract_file_path, 'wb')
-        self.mock_open.return_when(self.mock_file_for_read, self.data_contract_file_path, 'rb')
-
         mock_environ = self.patch('os.environ', {})
         mock_environ['PROJECT_NAME'] = self.project_name
         mock_environ['MONITOR_NAME'] = self.model_name
@@ -320,21 +316,29 @@ class TestDataContract(Spec):
 
     def test_data_contract_can_save_to_file(self):
         import pickle
+        from unittest.mock import mock_open, patch
 
         contract = DataContract(self.contract_name, df=self.empty_dataframe)
-        contract.save(self.monitor_package_directory)
 
-        self.mock_file_for_write.write.assert_called_once_with(pickle.dumps(contract))
+        open_mock = mock_open()
+
+        with patch('builtins.open', open_mock):
+            contract.save(self.monitor_package_directory)
+            open_mock().write.assert_called_once_with(pickle.dumps(contract))
+
 
     def test_data_contract_save_preserves_options(self):
         import pickle
+        from unittest.mock import mock_open, patch
 
         contract = DataContract(self.contract_name, df=self.empty_dataframe)
         contract.options = {'asdf': 'value'}
 
-        contract.save(self.monitor_package_directory)
+        open_mock = mock_open()
 
-        self.mock_file_for_write.write.assert_called_once_with(pickle.dumps(contract))
+        with patch('builtins.open', open_mock):
+            contract.save(self.monitor_package_directory)
+            open_mock().write.assert_called_once_with(pickle.dumps(contract))
 
     def test_data_contract_has_equality(self):
         self.assertEqual(DataContract(self.contract_name, df=self.empty_dataframe), DataContract(self.contract_name, df=self.empty_dataframe))
@@ -352,20 +356,35 @@ class TestDataContract(Spec):
 
     def test_data_contract_load_loads_data_contract_from_file(self):
         import pickle
+        from unittest.mock import mock_open, patch
 
         contract = DataContract(self.contract_name, df=self.empty_dataframe)
         self.mock_file_for_read.read.return_value = pickle.dumps(contract)
 
-        self.assertEqual(contract, DataContract.load(self.monitor_package_directory, self.contract_name))
+        open_mock = mock_open()
+
+        with patch('builtins.open', open_mock):
+            mock_file = open_mock()
+            mock_file.read.return_value = pickle.dumps(contract)
+            loaded_contract = DataContract.load(self.monitor_package_directory, self.contract_name)
+
+        self.assertEqual(contract, loaded_contract)
 
     def test_data_contract_load_actually_loads(self):
         import pickle
+        from unittest.mock import mock_open, patch
 
         contract = DataContract(self.contract_name, df=self.empty_dataframe)
         contract.options = {'some_option': 'with_value'}
-        self.mock_file_for_read.read.return_value = pickle.dumps(contract)
 
-        self.assertEqual(contract, DataContract.load(self.monitor_package_directory, self.contract_name))
+        open_mock = mock_open()
+
+        with patch('builtins.open', open_mock):
+            mock_file = open_mock()
+            mock_file.read.return_value = pickle.dumps(contract)
+            loaded_contract = DataContract.load(self.monitor_package_directory, self.contract_name)
+
+        self.assertEqual(contract, loaded_contract)
 
     def test_data_contract_validate_performs_schema_check_by_default(self):
         mock_schema_check_results = {'passed': True}

@@ -19,3 +19,5 @@ slackclient==1.3.0
 Werkzeug==0.16.0
 boto3==1.9.86
 boto==2.49.0
+python-jose==3.0.1
+python-keycloak==0.17.6

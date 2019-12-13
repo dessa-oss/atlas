@@ -31,4 +31,5 @@ RUN find -iname "foundations_internal-*.whl" | xargs pip install && \
     find -iname "foundations_orbit_rest_api-*.whl" | xargs pip install
 
 WORKDIR /app/
+COPY docker/uwsgi.ini /app/uwsgi.ini
 COPY docker/${main_file} /app/main.py
