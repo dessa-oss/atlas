@@ -6,3 +6,6 @@ export NEXUS_USER=jenkins-user
 export NEXUS_DOCKER_REGISTRY=docker.shehanigans.net
 export NEXUS_DOCKER_STAGING=docker-staging.shehanigans.net
 export NEXUS_PYPI_PATH=nexus.shehanigans.net/repository/dessa-pypi/simple
+
+export NEXUS_PYPI_STAGING=https://nexus.shehanigans.net/repository/dessa-pypi-staging/
+export NEXUS_PYPI=https://nexus.shehanigans.net/repository/dessa-pypi/
