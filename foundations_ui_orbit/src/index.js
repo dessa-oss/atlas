@@ -1,19 +1,19 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import * as serviceWorker from "./serviceWorker";
-import "./scss/app.scss";
-import App from "./js/components/App";
-import SystemHealth from "./js/components/PackagePage/SystemHealth";
-import NewDeployment from "./js/components/PackagePage/NewDeployment";
-import ModelEvaluation from "./js/components/PackagePage/ModelEvaluation";
-import MonitorSchedules from "./js/components/PackagePage/MonitorSchedules";
-import Timeline from "./js/components/PackagePage/Timeline";
-import ModelManagement from "./js/components/PackagePage/ModelManagement";
-import Settings from "./js/components/PackagePage/Settings/Settings";
-import ProjectPage from "./js/components/ProjectPage/ProjectPage";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import * as serviceWorker from './serviceWorker';
+import './scss/app.scss';
+import App from './js/components/App';
+import SystemHealth from './js/components/PackagePage/SystemHealth';
+import NewDeployment from './js/components/PackagePage/NewDeployment';
+import ModelEvaluation from './js/components/PackagePage/ModelEvaluation';
+import MonitorSchedules from './js/components/PackagePage/MonitorSchedules';
+import Timeline from './js/components/PackagePage/Timeline';
+import ModelManagement from './js/components/PackagePage/ModelManagement';
+import Settings from './js/components/PackagePage/Settings/Settings';
+import ProjectPage from './js/components/ProjectPage/ProjectPage';
 
-const app = document.getElementById("root");
+const app = document.getElementById('root');
 
 ReactDOM.render(
   <div className="App">
@@ -33,7 +33,7 @@ ReactDOM.render(
       </Switch>
     </Router>
   </div>,
-  app
+  app,
 );
 
 serviceWorker.unregister();

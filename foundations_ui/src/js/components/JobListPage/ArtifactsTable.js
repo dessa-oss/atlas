@@ -11,7 +11,7 @@ class ArtifactsTable extends React.Component {
           <p>Artifact Name</p>
         </div>
         <div className="table-artifacts-header last" />
-        {job.artifacts ? job.artifacts.map((artifact) => {
+        {job.artifacts ? job.artifacts.map(artifact => {
           return <ArtifactRow onClickArtifact={onClickArtifact} key={artifact.id} artifact={artifact} />;
         }) : null
         }

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 function SelectJobCell(props) {
   const jobID = props.job.job_id;
   const btnID = `select-job-${jobID}`;
-  const isSelectedJob = props.isSelectedJob;
+  const { isSelectedJob } = props;
 
   function handleClick(e) {
     e.stopPropagation();

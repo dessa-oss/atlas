@@ -1,7 +1,7 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import PackagePageHeader from "./PackagePageHeader";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import PackagePageHeader from './PackagePageHeader';
 
 class PackageToolbar extends React.Component {
   render() {
@@ -13,8 +13,8 @@ class PackageToolbar extends React.Component {
           <PackagePageHeader
             pageName={project.name}
             pageSubName={
-              title === ""
-                ? "Inference Automation and Model Management"
+              title === ''
+                ? 'Inference Automation and Model Management'
                 : title
             }
           />
@@ -27,13 +27,13 @@ class PackageToolbar extends React.Component {
 PackageToolbar.propTypes = {
   project: PropTypes.object,
   title: PropTypes.string,
-  onLoading: PropTypes.func
+  onLoading: PropTypes.func,
 };
 
 PackageToolbar.defaultProps = {
   project: {},
-  title: "",
-  onLoading: () => null
+  title: '',
+  onLoading: () => null,
 };
 
 export default withRouter(PackageToolbar);

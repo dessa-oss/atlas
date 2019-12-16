@@ -10,16 +10,16 @@ import ProjectSummary from './ProjectSummary';
 import CommonHeader from '../common/CommonHeader';
 import CommonFooter from '../common/CommonFooter';
 
-const ProjectPage = (props) => {
+const ProjectPage = props => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [projects, setProjects] = React.useState([]);
 
-  const setTagsForProjects = (fetchedProjects) => {
-    let newProjects = [];
-    const promises = fetchedProjects.map((fetchedProject) => {
-      let newProject = fetchedProject;
+  const setTagsForProjects = fetchedProjects => {
+    const newProjects = [];
+    const promises = fetchedProjects.map(fetchedProject => {
+      const newProject = fetchedProject;
       return BaseActions.getFromStaging(`projects/${fetchedProject.name}/job_listing`)
-        .then((result) => {
+        .then(result => {
           if (result && result.jobs) {
             const tags = CommonActions.getTagsFromJob(result.jobs);
             newProject.tags = tags;
@@ -28,7 +28,7 @@ const ProjectPage = (props) => {
         });
     });
 
-    return Promise.all(promises).then((result) => {
+    return Promise.all(promises).then(result => {
       return result;
     });
   };
@@ -36,7 +36,7 @@ const ProjectPage = (props) => {
   const reload = () => {
     setIsLoading(true);
 
-    BaseActions.get('projects').then((result) => {
+    BaseActions.get('projects').then(result => {
       if (result != null) {
         result.sort((a, b) => {
           const dateA = new Date(a.created_at);
@@ -44,7 +44,7 @@ const ProjectPage = (props) => {
 
           return dateB - dateA;
         });
-        setTagsForProjects(result).then((updatedProjects) => {
+        setTagsForProjects(result).then(updatedProjects => {
           setProjects(updatedProjects);
           setIsLoading(false);
         });
@@ -65,7 +65,7 @@ const ProjectPage = (props) => {
     if (projects.length === 0) {
       return <p>No projects available</p>;
     }
-    return projects.map((project) => {
+    return projects.map(project => {
       const newProject = project;
       const key = newProject.name.concat('-').concat(newProject.created_at);
       const formattedDate = moment(newProject.created_at)

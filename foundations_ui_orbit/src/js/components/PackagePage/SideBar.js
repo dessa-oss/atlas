@@ -1,13 +1,13 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 
 const SideBar = props => {
   const onClickDeployment = () => {
     const { history, location } = props;
 
     history.push(`/projects/${location.state.project.name}/deployment`, {
-      project: location.state.project
+      project: location.state.project,
     });
   };
 
@@ -17,8 +17,8 @@ const SideBar = props => {
     history.push(
       `/projects/${location.state.project.name}/evaluation`,
       {
-        project: location.state.project
-      }
+        project: location.state.project,
+      },
     );
   };
 
@@ -26,15 +26,15 @@ const SideBar = props => {
     const { history, location } = props;
 
     history.push(`/projects/${location.state.project.name}/schedules`, {
-      project: location.state.project
+      project: location.state.project,
     });
   };
 
   const onClickDashboard = () => {
     const { history, location } = props;
 
-    history.push("/", {
-      project: location.state.project
+    history.push('/', {
+      project: location.state.project,
     });
   };
 
@@ -42,7 +42,7 @@ const SideBar = props => {
     const { history, location } = props;
 
     history.push(`/projects/${location.state.project.name}/timeline`, {
-      project: location.state.project
+      project: location.state.project,
     });
   };
 
@@ -52,8 +52,8 @@ const SideBar = props => {
     history.push(
       `/projects/${location.state.project.name}/settings`,
       {
-        project: location.state.project
-      }
+        project: location.state.project,
+      },
     );
   };
 
@@ -63,8 +63,8 @@ const SideBar = props => {
     history.push(
       `/projects/${location.state.project.name}/management`,
       {
-        project: location.state.project
-      }
+        project: location.state.project,
+      },
     );
   };
 
@@ -74,8 +74,8 @@ const SideBar = props => {
     history.push(
       `/projects/${location.state.project.name}/health`,
       {
-        project: location.state.project
-      }
+        project: location.state.project,
+      },
     );
   };
 
@@ -100,9 +100,9 @@ const SideBar = props => {
       <div
         onClick={onClickEvaluation}
         className={
-          tab === "Evaluation"
-            ? "sidebar-item active icon-chart-blue"
-            : "sidebar-item icon-chart"
+          tab === 'Evaluation'
+            ? 'sidebar-item active icon-chart-blue'
+            : 'sidebar-item icon-chart'
         }
       >
         <div className="label model-eval">
@@ -114,9 +114,9 @@ const SideBar = props => {
       <div
         onClick={onClickHealth}
         className={
-          tab === "Health"
-            ? "sidebar-item active icon-monitor-blue"
-            : "sidebar-item icon-monitor"
+          tab === 'Health'
+            ? 'sidebar-item active icon-monitor-blue'
+            : 'sidebar-item icon-monitor'
         }
       >
         <div className="label">Data Health</div>
@@ -144,9 +144,9 @@ const SideBar = props => {
       <div
         onClick={onClickSchedules}
         className={
-          tab === "Schedules"
-            ? "sidebar-item active icon-schedule-blue"
-            : "sidebar-item icon-schedule"
+          tab === 'Schedules'
+            ? 'sidebar-item active icon-schedule-blue'
+            : 'sidebar-item icon-schedule'
         }
       >
         <div className="label">Monitor<br />Schedules</div>
@@ -168,13 +168,13 @@ const SideBar = props => {
 SideBar.propTypes = {
   tab: PropTypes.string,
   history: PropTypes.object,
-  location: PropTypes.object
+  location: PropTypes.object,
 };
 
 SideBar.defaultProps = {
-  tab: "Deployment",
+  tab: 'Deployment',
   history: {},
-  location: { state: {} }
+  location: { state: {} },
 };
 
 export default withRouter(SideBar);

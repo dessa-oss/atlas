@@ -1,11 +1,11 @@
-import React from "react";
-import PropTypes from "prop-types";
-import Toolbar from "../common/Toolbar";
-import ProjectHeader from "./ProjectHeader";
-import Loading from "../common/Loading";
-import { get } from "../../actions/BaseActions";
-import ProjectSummary from "./ProjectSummary";
-import moment from "moment";
+import React from 'react';
+import PropTypes from 'prop-types';
+import Toolbar from '../common/Toolbar';
+import ProjectHeader from './ProjectHeader';
+import Loading from '../common/Loading';
+import { get } from '../../actions/BaseActions';
+import ProjectSummary from './ProjectSummary';
+import moment from 'moment';
 
 class ProjectPage extends React.Component {
   constructor(props) {
@@ -14,7 +14,7 @@ class ProjectPage extends React.Component {
     this.state = {
       isLoading: false,
       projects: [],
-      timerId: -1
+      timerId: -1,
     };
 
     this.reload = this.reload.bind(this);
@@ -25,11 +25,11 @@ class ProjectPage extends React.Component {
   reload(showAnimation) {
     if (showAnimation === true) {
       this.setState({
-        isLoading: true
+        isLoading: true,
       });
     }
 
-    get("projects").then(result => {
+    get('projects').then(result => {
       if (result != null) {
         result.sort((a, b) => {
           const dateA = new Date(a.created_at);
@@ -38,15 +38,15 @@ class ProjectPage extends React.Component {
           return dateB - dateA;
         });
         this.setState({
-          projects: result
+          projects: result,
         });
       }
       this.setState({
-        isLoading: false
+        isLoading: false,
       });
     }).catch(() => {
       this.setState({
-        isLoading: false
+        isLoading: false,
       });
     });
   }
@@ -56,7 +56,7 @@ class ProjectPage extends React.Component {
       this.reload(false);
     }, 30000);
     this.setState({
-      timerId: id
+      timerId: id,
     });
   }
 
@@ -85,9 +85,9 @@ class ProjectPage extends React.Component {
     }
     return projects.map(project => {
       const newProject = project;
-      const key = newProject.name.concat("-").concat(newProject.created_at);
+      const key = newProject.name.concat('-').concat(newProject.created_at);
       const formattedDate = moment(newProject.created_at)
-        .format("YYYY-MM-DD HH:mm")
+        .format('YYYY-MM-DD HH:mm')
         .toString();
       newProject.created_at = formattedDate;
       return (
@@ -117,12 +117,12 @@ class ProjectPage extends React.Component {
 
 ProjectPage.propTypes = {
   selectProject: PropTypes.func,
-  changePage: PropTypes.func
+  changePage: PropTypes.func,
 };
 
 ProjectPage.defaultProps = {
   selectProject: () => null,
-  changePage: () => null
+  changePage: () => null,
 };
 
 export default ProjectPage;

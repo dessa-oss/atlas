@@ -108,7 +108,7 @@ class JobTableHeader extends Component {
   }
 
   searchUserFilter(searchText) {
-    this.setState({ searchText });
+    this.setState({ searchText: searchText });
   }
 
   toggleStatusFilter() {
@@ -222,7 +222,7 @@ class JobTableHeader extends Component {
 
     if (e !== undefined) {
       this.setState({
-        metricClass,
+        metricClass: metricClass,
       });
       if (numberFilterColumn === columnName) {
         this.setState({
@@ -314,13 +314,13 @@ class JobTableHeader extends Component {
 
   generateStaticJobs(jobs) {
     const { selectJob, selectedJobs } = this.state;
-    return jobs.map((el) => {
+    return jobs.map(el => {
       const neededColums = [];
       const isSelectedJob = selectedJobs.includes(el.job_id);
       neededColums.push({
         name: 'SelectAllCheckboxes',
         value: SelectJobCell({
-          job: el, onSuccessfullDeletion: this.onDataUpdated, selectJob, isSelectedJob,
+          job: el, onSuccessfullDeletion: this.onDataUpdated, selectJob: selectJob, isSelectedJob: isSelectedJob,
         }),
         type: 'string',
         hoverable: false,
@@ -427,7 +427,7 @@ class JobTableHeader extends Component {
     let statusFilter = null;
     let hiddenInputParams = [];
     hiddenInputParams = statuses.map(
-      (status) => {
+      status => {
         if (status.hidden === true && status.hidden !== undefined) {
           return status.name;
         }
@@ -558,7 +558,7 @@ class JobTableHeader extends Component {
       );
     }
 
-    hiddenInputParams = hiddenInputParams.filter((hiddenParam) => {
+    hiddenInputParams = hiddenInputParams.filter(hiddenParam => {
       return hiddenParam !== undefined;
     });
 

@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import ValidationResultsActions from "../../../actions/ValidationResultsActions";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import ValidationResultsActions from '../../../actions/ValidationResultsActions';
 
 class ValidationResultsTable extends Component {
   constructor(props) {
@@ -9,7 +9,7 @@ class ValidationResultsTable extends Component {
 
     this.state = {
       rows: null,
-      projectName: location.state.project.name
+      projectName: location.state.project.name,
     };
     this.reload = this.reload.bind(this);
   }
@@ -36,7 +36,7 @@ class ValidationResultsTable extends Component {
     if (rows) {
       rowsWithProps = rows.map(row => React.cloneElement(
         row,
-        { selectedRow: selectedRow }
+        { selectedRow: selectedRow },
       ));
     }
 
@@ -61,14 +61,14 @@ ValidationResultsTable.propTypes = {
   location: PropTypes.object,
   onClickRow: PropTypes.func,
   selectedRow: PropTypes.object,
-  reload: PropTypes.func
+  reload: PropTypes.func,
 };
 
 ValidationResultsTable.defaultProps = {
   location: { state: {} },
   onClickRow: () => {},
   selectedRow: {},
-  reload: () => {}
+  reload: () => {},
 };
 
 export default ValidationResultsTable;

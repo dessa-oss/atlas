@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import ValidationResultsActions from "../../../actions/ValidationResultsActions";
-import CommonActions from "../../../actions/CommonActions";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import ValidationResultsActions from '../../../actions/ValidationResultsActions';
+import CommonActions from '../../../actions/CommonActions';
 
 class ValidationResultsTestsPane extends Component {
   render() {
@@ -37,11 +37,11 @@ class ValidationResultsTestsPane extends Component {
 }
 
 ValidationResultsTestsPane.propTypes = {
-  validationTestResult: PropTypes.object
+  validationTestResult: PropTypes.object,
 };
 
 ValidationResultsTestsPane.defaultProps = {
-  validationTestResult: {}
+  validationTestResult: {},
 };
 
 export default ValidationResultsTestsPane;

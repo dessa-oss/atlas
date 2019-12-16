@@ -1,11 +1,11 @@
-import React from "react";
-import PropTypes from "prop-types";
-import Layout from "../Layout";
-import { withRouter } from "react-router-dom";
-import Metadata from "./Metadata";
-import Content from "./Content";
-import Schedule from "./Schedule";
-import { Modal, ModalBody } from "reactstrap";
+import React from 'react';
+import PropTypes from 'prop-types';
+import Layout from '../Layout';
+import { withRouter } from 'react-router-dom';
+import Metadata from './Metadata';
+import Content from './Content';
+import Schedule from './Schedule';
+import { Modal, ModalBody } from 'reactstrap';
 
 const NewDeploymentPage = props => {
   const { tab } = props;
@@ -32,11 +32,11 @@ const NewDeploymentPage = props => {
 };
 
 NewDeploymentPage.propTypes = {
-  tab: PropTypes.string
+  tab: PropTypes.string,
 };
 
 NewDeploymentPage.defaultProps = {
-  tab: "Deployment"
+  tab: 'Deployment',
 };
 
 export default withRouter(NewDeploymentPage);

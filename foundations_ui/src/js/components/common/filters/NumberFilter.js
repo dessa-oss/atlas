@@ -104,7 +104,7 @@ class NumberFilter extends Component {
               id="filter-input-sec"
               placeholder="Min"
               value={minValue}
-              onChange={(e) => { this.onChangeMin(e); }}
+              onChange={e => { this.onChangeMin(e); }}
             />
           </div>
           <div> - </div>
@@ -115,7 +115,7 @@ class NumberFilter extends Component {
               id="filter-input-sec"
               placeholder="Max"
               value={maxValue}
-              onChange={(e) => { this.onChangeMax(e); }}
+              onChange={e => { this.onChangeMax(e); }}
             />
           </div>
         </div>

@@ -1,31 +1,31 @@
-import React from "react";
-import { withRouter } from "react-router-dom";
-import { Modal, ModalBody } from "reactstrap";
-import AddPredictor from "./AddPredictor";
-import PredictorChart from "./PredictorChart";
-import { get, postJSONFile } from "../../../actions/BaseActions";
-import PredictorRow from "./PredictorRow";
+import React from 'react';
+import { withRouter } from 'react-router-dom';
+import { Modal, ModalBody } from 'reactstrap';
+import AddPredictor from './AddPredictor';
+import PredictorChart from './PredictorChart';
+import { get, postJSONFile } from '../../../actions/BaseActions';
+import PredictorRow from './PredictorRow';
 
 const NewDeploymentPage = () => {
   const [testLearningConfig, setTestLearningConfig] = React.useState({
     setting: {
-      method: "",
-      split_mechanism: "",
-      feedback_cycle: "",
+      method: '',
+      split_mechanism: '',
+      feedback_cycle: '',
       hold_out_period_length: 0,
-      hold_out_period_unit: ""
+      hold_out_period_unit: '',
     },
-    populations: []
+    populations: [],
   });
   const [newTestLearnConfig, setNewTestLearningConfig] = React.useState({
     setting: {
-      method: "",
-      split_mechanism: "",
-      feedback_cycle: "",
+      method: '',
+      split_mechanism: '',
+      feedback_cycle: '',
       hold_out_period_length: 0,
-      hold_out_period_unit: ""
+      hold_out_period_unit: '',
     },
-    populations: []
+    populations: [],
   });
 
   const [predictors, setPredictors] = React.useState([]);
@@ -33,38 +33,38 @@ const NewDeploymentPage = () => {
   const [openAddPredictor, setOpenAddPredictor] = React.useState(false);
   const [openChart, setOpenChart] = React.useState(false);
 
-  const [errorManager, setErrorManager] = React.useState("");
-  const [errorProportions, setErrorProportions] = React.useState("");
-  const [messageProportions, setMessageProportions] = React.useState("");
+  const [errorManager, setErrorManager] = React.useState('');
+  const [errorProportions, setErrorProportions] = React.useState('');
+  const [messageProportions, setMessageProportions] = React.useState('');
 
-  const methods = ["Define Manually", "Automatically Optimize"];
+  const methods = ['Define Manually', 'Automatically Optimize'];
 
   const manualSpliMechanisms = [
-    "Random split (specified proportion)",
-    "Random split (even)"
+    'Random split (specified proportion)',
+    'Random split (even)',
   ];
 
-  const autoSplitMechanisms = ["Multi-arm bandit"];
+  const autoSplitMechanisms = ['Multi-arm bandit'];
 
   const feedbackCycles = [
-    "Hourly",
-    "Daily",
-    "Weekly",
-    "Bi-Weekly",
-    "Monthly",
-    "Quaterly",
-    "Semy-Annually"
+    'Hourly',
+    'Daily',
+    'Weekly',
+    'Bi-Weekly',
+    'Monthly',
+    'Quaterly',
+    'Semy-Annually',
   ];
 
-  const periodUnits = ["Hour", "Day", "Week", "Month"];
+  const periodUnits = ['Hour', 'Day', 'Week', 'Month'];
 
   const reload = () => {
-    get("learn").then(result => {
+    get('learn').then(result => {
       if (result && result.data && result.data.setting && result.data.populations) {
         setTestLearningConfig(result.data);
         setNewTestLearningConfig(result.data);
 
-        get("predictors").then(resultPredictors => {
+        get('predictors').then(resultPredictors => {
           if (resultPredictors.data) {
             let values = resultPredictors.data;
             if (values.length === 1) {
@@ -73,7 +73,7 @@ const NewDeploymentPage = () => {
               const newValues = values.map(predictor => {
                 const newPredictor = predictor;
                 const filteredPopulations = result.data.populations.filter(
-                  item => item.name === newPredictor.name
+                  item => item.name === newPredictor.name,
                 );
                 if (filteredPopulations.length >= 1) {
                   newPredictor.proportion = filteredPopulations[0].proportion;
@@ -101,10 +101,10 @@ const NewDeploymentPage = () => {
     let { method } = newTestLearnConfig.setting;
 
     method = e.target.value;
-    let splitMechanism = "Multi-arm bandit";
+    let splitMechanism = 'Multi-arm bandit';
 
-    if (e.target.value === "Define Manually") {
-      splitMechanism = "Random split (specified proportion)";
+    if (e.target.value === 'Define Manually') {
+      splitMechanism = 'Random split (specified proportion)';
     }
 
     setNewTestLearningConfig({
@@ -114,9 +114,9 @@ const NewDeploymentPage = () => {
         feedback_cycle: newTestLearnConfig.setting.feedback_cycle,
         hold_out_period_length:
           newTestLearnConfig.setting.hold_out_period_length,
-        hold_out_period_unit: newTestLearnConfig.setting.hold_out_period_unit
+        hold_out_period_unit: newTestLearnConfig.setting.hold_out_period_unit,
       },
-      populations: newTestLearnConfig.populations
+      populations: newTestLearnConfig.populations,
     });
   };
 
@@ -132,9 +132,9 @@ const NewDeploymentPage = () => {
         feedback_cycle: newTestLearnConfig.setting.feedback_cycle,
         hold_out_period_length:
           newTestLearnConfig.setting.hold_out_period_length,
-        hold_out_period_unit: newTestLearnConfig.setting.hold_out_period_unit
+        hold_out_period_unit: newTestLearnConfig.setting.hold_out_period_unit,
       },
-      populations: newTestLearnConfig.populations
+      populations: newTestLearnConfig.populations,
     });
   };
 
@@ -150,9 +150,9 @@ const NewDeploymentPage = () => {
         feedback_cycle: feedbackCycle,
         hold_out_period_length:
           newTestLearnConfig.setting.hold_out_period_length,
-        hold_out_period_unit: newTestLearnConfig.setting.hold_out_period_unit
+        hold_out_period_unit: newTestLearnConfig.setting.hold_out_period_unit,
       },
-      populations: newTestLearnConfig.populations
+      populations: newTestLearnConfig.populations,
     });
   };
 
@@ -168,9 +168,9 @@ const NewDeploymentPage = () => {
         feedback_cycle: newTestLearnConfig.setting.feedback_cycle,
         hold_out_period_length:
           newTestLearnConfig.setting.hold_out_period_length,
-        hold_out_period_unit: holdOutPeriodUnit
+        hold_out_period_unit: holdOutPeriodUnit,
       },
-      populations: newTestLearnConfig.populations
+      populations: newTestLearnConfig.populations,
     });
   };
 
@@ -185,9 +185,9 @@ const NewDeploymentPage = () => {
         split_mechanism: newTestLearnConfig.setting.split_mechanism,
         feedback_cycle: newTestLearnConfig.setting.feedback_cycle,
         hold_out_period_length: holdOutPeriodLength,
-        hold_out_period_unit: newTestLearnConfig.setting.hold_out_period_unit
+        hold_out_period_unit: newTestLearnConfig.setting.hold_out_period_unit,
       },
-      populations: newTestLearnConfig.populations
+      populations: newTestLearnConfig.populations,
     });
   };
 
@@ -197,15 +197,15 @@ const NewDeploymentPage = () => {
 
   const validate = () => {
     let validated = true;
-    let message = "";
+    let message = '';
 
     const periodLengthValue = parseInt(
-      newTestLearnConfig.setting.hold_out_period_length, 10
+      newTestLearnConfig.setting.hold_out_period_length, 10,
     );
 
     if (Number.isNaN(periodLengthValue)) {
       validated = false;
-      message = "Period length must be an integer";
+      message = 'Period length must be an integer';
     }
 
     setErrorManager(message);
@@ -213,13 +213,13 @@ const NewDeploymentPage = () => {
   };
 
   const onClickSave = () => {
-    setErrorManager("");
+    setErrorManager('');
 
     if (validate()) {
       postJSONFile(
-        "learn",
-        "test_learn_config.json",
-        newTestLearnConfig.setting
+        'learn',
+        'test_learn_config.json',
+        newTestLearnConfig.setting,
       ).then(() => {
         reload();
       });
@@ -227,8 +227,8 @@ const NewDeploymentPage = () => {
   };
 
   const onClickSaveProportions = () => {
-    setErrorProportions("");
-    setMessageProportions("");
+    setErrorProportions('');
+    setMessageProportions('');
     let result = 0;
     newPredictors.forEach(item => {
       result += item.proportion;
@@ -236,23 +236,23 @@ const NewDeploymentPage = () => {
 
     if (result !== 1) {
       setErrorProportions(
-        "Please make sure that the sum of all proportions is equal to 1 (100%)"
+        'Please make sure that the sum of all proportions is equal to 1 (100%)',
       );
     } else {
       const data = newPredictors.map(item => {
         return {
           name: item.name,
-          proportion: item.proportion
+          proportion: item.proportion,
         };
       });
 
       postJSONFile(
-        "files/proportions",
-        "test_learn_config.json",
-        data
+        'files/proportions',
+        'test_learn_config.json',
+        data,
       ).then(() => {
         reload();
-        setMessageProportions("Changes saved!");
+        setMessageProportions('Changes saved!');
       });
     }
   };
@@ -286,7 +286,7 @@ const NewDeploymentPage = () => {
   };
 
   const renderSplitMechanisms = () => {
-    if (newTestLearnConfig.setting.method === "Define Manually") {
+    if (newTestLearnConfig.setting.method === 'Define Manually') {
       return manualSpliMechanisms.map(item => {
         return <option key={item}>{item}</option>;
       });
@@ -301,12 +301,12 @@ const NewDeploymentPage = () => {
     const predictorsCount = newPredictors.length;
 
     return newPredictors.map(predictor => {
-      if (newTestLearnConfig.setting.method === "Define Manually") {
+      if (newTestLearnConfig.setting.method === 'Define Manually') {
         if (predictorsCount === 1) {
           proportionValue = 1;
         } else if (predictorsCount > 1) {
           const filteredPopulations = newTestLearnConfig.populations.filter(
-            item => item.name === predictor.name
+            item => item.name === predictor.name,
           );
           if (filteredPopulations.length >= 1) {
             const { proportion } = filteredPopulations[0];
@@ -329,16 +329,16 @@ const NewDeploymentPage = () => {
     });
   };
 
-  let connectingLineClassName = "";
+  let connectingLineClassName = '';
 
   if (predictors.length <= 2) {
     if (predictors.length <= 1) {
-      connectingLineClassName = "connecting-line just-one";
+      connectingLineClassName = 'connecting-line just-one';
     } else {
-      connectingLineClassName = "connecting-line less-amount";
+      connectingLineClassName = 'connecting-line less-amount';
     }
   } else {
-    connectingLineClassName = "connecting-line";
+    connectingLineClassName = 'connecting-line';
   }
 
 
@@ -360,14 +360,14 @@ const NewDeploymentPage = () => {
               value={
                 newTestLearnConfig && newTestLearnConfig.setting
                   ? newTestLearnConfig.setting.method
-                  : ""
+                  : ''
               }
               onChange={onChangeMethod}
               className={
                 newTestLearnConfig.setting.method
                   !== testLearningConfig.setting.method
-                  ? "new-dep-select edited"
-                  : "new-dep-select"
+                  ? 'new-dep-select edited'
+                  : 'new-dep-select'
               }
             >
               {methods.map(item => {
@@ -383,8 +383,8 @@ const NewDeploymentPage = () => {
               className={
                 newTestLearnConfig.setting.split_mechanism
                   !== testLearningConfig.setting.split_mechanism
-                  ? "new-dep-select edited"
-                  : "new-dep-select"
+                  ? 'new-dep-select edited'
+                  : 'new-dep-select'
               }
             >
               {renderSplitMechanisms()}
@@ -398,8 +398,8 @@ const NewDeploymentPage = () => {
               className={
                 newTestLearnConfig.setting.feedback_cycle
                   !== testLearningConfig.setting.feedback_cycle
-                  ? "new-dep-select edited"
-                  : "new-dep-select"
+                  ? 'new-dep-select edited'
+                  : 'new-dep-select'
               }
             >
               {feedbackCycles.map(item => {
@@ -416,8 +416,8 @@ const NewDeploymentPage = () => {
                 className={
                   newTestLearnConfig.setting.hold_out_period_unit
                     !== testLearningConfig.setting.hold_out_period_unit
-                    ? "new-dep-select edited"
-                    : "new-dep-select"
+                    ? 'new-dep-select edited'
+                    : 'new-dep-select'
                 }
               >
                 {periodUnits.map(item => {
@@ -430,8 +430,8 @@ const NewDeploymentPage = () => {
                 className={
                   newTestLearnConfig.setting.hold_out_period_length
                     !== testLearningConfig.setting.hold_out_period_length
-                    ? "new-dep-input edited"
-                    : "new-dep-input"
+                    ? 'new-dep-input edited'
+                    : 'new-dep-input'
                 }
               />
             </div>
@@ -453,7 +453,7 @@ const NewDeploymentPage = () => {
             </button>
           </div>
           <div className="new-dep-container-button">
-            {errorManager !== "" && <p className="error">{errorManager}</p>}
+            {errorManager !== '' && <p className="error">{errorManager}</p>}
           </div>
         </div>
       </div>
@@ -466,11 +466,11 @@ const NewDeploymentPage = () => {
             <button
               type="button"
               onClick={onClickSaveProportions}
-              disabled={newTestLearnConfig.setting.method !== "Define Manually"}
+              disabled={newTestLearnConfig.setting.method !== 'Define Manually'}
               className={
-                newTestLearnConfig.setting.method !== "Define Manually"
-                  ? "b--secondary green disabled"
-                  : "b--secondary green"
+                newTestLearnConfig.setting.method !== 'Define Manually'
+                  ? 'b--secondary green disabled'
+                  : 'b--secondary green'
               }
             >
               <i className="checkmark" />
@@ -496,10 +496,10 @@ const NewDeploymentPage = () => {
             <div className="i--icon-chart" />
           </button>
         </div>
-        {errorProportions !== "" && (
+        {errorProportions !== '' && (
           <p className="error sum-error">{errorProportions}</p>
         )}
-        {messageProportions !== "" && <p>{messageProportions}</p>}
+        {messageProportions !== '' && <p>{messageProportions}</p>}
         <div>
           {newPredictors.length === 0 ? (
             <p className="label-no-pred">

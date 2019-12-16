@@ -110,9 +110,9 @@ class DateTimeFilter extends Component {
           {startCalButton}
           <Flatpickr
             data-enable-time
-            ref={(startPicker) => { this.startPicker = startPicker; }}
+            ref={startPicker => { this.startPicker = startPicker; }}
             value={startDate}
-            onChange={(e) => { this.onChangeDateTime(e, true); }}
+            onChange={e => { this.onChangeDateTime(e, true); }}
           />
         </div>
         <p>and</p>
@@ -121,8 +121,8 @@ class DateTimeFilter extends Component {
           <Flatpickr
             data-enable-time
             value={endDate}
-            ref={(endPicker) => { this.endPicker = endPicker; }}
-            onChange={(e) => { this.onChangeDateTime(e, false); }}
+            ref={endPicker => { this.endPicker = endPicker; }}
+            onChange={e => { this.onChangeDateTime(e, false); }}
           />
         </div>
         <div className="column-filter-buttons">

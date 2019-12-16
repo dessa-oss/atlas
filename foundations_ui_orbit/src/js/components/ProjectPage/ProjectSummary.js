@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 
 const ProjectSummary = props => {
   const packageClick = () => {
@@ -9,8 +9,8 @@ const ProjectSummary = props => {
     history.push(
       `/projects/${project.name}/schedules`,
       {
-        project: project
-      }
+        project: project,
+      },
     );
   };
 
@@ -54,12 +54,12 @@ const ProjectSummary = props => {
 
 ProjectSummary.propTypes = {
   project: PropTypes.object,
-  history: PropTypes.object
+  history: PropTypes.object,
 };
 
 ProjectSummary.defaultProps = {
   project: {},
-  history: {}
+  history: {},
 };
 
 export default withRouter(ProjectSummary);

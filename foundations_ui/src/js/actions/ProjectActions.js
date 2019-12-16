@@ -10,7 +10,7 @@ class ProjectActions {
 
   static getAllProjects(projects) {
     const projectList = [];
-    projects.forEach((project) => {
+    projects.forEach(project => {
       const key = project.name.concat('-').concat(project.created_at);
       projectList.push(<ProjectSummary
         key={key}

@@ -1,29 +1,29 @@
-import React from "react";
-import PropTypes from "prop-types";
-import Layout from "../Layout";
-import { withRouter } from "react-router-dom";
-import { get } from "../../../actions/BaseActions";
-import moment from "moment";
-import EntryRow from "./EntryRow";
-import { Modal, ModalBody } from "reactstrap";
+import React from 'react';
+import PropTypes from 'prop-types';
+import Layout from '../Layout';
+import { withRouter } from 'react-router-dom';
+import { get } from '../../../actions/BaseActions';
+import moment from 'moment';
+import EntryRow from './EntryRow';
+import { Modal, ModalBody } from 'reactstrap';
 
 const Timeline = props => {
   const [events, setEvents] = React.useState([]);
 
   React.useEffect(() => {
-    get("events").then(result => {
+    get('events').then(result => {
       if (result) {
         const entries = [];
         result.data.forEach(item => {
           const itemDate = moment(item.datetime)
-            .format("MMMM D, YYYY")
+            .format('MMMM D, YYYY')
             .toString();
           const found = entries.find(entry => entry.date === itemDate);
 
           if (!found) {
             const entry = {
               date: itemDate,
-              data: []
+              data: [],
             };
             entries.push(entry);
           }
@@ -31,7 +31,7 @@ const Timeline = props => {
 
         result.data.forEach(item => {
           const itemDate = moment(item.datetime)
-            .format("MMMM D, YYYY")
+            .format('MMMM D, YYYY')
             .toString();
           entries.forEach(entry => {
             if (entry.date === itemDate) {
@@ -74,8 +74,8 @@ const Timeline = props => {
         <div
           className={
             events.length <= 1
-              ? "container-timeline less-amount"
-              : "container-timeline"
+              ? 'container-timeline less-amount'
+              : 'container-timeline'
           }
         >
           {events.map(item => {
@@ -102,11 +102,11 @@ const Timeline = props => {
 };
 
 Timeline.propTypes = {
-  tab: PropTypes.string
+  tab: PropTypes.string,
 };
 
 Timeline.defaultProps = {
-  tab: "Timeline"
+  tab: 'Timeline',
 };
 
 export default withRouter(Timeline);

@@ -6,7 +6,7 @@ const BaseActions = {
   baseStagingURL: process.env.REACT_APP_API_STAGING_URL,
   baseApiaryURL: process.env.REACT_APP_APIARY_URL || 'http://private-d03986-iannelladessa.apiary-mock.com/api/v1/',
 
-  get(url) {
+  get: function (url) {
     const fullURL = this.baseURL.concat(url);
     const accessToken = CommonActions.getAccessCookie();
     return fetch(fullURL, {
@@ -14,20 +14,20 @@ const BaseActions = {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      .then((res) => {
+      .then(res => {
         CommonActions.checkStatusResponse(res);
         return res.json();
       })
-      .then((result) => {
+      .then(result => {
         return result;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('baseURL get error: ', error);
         return null;
       });
   },
 
-  getFromStaging(url) {
+  getFromStaging: function (url) {
     const fullURL = this.baseStagingURL.concat(url);
     const accessToken = CommonActions.getAccessCookie();
     return fetch(fullURL, {
@@ -35,20 +35,20 @@ const BaseActions = {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      .then((res) => {
+      .then(res => {
         CommonActions.checkStatusResponse(res);
         return res;
       })
-      .then((res) => {
+      .then(res => {
         return res.json();
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('getFromStaging error: ', error);
         return null;
       });
   },
 
-  async getFromStagingAuth(url, userpass) {
+  getFromStagingAuth: async function (url, userpass) {
     const fullURL = this.baseStagingURL.concat(url);
     try {
       const fetchResponse = await fetch(fullURL, { headers: { Authorization: `Basic ${userpass}` } });
@@ -65,7 +65,7 @@ const BaseActions = {
     }
   },
 
-  getFromStagingAuthLogout(url) {
+  getFromStagingAuthLogout: function (url) {
     const fullURL = this.baseStagingURL.concat(url);
     const refreshToken = Cookies.get('atlas_refresh_token');
     return fetch(fullURL, {
@@ -73,29 +73,29 @@ const BaseActions = {
         Authorization: `Bearer ${refreshToken}`,
       },
     })
-      .then((result) => {
+      .then(result => {
         return result;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('getFromStagingAuthLogout error: ', error);
         return error;
       });
   },
 
-  getFromApiary(url) {
+  getFromApiary: function (url) {
     const fullURL = this.baseApiaryURL.concat(url);
     return fetch(fullURL)
       .then(res => res.json())
-      .then((result) => {
+      .then(result => {
         return result;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('getFromApiary error: ', error);
         return null;
       });
   },
 
-  post(url, body) {
+  post: function (url, body) {
     const fullURL = this.baseURL.concat(url);
     return fetch(fullURL, {
       method: 'post',
@@ -106,16 +106,16 @@ const BaseActions = {
       },
     })
       .then(res => res.json())
-      .then((result) => {
+      .then(result => {
         return result;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
         return null;
       });
   },
 
-  postStaging(url, body) {
+  postStaging: function (url, body) {
     const fullURL = this.baseStagingURL.concat(url);
     const accessToken = CommonActions.getAccessCookie();
     return fetch(fullURL, {
@@ -127,20 +127,20 @@ const BaseActions = {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      .then((res) => {
+      .then(res => {
         CommonActions.checkStatusResponse(res);
         return res.json();
       })
-      .then((result) => {
+      .then(result => {
         return result;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
         return null;
       });
   },
 
-  postApiary(url, body) {
+  postApiary: function (url, body) {
     const fullURL = this.baseApiaryURL.concat(url);
     return fetch(fullURL, {
       method: 'post',
@@ -151,16 +151,16 @@ const BaseActions = {
       },
     })
       .then(res => res.json())
-      .then((result) => {
+      .then(result => {
         return result;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
         return null;
       });
   },
 
-  put(url, body) {
+  put: function (url, body) {
     const fullURL = this.baseURL.concat(url);
     return fetch(fullURL, {
       method: 'put',
@@ -171,16 +171,16 @@ const BaseActions = {
       },
     })
       .then(res => res.json())
-      .then((result) => {
+      .then(result => {
         return result;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
         return null;
       });
   },
 
-  putStaging(url, body) {
+  putStaging: function (url, body) {
     const fullURL = this.baseStagingURL.concat(url);
     const accessToken = CommonActions.getAccessCookie();
     return fetch(fullURL, {
@@ -192,21 +192,21 @@ const BaseActions = {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      .then((res) => {
+      .then(res => {
         CommonActions.checkStatusResponse(res);
         return res.json();
       })
-      .then((result) => {
+      .then(result => {
         return result;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
         return null;
       });
   },
 
 
-  putApiary(url, body) {
+  putApiary: function (url, body) {
     const fullURL = this.baseApiaryURL.concat(url);
     return fetch(fullURL, {
       method: 'put',
@@ -217,16 +217,16 @@ const BaseActions = {
       },
     })
       .then(res => res.json())
-      .then((result) => {
+      .then(result => {
         return result;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
         return null;
       });
   },
 
-  del(url) {
+  del: function (url) {
     const fullURL = this.baseURL.concat(url);
     return fetch(fullURL, {
       method: 'delete',
@@ -236,16 +236,16 @@ const BaseActions = {
       },
     })
       .then(res => res.json())
-      .then((result) => {
+      .then(result => {
         return result;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
         return null;
       });
   },
 
-  delStaging(url) {
+  delStaging: function (url) {
     const fullURL = this.baseStagingURL.concat(url);
     const accessToken = CommonActions.getAccessCookie();
     return fetch(fullURL, {
@@ -256,20 +256,20 @@ const BaseActions = {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      .then((res) => {
+      .then(res => {
         CommonActions.checkStatusResponse(res);
         return res.json();
       })
-      .then((result) => {
+      .then(result => {
         return result;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
         return null;
       });
   },
 
-  delAPIary(url) {
+  delAPIary: function (url) {
     const fullURL = this.baseApiaryURL.concat(url);
     return fetch(fullURL, {
       method: 'delete',
@@ -279,30 +279,30 @@ const BaseActions = {
       },
     })
       .then(res => res.json())
-      .then((result) => {
+      .then(result => {
         return result;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
         return null;
       });
   },
 
-  postJSONFile(url, fileName, data) {
+  postJSONFile: function (url, fileName, data) {
     const fullURL = this.baseApiaryURL.concat(url);
     return fetch(fullURL, {
       method: 'post',
-      body: JSON.stringify({ file: fileName, data }),
+      body: JSON.stringify({ file: fileName, data: data }),
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     })
       .then(res => res.json())
-      .then((result) => {
+      .then(result => {
         return result;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
         return null;
       });

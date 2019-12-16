@@ -1,12 +1,12 @@
-import React from "react";
-import PropTypes from "prop-types";
-import CommonActions from "../../actions/CommonActions";
+import React from 'react';
+import PropTypes from 'prop-types';
+import CommonActions from '../../actions/CommonActions';
 
 class ModalInfo extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { message: "" };
+    this.state = { message: '' };
 
     this.reload = this.reload.bind(this);
   }
@@ -28,7 +28,7 @@ class ModalInfo extends React.Component {
   }
 
   render() {
-    let { message } = this.state;
+    const { message } = this.state;
 
     return (
       <div className="centered-modal-container">
@@ -40,11 +40,11 @@ class ModalInfo extends React.Component {
 
 
 ModalInfo.propTypes = {
-  fetchInfo: PropTypes.func
+  fetchInfo: PropTypes.func,
 };
 
 ModalInfo.defaultProps = {
-  fetchInfo: () => {}
+  fetchInfo: () => {},
 };
 
 export default ModalInfo;

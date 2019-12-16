@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import ModelManagementRow from "./ModelManagementRow";
+import React from 'react';
+import PropTypes from 'prop-types';
+import ModelManagementRow from './ModelManagementRow';
 
 const ModelManagementTable = props => {
   const [detailRow, setDetailRow] = React.useState(-1);
@@ -26,7 +26,7 @@ const ModelManagementTable = props => {
           startTimer={startTimer}
           stopTimer={stopTimer}
           {...props}
-        />
+        />,
       );
       curRow += 1;
     });
@@ -63,14 +63,14 @@ ModelManagementTable.propTypes = {
   tableData: PropTypes.array,
   reload: PropTypes.func,
   startTimer: PropTypes.func,
-  stopTimer: PropTypes.func
+  stopTimer: PropTypes.func,
 };
 
 ModelManagementTable.defaultProps = {
   tableData: [],
   reload: () => null,
   startTimer: () => null,
-  stopTimer: () => null
+  stopTimer: () => null,
 };
 
 export default ModelManagementTable;

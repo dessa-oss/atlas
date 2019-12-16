@@ -111,7 +111,7 @@ class DurationFilter extends Component {
               id="filter-input-days"
               placeholder="days"
               value={startTime.days}
-              onChange={(e) => { this.onChangeTime(e, true, null, null, 'days'); }}
+              onChange={e => { this.onChangeTime(e, true, null, null, 'days'); }}
             />
             <label htmlFor="filter-input-days">days</label>
           </div>
@@ -123,7 +123,7 @@ class DurationFilter extends Component {
               id="filter-input-hours"
               placeholder="hrs"
               value={startTime.hours}
-              onChange={(e) => { this.onChangeTime(e, true, 0, 23, 'hours'); }}
+              onChange={e => { this.onChangeTime(e, true, 0, 23, 'hours'); }}
             />
             <label htmlFor="filter-input-hours">hrs</label>
           </div>
@@ -135,7 +135,7 @@ class DurationFilter extends Component {
               id="filter-input-min"
               placeholder="min"
               value={startTime.minutes}
-              onChange={(e) => { this.onChangeTime(e, true, 0, 59, 'minutes'); }}
+              onChange={e => { this.onChangeTime(e, true, 0, 59, 'minutes'); }}
             />
             <label htmlFor="filter-input-min">min</label>
           </div>
@@ -147,7 +147,7 @@ class DurationFilter extends Component {
               id="filter-input-sec"
               placeholder="sec"
               value={startTime.seconds}
-              onChange={(e) => { this.onChangeTime(e, true, 0, 59, 'seconds'); }}
+              onChange={e => { this.onChangeTime(e, true, 0, 59, 'seconds'); }}
             />
             <label htmlFor="filter-input-sec">sec</label>
           </div>
@@ -161,7 +161,7 @@ class DurationFilter extends Component {
               id="filter-input-days"
               placeholder="days"
               value={endTime.days}
-              onChange={(e) => { this.onChangeTime(e, false, null, null, 'days'); }}
+              onChange={e => { this.onChangeTime(e, false, null, null, 'days'); }}
             />
             <label htmlFor="filter-input-days">days</label>
           </div>
@@ -173,7 +173,7 @@ class DurationFilter extends Component {
               id="filter-input-hours"
               placeholder="hrs"
               value={endTime.hours}
-              onChange={(e) => { this.onChangeTime(e, false, 0, 23, 'hours'); }}
+              onChange={e => { this.onChangeTime(e, false, 0, 23, 'hours'); }}
             />
             <label htmlFor="filter-input-hours">hrs</label>
           </div>
@@ -185,7 +185,7 @@ class DurationFilter extends Component {
               id="filter-input-min"
               placeholder="min"
               value={endTime.minutes}
-              onChange={(e) => { this.onChangeTime(e, false, 0, 59, 'minutes'); }}
+              onChange={e => { this.onChangeTime(e, false, 0, 59, 'minutes'); }}
             />
             <label htmlFor="filter-input-min">min</label>
           </div>
@@ -197,7 +197,7 @@ class DurationFilter extends Component {
               id="filter-input-sec"
               placeholder="sec"
               value={endTime.seconds}
-              onChange={(e) => { this.onChangeTime(e, false, 0, 59, 'seconds'); }}
+              onChange={e => { this.onChangeTime(e, false, 0, 59, 'seconds'); }}
             />
             <label htmlFor="filter-input-sec">sec</label>
           </div>

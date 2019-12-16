@@ -46,7 +46,7 @@ class JobTableButtons extends Component {
       selectedJobs, projectName, getJobs, selectNoJobs,
     } = this.state;
     if (selectedJobs.length > 0) {
-      await Promise.all(selectedJobs.map((job) => {
+      await Promise.all(selectedJobs.map(job => {
         const URL = 'projects/'.concat(projectName).concat('/job_listing/').concat(job);
         return BaseActions.delStaging(URL);
       }));

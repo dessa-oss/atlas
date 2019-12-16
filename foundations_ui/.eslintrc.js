@@ -1,4 +1,3 @@
-
 module.exports = {
   "extends": [
     "airbnb",
@@ -9,6 +8,9 @@ module.exports = {
           "node": true,
           "es6": true
   },
+  plugins: [
+    "react-hooks"
+  ],
   "parserOptions": {
     "ecmaFeatures": {
         "jsx": true
@@ -36,6 +38,11 @@ module.exports = {
     "prefer-destructuring": 1,
     "react/sort-comp": 0,
     "import/no-extraneous-dependencies": 1,
+    "import/order": 0,
+    "jsx-a11y/no-static-element-interactions": 0,
+    "jsx-a11y/click-events-have-key-events": 0,
+    "object-shorthand": ["error", "never"],
+    "arrow-parens": ["error", "as-needed"],
+    "linebreak-style": 0
   }
 };
-

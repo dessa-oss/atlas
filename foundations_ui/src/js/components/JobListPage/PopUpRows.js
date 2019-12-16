@@ -38,7 +38,7 @@ class PopUpRows extends React.Component {
 
     const rows = [];
 
-    jobs.forEach((job) => {
+    jobs.forEach(job => {
       rows.push(<div
         className="job-cell pop-up-cell i--icon-open-link"
         data-class="job-details-button"

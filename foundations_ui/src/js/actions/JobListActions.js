@@ -36,7 +36,7 @@ class JobListActions {
 
     // TODO get Jobs is currently in Beta
     return BaseActions.getFromStaging(url)
-      .then((results) => {
+      .then(results => {
         return results;
       });
   }
@@ -62,8 +62,8 @@ class JobListActions {
     return BaseActions.getFromApiary(url)
       .then(([status, result]) => {
         return {
-          status,
-          result,
+          status: status,
+          result: result,
         };
       });
   }
@@ -197,7 +197,7 @@ class JobListActions {
 
   static getConstantInputParams(allInputParams) {
     const constantParams = [];
-    allInputParams.forEach((input) => {
+    allInputParams.forEach(input => {
       constantParams.push(input);
     });
     return constantParams;
@@ -304,7 +304,7 @@ class JobListActions {
     let isFirstFilter = true;
     if (this.areStatusesHidden(statusFilter)) {
       let isFirstStatus = true;
-      statusFilter.forEach((status) => {
+      statusFilter.forEach(status => {
         url = this.addStatusToURLNotHidden(url, isFirstStatus, status);
         isFirstStatus = this.setIsFirst(status, isFirstStatus);
       });
@@ -314,29 +314,29 @@ class JobListActions {
     if (userFilter.length > 0) {
       url = this.addAndIfNotFirstFilter(url, isFirstFilter);
     }
-    userFilter.forEach((user) => {
+    userFilter.forEach(user => {
       url = this.addToURLNotHidden(url, isFirstUser, user, 'user');
       isFirstUser = false;
       isFirstFilter = false;
     });
 
-    numberFilters.forEach((numberFilter) => {
+    numberFilters.forEach(numberFilter => {
       url = this.addAndIfNotFirstFilter(url, isFirstFilter);
       url = this.addToURLRangeNotHidden(url, numberFilter.min, numberFilter.max, numberFilter.columnName);
       isFirstFilter = false;
     });
 
-    containFilters.forEach((containFilter) => {
+    containFilters.forEach(containFilter => {
       url = this.addAndIfNotFirstFilter(url, isFirstFilter);
       url = this.addToURLContainFilter(url, containFilter.searchText, containFilter.columnName);
       isFirstFilter = false;
     });
 
     if (this.boolFilterArrayHasHidden(boolFilters)) {
-      boolFilters.forEach((boolFilter) => {
+      boolFilters.forEach(boolFilter => {
         if (this.boolFilterHasHidden(boolFilter)) {
           const nonHiddenBoolCheckboxes = this.boolFilterGetNonHidden(boolFilter);
-          nonHiddenBoolCheckboxes.forEach((checkbox) => {
+          nonHiddenBoolCheckboxes.forEach(checkbox => {
             url = this.addAndIfNotFirstFilter(url, isFirstFilter);
             url = this.addToURLNotHidden(url, true, checkbox.name, boolFilter.columnName);
             isFirstFilter = false;
@@ -345,7 +345,7 @@ class JobListActions {
       });
     }
 
-    durationFilters.forEach((durationFilter) => {
+    durationFilters.forEach(durationFilter => {
       url = this.addAndIfNotFirstFilter(url, isFirstFilter);
       const startTime = this.getTimeForDurationURL(durationFilter.startTime);
       const endTime = this.getTimeForDurationURL(durationFilter.endTime);
@@ -353,13 +353,13 @@ class JobListActions {
       isFirstFilter = false;
     });
 
-    jobIdFilters.forEach((jobIdFilter) => {
+    jobIdFilters.forEach(jobIdFilter => {
       url = this.addAndIfNotFirstFilter(url, isFirstFilter);
       url = this.addToURLContainFilter(url, jobIdFilter.searchText, 'job_id');
       isFirstFilter = false;
     });
 
-    startTimeFilters.forEach((startTimeFilter) => {
+    startTimeFilters.forEach(startTimeFilter => {
       url = this.addAndIfNotFirstFilter(url, isFirstFilter);
       // time format for api is MM_DD_YY_HH_mm
       const startTime = this.getTimeForStartTimeURL(startTimeFilter.startTime);
@@ -376,7 +376,7 @@ class JobListActions {
   }
 
   static areStatusesHidden(statuses) {
-    const areHidden = statuses.some((status) => {
+    const areHidden = statuses.some(status => {
       return (status.hidden === true);
     });
     return areHidden;
@@ -393,24 +393,24 @@ class JobListActions {
     }
 
     if (numberFilters.length > 0) {
-      numberFilters.forEach((numberFilter) => {
+      numberFilters.forEach(numberFilter => {
         const newRangeFilter = this.getRangeFilter(numberFilter.columnName, numberFilter.min, numberFilter.max);
         updatedFilters.push(newRangeFilter);
       });
     }
 
     if (containFilters.length > 0) {
-      containFilters.forEach((containFilter) => {
+      containFilters.forEach(containFilter => {
         const newContainFilter = this.getContainFilter(containFilter.columnName, containFilter.searchText);
         updatedFilters.push(newContainFilter);
       });
     }
 
     if (this.boolFilterArrayHasHidden(boolFilters)) {
-      boolFilters.forEach((boolFilter) => {
+      boolFilters.forEach(boolFilter => {
         if (this.boolFilterHasHidden(boolFilter)) {
           const nonHiddenBoolCheckboxes = this.boolFilterGetNonHidden(boolFilter);
-          nonHiddenBoolCheckboxes.forEach((checkbox) => {
+          nonHiddenBoolCheckboxes.forEach(checkbox => {
             const newboolFilter = this.getFilterObject(boolFilter.columnName, checkbox.name);
             updatedFilters.push(newboolFilter);
           });
@@ -419,7 +419,7 @@ class JobListActions {
     }
 
     if (durationFilters.length > 0) {
-      durationFilters.forEach((durationFilter) => {
+      durationFilters.forEach(durationFilter => {
         const startTime = this.getTimeForDurationBubble(durationFilter.startTime);
         const endTime = this.getTimeForDurationBubble(durationFilter.endTime);
         const newRangeFilter = this.getRangeFilter('Duration', startTime, endTime);
@@ -428,14 +428,14 @@ class JobListActions {
     }
 
     if (jobIdFilters.length > 0) {
-      jobIdFilters.forEach((jobIdFilter) => {
+      jobIdFilters.forEach(jobIdFilter => {
         const newJobIdFilter = this.getContainFilter(jobIdFilter.columnName, jobIdFilter.searchText);
         updatedFilters.push(newJobIdFilter);
       });
     }
 
     if (startTimeFilters.length > 0) {
-      startTimeFilters.forEach((startTimeFilter) => {
+      startTimeFilters.forEach(startTimeFilter => {
         const startTime = this.getTimeForStartTimeBubble(startTimeFilter.startTime);
         const endTime = this.getTimeForStartTimeBubble(startTimeFilter.endTime);
         const newRangeFilter = this.getRangeFilter('Start Time', startTime, endTime);
@@ -448,7 +448,7 @@ class JobListActions {
 
   static getFilters(filters, colName) {
     const updatedFilters = [];
-    filters.forEach((value) => {
+    filters.forEach(value => {
       const newFilter = this.getFilterObject(colName, value);
       updatedFilters.push(newFilter);
     });
@@ -463,7 +463,7 @@ class JobListActions {
 
   static removeFilter(oldFilters, removeFilter) {
     const newFilters = [];
-    oldFilters.forEach((filter) => {
+    oldFilters.forEach(filter => {
       if (!this.doesFilterExist(filter, removeFilter)) {
         newFilters.push(filter);
       }
@@ -474,7 +474,7 @@ class JobListActions {
   static getUpdatedStatuses(oldStatuses, filters) {
     const newStatuses = [];
     let noStatusFilters = true;
-    oldStatuses.forEach((status) => {
+    oldStatuses.forEach(status => {
       noStatusFilters = this.getUpdatedStatusesFromOldStatuses(filters, status, noStatusFilters, newStatuses);
     });
     this.updateStatusesIfNoFilters(noStatusFilters, newStatuses);
@@ -484,7 +484,7 @@ class JobListActions {
 
   static updateStatusesIfNoFilters(noStatusFilters, newStatuses) {
     if (noStatusFilters) {
-      newStatuses.forEach((status) => {
+      newStatuses.forEach(status => {
         status.hidden = false;
       });
     }
@@ -509,7 +509,7 @@ class JobListActions {
   }
 
   static getFilterObject(columnName, value) {
-    return { column: columnName, value };
+    return { column: columnName, value: value };
   }
 
   static doesFilterExist(oldFilter, newFilter) {
@@ -526,7 +526,7 @@ class JobListActions {
 
   static getOldStatusFilters(oldFilters) {
     return oldFilters.filter(
-      (filter) => {
+      filter => {
         if (filter.column !== statusText) {
           return true;
         }
@@ -536,7 +536,7 @@ class JobListActions {
 
   static addNewStatusFilters(statuses, newFilters) {
     if (this.areStatusesHidden(statuses)) {
-      statuses.forEach((status) => {
+      statuses.forEach(status => {
         if (status.hidden === false) {
           const newFilter = this.getFilterObject(statusText, status.name);
           newFilters.push(newFilter);
@@ -549,7 +549,7 @@ class JobListActions {
     const statusInFilter = this.getFilterObject(statusText, status.name);
     let isHidden = true;
     let newNoStatusFilters = noStatusFilters;
-    filters.forEach((filter) => {
+    filters.forEach(filter => {
       if (this.doesFilterExist(filter, statusInFilter)) {
         isHidden = false;
         newNoStatusFilters = false;
@@ -561,8 +561,8 @@ class JobListActions {
 
   static getAllJobUsers(jobs) {
     const users = [];
-    jobs.forEach((job) => {
-      const userExists = users.some((user) => {
+    jobs.forEach(job => {
+      const userExists = users.some(user => {
         return (user.name === job.user);
       });
       if (!userExists) {
@@ -588,7 +588,7 @@ class JobListActions {
 
   static getVisibleFromFilter(allValues, hiddenValues) {
     const visibleValues = allValues.filter(
-      (value) => {
+      value => {
         if (!hiddenValues.includes(value)) {
           return true;
         }
@@ -632,7 +632,7 @@ class JobListActions {
   }
 
   static getExistingValuesForFilter(allFilters, colName) {
-    const existingFilters = allFilters.filter((filter) => {
+    const existingFilters = allFilters.filter(filter => {
       if (filter.columnName === colName) {
         return true;
       }
@@ -645,7 +645,7 @@ class JobListActions {
   }
 
   static removeFilterByName(rangeFilters, removeFilter) {
-    return rangeFilters.filter((filter) => {
+    return rangeFilters.filter(filter => {
       if (filter.columnName !== removeFilter.column) {
         return true;
       }
@@ -665,7 +665,7 @@ class JobListActions {
   }
 
   static boolFilterHasHidden(boolFilter) {
-    const hasHidden = boolFilter.boolCheckboxes.filter((checkbox) => {
+    const hasHidden = boolFilter.boolCheckboxes.filter(checkbox => {
       return checkbox.hidden === true;
     });
     return hasHidden.length > 0;
@@ -673,21 +673,21 @@ class JobListActions {
 
   static boolFilterArrayHasHidden(boolFilters) {
     let hasHidden = false;
-    boolFilters.forEach((filter) => {
+    boolFilters.forEach(filter => {
       hasHidden = hasHidden || this.boolFilterHasHidden(filter);
     });
     return hasHidden;
   }
 
   static boolFilterGetNonHidden(boolFilter) {
-    const filtersWithoutHidden = boolFilter.boolCheckboxes.filter((checkbox) => {
+    const filtersWithoutHidden = boolFilter.boolCheckboxes.filter(checkbox => {
       return checkbox.hidden === false;
     });
     return filtersWithoutHidden;
   }
 
   static boolFilterGetHidden(boolFilter) {
-    const filtersOnlyHidden = boolFilter.filter((checkbox) => {
+    const filtersOnlyHidden = boolFilter.filter(checkbox => {
       return checkbox.hidden !== false;
     });
 
@@ -705,7 +705,7 @@ class JobListActions {
   static areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters,
     jobIdFilters, startTimeFilters) {
     const arrayFilters = [userFilter, numberFilters, containFilters, durationFilters, jobIdFilters, startTimeFilters];
-    const mappedFilters = arrayFilters.filter((filter) => {
+    const mappedFilters = arrayFilters.filter(filter => {
       return filter.length !== 0;
     });
     return !this.areStatusesHidden(statusFilter)
@@ -733,7 +733,7 @@ class JobListActions {
   }
 
   static isColumnFiltered(filteredArray, columnName) {
-    const filteredArrayMapped = filteredArray.map((filter) => {
+    const filteredArrayMapped = filteredArray.map(filter => {
       return filter.column;
     });
     return filteredArrayMapped.includes(columnName);
@@ -741,7 +741,7 @@ class JobListActions {
 
   static deleteAllJobs(jobIds, callback) {
     const deletedJobRequests = jobIds.map(
-      (jobId) => {
+      jobId => {
         const uri = `projects/dummy_project_name/job_listing/${jobId}`;
         return BaseActions.deleteBetaFromAPI(uri);
       },

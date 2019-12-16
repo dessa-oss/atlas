@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
-import Layout from "../Layout";
-import PropTypes from "prop-types";
-import ModalTutorial from "../../common/ModalTutorial";
-import ValidationResultsTable from "./ValidationResultsTable";
-import ValidationResultsDetails from "./ValidationResultsDetails";
-import DataContractInfoModal from "./DataContractInfoModal";
+import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import Layout from '../Layout';
+import PropTypes from 'prop-types';
+import ModalTutorial from '../../common/ModalTutorial';
+import ValidationResultsTable from './ValidationResultsTable';
+import ValidationResultsDetails from './ValidationResultsDetails';
+import DataContractInfoModal from './DataContractInfoModal';
 
 class SystemHealth extends Component {
   constructor(props) {
@@ -14,8 +14,8 @@ class SystemHealth extends Component {
     this.state = {
       selectedValidationResult: {},
       tutorialVisible: false,
-      selectedUuid: "",
-      infoVisible: false
+      selectedUuid: '',
+      infoVisible: false,
     };
 
     this.selectRow = this.selectRow.bind(this);
@@ -47,10 +47,10 @@ class SystemHealth extends Component {
       selectedValidationResult,
       selectedUuid,
       tutorialVisible,
-      infoVisible
+      infoVisible,
     } = this.state;
 
-    const location = this.props.location;
+    const { location } = this.props;
 
     return (
       <Layout tab="Health" title="Data Health" openTutorial={this.onToggleTutorial}>
@@ -93,11 +93,11 @@ class SystemHealth extends Component {
 }
 
 SystemHealth.propTypes = {
-  location: PropTypes.object
+  location: PropTypes.object,
 };
 
 SystemHealth.defaultProps = {
-  location: { state: {} }
+  location: { state: {} },
 };
 
 export default withRouter(SystemHealth);

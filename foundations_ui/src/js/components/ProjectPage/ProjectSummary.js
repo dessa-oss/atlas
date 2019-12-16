@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import HoverCell from '../JobListPage/cells/HoverCell';
 import CommonActions from '../../actions/CommonActions';
 
-const ProjectSummary = (props) => {
+const ProjectSummary = props => {
   const [showAllTags, setShowAllTags] = React.useState(false);
 
   const packageClick = () => {
@@ -13,7 +13,7 @@ const ProjectSummary = (props) => {
     history.push(
       `/projects/${project.name}/job_listing`,
       {
-        project,
+        project: project,
       },
     );
   };
@@ -30,8 +30,8 @@ const ProjectSummary = (props) => {
 
   const { project } = props;
 
-  let expandedTagSpans = [];
-  project.tags.forEach((tag) => {
+  const expandedTagSpans = [];
+  project.tags.forEach(tag => {
     expandedTagSpans.push(<span key={'tag-'.concat(tag)}>{tag}</span>);
   });
 
@@ -58,7 +58,7 @@ const ProjectSummary = (props) => {
       </div>
       <div className="project-summary-tags-container">
         <p>tags</p>
-        {project.tags.slice(0, 10).map((tag) => {
+        {project.tags.slice(0, 10).map(tag => {
           return <span key={tag}>{tag}</span>;
         })}
         {project.tags.length > 10

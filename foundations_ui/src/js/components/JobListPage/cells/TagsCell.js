@@ -31,7 +31,7 @@ class TagsCell extends Component {
     const tagList = [];
     const someTagKeys = Object.keys(tags);
 
-    someTagKeys.map((keyName) => {
+    someTagKeys.map(keyName => {
       tagList.push(<div className="tagBlock">{keyName}:{tags[keyName]}</div>);
     });
 

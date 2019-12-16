@@ -5,7 +5,7 @@ import Artifact from './Artifact';
 export default function ArtifactList(props) {
   const { handleClick, artifacts } = props;
 
-  const artifactComps = (artifacts || []).map((artifact) => {
+  const artifactComps = (artifacts || []).map(artifact => {
     return <Artifact key={artifact.id} artifact={artifact} onClick={handleClick} />;
   });
 

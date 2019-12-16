@@ -1,12 +1,12 @@
-import React from "react";
-import { Modal, ModalBody } from "reactstrap";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import ImageTutorial1 from "../../../assets/images/tutorial_1.png";
-import ImageTutorial2 from "../../../assets/images/tutorial_2.png";
-import ImageTutorial3 from "../../../assets/images/tutorial_3.png";
-import ImageTutorial4 from "../../../assets/images/tutorial_4.png";
-import ImageTutorial5 from "../../../assets/images/tutorial_5.png";
+import React from 'react';
+import { Modal, ModalBody } from 'reactstrap';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import ImageTutorial1 from '../../../assets/images/tutorial_1.png';
+import ImageTutorial2 from '../../../assets/images/tutorial_2.png';
+import ImageTutorial3 from '../../../assets/images/tutorial_3.png';
+import ImageTutorial4 from '../../../assets/images/tutorial_4.png';
+import ImageTutorial5 from '../../../assets/images/tutorial_5.png';
 
 
 class ModalTutorial extends React.Component {
@@ -17,7 +17,7 @@ class ModalTutorial extends React.Component {
     this.onClickPrevious = this.onClickPrevious.bind(this);
 
     this.state = {
-      imageIndex: 1
+      imageIndex: 1,
     };
   }
 
@@ -29,7 +29,7 @@ class ModalTutorial extends React.Component {
         const value = prevState.imageIndex + 1;
         return {
           ...prevState,
-          imageIndex: value
+          imageIndex: value,
         };
       });
     }
@@ -43,7 +43,7 @@ class ModalTutorial extends React.Component {
         const value = prevState.imageIndex - 1;
         return {
           ...prevState,
-          imageIndex: value
+          imageIndex: value,
         };
       });
     }
@@ -88,32 +88,32 @@ class ModalTutorial extends React.Component {
               <div
                 className={
                   imageIndex === 1
-                    ? "tutorial-dot-active"
-                    : "tutorial-dot-inactive"}
+                    ? 'tutorial-dot-active'
+                    : 'tutorial-dot-inactive'}
               />
               <div
                 className={
                   imageIndex === 2
-                    ? "tutorial-dot-active"
-                    : "tutorial-dot-inactive"}
+                    ? 'tutorial-dot-active'
+                    : 'tutorial-dot-inactive'}
               />
               <div
                 className={
                   imageIndex === 3
-                    ? "tutorial-dot-active"
-                    : "tutorial-dot-inactive"}
+                    ? 'tutorial-dot-active'
+                    : 'tutorial-dot-inactive'}
               />
               <div
                 className={
                   imageIndex === 4
-                    ? "tutorial-dot-active"
-                    : "tutorial-dot-inactive"}
+                    ? 'tutorial-dot-active'
+                    : 'tutorial-dot-inactive'}
               />
               <div
                 className={
                   imageIndex === 5
-                    ? "tutorial-dot-active"
-                    : "tutorial-dot-inactive"}
+                    ? 'tutorial-dot-active'
+                    : 'tutorial-dot-inactive'}
               />
             </div>
             {
@@ -151,12 +151,12 @@ class ModalTutorial extends React.Component {
 
 ModalTutorial.propTypes = {
   tutorialVisible: PropTypes.bool,
-  onToggleTutorial: PropTypes.func
+  onToggleTutorial: PropTypes.func,
 };
 
 ModalTutorial.defaultProps = {
   tutorialVisible: false,
-  onToggleTutorial: () => null
+  onToggleTutorial: () => null,
 };
 
 export default withRouter(ModalTutorial);

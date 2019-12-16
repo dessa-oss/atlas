@@ -1,7 +1,7 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import { Modal, ModalBody } from "reactstrap";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import { Modal, ModalBody } from 'reactstrap';
 
 class DeleteConfirmModal extends React.Component {
   constructor(props) {
@@ -54,13 +54,13 @@ class DeleteConfirmModal extends React.Component {
 DeleteConfirmModal.propTypes = {
   isOpen: PropTypes.bool,
   toggle: PropTypes.func,
-  onConfirm: PropTypes.func
+  onConfirm: PropTypes.func,
 };
 
 DeleteConfirmModal.defaultProps = {
   isOpen: false,
   toggle: () => {},
-  onConfirm: () => {}
+  onConfirm: () => {},
 };
 
 export default withRouter(DeleteConfirmModal);

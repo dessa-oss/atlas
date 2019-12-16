@@ -1,10 +1,10 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import { Modal, ModalBody } from "reactstrap";
-import { getAtlas } from "../../../actions/BaseActions";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import ModalInfo from "../../common/ModalInfo";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import { Modal, ModalBody } from 'reactstrap';
+import { getAtlas } from '../../../actions/BaseActions';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import ModalInfo from '../../common/ModalInfo';
 
 class MonitorLogsModal extends React.Component {
   constructor(props) {
@@ -21,7 +21,7 @@ class MonitorLogsModal extends React.Component {
     const {
       isOpen,
       jobID,
-      projectName
+      projectName,
     } = this.props;
 
     return (
@@ -68,14 +68,14 @@ MonitorLogsModal.propTypes = {
   isOpen: PropTypes.bool,
   toggle: PropTypes.func,
   jobID: PropTypes.string,
-  projectName: PropTypes.string
+  projectName: PropTypes.string,
 };
 
 MonitorLogsModal.defaultProps = {
   isOpen: false,
   toggle: () => {},
-  jobID: "",
-  projectName: ""
+  jobID: '',
+  projectName: '',
 };
 
 export default withRouter(MonitorLogsModal);

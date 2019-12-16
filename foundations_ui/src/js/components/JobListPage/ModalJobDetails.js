@@ -27,9 +27,9 @@ class ModalJobDetails extends React.Component {
       newTagValue: '',
       timerId: -1,
       addNewTagVisible: false,
-      job,
+      job: job,
       selectedArtifact: {},
-      reloadJobTable,
+      reloadJobTable: reloadJobTable,
     };
 
     this.onClickRemoveTag = this.onClickRemoveTag.bind(this);
@@ -50,9 +50,9 @@ class ModalJobDetails extends React.Component {
     const { location } = this.props;
     const { job } = this.state;
     const { projectName } = this.props.match.params;
-    let selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
+    const selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
     BaseActions.getFromStaging(`projects/${selectedProjectName}/job_listing`)
-      .then((result) => {
+      .then(result => {
         const filteredJob = result.jobs.find(item => item.job_id === job.job_id);
         let newTags = [];
         if (filteredJob.tags) {
@@ -96,9 +96,9 @@ class ModalJobDetails extends React.Component {
     const { job } = this.state;
     const { location } = this.props;
     const { projectName } = this.props.match.params;
-    let selectedProjectName = location.state.project ? location.state.project.name : projectName;
+    const selectedProjectName = location.state.project ? location.state.project.name : projectName;
     BaseActions.delStaging(`projects/${selectedProjectName}/job_listing/${job.job_id}/tags/${tag}`)
-      .then((result) => {
+      .then(result => {
         this.reload();
         this.state.reloadJobTable();
       });
@@ -148,7 +148,7 @@ class ModalJobDetails extends React.Component {
     const { newTagKey, newTagValue, job } = this.state;
     const { location } = this.props;
     const { projectName } = this.props.match.params;
-    let selectedProjectName = location.state.project ? location.state.project.name : projectName;
+    const selectedProjectName = location.state.project ? location.state.project.name : projectName;
 
     const body = {
       tag: {
@@ -158,7 +158,7 @@ class ModalJobDetails extends React.Component {
     };
 
     BaseActions.postStaging(`projects/${selectedProjectName}/job_listing/${job.job_id}/tags`, body)
-      .then((result) => {
+      .then(result => {
         this.reload();
         this.state.reloadJobTable();
       });
@@ -188,7 +188,7 @@ class ModalJobDetails extends React.Component {
       selectedArtifact,
     } = this.state;
 
-    const selectViewer = (artifact) => {
+    const selectViewer = artifact => {
       switch (artifact.artifact_type) {
         case 'image':
           return <ImageViewer image={artifact.uri} />;
@@ -240,7 +240,7 @@ class ModalJobDetails extends React.Component {
               />
             </div>
             <div className="container-tags" data-class="job-details-tags">
-              {tags.map((tag) => {
+              {tags.map(tag => {
                 return <Tag key={tag} value={tag} removeVisible removeTag={() => this.onClickRemoveTag(tag)} />;
               })}
               <div

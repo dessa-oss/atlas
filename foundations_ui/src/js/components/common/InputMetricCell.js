@@ -73,13 +73,13 @@ class InputMetricCell extends Component {
 
     let finalValue = value;
     let expandedValue = value;
-    let shouldCheckExpand = expand;
-    let dataClass = '';
+    const shouldCheckExpand = expand;
+    const dataClass = '';
     if (pClass.includes('tag') && value !== '') {
       finalValue = [];
       let index = 0;
       if (Array.isArray(value)) {
-        value.forEach((tag) => {
+        value.forEach(tag => {
           if (index === maxLength) {
             expandedValue = Array.from(finalValue);
             expandedValue.push(<Tag key={tag} value={tag} />);
@@ -92,7 +92,7 @@ class InputMetricCell extends Component {
           index += 1;
         });
       } else {
-        Object.keys(value).forEach((tag) => {
+        Object.keys(value).forEach(tag => {
           if (index === maxLength) {
             expandedValue = Array.from(finalValue);
             expandedValue.push(<Tag key={tag} value={tag} />);

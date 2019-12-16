@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import Select from "react-select";
-import { postJSONFile } from "../../../actions/BaseActions";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Select from 'react-select';
+import { postJSONFile } from '../../../actions/BaseActions';
 
 const roleOptions = [
-  { value: "Admin", label: "Admin" },
-  { value: "Manager", label: "Manager" },
-  { value: "Read", label: "Read Only" }
+  { value: 'Admin', label: 'Admin' },
+  { value: 'Manager', label: 'Manager' },
+  { value: 'Read', label: 'Read Only' },
 ];
 
 class AddUserModal extends Component {
@@ -17,7 +17,7 @@ class AddUserModal extends Component {
 
     this.state = {
       updateUser: updateUser,
-      role: null
+      role: null,
     };
     this.AddUser = this.AddUser.bind(this);
     this.ChangeRole = this.ChangeRole.bind(this);
@@ -30,21 +30,21 @@ class AddUserModal extends Component {
   async AddUser() {
     const { updateUser, role } = this.state;
 
-    const name = document.getElementById("add-user-name").value;
-    const id = document.getElementById("add-user-username").value;
-    const email = document.getElementById("add-user-email").value;
+    const name = document.getElementById('add-user-name').value;
+    const id = document.getElementById('add-user-username').value;
+    const email = document.getElementById('add-user-email').value;
 
-    if (name !== "" && id !== "" && email !== "" && role !== null) {
+    if (name !== '' && id !== '' && email !== '' && role !== null) {
       const data = {
         name: name,
         id: id,
         email: email,
-        permission: role
+        permission: role,
       };
 
       const body = JSON.stringify(data);
 
-      await postJSONFile("settings/users/add", "users.json", body);
+      await postJSONFile('settings/users/add', 'users.json', body);
       updateUser();
     }
   }
@@ -85,11 +85,11 @@ class AddUserModal extends Component {
 }
 
 AddUserModal.propTypes = {
-  updateUser: PropTypes.func
+  updateUser: PropTypes.func,
 };
 
 AddUserModal.defaultProps = {
-  updateUser: () => null
+  updateUser: () => null,
 };
 
 export default AddUserModal;

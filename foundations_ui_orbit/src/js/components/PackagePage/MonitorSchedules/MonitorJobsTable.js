@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import MonitorSchedulesActions from '../../../actions/MonitorSchedulesActions';
 
 class MonitorJobsTable extends Component {
   constructor(props) {
@@ -11,7 +11,7 @@ class MonitorJobsTable extends Component {
       rows: null,
       projectName: location.state.project.name,
       selectedRows: new Set(),
-      isAscending: false
+      isAscending: false,
     };
 
     this.onSelectRow = this.onSelectRow.bind(this);
@@ -40,7 +40,7 @@ class MonitorJobsTable extends Component {
     const { reload, toggleLogsModal, monitorResult } = this.props;
 
     const monitorName = monitorResult.properties.spec.environment.MONITOR_NAME;
-    console.log("Before getting", isAscending);
+    console.log('Before getting', isAscending);
     const result = await MonitorSchedulesActions.getMonitorJobs(projectName, monitorName, isAscending);
     const rows = MonitorSchedulesActions.getMonitorJobRows(result, this.onSelectRow, toggleLogsModal);
     this.setState({ rows: rows });
@@ -70,7 +70,7 @@ class MonitorJobsTable extends Component {
   }
 
   onClickSortByLaunched() {
-    let { isAscending } = this.state;
+    const { isAscending } = this.state;
     this.setState({ isAscending: !isAscending }, this.reload);
   }
 
@@ -78,14 +78,14 @@ class MonitorJobsTable extends Component {
     const {
       rows,
       selectedRows,
-      isAscending
+      isAscending,
     } = this.state;
 
     let rowsWithProps = [];
     if (rows) {
       rowsWithProps = rows.map(row => React.cloneElement(
         row,
-        { selectedRows: selectedRows }
+        { selectedRows: selectedRows },
       ));
     }
 
@@ -96,7 +96,7 @@ class MonitorJobsTable extends Component {
         role="button"
         onClick={this.onClickSortByLaunched}
         className={isAscending
-          ? "i--icon-arrow-up" : "i--icon-arrow-down"}
+          ? 'i--icon-arrow-up' : 'i--icon-arrow-down'}
       />
     );
 
@@ -131,14 +131,14 @@ MonitorJobsTable.propTypes = {
   location: PropTypes.object,
   reload: PropTypes.func,
   monitorResult: PropTypes.object,
-  toggleLogsModal: PropTypes.func
+  toggleLogsModal: PropTypes.func,
 };
 
 MonitorJobsTable.defaultProps = {
   location: { state: {} },
   reload: () => {},
   monitorResult: {},
-  toggleLogsModal: () => {}
+  toggleLogsModal: () => {},
 };
 
 export default MonitorJobsTable;

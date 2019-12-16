@@ -14,7 +14,7 @@ class ShowMoreFilters extends Component {
     const { hiddenBubbles } = this.state;
 
     const filterBubbles = [];
-    hiddenBubbles.forEach((bubble) => {
+    hiddenBubbles.forEach(bubble => {
       const key = bubble.id;
       const name = bubble.id.split(/-(.+)/)[0];
       const value = bubble.id.split(/-(.+)/)[1];
@@ -24,7 +24,7 @@ class ShowMoreFilters extends Component {
             {name}:<span> {value}</span>
           </p>
           <button
-            onClick={() => { this.state.removeFilter({ column: name, value }); }}
+            onClick={() => { this.state.removeFilter({ column: name, value: value }); }}
             type="button"
             className="close-button"
           />

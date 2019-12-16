@@ -1,21 +1,21 @@
-import React, { Component } from "react";
-import moment from "moment";
-import PropTypes from "prop-types";
-import CommonActions from "../../../actions/CommonActions";
-import OverflowTooltip from "../../common/OverflowTooltip";
+import React, { Component } from 'react';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import CommonActions from '../../../actions/CommonActions';
+import OverflowTooltip from '../../common/OverflowTooltip';
 
 class ValidationResultsTableRow extends Component {
   constructor(props) {
     super(props);
     const {
-      time, monitorName, contractName, numCritical
+      time, monitorName, contractName, numCritical,
     } = this.props;
 
     this.state = {
       time: time,
       monitorName: monitorName,
       contractName: contractName,
-      numCritical: numCritical
+      numCritical: numCritical,
     };
 
     this.onClick = this.onClick.bind(this);
@@ -27,7 +27,7 @@ class ValidationResultsTableRow extends Component {
       time,
       monitorName,
       contractName,
-      numCritical
+      numCritical,
     } = this.state;
     const { onClick } = this.props;
 
@@ -35,7 +35,7 @@ class ValidationResultsTableRow extends Component {
       time: time,
       monitorName: monitorName,
       contractName: contractName,
-      numCritical: numCritical
+      numCritical: numCritical,
     });
   }
 
@@ -44,14 +44,14 @@ class ValidationResultsTableRow extends Component {
       time,
       monitorName,
       contractName,
-      numCritical
+      numCritical,
     } = this.state;
     const { selectedRow } = this.props;
     const thisRow = {
       time: time,
       monitorName: monitorName,
       contractName: contractName,
-      numCritical: numCritical
+      numCritical: numCritical,
     };
 
     return CommonActions.deepEqual(thisRow, selectedRow);
@@ -62,13 +62,13 @@ class ValidationResultsTableRow extends Component {
       time,
       monitorName,
       contractName,
-      numCritical
+      numCritical,
     } = this.state;
 
-    const selectedClass = this.isSelectedRow() ? "selected-row" : "";
-    const date = moment(time).format("YYYY-MM-DD").toString();
-    const criticalState = numCritical > 0 ? "critical" : "healthy";
-    const numCriticalVal = numCritical > 0 ? numCritical : "";
+    const selectedClass = this.isSelectedRow() ? 'selected-row' : '';
+    const date = moment(time).format('YYYY-MM-DD').toString();
+    const criticalState = numCritical > 0 ? 'critical' : 'healthy';
+    const numCriticalVal = numCritical > 0 ? numCritical : '';
 
     return (
       <div className={`validation-results-table-row ${selectedClass}`} onClick={this.onClick}>
@@ -97,16 +97,16 @@ ValidationResultsTableRow.propTypes = {
   contractName: PropTypes.string,
   numCritical: PropTypes.number,
   onClick: PropTypes.func,
-  selectedRow: PropTypes.object
+  selectedRow: PropTypes.object,
 };
 
 ValidationResultsTableRow.defaultProps = {
-  time: "Invalid date",
-  monitorName: "Invalid monitor name",
-  contractName: "Invalid contract name",
+  time: 'Invalid date',
+  monitorName: 'Invalid monitor name',
+  contractName: 'Invalid contract name',
   numCritical: 0,
   onClick: () => {},
-  selectedRow: {}
+  selectedRow: {},
 };
 
 

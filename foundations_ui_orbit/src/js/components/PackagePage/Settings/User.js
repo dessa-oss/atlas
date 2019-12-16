@@ -1,11 +1,11 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { postJSONFile } from "../../../actions/BaseActions";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { postJSONFile } from '../../../actions/BaseActions';
 
 const roleOptions = [
-  { value: "Admin", label: "Admin" },
-  { value: "Manager", label: "Manager" },
-  { value: "Read", label: "Read" }
+  { value: 'Admin', label: 'Admin' },
+  { value: 'Manager', label: 'Manager' },
+  { value: 'Read', label: 'Read' },
 ];
 
 class User extends React.Component {
@@ -13,14 +13,14 @@ class User extends React.Component {
     super(props);
 
     const {
-      name, username, email, role
+      name, username, email, role,
     } = this.props;
 
     this.state = {
       name: name,
       username: username,
       email: email,
-      role: role
+      role: role,
     };
     this.changeRole = this.changeRole.bind(this);
     this.deleteUser = this.deleteUser.bind(this);
@@ -28,19 +28,19 @@ class User extends React.Component {
 
   async changeRole(selectedOption) {
     const {
-      name, username, email, updateUser
+      name, username, email, updateUser,
     } = this.state;
 
     const data = {
       name: name,
       id: username,
       email: email,
-      permission: selectedOption.target.value
+      permission: selectedOption.target.value,
     };
 
     const body = JSON.stringify(data);
 
-    await postJSONFile("settings/users/role", "users.json", body);
+    await postJSONFile('settings/users/role', 'users.json', body);
     updateUser();
   }
 
@@ -48,16 +48,16 @@ class User extends React.Component {
     const { updateUser } = this.props;
     const { username } = this.state;
     await postJSONFile(
-      "settings/users/delete",
-      "users.json",
-      username
+      'settings/users/delete',
+      'users.json',
+      username,
     );
     updateUser();
   }
 
   render() {
     const {
-      name, username, email, role
+      name, username, email, role,
     } = this.state;
 
     return (
@@ -98,15 +98,15 @@ User.propTypes = {
   username: PropTypes.string,
   email: PropTypes.string,
   role: PropTypes.string,
-  updateUser: PropTypes.func
+  updateUser: PropTypes.func,
 };
 
 User.defaultProps = {
-  name: "",
-  username: "",
-  email: "",
-  role: "",
-  updateUser: () => null
+  name: '',
+  username: '',
+  email: '',
+  role: '',
+  updateUser: () => null,
 };
 
 export default User;

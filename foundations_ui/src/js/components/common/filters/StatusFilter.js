@@ -60,7 +60,7 @@ class StatusFilter extends Component {
 
   isDisabled() {
     const { changedParams } = this.state;
-    const filteredParams = changedParams.filter((param) => {
+    const filteredParams = changedParams.filter(param => {
       return param !== null && param !== undefined;
     });
     return filteredParams.length >= numCheckboxes;

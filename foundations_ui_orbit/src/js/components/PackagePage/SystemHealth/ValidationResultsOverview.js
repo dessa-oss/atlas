@@ -2,23 +2,23 @@ import React, {
   Component,
   useState,
   useEffect,
-  useRef
-} from "react";
-import moment from "moment";
-import Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
-import Select from "react-select";
-import Toggle from "react-toggle";
-import PropTypes from "prop-types";
-import CommonActions from "../../../actions/CommonActions";
-import ValidationResultsActions from "../../../actions/ValidationResultsActions";
-import OverflowTooltip from "../../common/OverflowTooltip";
+  useRef,
+} from 'react';
+import moment from 'moment';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
+import Select from 'react-select';
+import Toggle from 'react-toggle';
+import PropTypes from 'prop-types';
+import CommonActions from '../../../actions/CommonActions';
+import ValidationResultsActions from '../../../actions/ValidationResultsActions';
+import OverflowTooltip from '../../common/OverflowTooltip';
 
 const ValidationResultsOverviewGraph = ({
   data,
   bins,
   isDefaultSelectedOverview,
-  dataIsNormalized
+  dataIsNormalized,
 }) => {
   const graphDiv = useRef(null);
   const [graphWidth, setGraphWidth] = useState(null);
@@ -68,41 +68,41 @@ const ValidationResultsOverviewGraph = ({
   const binLabels = bins;
   const series = [
     {
-      name: "Reference Data",
+      name: 'Reference Data',
       data: expectedData,
-      color: "#50B8FF"
+      color: '#50B8FF',
     },
     {
-      name: "Current Data",
+      name: 'Current Data',
       data: actualData,
-      color: "#004A9C"
-    }
+      color: '#004A9C',
+    },
   ];
 
   const options = {
     chart: {
-      type: "column",
+      type: 'column',
       width: graphWidth - 60,
-      height: graphHeight - 30
+      height: graphHeight - 30,
     },
     title: {
-      text: ""
+      text: '',
     },
     xAxis: {
       categories: binLabels,
       showEmpty: true,
       minPadding: 0,
-      maxPadding: 0
+      maxPadding: 0,
     },
     yAxis: {
       lineWidth: 1,
       title: {
-        text: "",
-        allowDecimals: false
-      }
+        text: '',
+        allowDecimals: false,
+      },
     },
     legend: {
-      enabled: false
+      enabled: false,
     },
     tooltip: {
       formatter: function formatter() {
@@ -111,17 +111,17 @@ const ValidationResultsOverviewGraph = ({
         const expectedTooltip = `${expectedPoint.series.name}: ${expectedPoint.y}`;
         const actualTooltip = `${actualPoint.series.name}: ${actualPoint.y}`;
         const diffTooltip = `<b>Difference:</b> ${Math.abs(
-          expectedPoint.y - actualPoint.y
+          expectedPoint.y - actualPoint.y,
         )}`;
         // eslint-disable-next-line react/no-this-in-sfc
         return `<b>${this.x}</b><br/>${expectedTooltip}<br/>${actualTooltip}<br/>${diffTooltip}`;
       },
-      shared: true
+      shared: true,
     },
     series: series,
     credits: {
-      enabled: false
-    }
+      enabled: false,
+    },
   };
 
   const graph = (isDefaultSelectedOverview || !expectedData || expectedData.length === 0) ? (
@@ -145,7 +145,7 @@ class ValidationResultsOverview extends Component {
       selectedAttribute: null,
       selectedOverview: this.defaultSelectedOverview(),
       isDefaultSelectedOverview: true,
-      dataIsNormalized: false
+      dataIsNormalized: false,
     };
 
     this.update = this.update.bind(this);
@@ -198,7 +198,7 @@ class ValidationResultsOverview extends Component {
         let overview = await ValidationResultsActions.getOverviewForAttribute(
           validationResult,
           location.state.project.name,
-          selectedAttribute.value
+          selectedAttribute.value,
         );
 
         let isDefaultSelectedOverview = false;
@@ -211,21 +211,21 @@ class ValidationResultsOverview extends Component {
           isDefaultSelectedOverview = true;
         } else {
           overview.actual_data_summary.percentage_missing = CommonActions.decimalToPercentage(
-            overview.actual_data_summary.percentage_missing
+            overview.actual_data_summary.percentage_missing,
           );
           overview.expected_data_summary.percentage_missing = CommonActions.decimalToPercentage(
-            overview.expected_data_summary.percentage_missing
+            overview.expected_data_summary.percentage_missing,
           );
         }
 
         this.setState({
           selectedOverview: overview,
-          isDefaultSelectedOverview: isDefaultSelectedOverview
+          isDefaultSelectedOverview: isDefaultSelectedOverview,
         });
       } else {
         this.setState({
           selectedOverview: this.defaultSelectedOverview(),
-          isDefaultSelectedOverview: true
+          isDefaultSelectedOverview: true,
         });
       }
     }
@@ -238,22 +238,22 @@ class ValidationResultsOverview extends Component {
   defaultSelectedOverview() {
     return {
       expected_data_summary: {
-        percentage_missing: "N/A",
-        minimum: "N/A",
-        maximum: "N/A"
+        percentage_missing: 'N/A',
+        minimum: 'N/A',
+        maximum: 'N/A',
       },
       actual_data_summary: {
-        percentage_missing: "N/A",
-        minimum: "N/A",
-        maximum: "N/A"
+        percentage_missing: 'N/A',
+        minimum: 'N/A',
+        maximum: 'N/A',
       },
       binned_data: {
         bins: [],
         data: {
           expected_data: [],
-          actual_data: []
-        }
-      }
+          actual_data: [],
+        },
+      },
     };
   }
 
@@ -262,13 +262,13 @@ class ValidationResultsOverview extends Component {
       selectedAttribute,
       selectedOverview,
       isDefaultSelectedOverview,
-      dataIsNormalized
+      dataIsNormalized,
     } = this.state;
     const { validationResult } = this.props;
-    const date = moment(validationResult.date).format("YYYY-MM-DD h:mm A");
-    const sign = validationResult.row_count.row_count_diff >= 0 ? "+" : "-";
+    const date = moment(validationResult.date).format('YYYY-MM-DD h:mm A');
+    const sign = validationResult.row_count.row_count_diff >= 0 ? '+' : '-';
     const rowDiff = CommonActions.decimalToPercentage(
-      validationResult.row_count.row_count_diff
+      validationResult.row_count.row_count_diff,
     );
     const rowCount = `${validationResult.row_count.expected_row_count} -> ${validationResult.row_count.actual_row_count} (${sign}${rowDiff})`; // eslint-disable-line max-len
 
@@ -276,22 +276,22 @@ class ValidationResultsOverview extends Component {
     const selectOptions = columns.map(col => ({ value: col, label: col }));
 
     const expectedMissing = CommonActions.nullToNA(
-      selectedOverview.expected_data_summary.percentage_missing
+      selectedOverview.expected_data_summary.percentage_missing,
     );
     const expectedMinimum = CommonActions.nullToNA(
-      selectedOverview.expected_data_summary.minimum
+      selectedOverview.expected_data_summary.minimum,
     );
     const expectedMaximum = CommonActions.nullToNA(
-      selectedOverview.expected_data_summary.maximum
+      selectedOverview.expected_data_summary.maximum,
     );
     const actualMissing = CommonActions.nullToNA(
-      selectedOverview.actual_data_summary.percentage_missing
+      selectedOverview.actual_data_summary.percentage_missing,
     );
     const actualMinimum = CommonActions.nullToNA(
-      selectedOverview.actual_data_summary.minimum
+      selectedOverview.actual_data_summary.minimum,
     );
     const actualMaximum = CommonActions.nullToNA(
-      selectedOverview.actual_data_summary.maximum
+      selectedOverview.actual_data_summary.maximum,
     );
 
     const graph = (
@@ -420,28 +420,28 @@ ValidationResultsOverviewGraph.propTypes = {
   data: PropTypes.object,
   bins: PropTypes.array,
   isDefaultSelectedOverview: PropTypes.bool,
-  dataIsNormalized: PropTypes.bool
+  dataIsNormalized: PropTypes.bool,
 };
 
 ValidationResultsOverviewGraph.defaultProps = {
   data: {},
   bins: [],
   isDefaultSelectedOverview: true,
-  dataIsNormalized: false
+  dataIsNormalized: false,
 };
 
 ValidationResultsOverview.propTypes = {
   location: PropTypes.object,
   validationResult: PropTypes.object,
   toggleInfo: PropTypes.func,
-  uuid: PropTypes.string
+  uuid: PropTypes.string,
 };
 
 ValidationResultsOverview.defaultProps = {
   location: {},
   validationResult: {},
   toggleInfo: () => {},
-  uuid: ""
+  uuid: '',
 };
 
 export default ValidationResultsOverview;

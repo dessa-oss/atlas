@@ -1,7 +1,7 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import EventRow from "./EventRow";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import EventRow from './EventRow';
 
 const EntryRow = props => {
   const { entry } = props;
@@ -21,11 +21,11 @@ const EntryRow = props => {
 };
 
 EntryRow.propTypes = {
-  entry: PropTypes.object
+  entry: PropTypes.object,
 };
 
 EntryRow.defaultProps = {
-  entry: {}
+  entry: {},
 };
 
 export default withRouter(EntryRow);

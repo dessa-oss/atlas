@@ -3,14 +3,14 @@ const CommonActions = {
     const ok = Object.keys;
     const tx = typeof x;
     const ty = typeof y;
-    return x && y && tx === "object" && tx === ty ? (
+    return x && y && tx === 'object' && tx === ty ? (
       ok(x).length === ok(y).length
       && ok(x).every(key => CommonActions.deepEqual(x[key], y[key]))
     ) : (x === y);
   },
 
   isEmptyObject: obj => {
-    return !(obj && typeof obj === "object" && Object.entries(obj).length > 0);
+    return !(obj && typeof obj === 'object' && Object.entries(obj).length > 0);
   },
 
   decimalToPercentage: d => {
@@ -18,8 +18,8 @@ const CommonActions = {
   },
 
   nullToNA: val => {
-    return val === null ? "N/A" : val;
-  }
+    return val === null ? 'N/A' : val;
+  },
 };
 
 export default CommonActions;

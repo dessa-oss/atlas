@@ -17,7 +17,7 @@ class Header extends React.Component {
     }
 
     this.state = {
-      name,
+      name: name,
       dateCreated: createdAt,
       projectOwners: owners,
     };

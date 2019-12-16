@@ -79,7 +79,7 @@ class ContainsFilter extends Component {
           Clear Filters
           </button>
         </div>
-        <input type="text" onChange={(e) => { this.changeLocalParams(e); }} value={filterString} />
+        <input type="text" onChange={e => { this.changeLocalParams(e); }} value={filterString} />
         <div className="column-filter-buttons">
           <button type="button" onClick={this.onCancel} className="b--mat b--negation text-upper">Cancel</button>
           <button type="button" onClick={this.onApply} className={applyClass}>Apply</button>

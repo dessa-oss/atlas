@@ -1,13 +1,13 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import Layout from "../Layout";
-import MonitorListTable from "./MonitorListTable";
-import ScheduleDetails from "./ScheduleDetails";
-import MonitorLogsModal from "./MonitorLogsModal";
-import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
-import DeleteConfirmModal from "./DeleteConfirmModal";
-import Loading from "../../common/Loading";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import Layout from '../Layout';
+import MonitorListTable from './MonitorListTable';
+import ScheduleDetails from './ScheduleDetails';
+import MonitorLogsModal from './MonitorLogsModal';
+import MonitorSchedulesActions from '../../../actions/MonitorSchedulesActions';
+import DeleteConfirmModal from './DeleteConfirmModal';
+import Loading from '../../common/Loading';
 
 class MonitorSchedules extends Component {
   constructor(props) {
@@ -19,7 +19,7 @@ class MonitorSchedules extends Component {
       logsModalJobID: null,
       deleteModalIsOpen: false,
       allMonitors: {},
-      isLoading: false
+      isLoading: false,
     };
 
     this.selectRow = this.selectRow.bind(this);
@@ -67,7 +67,7 @@ class MonitorSchedules extends Component {
       await MonitorSchedulesActions.deleteMonitor(projectName, monitorName);
       const jobsObjects = await MonitorSchedulesActions.getMonitorJobs(projectName, monitorName);
 
-      if (!("error" in jobsObjects)) {
+      if (!('error' in jobsObjects)) {
         const jobs = jobsObjects.map(obj => obj.job_id);
         await MonitorSchedulesActions.deleteMonitorJobs(jobs, projectName, monitorName);
       }
@@ -83,7 +83,7 @@ class MonitorSchedules extends Component {
       logsModalJobID,
       allMonitors,
       deleteModalIsOpen,
-      isLoading
+      isLoading,
     } = this.state;
     const { location } = this.props;
 
@@ -132,11 +132,11 @@ class MonitorSchedules extends Component {
 }
 
 MonitorSchedules.propTypes = {
-  location: PropTypes.object
+  location: PropTypes.object,
 };
 
 MonitorSchedules.defaultProps = {
-  location: { state: {} }
+  location: { state: {} },
 };
 
 export default withRouter(MonitorSchedules);

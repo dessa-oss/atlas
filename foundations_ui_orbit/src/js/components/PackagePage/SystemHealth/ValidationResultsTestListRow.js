@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class ValidationResultsTestsListRow extends Component {
   constructor(props) {
@@ -15,11 +15,11 @@ class ValidationResultsTestsListRow extends Component {
 
   render() {
     const {
-      label, validationTestResult, selectedRow, objKey
+      label, validationTestResult, selectedRow, objKey,
     } = this.props;
 
     const isSelectedRow = selectedRow === objKey;
-    const selectedRowClass = isSelectedRow ? "selected-row" : "";
+    const selectedRowClass = isSelectedRow ? 'selected-row' : '';
 
     const labelError = (
       parseInt(validationTestResult.summary.critical, 10) !== 0
@@ -52,15 +52,15 @@ ValidationResultsTestsListRow.propTypes = {
   objKey: PropTypes.string,
   validationTestResult: PropTypes.object,
   onSelectRow: PropTypes.func,
-  selectedRow: PropTypes.string
+  selectedRow: PropTypes.string,
 };
 
 ValidationResultsTestsListRow.defaultProps = {
-  label: "Invalid test",
-  objKey: "",
+  label: 'Invalid test',
+  objKey: '',
   validationTestResult: {},
   onSelectRow: () => {},
-  selectedRow: ""
+  selectedRow: '',
 };
 
 export default ValidationResultsTestsListRow;

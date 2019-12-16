@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import moment from "moment";
+import React from 'react';
+import PropTypes from 'prop-types';
+import moment from 'moment';
 
 const ModelManagementDetails = props => {
   const { model } = props;
@@ -20,11 +20,11 @@ const ModelManagementDetails = props => {
 
         entrypointString += entrypointStringSubkey;
       });
-      entrypointString += "}";
+      entrypointString += '}';
       entrypoints.push(
         <p className="model-management-details-entrypoint">
           {entrypointString}
-        </p>
+        </p>,
       );
     });
 
@@ -39,7 +39,7 @@ const ModelManagementDetails = props => {
         validationMetrics.push(
           <p className="model-management-details-entrypoint">
             {`${key}: ${model.validation_metrics[key]}`}
-          </p>
+          </p>,
         );
       });
     }
@@ -47,7 +47,7 @@ const ModelManagementDetails = props => {
     return validationMetrics;
   };
 
-  const convertedDate = moment.unix(model.created_at).format("YYYY-MM-DD HH:mm").toString();
+  const convertedDate = moment.unix(model.created_at).format('YYYY-MM-DD HH:mm').toString();
 
   return (
     <div className="model-management-details-container">
@@ -70,7 +70,7 @@ const ModelManagementDetails = props => {
             Default:
           </p>
           <p className="model-management-details-text">
-            {model.default === true ? "true" : "false"}
+            {model.default === true ? 'true' : 'false'}
           </p>
         </div>
         <div>
@@ -78,7 +78,7 @@ const ModelManagementDetails = props => {
             Model Description:
           </p>
           <p className="model-management-details-text">
-            {model.description || ""}
+            {model.description || ''}
           </p>
           <p className="model-management-details-text-label font-bold">
             Created at:
@@ -117,11 +117,11 @@ const ModelManagementDetails = props => {
 };
 
 ModelManagementDetails.propTypes = {
-  model: PropTypes.object
+  model: PropTypes.object,
 };
 
 ModelManagementDetails.defaultProps = {
-  model: {}
+  model: {},
 };
 
 export default ModelManagementDetails;

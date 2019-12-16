@@ -1,12 +1,12 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import PackageToolbar from "./PackageToolbar";
-import SideBar from "./SideBar";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import PackageToolbar from './PackageToolbar';
+import SideBar from './SideBar';
 
 const Layout = props => {
   const [loading, setLoading] = React.useState(false);
-  const [loadingMessage, setLoadingMessage] = React.useState("");
+  const [loadingMessage, setLoadingMessage] = React.useState('');
 
   const onLoading = (value, message) => {
     setLoading(value);
@@ -14,7 +14,7 @@ const Layout = props => {
   };
 
   const {
-    tab, location, title, children, openTutorial
+    tab, location, title, children, openTutorial,
   } = props;
 
   return (
@@ -44,15 +44,15 @@ Layout.propTypes = {
   title: PropTypes.string,
   location: PropTypes.object,
   children: PropTypes.object,
-  openTutorial: PropTypes.func
+  openTutorial: PropTypes.func,
 };
 
 Layout.defaultProps = {
-  tab: "Deployment",
-  title: "Deployment",
+  tab: 'Deployment',
+  title: 'Deployment',
   location: { state: {} },
   children: [],
-  openTutorial: () => null
+  openTutorial: () => null,
 };
 
 export default withRouter(Layout);

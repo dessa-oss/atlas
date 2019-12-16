@@ -25,12 +25,12 @@ class Notes extends React.Component {
   reload() {
     const { location } = this.props;
     const { projectName } = this.props.match.params;
-    let selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
-    BaseActions.getFromStaging(`projects/${selectedProjectName}/note_listing`).then((result) => {
+    const selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
+    BaseActions.getFromStaging(`projects/${selectedProjectName}/note_listing`).then(result => {
       if (result) {
         result.sort((a, b) => {
-          let dateA = new Date(a.date);
-          let dateB = new Date(b.date);
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
           return dateB - dateA;
         });
         this.setState({
@@ -66,14 +66,14 @@ class Notes extends React.Component {
     const { message } = this.state;
     const { location } = this.props;
     const { projectName } = this.props.match.params;
-    let selectedProjectName = location.state.project ? location.state.project.name : projectName;
+    const selectedProjectName = location.state.project ? location.state.project.name : projectName;
 
     const atlasAccessToken = Cookies.get('atlas_access_token');
     const decodeToken = jwt(atlasAccessToken);
     const tokenUserID = decodeToken.sub;
 
     const body = {
-      message,
+      message: message,
       author: tokenUserID,
     };
 
@@ -110,7 +110,7 @@ class Notes extends React.Component {
               <img alt="" className="no-comments-image" src={NoCommentsImage} />
             </div>
           )}
-          { notes.length !== 0 && notes.map((note) => {
+          { notes.length !== 0 && notes.map(note => {
             return (
               <div key={note.date} className="notes-blocks">
                 <div className="container-note-profile">

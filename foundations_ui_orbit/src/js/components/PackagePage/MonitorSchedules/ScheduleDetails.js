@@ -1,15 +1,15 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import MonitorOverview from "./MonitorOverview";
-import MonitorJobsTable from "./MonitorJobsTable";
-import CommonActions from "../../../actions/CommonActions";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import MonitorOverview from './MonitorOverview';
+import MonitorJobsTable from './MonitorJobsTable';
+import CommonActions from '../../../actions/CommonActions';
 
 class ScheduleDetails extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      monitorResult: {}
+      monitorResult: {},
     };
 
     this.reload = this.reload.bind(this);
@@ -43,7 +43,7 @@ class ScheduleDetails extends Component {
       location,
       toggleLogsModal,
       reload,
-      toggleDeleteModal
+      toggleDeleteModal,
     } = this.props;
 
     let mainRender = (
@@ -79,16 +79,16 @@ ScheduleDetails.propTypes = {
   toggleLogsModal: PropTypes.func,
   toggleDeleteModal: PropTypes.func,
   allMonitors: PropTypes.object,
-  reload: PropTypes.func
+  reload: PropTypes.func,
 };
 
 ScheduleDetails.defaultProps = {
   location: {},
-  selectedMonitor: "",
+  selectedMonitor: '',
   toggleLogsModal: () => {},
   toggleDeleteModal: () => {},
   allMonitors: {},
-  reload: () => {}
+  reload: () => {},
 };
 
 export default ScheduleDetails;

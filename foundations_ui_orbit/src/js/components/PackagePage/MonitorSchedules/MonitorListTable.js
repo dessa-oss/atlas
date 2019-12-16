@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
-import CommonActions from "../../../actions/CommonActions";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import MonitorSchedulesActions from '../../../actions/MonitorSchedulesActions';
+import CommonActions from '../../../actions/CommonActions';
 
 class MonitorListTable extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      rows: null
+      rows: null,
     };
     this.reload = this.reload.bind(this);
   }
@@ -36,7 +36,7 @@ class MonitorListTable extends Component {
     if (rows) {
       rowsWithProps = rows.map(row => React.cloneElement(
         row,
-        { selectedRow: selectedRow }
+        { selectedRow: selectedRow },
       ));
     }
 
@@ -62,14 +62,14 @@ MonitorListTable.propTypes = {
   onClickRow: PropTypes.func,
   selectedRow: PropTypes.string,
   reload: PropTypes.func,
-  allMonitors: PropTypes.object
+  allMonitors: PropTypes.object,
 };
 
 MonitorListTable.defaultProps = {
   onClickRow: () => {},
-  selectedRow: "",
+  selectedRow: '',
   reload: () => {},
-  allMonitors: {}
+  allMonitors: {},
 };
 
 export default MonitorListTable;

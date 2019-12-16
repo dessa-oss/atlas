@@ -38,7 +38,7 @@ FileNameFormatter.propTypes = {
 function DownloadButton(props) {
   const { uri, filename } = props;
 
-  const getImage = async (evnt) => {
+  const getImage = async evnt => {
     evnt.preventDefault();
     window.location = uri;
   };

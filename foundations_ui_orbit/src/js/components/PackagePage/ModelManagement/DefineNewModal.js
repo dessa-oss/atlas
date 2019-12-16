@@ -1,5 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 
 const DefineNewModal = props => {
   const onClickClose = () => {
@@ -22,10 +22,10 @@ const DefineNewModal = props => {
   );
 };
 DefineNewModal.propTypes = {
-  onClickClose: PropTypes.func
+  onClickClose: PropTypes.func,
 };
 
 DefineNewModal.defaultProps = {
-  onClickClose: () => null
+  onClickClose: () => null,
 };
 export default DefineNewModal;

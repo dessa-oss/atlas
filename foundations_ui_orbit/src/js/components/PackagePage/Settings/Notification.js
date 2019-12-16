@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import EditNotificationModal from "./EditNotificationModal";
-import { Modal, ModalBody } from "reactstrap";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import EditNotificationModal from './EditNotificationModal';
+import { Modal, ModalBody } from 'reactstrap';
+import PropTypes from 'prop-types';
 
 class Notification extends Component {
   constructor(props) {
     super(props);
 
     const {
-      category, recipients, emails, updateNotifications
+      category, recipients, emails, updateNotifications,
     } = this.props;
 
     this.state = {
@@ -16,7 +16,7 @@ class Notification extends Component {
       recipients: recipients,
       isShowingEditNotification: false,
       emails: emails,
-      updateNotifications: updateNotifications
+      updateNotifications: updateNotifications,
     };
     this.editNotification = this.editNotification.bind(this);
     this.toggleShowEditNotification = this.toggleShowEditNotification.bind(this);
@@ -35,7 +35,7 @@ class Notification extends Component {
 
   render() {
     const {
-      category, recipients, isShowingEditNotification, emails
+      category, recipients, isShowingEditNotification, emails,
     } = this.state;
 
     return (
@@ -44,7 +44,7 @@ class Notification extends Component {
           <p>{category}</p>
         </div>
         <div className="notification-recipients">
-          <p>{recipients.join(", ")}</p>
+          <p>{recipients.join(', ')}</p>
         </div>
         <div className="notification-edit">
           <button type="button" className="b--secondary" onClick={this.toggleShowEditNotification}>
@@ -74,15 +74,15 @@ Notification.propTypes = {
   category: PropTypes.string,
   recipients: PropTypes.array,
   emails: PropTypes.array,
-  updateNotifications: PropTypes.func
+  updateNotifications: PropTypes.func,
 
 };
 
 Notification.defaultProps = {
-  category: "",
+  category: '',
   recipients: [],
   emails: [],
-  updateNotifications: () => null
+  updateNotifications: () => null,
 };
 
 export default Notification;

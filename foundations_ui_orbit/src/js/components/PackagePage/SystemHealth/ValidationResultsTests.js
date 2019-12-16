@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import ValidationResultsTestsList from "./ValidationResultsTestsList";
-import ValidationResultsTestsPane from "./ValidationResultsTestsPane";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import ValidationResultsTestsList from './ValidationResultsTestsList';
+import ValidationResultsTestsPane from './ValidationResultsTestsPane';
 
 class ValidationResultsTests extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      selectedRow: null
+      selectedRow: null,
     };
 
     this.selectRow = this.selectRow.bind(this);
@@ -42,11 +42,11 @@ class ValidationResultsTests extends Component {
 }
 
 ValidationResultsTests.propTypes = {
-  validationResult: PropTypes.object
+  validationResult: PropTypes.object,
 };
 
 ValidationResultsTests.defaultProps = {
-  validationResult: {}
+  validationResult: {},
 };
 
 export default ValidationResultsTests;

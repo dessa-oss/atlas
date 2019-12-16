@@ -30,13 +30,13 @@ class CommonActions {
     selectAllJobs, allJobsSelected, header,
   ) {
     const inputParams = [];
-    allInputParams.forEach((input) => {
+    allInputParams.forEach(input => {
       if (this.arrayDoesNotInclude(hiddenInputParams, input.name)) {
         const key = input.name;
         const colType = input.type;
         const isFiltered = JobListActions.isColumnFiltered(filteredArray, key);
 
-        let column = sortedColumn.column;
+        let { column } = sortedColumn;
         if (column.startsWith('input_params')) {
           column = column.substring('input_params:'.length);
         }
@@ -124,7 +124,7 @@ class CommonActions {
     rowNumber, onClickOpenModalJobDetails) {
     let cells = [];
     cells = [];
-    columns.forEach((col) => {
+    columns.forEach(col => {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
         const input = this.getInputMetricInput(job.input_params, col, isMetric);
         const key = this.getInputMetricKey(input, col, isMetric);
@@ -136,7 +136,7 @@ class CommonActions {
           inputValue = this.transformArraysToString(inputValue);
         }
 
-        const openModalJobDetails = (jobID) => {
+        const openModalJobDetails = jobID => {
           onClickOpenModalJobDetails(job);
         };
 
@@ -159,7 +159,7 @@ class CommonActions {
   static getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams,
     rowNumber, onClickOpenModalJobDetails) {
     const cells = [];
-    columns.forEach((col) => {
+    columns.forEach(col => {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
         const input = this.getInputMetricInput(job.output_metrics, col, isMetric);
         let inputValue = JobListActions.getInputMetricValue(input, isMetric, columns);
@@ -170,7 +170,7 @@ class CommonActions {
           inputValue = this.transformArraysToString(inputValue);
         }
 
-        const openModalJobDetails = (jobID) => {
+        const openModalJobDetails = jobID => {
           onClickOpenModalJobDetails(job);
         };
 
@@ -194,7 +194,7 @@ class CommonActions {
 
   static transformArraysToString(arrayValue) {
     let newValue = '[';
-    arrayValue.forEach((element) => {
+    arrayValue.forEach(element => {
       newValue = newValue.concat(String(element));
       newValue += ', ';
     });
@@ -209,7 +209,7 @@ class CommonActions {
     let rowNumber = 0;
     if (jobs.length > 0) {
       rows = [];
-      jobs.forEach((job) => {
+      jobs.forEach(job => {
         const key = this.getRowKey(job);
         const isError = this.isError(job.status);
         rows.push(<InputMetricRow
@@ -248,7 +248,7 @@ class CommonActions {
   static formatColumns(columns, hiddenInputParams, searchText = '') {
     const formatedColumns = [];
     if (columns !== null) {
-      columns.forEach((col) => {
+      columns.forEach(col => {
         if (col.name.toLowerCase().includes(searchText.toLowerCase())) {
           let isHidden = false;
           if (hiddenInputParams.includes(col.name)) {
@@ -302,14 +302,14 @@ class CommonActions {
   }
 
   static getFlatArray(array) {
-    return array.map((element) => {
+    return array.map(element => {
       return element.name;
     });
   }
 
   static getOldFiltersWithoutColumn(oldFilters, newColumnName) {
     return oldFilters.filter(
-      (filter) => {
+      filter => {
         if (filter.columnName !== newColumnName) {
           return true;
         }
@@ -347,7 +347,7 @@ class CommonActions {
   }
 
   static getDurationFilters(startTime, endTime, columnName) {
-    return [{ columnName, startTime, endTime }];
+    return [{ columnName: columnName, startTime: startTime, endTime: endTime }];
   }
 
   static getApplyClass(isDisabled) {
@@ -387,7 +387,7 @@ class CommonActions {
       input = {};
     }
     if (jobArray) {
-      jobArray.forEach((param) => {
+      jobArray.forEach(param => {
         if (param.name === column) {
           input = param;
         }
@@ -424,7 +424,7 @@ class CommonActions {
     if (columns.length > 0) {
       checkboxes = [];
       checkboxes.push(<h3 className="column-filter-divider">Metrics</h3>);
-      columns.forEach((col) => {
+      columns.forEach(col => {
         if (col.header === 'parameter' && !hasSeenParams) {
           checkboxes.push(<h3 className="column-filter-divider">Parameters</h3>);
           hasSeenParams = true;
@@ -461,16 +461,16 @@ class CommonActions {
   }
 
   static getTagsFromJob(jobs) {
-    let set = new Set();
-    jobs.forEach((job) => {
+    const set = new Set();
+    jobs.forEach(job => {
       if (job.tags) {
         if (Array.isArray(job.tags)) {
-          job.tags.forEach((tag) => {
+          job.tags.forEach(tag => {
             set.add(tag);
           });
         } else {
           const keys = Object.keys(job.tags);
-          keys.forEach((tag) => {
+          keys.forEach(tag => {
             set.add(tag);
           });
         }

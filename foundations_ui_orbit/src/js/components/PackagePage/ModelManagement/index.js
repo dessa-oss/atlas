@@ -1,13 +1,13 @@
-import React from "react";
-import DefineNewModal from "./DefineNewModal";
-import { withRouter } from "react-router-dom";
-import Layout from "../Layout";
-import { get, getFromApiary } from "../../../actions/BaseActions";
-import { Modal, ModalBody } from "reactstrap";
-import ModelManagementTable from "./ModelManagementTable";
-import Schedule from "./Schedule";
-import ModalTutorial from "../../common/ModalTutorial";
-import PropTypes from "prop-types";
+import React from 'react';
+import DefineNewModal from './DefineNewModal';
+import { withRouter } from 'react-router-dom';
+import Layout from '../Layout';
+import { get, getFromApiary } from '../../../actions/BaseActions';
+import { Modal, ModalBody } from 'reactstrap';
+import ModelManagementTable from './ModelManagementTable';
+import Schedule from './Schedule';
+import ModalTutorial from '../../common/ModalTutorial';
+import PropTypes from 'prop-types';
 
 class ModelManagement extends React.Component {
   constructor(props) {
@@ -17,7 +17,7 @@ class ModelManagement extends React.Component {
       modelManagementData: [],
       open: false,
       tutorialVisible: false,
-      timerId: -1
+      timerId: -1,
     };
 
     this.onClickOpenDefineNew = this.onClickOpenDefineNew.bind(this);
@@ -30,11 +30,11 @@ class ModelManagement extends React.Component {
   reload() {
     const { location } = this.props;
     getFromApiary(
-      `projects/${location.state.project.name}/model_listing`
+      `projects/${location.state.project.name}/model_listing`,
     ).then(result => {
       if (result) {
         this.setState({
-          modelManagementData: result.models
+          modelManagementData: result.models,
         });
       }
     });
@@ -45,7 +45,7 @@ class ModelManagement extends React.Component {
       this.reload();
     }, 10000);
     this.setState({
-      timerId: id
+      timerId: id,
     });
   }
 
@@ -65,19 +65,19 @@ class ModelManagement extends React.Component {
 
   onClickOpenDefineNew() {
     this.setState({
-      open: true
+      open: true,
     });
   }
 
   onClickCloseDefineNew() {
     this.setState({
-      open: false
+      open: false,
     });
     const id = setInterval(() => {
       this.reload();
     }, 1000);
     this.setState({
-      timerId: id
+      timerId: id,
     });
   }
 
@@ -85,7 +85,7 @@ class ModelManagement extends React.Component {
     const { tutorialVisible } = this.state;
     const value = !tutorialVisible;
     this.setState({
-      tutorialVisible: value
+      tutorialVisible: value,
     });
   }
 
@@ -94,7 +94,7 @@ class ModelManagement extends React.Component {
       modelManagementData,
       open,
       tutorialVisible,
-      timerId
+      timerId,
     } = this.state;
 
     return (
@@ -154,11 +154,11 @@ class ModelManagement extends React.Component {
 }
 
 ModelManagement.propTypes = {
-  location: PropTypes.object
+  location: PropTypes.object,
 };
 
 ModelManagement.defaultProps = {
-  location: { state: {} }
+  location: { state: {} },
 };
 
 export default withRouter(ModelManagement);

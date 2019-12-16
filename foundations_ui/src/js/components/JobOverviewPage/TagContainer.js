@@ -40,7 +40,7 @@ class TagContainer extends React.Component {
     let expandedTagSpans = [];
     let index = 0;
     let hover = null;
-    tags.forEach((tag) => {
+    tags.forEach(tag => {
       if (index === maxLength) {
         expandedTagSpans = Array.from(tagSpans);
         tagSpans.push(

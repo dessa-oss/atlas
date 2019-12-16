@@ -16,7 +16,7 @@ class rowSelect {
   static select(key) {
     rowSelect.removePreviousActiveRows();
     const rowElements = rowSelect.retrieveRowElements(key);
-    rowElements.forEach((el) => {
+    rowElements.forEach(el => {
       $(el).addClass('f9-active-row');
     });
   }

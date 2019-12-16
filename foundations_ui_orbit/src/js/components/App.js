@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import ProptTypes from "prop-types";
+import React, { Component } from 'react';
+import ProptTypes from 'prop-types';
 
 class App extends Component {
   componentDidMount() {
     const { history } = this.props;
 
-    history.push("/projects");
+    history.push('/projects');
   }
 
   render() {
@@ -14,11 +14,11 @@ class App extends Component {
 }
 
 App.propTypes = {
-  history: ProptTypes.object
+  history: ProptTypes.object,
 };
 
 App.defaultProps = {
-  history: {}
+  history: {},
 };
 
 export default App;

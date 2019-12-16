@@ -1,9 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 
 const Loading = props => {
   const { loadingMessage, floating } = props;
-  const floatingClass = floating ? "floating" : "";
+  const floatingClass = floating ? 'floating' : '';
 
   return (
     <div className={`loading-container ${floatingClass}`}>
@@ -26,12 +26,12 @@ const Loading = props => {
 
 Loading.propTypes = {
   loadingMessage: PropTypes.string,
-  floating: PropTypes.bool
+  floating: PropTypes.bool,
 };
 
 Loading.defaultProps = {
-  loadingMessage: "",
-  floating: false
+  loadingMessage: '',
+  floating: false,
 };
 
 export default Loading;

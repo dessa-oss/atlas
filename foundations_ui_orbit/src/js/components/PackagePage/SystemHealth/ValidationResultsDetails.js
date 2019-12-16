@@ -1,16 +1,16 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import ValidationResultsActions from "../../../actions/ValidationResultsActions";
-import ValidationResultsOverview from "./ValidationResultsOverview";
-import ValidationResultsTests from "./ValidationResultsTests";
-import CommonActions from "../../../actions/CommonActions";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import ValidationResultsActions from '../../../actions/ValidationResultsActions';
+import ValidationResultsOverview from './ValidationResultsOverview';
+import ValidationResultsTests from './ValidationResultsTests';
+import CommonActions from '../../../actions/CommonActions';
 
 class ValidationResultsDetails extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      validationResult: {}
+      validationResult: {},
     };
 
     this.reload = this.reload.bind(this);
@@ -35,7 +35,7 @@ class ValidationResultsDetails extends Component {
         location.state.project.name,
         selectedValidationResult.time,
         selectedValidationResult.monitorName,
-        selectedValidationResult.contractName
+        selectedValidationResult.contractName,
       );
       this.setState({ validationResult: validationResult });
     } else if (CommonActions.isEmptyObject(selectedValidationResult)) {
@@ -78,13 +78,13 @@ class ValidationResultsDetails extends Component {
 ValidationResultsDetails.propTypes = {
   location: PropTypes.object,
   selectedValidationResult: PropTypes.object,
-  toggleInfo: PropTypes.func
+  toggleInfo: PropTypes.func,
 };
 
 ValidationResultsDetails.defaultProps = {
   location: {},
   selectedValidationResult: {},
-  toggleInfo: () => {}
+  toggleInfo: () => {},
 };
 
 export default ValidationResultsDetails;

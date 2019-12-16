@@ -90,7 +90,7 @@ class JobDetails extends React.Component {
     if (location) {
       const { projectName } = this.props.match.params;
       BaseActions.getFromStaging(`projects/${projectName}/job_listing`)
-        .then((result) => {
+        .then(result => {
           if (result && result.jobs) {
             this.setState({
               tags: CommonActions.getTagsFromJob(result.jobs),
@@ -103,7 +103,7 @@ class JobDetails extends React.Component {
   async getJobs(sortedColumn) {
     const { location } = this.props;
     const { projectName } = this.props.match.params;
-    let selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
+    const selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
 
     const fetchedJobs = await JobListActions.getJobs(selectedProjectName, sortedColumn);
     const apiJobs = fetchedJobs;
@@ -253,7 +253,7 @@ class JobDetails extends React.Component {
       if (apiJobs != null) {
         this.saveAPIJobs(apiJobs);
         this.setProjectData(apiJobs);
-        this.setState({ allUsers });
+        this.setState({ allUsers: allUsers });
       } else {
         this.clearState();
       }
@@ -269,10 +269,10 @@ class JobDetails extends React.Component {
     const getAllInputParams = apiJobs.input_parameter_names;
     const getAllMetrics = apiJobs.output_metric_names;
 
-    getAllInputParams.forEach((ip) => {
+    getAllInputParams.forEach(ip => {
       ip.header = 'parameter';
     });
-    getAllMetrics.forEach((metric) => {
+    getAllMetrics.forEach(metric => {
       metric.header = 'metric';
     });
 
@@ -451,7 +451,7 @@ class JobDetails extends React.Component {
         jobIdFilters={jobIdFilter}
         startTimeFilters={startTimeFilter}
         filters={filters}
-        onClickJob={(job) => {
+        onClickJob={job => {
           this.onToggleModalJobDetails(job);
         }}
         getJobs={this.getJobs}

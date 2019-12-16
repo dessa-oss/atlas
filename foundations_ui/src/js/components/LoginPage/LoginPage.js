@@ -45,7 +45,7 @@ class LoginPage extends Component {
   }
 
   async login(username, password) {
-    LoginActions.getLogin(username, password).then((res) => {
+    LoginActions.getLogin(username, password).then(res => {
       if (res.status === 200) {
         this.setState({
           loginResponse: res,

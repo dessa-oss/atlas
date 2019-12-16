@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import ValidationResultsActions from "../../../actions/ValidationResultsActions";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import ValidationResultsActions from '../../../actions/ValidationResultsActions';
 
 class ValidationResultsTestsList extends Component {
   render() {
@@ -9,7 +9,7 @@ class ValidationResultsTestsList extends Component {
 
     const rowsWithProps = rows.map(row => React.cloneElement(
       row,
-      { selectedRow: selectedRow }
+      { selectedRow: selectedRow },
     ));
 
     return (
@@ -23,13 +23,13 @@ class ValidationResultsTestsList extends Component {
 ValidationResultsTestsList.propTypes = {
   validationResult: PropTypes.object,
   onSelectRow: PropTypes.func,
-  selectedRow: PropTypes.string
+  selectedRow: PropTypes.string,
 };
 
 ValidationResultsTestsList.defaultProps = {
   validationResult: {},
   onSelectRow: () => {},
-  selectedRow: ""
+  selectedRow: '',
 };
 
 export default ValidationResultsTestsList;

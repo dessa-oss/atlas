@@ -1,65 +1,65 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import { get, postJSONFile } from "../../../actions/BaseActions";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import { get, postJSONFile } from '../../../actions/BaseActions';
 
 const Manager = props => {
   const [testLearningConfig, setTestLearningConfig] = React.useState({
     setting: {
-      method: "",
-      split_mechanism: "",
-      feedback_cycle: "",
-      hold_out_period_length: "",
-      hold_out_period_unit: ""
-    }
+      method: '',
+      split_mechanism: '',
+      feedback_cycle: '',
+      hold_out_period_length: '',
+      hold_out_period_unit: '',
+    },
   });
   const methods = [
-    "Define Manually",
-    "Automatically Optimize"
+    'Define Manually',
+    'Automatically Optimize',
   ];
-  const [method, setMethod] = React.useState("");
+  const [method, setMethod] = React.useState('');
 
   const [splitMechanisms, setSplitMechanisms] = React.useState([
-    "Random split (specified proportion)",
-    "Random split (even)"
+    'Random split (specified proportion)',
+    'Random split (even)',
   ]);
 
-  const [splitMechanism, setSplitMechanism] = React.useState("");
+  const [splitMechanism, setSplitMechanism] = React.useState('');
 
   const feedbackCycles = [
-    "Hourly",
-    "Daily",
-    "Weekly",
-    "Bi-Weekly",
-    "Monthly",
-    "Quaterly",
-    "Semy-Annually"
+    'Hourly',
+    'Daily',
+    'Weekly',
+    'Bi-Weekly',
+    'Monthly',
+    'Quaterly',
+    'Semy-Annually',
   ];
 
-  const [feedbackCycle, setFeedbackCycle] = React.useState("");
-  const [periodLength, setPeriodLength] = React.useState("");
+  const [feedbackCycle, setFeedbackCycle] = React.useState('');
+  const [periodLength, setPeriodLength] = React.useState('');
   const periodUnits = [
-    "Hour",
-    "Day",
-    "Week",
-    "Month"
+    'Hour',
+    'Day',
+    'Week',
+    'Month',
   ];
-  const [periodUnit, setPeriodUnit] = React.useState("");
+  const [periodUnit, setPeriodUnit] = React.useState('');
 
-  const [error, setError] = React.useState("");
+  const [error, setError] = React.useState('');
 
   const loadLearnConfig = () => {
-    get("learn").then(result => {
+    get('learn').then(result => {
       if (result.data.setting && result.data.populations) {
         setTestLearningConfig(result.data);
         setMethod(result.data.setting.method);
-        if (result.data.setting.method === "Define Manually") {
+        if (result.data.setting.method === 'Define Manually') {
           setSplitMechanisms([
-            "Random split (specified proportion)",
-            "Random split (even)"
+            'Random split (specified proportion)',
+            'Random split (even)',
           ]);
-        } else if (result.data.setting.method === "Automatically Optimize") {
-          setSplitMechanisms(["Multi-arm bandit"]);
+        } else if (result.data.setting.method === 'Automatically Optimize') {
+          setSplitMechanisms(['Multi-arm bandit']);
         }
         setSplitMechanism(result.data.setting.split_mechanism);
         setFeedbackCycle(result.data.setting.feedback_cycle);
@@ -80,17 +80,17 @@ const Manager = props => {
     setMethod(e.target.value);
     props.onSetNewMethod(e.target.value);
 
-    if (e.target.value === "Define Manually") {
+    if (e.target.value === 'Define Manually') {
       setSplitMechanisms([
-        "Random split (specified proportion)",
-        "Random split (even)"
+        'Random split (specified proportion)',
+        'Random split (even)',
       ]);
-      setSplitMechanism("Random split (specified proportion)");
-      props.onSetNewSplitMechanism("Random split (specified proportion)");
-    } else if (e.target.value === "Automatically Optimize") {
-      setSplitMechanisms(["Multi-arm bandit"]);
-      setSplitMechanism("Multi-arm bandit");
-      props.onSetNewSplitMechanism("Random split (specified proportion)");
+      setSplitMechanism('Random split (specified proportion)');
+      props.onSetNewSplitMechanism('Random split (specified proportion)');
+    } else if (e.target.value === 'Automatically Optimize') {
+      setSplitMechanisms(['Multi-arm bandit']);
+      setSplitMechanism('Multi-arm bandit');
+      props.onSetNewSplitMechanism('Random split (specified proportion)');
     }
   };
 
@@ -113,13 +113,13 @@ const Manager = props => {
 
   const validate = () => {
     let validated = true;
-    let message = "";
+    let message = '';
 
     const periodLengthValue = parseInt(periodLength, 10);
 
     if (Number.isNaN(periodLengthValue)) {
       validated = false;
-      message = "Period length must be an integer";
+      message = 'Period length must be an integer';
     }
 
     setError(message);
@@ -127,13 +127,13 @@ const Manager = props => {
   };
 
   const onClickCancel = () => {
-    if (testLearningConfig.setting.method === "Define Manually") {
+    if (testLearningConfig.setting.method === 'Define Manually') {
       setSplitMechanisms([
-        "Random split (specified proportion)",
-        "Random split (even)"
+        'Random split (specified proportion)',
+        'Random split (even)',
       ]);
-    } else if (testLearningConfig.setting.method === "Automatically Optimize") {
-      setSplitMechanisms(["Multi-arm bandit"]);
+    } else if (testLearningConfig.setting.method === 'Automatically Optimize') {
+      setSplitMechanisms(['Multi-arm bandit']);
     }
 
     setMethod(testLearningConfig.setting.method);
@@ -147,7 +147,7 @@ const Manager = props => {
   };
 
   const onClickSave = () => {
-    setError("");
+    setError('');
 
     if (validate()) {
       const periodLengthValue = parseInt(periodLength, 10);
@@ -157,13 +157,13 @@ const Manager = props => {
         split_mechanism: splitMechanism,
         feedback_cycle: feedbackCycle,
         hold_out_period_length: periodLengthValue,
-        hold_out_period_unit: periodUnit
+        hold_out_period_unit: periodUnit,
       };
 
-      postJSONFile("learn", "test_learn_config.json", data).then(
+      postJSONFile('learn', 'test_learn_config.json', data).then(
         () => {
           loadLearnConfig();
-        }
+        },
       );
     }
   };
@@ -186,8 +186,8 @@ const Manager = props => {
             onChange={onChangeMethod}
             className={
               method !== testLearningConfig.setting.method
-                ? "new-dep-select edited"
-                : "new-dep-select"
+                ? 'new-dep-select edited'
+                : 'new-dep-select'
             }
           >
             {methods.map(item => {
@@ -202,8 +202,8 @@ const Manager = props => {
             onChange={onChangeSplitMechanism}
             className={
               splitMechanism !== testLearningConfig.setting.split_mechanism
-                ? "new-dep-select edited"
-                : "new-dep-select"
+                ? 'new-dep-select edited'
+                : 'new-dep-select'
             }
           >
             {splitMechanisms.map(item => {
@@ -218,8 +218,8 @@ const Manager = props => {
             onChange={onChangeFeedbackCycle}
             className={
               feedbackCycle !== testLearningConfig.setting.feedback_cycle
-                ? "new-dep-select edited"
-                : "new-dep-select"
+                ? 'new-dep-select edited'
+                : 'new-dep-select'
             }
           >
             {feedbackCycles.map(item => {
@@ -235,8 +235,8 @@ const Manager = props => {
               onChange={onChangePeriodUnit}
               className={
                 periodUnit !== testLearningConfig.setting.hold_out_period_unit
-                  ? "new-dep-select edited"
-                  : "new-dep-select"
+                  ? 'new-dep-select edited'
+                  : 'new-dep-select'
               }
             >
               {periodUnits.map(item => {
@@ -247,8 +247,8 @@ const Manager = props => {
               className={
                 periodLength
                   !== testLearningConfig.setting.hold_out_period_length
-                  ? "new-dep-input edited"
-                  : "new-dep-input"
+                  ? 'new-dep-input edited'
+                  : 'new-dep-input'
               }
               value={periodLength}
               onChange={onChangePeriodLength}
@@ -272,7 +272,7 @@ const Manager = props => {
           </button>
         </div>
         <div className="new-dep-container-button">
-          {error !== "" && <p className="error">{error}</p>}
+          {error !== '' && <p className="error">{error}</p>}
         </div>
       </div>
     </div>
@@ -281,12 +281,12 @@ const Manager = props => {
 
 Manager.propTypes = {
   onSetNewMethod: PropTypes.func,
-  onSetNewSplitMechanism: PropTypes.func
+  onSetNewSplitMechanism: PropTypes.func,
 };
 
 Manager.defaultProps = {
   onSetNewMethod: () => null,
-  onSetNewSplitMechanism: () => null
+  onSetNewSplitMechanism: () => null,
 };
 
 export default withRouter(Manager);

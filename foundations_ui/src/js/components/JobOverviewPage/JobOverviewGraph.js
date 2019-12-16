@@ -38,7 +38,7 @@ class JobOverviewGraph extends Component {
 
   formatGraphData() {
     const { graphData } = this.state;
-    let graphCopy = [...graphData];
+    const graphCopy = [...graphData];
 
     const allSeries = graphCopy.map(this.formatGraphMetric);
     this.setState({ formattedGraphData: allSeries });
@@ -60,7 +60,7 @@ class JobOverviewGraph extends Component {
       [...]
     ]
     */
-    let seriesObject = {};
+    const seriesObject = {};
     seriesObject.showInLegend = false;
     seriesObject.marker = {
       symbol: 'circle',
@@ -120,7 +120,7 @@ class JobOverviewGraph extends Component {
     };
 
     const metricOptions = [];
-    allMetrics.forEach((metricName) => {
+    allMetrics.forEach(metricName => {
       metricOptions.push({ value: metricName, label: metricName });
     });
 

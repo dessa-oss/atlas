@@ -33,7 +33,7 @@ class ProjectOverview extends React.Component {
     if (location) {
       const { projectName } = this.props.match.params;
       await BaseActions.getFromStaging(`projects/${projectName}/job_listing`)
-        .then((result) => {
+        .then(result => {
           if (result && result.jobs) {
             this.setState({
               tags: CommonActions.getTagsFromJob(result.jobs),
@@ -47,7 +47,7 @@ class ProjectOverview extends React.Component {
     let URL = `projects/${projectName}/overview_metrics`;
     if (metrics) {
       URL = `${URL}?metric_name=`;
-      metrics.forEach((m) => {
+      metrics.forEach(m => {
         URL = `${URL}${m}|`;
       });
       URL = URL.substring(0, URL.length - 1);
@@ -56,10 +56,10 @@ class ProjectOverview extends React.Component {
     const APIGraphData = await BaseActions.getFromStaging(URL);
 
     if (APIGraphData) {
-      let correctGraphData = [];
-      APIGraphData.metric_query.forEach((graph) => {
+      const correctGraphData = [];
+      APIGraphData.metric_query.forEach(graph => {
         let addGraph = true;
-        graph.values.forEach((value) => {
+        graph.values.forEach(value => {
           if (typeof value[1] !== 'number') {
             addGraph = false;
           }
@@ -73,7 +73,7 @@ class ProjectOverview extends React.Component {
       const allMetrics = APIGraphData.all_metric_names;
 
       if (correctGraphData.length > 0) {
-        this.setState({ graphData: correctGraphData, allMetrics });
+        this.setState({ graphData: correctGraphData, allMetrics: allMetrics });
       } else {
         this.setState({ graphData: [], allMetrics: [] });
       }

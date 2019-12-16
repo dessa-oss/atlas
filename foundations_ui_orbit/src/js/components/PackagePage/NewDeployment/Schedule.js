@@ -1,60 +1,60 @@
-import React from "react";
-import { withRouter } from "react-router-dom";
-import { Modal, ModalBody } from "reactstrap";
-import Flatpickr from "react-flatpickr";
-import Select from "react-select";
-import { get, postJSONFile } from "../../../actions/BaseActions";
+import React from 'react';
+import { withRouter } from 'react-router-dom';
+import { Modal, ModalBody } from 'reactstrap';
+import Flatpickr from 'react-flatpickr';
+import Select from 'react-select';
+import { get, postJSONFile } from '../../../actions/BaseActions';
 
 const Schedule = () => {
   const [scheduleData, setScheduleData] = React.useState({
-    start_datetime: "",
-    end_datetime: "",
-    frequency: ""
+    start_datetime: '',
+    end_datetime: '',
+    frequency: '',
   });
   const [open, setOpen] = React.useState(false);
-  const [error, setError] = React.useState("");
-  const [startDate, setStartDate] = React.useState("");
-  const [endDate, setEndDate] = React.useState("");
+  const [error, setError] = React.useState('');
+  const [startDate, setStartDate] = React.useState('');
+  const [endDate, setEndDate] = React.useState('');
   const options = [
     {
-      label: "Hourly",
-      value: "Hourly"
+      label: 'Hourly',
+      value: 'Hourly',
     },
     {
-      label: "Daily",
-      value: "Daily"
+      label: 'Daily',
+      value: 'Daily',
     },
     {
-      label: "Weekly",
-      value: "Weekly"
+      label: 'Weekly',
+      value: 'Weekly',
     },
     {
-      label: "Bi-Weekly",
-      value: "Bi-Weekly"
+      label: 'Bi-Weekly',
+      value: 'Bi-Weekly',
     },
     {
-      label: "Monthly",
-      value: "Monthly"
+      label: 'Monthly',
+      value: 'Monthly',
     },
     {
-      label: "Quaterly",
-      value: "Quaterly"
+      label: 'Quaterly',
+      value: 'Quaterly',
     },
     {
-      label: "Semi-Annually",
-      value: "Semi-Annually"
-    }
+      label: 'Semi-Annually',
+      value: 'Semi-Annually',
+    },
   ];
-  const [selectedOption, setSelectedOption] = React.useState("");
+  const [selectedOption, setSelectedOption] = React.useState('');
   const pickerStartDateRef = React.useRef();
   const pickerEndDateRef = React.useRef();
-  const [message, setMessage] = React.useState("");
+  const [message, setMessage] = React.useState('');
   const [dates, setDates] = React.useState([]);
-  const [selectedDate, setSelectedDate] = React.useState("");
+  const [selectedDate, setSelectedDate] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
   const reload = () => {
-    get("dates/inference").then(result => {
+    get('dates/inference').then(result => {
       if (result) {
         const items = [];
 
@@ -62,7 +62,7 @@ const Schedule = () => {
           result.data.forEach(item => {
             items.push({
               label: item,
-              value: item
+              value: item,
             });
           });
 
@@ -77,7 +77,7 @@ const Schedule = () => {
           result.meta.fields.forEach(value => {
             items.push({
               label: value,
-              value: value
+              value: value,
             });
           });
           setDates(items);
@@ -85,7 +85,7 @@ const Schedule = () => {
         }
       }
 
-      get("schedule").then(resultSchedule => {
+      get('schedule').then(resultSchedule => {
         if (
           resultSchedule
           && resultSchedule.data
@@ -95,18 +95,18 @@ const Schedule = () => {
         ) {
           const startDateTime = resultSchedule.data.start_datetime
             ? new Date(resultSchedule.data.start_datetime)
-            : "";
+            : '';
 
           const endDateTime = resultSchedule.data.end_datetime
             ? new Date(resultSchedule.data.end_datetime)
-            : "";
+            : '';
 
           const freq = resultSchedule.data.frequency
             ? {
               label: resultSchedule.data.frequency,
-              value: resultSchedule.data.frequency
+              value: resultSchedule.data.frequency,
             }
-            : "";
+            : '';
 
           setScheduleData(resultSchedule.data);
           setStartDate(startDateTime);
@@ -146,16 +146,16 @@ const Schedule = () => {
   };
 
   const onClickSaveSchedule = () => {
-    setMessage("");
+    setMessage('');
     const data = {
       start_datetime: startDate.toString(),
       end_datetime: endDate.toString(),
-      frequency: selectedOption.value
+      frequency: selectedOption.value,
     };
 
-    postJSONFile("schedule", "inference_schedule.json", data).then(() => {
+    postJSONFile('schedule', 'inference_schedule.json', data).then(() => {
       setMessage(
-        "Schedule has been saved. Inference will be executed at scheduled time"
+        'Schedule has been saved. Inference will be executed at scheduled time',
       );
       reload();
     });
@@ -164,18 +164,18 @@ const Schedule = () => {
   const onClickCancelSchedule = () => {
     const startValue = scheduleData.start_datetime
       ? new Date(scheduleData.start_datetime)
-      : "";
+      : '';
 
     const endValue = scheduleData.end_datetime
       ? new Date(scheduleData.end_datetime)
-      : "";
+      : '';
 
-    let frequencyValue = "";
+    let frequencyValue = '';
 
     if (scheduleData.frequency) {
       frequencyValue = {
         label: scheduleData.frequency,
-        value: scheduleData.frequency
+        value: scheduleData.frequency,
       };
     }
 
@@ -195,9 +195,9 @@ const Schedule = () => {
   const onClickRunInference = () => {
     setLoading(true);
 
-    get("learn").then(result => {
+    get('learn').then(result => {
       if (result.data.setting && result.data.populations) {
-        get("predictors").then(resultPredictors => {
+        get('predictors').then(resultPredictors => {
           if (resultPredictors.data) {
             let values = resultPredictors.data;
             if (values.length === 1) {
@@ -206,7 +206,7 @@ const Schedule = () => {
               const newPredictors = values.map(predictor => {
                 const newPredictor = predictor;
                 const filteredPopulations = result.data.populations.filter(
-                  item => item.name === newPredictor.name
+                  item => item.name === newPredictor.name,
                 );
                 if (filteredPopulations.length >= 1) {
                   newPredictor.proportion = filteredPopulations[0].proportion;
@@ -220,12 +220,12 @@ const Schedule = () => {
             const data = {
               inference_period_datetime: selectedDate,
               population_setup_period_datetime: selectedDate,
-              populations: values
+              populations: values,
             };
 
             const finalData = JSON.stringify(data);
 
-            postJSONFile("files/run", "config.json", finalData)
+            postJSONFile('files/run', 'config.json', finalData)
               .then(() => {
                 setLoading(false);
                 setOpen(false);
@@ -234,7 +234,7 @@ const Schedule = () => {
               .catch(() => {
                 setLoading(false);
                 setError(
-                  "There was a problem running the inference. Please try again"
+                  'There was a problem running the inference. Please try again',
                 );
               });
           }
@@ -253,7 +253,7 @@ const Schedule = () => {
           onClick={onClickOpenInferenceModal}
           className="b--mat b--affirmative text-upper new-dep-button"
         >
-          {loading === true ? "running" : "run inference now"}
+          {loading === true ? 'running' : 'run inference now'}
         </button>
       </div>
 
@@ -292,10 +292,10 @@ const Schedule = () => {
           <div className="container-date">
             <Select
               className={
-                selectedOption !== ""
+                selectedOption !== ''
                 && selectedOption.value !== scheduleData.frequency
-                  ? "select-frequency adaptive edited"
-                  : "select-frequency adaptive"
+                  ? 'select-frequency adaptive edited'
+                  : 'select-frequency adaptive'
               }
               value={selectedOption}
               onChange={onChangeOption}
@@ -354,10 +354,10 @@ const Schedule = () => {
                 onClick={onClickRunInference}
                 className="b--mat b--affirmative text-upper"
               >
-                {loading === true ? "running" : "run"}
+                {loading === true ? 'running' : 'run'}
               </button>
             </div>
-            {error !== "" && <p>{error}</p>}
+            {error !== '' && <p>{error}</p>}
           </div>
         </ModalBody>
       </Modal>

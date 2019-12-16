@@ -54,7 +54,7 @@ class ParCoordsGraph extends React.Component {
       metricNamesToShow = allMetricNames;
     }
 
-    paramNamesToShow.forEach((param) => {
+    paramNamesToShow.forEach(param => {
       paramTraceDimensions.push({
         label: param,
         values: [],
@@ -63,16 +63,16 @@ class ParCoordsGraph extends React.Component {
 
     const metricTraceDimensions = [];
 
-    metricNamesToShow.forEach((metric) => {
+    metricNamesToShow.forEach(metric => {
       metricTraceDimensions.push({
         label: metric,
         values: [],
       });
     });
 
-    jobs.forEach((job) => {
-      paramTraceDimensions.forEach((traceDimension) => {
-        const foundJobParam = job.input_params.filter((jobParam) => {
+    jobs.forEach(job => {
+      paramTraceDimensions.forEach(traceDimension => {
+        const foundJobParam = job.input_params.filter(jobParam => {
           return jobParam.name === traceDimension.label;
         });
 
@@ -83,8 +83,8 @@ class ParCoordsGraph extends React.Component {
         }
       });
 
-      metricTraceDimensions.forEach((traceDimension) => {
-        const foundJobMetric = job.output_metrics.filter((jobMetric) => {
+      metricTraceDimensions.forEach(traceDimension => {
+        const foundJobMetric = job.output_metrics.filter(jobMetric => {
           return jobMetric.name === traceDimension.label;
         });
 
@@ -98,7 +98,7 @@ class ParCoordsGraph extends React.Component {
 
     trace.dimensions = [...paramTraceDimensions, ...metricTraceDimensions];
     const data = [trace];
-    this.setState({ data });
+    this.setState({ data: data });
   }
 
   onChangeParam(selectedOptions) {
@@ -120,10 +120,10 @@ class ParCoordsGraph extends React.Component {
   render() {
     const { data, allMetricNames, allParamNames } = this.state;
 
-    const metricOptions = allMetricNames.map((metric) => {
+    const metricOptions = allMetricNames.map(metric => {
       return { value: metric, label: metric };
     });
-    const paramOptions = allParamNames.map((param) => {
+    const paramOptions = allParamNames.map(param => {
       return { value: param, label: param };
     });
 

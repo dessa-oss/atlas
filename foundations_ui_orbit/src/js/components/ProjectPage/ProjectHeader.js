@@ -1,5 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 
 const ProjectHeader = props => {
   const { numProjects } = props;
@@ -28,11 +28,11 @@ const ProjectHeader = props => {
 };
 
 ProjectHeader.propTypes = {
-  numProjects: PropTypes.number
+  numProjects: PropTypes.number,
 };
 
 ProjectHeader.defaultProps = {
-  numProjects: 0
+  numProjects: 0,
 };
 
 export default ProjectHeader;

@@ -1,59 +1,59 @@
-import React from "react";
-import { withRouter } from "react-router-dom";
-import Flatpickr from "react-flatpickr";
-import Select from "react-select";
-import { getFromApiary } from "../../../actions/BaseActions";
-import PropTypes from "prop-types";
+import React from 'react';
+import { withRouter } from 'react-router-dom';
+import Flatpickr from 'react-flatpickr';
+import Select from 'react-select';
+import { getFromApiary } from '../../../actions/BaseActions';
+import PropTypes from 'prop-types';
 
 const Schedule = props => {
   const [scheduleData] = React.useState({
     start_datetime: new Date().toString(),
-    end_datetime: new Date("2025-01-02").toString(),
-    frequency: "Monthly"
+    end_datetime: new Date('2025-01-02').toString(),
+    frequency: 'Monthly',
   });
   const [startDate, setStartDate] = React.useState(new Date());
-  const [endDate, setEndDate] = React.useState(new Date("2025-01-02"));
+  const [endDate, setEndDate] = React.useState(new Date('2025-01-02'));
   const options = [
     {
-      label: "Hourly",
-      value: "Hourly"
+      label: 'Hourly',
+      value: 'Hourly',
     },
     {
-      label: "Daily",
-      value: "Daily"
+      label: 'Daily',
+      value: 'Daily',
     },
     {
-      label: "Weekly",
-      value: "Weekly"
+      label: 'Weekly',
+      value: 'Weekly',
     },
     {
-      label: "Bi-Weekly",
-      value: "Bi-Weekly"
+      label: 'Bi-Weekly',
+      value: 'Bi-Weekly',
     },
     {
-      label: "Monthly",
-      value: "Monthly"
+      label: 'Monthly',
+      value: 'Monthly',
     },
     {
-      label: "Quaterly",
-      value: "Quaterly"
+      label: 'Quaterly',
+      value: 'Quaterly',
     },
     {
-      label: "Semi-Annually",
-      value: "Semi-Annually"
-    }
+      label: 'Semi-Annually',
+      value: 'Semi-Annually',
+    },
   ];
   const [selectedOption, setSelectedOption] = React.useState({
-    label: "Monthly",
-    value: "Monthly"
+    label: 'Monthly',
+    value: 'Monthly',
   });
   const pickerStartDateRef = React.useRef();
   const pickerEndDateRef = React.useRef();
-  const [message, setMessage] = React.useState("");
+  const [message, setMessage] = React.useState('');
 
   const reload = () => {
     getFromApiary(
-      `/projects/${props.location.state.project.name}/evaluation_schedule`
+      `/projects/${props.location.state.project.name}/evaluation_schedule`,
     ).then(resultSchedule => {
       //   if (
       //     resultSchedule
@@ -110,7 +110,7 @@ const Schedule = props => {
   };
 
   const onClickSaveSchedule = () => {
-    setMessage("Schedule is not changeble for trial");
+    setMessage('Schedule is not changeble for trial');
     // setMessage("");
     // const data = {
     //   schedule: {
@@ -134,18 +134,18 @@ const Schedule = props => {
   const onClickCancelSchedule = () => {
     const startValue = scheduleData.start_datetime
       ? new Date(scheduleData.start_datetime)
-      : "";
+      : '';
 
     const endValue = scheduleData.end_datetime
       ? new Date(scheduleData.end_datetime)
-      : "";
+      : '';
 
-    let frequencyValue = "";
+    let frequencyValue = '';
 
     if (scheduleData.frequency) {
       frequencyValue = {
         label: scheduleData.frequency,
-        value: scheduleData.frequency
+        value: scheduleData.frequency,
       };
     }
 
@@ -193,10 +193,10 @@ const Schedule = props => {
           <div className="container-date">
             <Select
               className={
-                selectedOption !== ""
+                selectedOption !== ''
                   && selectedOption.value !== scheduleData.frequency
-                  ? "select-frequency adaptive edited"
-                  : "select-frequency adaptive"
+                  ? 'select-frequency adaptive edited'
+                  : 'select-frequency adaptive'
               }
               value={selectedOption}
               onChange={onChangeOption}
@@ -267,11 +267,11 @@ const Schedule = props => {
 };
 
 Schedule.propTypes = {
-  location: PropTypes.object
+  location: PropTypes.object,
 };
 
 Schedule.defaultProps = {
-  location: { state: {} }
+  location: { state: {} },
 };
 
 export default withRouter(Schedule);

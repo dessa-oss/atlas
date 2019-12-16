@@ -52,13 +52,13 @@ class JobHeader extends Component {
   }
 
   refsInFilters(filters) {
-    return filters.map((filter) => {
+    return filters.map(filter => {
       return `${filter.column}-${filter.value}`;
     });
   }
 
   getCurHiddenBubbles(newRefs, hiddenBubbles) {
-    return hiddenBubbles.filter((bubble) => {
+    return hiddenBubbles.filter(bubble => {
       return newRefs.indexOf(bubble) >= 0;
     });
   }
@@ -99,14 +99,14 @@ class JobHeader extends Component {
 
   addIfNotHidden(array, id, width) {
     const newHidden = this.removeFromHidden(array, id);
-    newHidden.push({ id, width });
+    newHidden.push({ id: id, width: width });
     return newHidden;
   }
 
   removeFromHidden(array, id) {
     let newHidden = CommonActions.deepCopyArray(array);
     newHidden = newHidden.filter(
-      (filter) => {
+      filter => {
         return (filter.id && filter.id !== id) || (!filter.id && filter !== id);
       },
     );
@@ -116,7 +116,7 @@ class JobHeader extends Component {
   getHiddenWidth(array, id) {
     let newHidden = CommonActions.deepCopyArray(array);
     newHidden = newHidden.filter(
-      (filter) => {
+      filter => {
         return (filter.id === id);
       },
     );
@@ -149,7 +149,7 @@ class JobHeader extends Component {
   }
 
   removeBubbleFromRef(bubbleRefs, id) {
-    return bubbleRefs.filter((bubble) => {
+    return bubbleRefs.filter(bubble => {
       if (bubble !== id) {
         return true;
       }
@@ -175,7 +175,7 @@ class JobHeader extends Component {
     } = this.state;
 
     const filterBubbles = [];
-    filters.forEach((filter) => {
+    filters.forEach(filter => {
       const key = filter.column.concat('-').concat(filter.value);
       filterBubbles.push(
         <div ref={() => { this.addToBubbleRefs(key); }} id={key} key={key} className="bubble inline-block">

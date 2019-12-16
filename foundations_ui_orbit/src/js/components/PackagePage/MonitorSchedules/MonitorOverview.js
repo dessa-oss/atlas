@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import MonitorSchedulesActions from "../../../actions/MonitorSchedulesActions";
-import Select from "react-select";
-import moment from "moment";
-import Flatpickr from "react-flatpickr";
-import CommonActions from "../../../actions/CommonActions";
-import OverflowTooltip from "../../common/OverflowTooltip";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import MonitorSchedulesActions from '../../../actions/MonitorSchedulesActions';
+import Select from 'react-select';
+import moment from 'moment';
+import Flatpickr from 'react-flatpickr';
+import CommonActions from '../../../actions/CommonActions';
+import OverflowTooltip from '../../common/OverflowTooltip';
 
 class MonitorOverview extends Component {
   constructor(props) {
@@ -40,7 +40,7 @@ class MonitorOverview extends Component {
       calDateEnd: calDateEnd,
       scheduleRepeatUnit: null,
       scheduleRepeatValue: [],
-      scheduleValid: false
+      scheduleValid: false,
     };
   }
 
@@ -62,7 +62,7 @@ class MonitorOverview extends Component {
       calDateStart: calDateStart,
       calDateEnd: calDateEnd,
       scheduleRepeatUnit: result.repeatUnit,
-      scheduleRepeatValue: result.repeatValue
+      scheduleRepeatValue: result.repeatValue,
     }, () => {
       this.setState({ scheduleValid: this.validateMonitorSchedule() }, reload);
     });
@@ -105,12 +105,12 @@ class MonitorOverview extends Component {
       calDateStart,
       calDateEnd,
       scheduleRepeatUnit,
-      scheduleRepeatValue
+      scheduleRepeatValue,
     } = this.state;
 
     const scheduleBody = MonitorSchedulesActions.getSchedule(
       calDateStart, calDateEnd,
-      scheduleRepeatUnit, scheduleRepeatValue.map(obj => obj.value)
+      scheduleRepeatUnit, scheduleRepeatValue.map(obj => obj.value),
     );
 
     const projectName = monitorResult.properties.spec.environment.PROJECT_NAME;
@@ -130,7 +130,7 @@ class MonitorOverview extends Component {
     calDateStart.setHours(time[0].getHours(), time[0].getMinutes(), 0, 0);
 
     this.setState({
-      calDateStart: calDateStart
+      calDateStart: calDateStart,
     }, () => {
       this.setState({ scheduleValid: this.validateMonitorSchedule() });
     });
@@ -142,7 +142,7 @@ class MonitorOverview extends Component {
     calDateEnd.setHours(time[0].getHours(), time[0].getMinutes(), 0, 0);
 
     this.setState({
-      calDateEnd: calDateEnd
+      calDateEnd: calDateEnd,
     }, () => {
       this.setState({ scheduleValid: this.validateMonitorSchedule() });
     });
@@ -159,7 +159,7 @@ class MonitorOverview extends Component {
       calDateStart,
       calDateEnd,
       scheduleRepeatUnit,
-      scheduleRepeatValue
+      scheduleRepeatValue,
     } = this.state;
     const startTime = moment(calDateStart);
     const endTime = moment(calDateEnd);
@@ -190,31 +190,31 @@ class MonitorOverview extends Component {
       calDateEnd,
       scheduleRepeatUnit,
       scheduleRepeatValue,
-      scheduleValid
+      scheduleValid,
     } = this.state;
 
-    const status = monitorResult.status.split("")[0].toUpperCase() + monitorResult.status.slice(1);
+    const status = monitorResult.status.split('')[0].toUpperCase() + monitorResult.status.slice(1);
 
     const scheduleOptions = [
-      { label: "year", value: "year" },
-      { label: "month", value: "month" },
-      { label: "week", value: "week" },
-      { label: "day", value: "day" },
-      { label: "hour", value: "hour" },
-      { label: "minute", value: "minute" }
+      { label: 'year', value: 'year' },
+      { label: 'month', value: 'month' },
+      { label: 'week', value: 'week' },
+      { label: 'day', value: 'day' },
+      { label: 'hour', value: 'hour' },
+      { label: 'minute', value: 'minute' },
     ];
 
     const clockTimeStart = `${calDateStart.getHours()}:${calDateStart.getMinutes()}`;
     const clockTimeEnd = `${calDateEnd.getHours()}:${calDateEnd.getMinutes()}`;
 
-    const saveDisabled = !scheduleValid ? "disabled" : "";
+    const saveDisabled = !scheduleValid ? 'disabled' : '';
 
     const nextRunTimes = (
       <div className="monitor-overview-value">
         {monitorResult.next_run_time.map((runTime, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <div key={index} className="monitor-overview-runtime">
-            {runTime ? moment.unix(runTime).format("YYYY-MM-DD HH:mm:ss") : "N/A"}
+            {runTime ? moment.unix(runTime).format('YYYY-MM-DD HH:mm:ss') : 'N/A'}
           </div>
         ))}
       </div>
@@ -297,9 +297,9 @@ class MonitorOverview extends Component {
                   value={calDateStart}
                   onChange={this.onChangeDateStart}
                   options={{
-                    altFormat: "F j, Y",
-                    dateFormat: "Y-m-d",
-                    defaultDate: new Date()
+                    altFormat: 'F j, Y',
+                    dateFormat: 'Y-m-d',
+                    defaultDate: new Date(),
                   }}
                 />
                 <p> at </p>
@@ -310,9 +310,9 @@ class MonitorOverview extends Component {
                   options={{
                     enableTime: true,
                     noCalendar: true,
-                    dateFormat: "H:i",
+                    dateFormat: 'H:i',
                     defaultDate: clockTimeStart,
-                    time_24hr: true
+                    time_24hr: true,
                   }}
                 />
               </div>
@@ -325,8 +325,8 @@ class MonitorOverview extends Component {
                   value={calDateEnd}
                   onChange={this.onChangeDateEnd}
                   options={{
-                    altFormat: "F j, Y",
-                    dateFormat: "Y-m-d"
+                    altFormat: 'F j, Y',
+                    dateFormat: 'Y-m-d',
                   }}
                 />
                 <p> at </p>
@@ -337,9 +337,9 @@ class MonitorOverview extends Component {
                   options={{
                     enableTime: true,
                     noCalendar: true,
-                    dateFormat: "H:i",
+                    dateFormat: 'H:i',
                     defaultDate: clockTimeEnd,
-                    time_24hr: true
+                    time_24hr: true,
                   }}
                 />
               </div>
@@ -357,13 +357,13 @@ class MonitorOverview extends Component {
 MonitorOverview.propTypes = {
   monitorResult: PropTypes.object,
   reload: PropTypes.func,
-  toggleDeleteModal: PropTypes.func
+  toggleDeleteModal: PropTypes.func,
 };
 
 MonitorOverview.defaultProps = {
   monitorResult: {},
   reload: () => {},
-  toggleDeleteModal: () => {}
+  toggleDeleteModal: () => {},
 };
 
 export default MonitorOverview;

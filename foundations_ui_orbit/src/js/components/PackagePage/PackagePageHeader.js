@@ -1,5 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 
 const PackagePageHeader = props => {
   const { pageName, pageSubName } = props;
@@ -14,12 +14,12 @@ const PackagePageHeader = props => {
 
 PackagePageHeader.propTypes = {
   pageName: PropTypes.string,
-  pageSubName: PropTypes.string
+  pageSubName: PropTypes.string,
 };
 
 PackagePageHeader.defaultProps = {
-  pageName: "",
-  pageSubName: ""
+  pageName: '',
+  pageSubName: '',
 };
 
 export default PackagePageHeader;

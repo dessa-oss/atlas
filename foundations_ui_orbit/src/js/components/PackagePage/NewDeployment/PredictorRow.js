@@ -1,9 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import EditPredictor from "./EditPredictor";
-import { Modal, ModalBody } from "reactstrap";
-import { postJSONFile } from "../../../actions/BaseActions";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import EditPredictor from './EditPredictor';
+import { Modal, ModalBody } from 'reactstrap';
+import { postJSONFile } from '../../../actions/BaseActions';
 
 const Predictors = props => {
   const [open, setOpen] = React.useState(false);
@@ -13,16 +13,16 @@ const Predictors = props => {
     return proportion;
   });
   const [editable, setEditable] = React.useState(false);
-  const statuses = ["Running", "Test", "Retire"];
+  const statuses = ['Running', 'Test', 'Retire'];
 
   const [selectedStatus, setSelectedStatus] = React.useState(() => {
     const { predictor } = props;
 
-    let value = "Running";
-    if (predictor.status === "retired") {
-      value = "Retire";
-    } else if (predictor.status === "testing") {
-      value = "Test";
+    let value = 'Running';
+    if (predictor.status === 'retired') {
+      value = 'Retire';
+    } else if (predictor.status === 'testing') {
+      value = 'Test';
     }
 
     return value;
@@ -44,9 +44,9 @@ const Predictors = props => {
   const onclickRemove = () => {
     const { predictor, reload } = props;
     postJSONFile(
-      "files/predictors/delete",
-      "predictors.json",
-      predictor.name
+      'files/predictors/delete',
+      'predictors.json',
+      predictor.name,
     ).then(() => {
       reload();
     });
@@ -63,7 +63,7 @@ const Predictors = props => {
   const onKeyDown = e => {
     const { changeProportion, predictor } = props;
 
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       const value = parseFloat(selectedProportion);
 
       if (!Number.isNaN(value) && value >= 0 && value <= 1) {
@@ -77,25 +77,25 @@ const Predictors = props => {
   const onChangeStatus = e => {
     const newValue = e.target.value;
     const { predictor, splitMechanism, reload } = props;
-    if (newValue === "Running") {
-      predictor.status = "running";
-    } else if (newValue === "Test") {
-      predictor.status = "testing";
-    } else if (newValue === "Retire") {
-      predictor.status = "retired";
+    if (newValue === 'Running') {
+      predictor.status = 'running';
+    } else if (newValue === 'Test') {
+      predictor.status = 'testing';
+    } else if (newValue === 'Retire') {
+      predictor.status = 'retired';
     }
 
     delete predictor.proportion;
 
     const data = {
       predictor: predictor,
-      split_mechanism: splitMechanism
+      split_mechanism: splitMechanism,
     };
 
     postJSONFile(
-      "files/predictors/edit",
-      "predictors.json",
-      data
+      'files/predictors/edit',
+      'predictors.json',
+      data,
     ).then(() => {
       setSelectedStatus(newValue);
       reload();
@@ -103,7 +103,7 @@ const Predictors = props => {
   };
 
   const {
-    proportion, predictor, predictors, method, splitMechanism, reload
+    proportion, predictor, predictors, method, splitMechanism, reload,
   } = props;
 
   let actionsString = predictor.action_space[0];
@@ -112,66 +112,66 @@ const Predictors = props => {
     actionsString += `, ${predictor.action_space[i]}`;
   }
 
-  let labelClassName = "label";
+  let labelClassName = 'label';
 
 
-  if (method === "Define Manually") {
+  if (method === 'Define Manually') {
     if (expanded) {
       if (parseFloat(selectedProportion) !== parseFloat(proportion)) {
-        labelClassName = "label expanded edited";
+        labelClassName = 'label expanded edited';
       } else {
-        labelClassName = "label expanded";
+        labelClassName = 'label expanded';
       }
     } else if (parseFloat(selectedProportion) !== parseFloat(proportion)) {
-      labelClassName = "label edited";
+      labelClassName = 'label edited';
     }
   }
 
   const runningPredictors = predictors.filter(
-    item => item.status === "running"
+    item => item.status === 'running',
   );
 
-  let proportionValue = "auto";
+  let proportionValue = 'auto';
 
-  if (predictor.status !== "testing") {
-    if (predictor.status !== "running") {
+  if (predictor.status !== 'testing') {
+    if (predictor.status !== 'running') {
       proportionValue = `${(selectedProportion * 100).toFixed(0)}%`;
-    } else if (splitMechanism === "Random split (even)") {
+    } else if (splitMechanism === 'Random split (even)') {
       proportionValue = `${(100 / runningPredictors.length).toFixed(0)}%`;
-    } else if (method === "Define Manually") {
+    } else if (method === 'Define Manually') {
       proportionValue = `${(selectedProportion * 100).toFixed(0)}%`;
     }
   }
 
 
-  let statusClassName = "pred-active";
+  let statusClassName = 'pred-active';
 
-  if (predictor.status === "retired") {
-    statusClassName = "pred-retired";
-  } else if (predictor.status === "testing") {
-    statusClassName = "pred-testing";
+  if (predictor.status === 'retired') {
+    statusClassName = 'pred-retired';
+  } else if (predictor.status === 'testing') {
+    statusClassName = 'pred-testing';
   }
 
-  let parentClassName = "";
+  let parentClassName = '';
 
   if (expanded === false) {
     if (predictors.length <= 2) {
       if (predictors.length <= 1) {
-        parentClassName = "container-row-parent just-one";
+        parentClassName = 'container-row-parent just-one';
       } else {
-        parentClassName = "container-row-parent less-amount";
+        parentClassName = 'container-row-parent less-amount';
       }
     } else {
-      parentClassName = "container-row-parent";
+      parentClassName = 'container-row-parent';
     }
   } else if (predictors.length <= 2) {
     if (predictors.length <= 1) {
-      parentClassName = "container-row-parent just-one expanded";
+      parentClassName = 'container-row-parent just-one expanded';
     } else {
-      parentClassName = "container-row-parent less-amount expanded";
+      parentClassName = 'container-row-parent less-amount expanded';
     }
   } else {
-    parentClassName = "container-row-parent expanded";
+    parentClassName = 'container-row-parent expanded';
   }
 
   /* eslint-disable react/jsx-curly-brace-presence */
@@ -186,7 +186,7 @@ const Predictors = props => {
         <div className="container-pred-percentage">
           {editable === true ? (
             <input
-              className={expanded === true ? "input expanded" : "input"}
+              className={expanded === true ? 'input expanded' : 'input'}
               onChange={onChangeProportion}
               value={selectedProportion}
               onKeyDown={onKeyDown}
@@ -194,17 +194,17 @@ const Predictors = props => {
           ) : (
             <p className={labelClassName}>{proportionValue}</p>
           )}
-          {method === "Define Manually"
-            && splitMechanism !== "Random split (even)"
-            && predictor.status === "running" && (
+          {method === 'Define Manually'
+            && splitMechanism !== 'Random split (even)'
+            && predictor.status === 'running' && (
               <button
                 type="button"
-                disabled={method !== "Define Manually"}
+                disabled={method !== 'Define Manually'}
                 onClick={onClickEditProportion}
                 className={
                   expanded === true
-                    ? "button-edit-proportion expanded"
-                    : "text-upper button-edit-proportion"
+                    ? 'button-edit-proportion expanded'
+                    : 'text-upper button-edit-proportion'
                 }
               >
                 <i className="i--icon-pencil-dark" />
@@ -214,13 +214,13 @@ const Predictors = props => {
         <div
           className={
             expanded === false
-              ? "container-pred-grid"
-              : "container-pred-grid pred-separator"
+              ? 'container-pred-grid'
+              : 'container-pred-grid pred-separator'
           }
         >
           <div className="container-pred-info pred-column-1">
             <span className="span">Name: </span>
-            <span>{predictor.name || ""}</span>
+            <span>{predictor.name || ''}</span>
           </div>
           <div className="container-pred-buttons container-buttons pred-column-3">
             <div className="select-container">
@@ -242,7 +242,7 @@ const Predictors = props => {
             <button
               type="button"
               className={
-                expanded ? "b--secondary-text active" : "b--secondary-text"
+                expanded ? 'b--secondary-text active' : 'b--secondary-text'
               }
               onClick={onclickDetails}
             >
@@ -257,8 +257,8 @@ const Predictors = props => {
           <div
             className={
               expanded
-                ? "more-detail-container expanded"
-                : "more-detail-container"
+                ? 'more-detail-container expanded'
+                : 'more-detail-container'
             }
           >
             <div>
@@ -283,14 +283,14 @@ const Predictors = props => {
                 <div>
                   <p className="label">Post Prediction Selection:</p>
                   <p className="info">
-                    Uncertainty scoring:{" "}
+                    Uncertainty scoring:{' '}
                     {
                       predictor.post_predict_selection
                         .exploration_strategy
                     }
                   </p>
                   <p className="info">
-                    Uncertainty handle: exploration{" "}
+                    Uncertainty handle: exploration{' '}
                     {predictor.post_predict_selection
                       .exploration_percentage * 100}
                     %
@@ -334,17 +334,17 @@ Predictors.propTypes = {
   changeProportion: PropTypes.func,
   predictors: PropTypes.array,
   splitMechanism: PropTypes.string,
-  reload: PropTypes.func
+  reload: PropTypes.func,
 };
 
 Predictors.defaultProps = {
   predictor: {},
   proportion: 0,
-  method: "Define Manually",
-  splitMechanism: "spec",
+  method: 'Define Manually',
+  splitMechanism: 'spec',
   predictors: [],
   changeProportion: () => null,
-  reload: () => null
+  reload: () => null,
 };
 
 export default withRouter(Predictors);

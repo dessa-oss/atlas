@@ -1,13 +1,13 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import Select from "react-select";
-import MultiSelect from "@kenshooui/react-multi-select";
-import "@kenshooui/react-multi-select/dist/style.css";
-import { postJSONFile } from "../../../actions/BaseActions";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Select from 'react-select';
+import MultiSelect from '@kenshooui/react-multi-select';
+import '@kenshooui/react-multi-select/dist/style.css';
+import { postJSONFile } from '../../../actions/BaseActions';
 
 const conditionOptions = [
-  { value: "Errors Only", label: "Errors Only" },
-  { value: "All Updates", label: "All Updates" }
+  { value: 'Errors Only', label: 'Errors Only' },
+  { value: 'All Updates', label: 'All Updates' },
 ];
 
 class EditNotification extends Component {
@@ -20,8 +20,8 @@ class EditNotification extends Component {
       category: category,
       updateNotifications: updateNotifications,
       allUsers: allUsers,
-      condition: "Errors Only",
-      selectedUsers: []
+      condition: 'Errors Only',
+      selectedUsers: [],
     };
     this.UpdateNotification = this.UpdateNotification.bind(this);
     this.ChangeUsers = this.ChangeUsers.bind(this);
@@ -33,21 +33,21 @@ class EditNotification extends Component {
       condition,
       selectedUsers,
       category,
-      updateNotifications
+      updateNotifications,
     } = this.state;
 
     const data = {
       condition: condition,
       recipients: selectedUsers,
-      category: category
+      category: category,
     };
 
     const body = JSON.stringify(data);
 
     await postJSONFile(
-      "settings/users/notification",
-      "notifications.json",
-      body
+      'settings/users/notification',
+      'notifications.json',
+      body,
     );
 
     updateNotifications();
@@ -101,13 +101,13 @@ class EditNotification extends Component {
 EditNotification.propTypes = {
   category: PropTypes.string,
   updateNotifications: PropTypes.func,
-  allUsers: PropTypes.array
+  allUsers: PropTypes.array,
 };
 
 EditNotification.defaultProps = {
-  category: "",
+  category: '',
   updateNotifications: () => null,
-  allUsers: []
+  allUsers: [],
 };
 
 export default EditNotification;

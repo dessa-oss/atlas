@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const ProjectHeader = (props) => {
+const ProjectHeader = props => {
   const { numProjects } = props;
 
   return (

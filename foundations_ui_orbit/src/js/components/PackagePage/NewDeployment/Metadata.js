@@ -1,13 +1,13 @@
-import React from "react";
-import { withRouter } from "react-router-dom";
-import { get } from "../../../actions/BaseActions";
+import React from 'react';
+import { withRouter } from 'react-router-dom';
+import { get } from '../../../actions/BaseActions';
 
 const Metadata = () => {
   const [deploymentMetadata, setDeploymentMetadata] = React.useState({});
   const [expanded, setExpanded] = React.useState(false);
 
   React.useEffect(() => {
-    get("metadata").then(result => {
+    get('metadata').then(result => {
       if (result && result.data) {
         setDeploymentMetadata(result.data);
       }
@@ -22,7 +22,7 @@ const Metadata = () => {
         <div className="container-metadata">
           <p className="label-metadata-key">{key}: </p>
           <p className="label-metadata-value">{deploymentMetadata[key]}</p>
-        </div>
+        </div>,
       );
     });
 
@@ -37,7 +37,7 @@ const Metadata = () => {
   return (
     <div
       className={
-        expanded ? "metadata-container expanded" : "metadata-container"
+        expanded ? 'metadata-container expanded' : 'metadata-container'
       }
     >
       <div>

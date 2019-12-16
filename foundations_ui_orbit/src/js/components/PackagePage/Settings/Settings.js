@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
-import Layout from "../Layout";
-import { getFromApiary } from "../../../actions/BaseActions";
-import User from "./User";
-import Notification from "./Notification";
-import AddUserModal from "./AddUserModal";
-import { Modal, ModalBody } from "reactstrap";
+import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import Layout from '../Layout';
+import { getFromApiary } from '../../../actions/BaseActions';
+import User from './User';
+import Notification from './Notification';
+import AddUserModal from './AddUserModal';
+import { Modal, ModalBody } from 'reactstrap';
 
 class Settings extends Component {
   constructor(props) {
@@ -15,7 +15,7 @@ class Settings extends Component {
       notifications: [],
       filteredUsers: [],
       searching: false,
-      isShowingAddUser: false
+      isShowingAddUser: false,
     };
     this.getUsers = this.getUsers.bind(this);
     this.saveUsers = this.saveUsers.bind(this);
@@ -32,7 +32,7 @@ class Settings extends Component {
   }
 
   async getUsers() {
-    const apiUsers = await getFromApiary("settings/users");
+    const apiUsers = await getFromApiary('settings/users');
     if (apiUsers) {
       await this.saveUsers(apiUsers);
     }
@@ -41,7 +41,7 @@ class Settings extends Component {
 
   async getNotifications() {
     const apiNotifications = await getFromApiary(
-      "settings/notifications"
+      'settings/notifications',
     );
     if (apiNotifications) await this.saveNotifications(apiNotifications);
   }
@@ -101,7 +101,7 @@ class Settings extends Component {
       notifications,
       filteredUsers,
       searching,
-      isShowingAddUser
+      isShowingAddUser,
     } = this.state;
 
     const userRows = [];
@@ -116,7 +116,7 @@ class Settings extends Component {
             email={user.email}
             role={user.permission}
             updateUser={this.getUsers}
-          />
+          />,
         );
       });
     } else {
@@ -128,7 +128,7 @@ class Settings extends Component {
             username={user.id}
             email={user.email}
             role={user.permission}
-          />
+          />,
         );
       });
     }
@@ -143,14 +143,14 @@ class Settings extends Component {
             }-${
               notif.condition
             }-${
-              notif.recipients.join("-")}`
+              notif.recipients.join('-')}`
           }
           category={notif.category}
           condition={notif.condition}
           recipients={notif.recipients}
           emails={this.getDistinctUserEmails()}
           updateNotifications={this.getNotifications}
-        />
+        />,
       );
     });
 

@@ -1,9 +1,9 @@
-import React from "react";
-import { get, post } from "./BaseActions";
-import ValidationResultsTableRow from "../components/PackagePage/SystemHealth/ValidationResultsTableRow";
-import ValidationResultsTestsListRow from "../components/PackagePage/SystemHealth/ValidationResultsTestListRow";
-import CommonActions from "./CommonActions";
-import OverflowTooltip from "../components/common/OverflowTooltip";
+import React from 'react';
+import { get, post } from './BaseActions';
+import ValidationResultsTableRow from '../components/PackagePage/SystemHealth/ValidationResultsTableRow';
+import ValidationResultsTestsListRow from '../components/PackagePage/SystemHealth/ValidationResultsTestListRow';
+import CommonActions from './CommonActions';
+import OverflowTooltip from '../components/common/OverflowTooltip';
 
 const ValidationResultsActions = {
   getValidationResultList: projectName => {
@@ -39,7 +39,7 @@ const ValidationResultsActions = {
     const body = {
       inference_period: inferencePeriod,
       monitor_package: monitorPackage,
-      data_contract: dataContract
+      data_contract: dataContract,
     };
 
     return post(url, body)
@@ -61,22 +61,22 @@ const ValidationResultsActions = {
           label={label}
           validationTestResult={testResult}
           onSelectRow={onSelectRow}
-        />
+        />,
       );
     }
   },
 
   getTestRows: (validationResult, onSelectRow) => {
     const allRows = [];
-    ValidationResultsActions.createTestRowIfExists("schema", "Schema Check", validationResult, allRows, onSelectRow);
+    ValidationResultsActions.createTestRowIfExists('schema', 'Schema Check', validationResult, allRows, onSelectRow);
     ValidationResultsActions.createTestRowIfExists(
-      "population_shift", "Population Shift", validationResult, allRows, onSelectRow
+      'population_shift', 'Population Shift', validationResult, allRows, onSelectRow,
     );
     ValidationResultsActions.createTestRowIfExists(
-      "data_quality", "Special Values", validationResult, allRows, onSelectRow
+      'data_quality', 'Special Values', validationResult, allRows, onSelectRow,
     );
-    ValidationResultsActions.createTestRowIfExists("min", "Min", validationResult, allRows, onSelectRow);
-    ValidationResultsActions.createTestRowIfExists("max", "Max", validationResult, allRows, onSelectRow);
+    ValidationResultsActions.createTestRowIfExists('min', 'Min', validationResult, allRows, onSelectRow);
+    ValidationResultsActions.createTestRowIfExists('max', 'Max', validationResult, allRows, onSelectRow);
     return allRows;
   },
 
@@ -87,11 +87,11 @@ const ValidationResultsActions = {
         <th>Data Type</th>
         <th>Issue Type</th>
         <th>Validation Outcome</th>
-      </tr>
+      </tr>,
     ];
 
     const rows = validationTestResult.schema.details_by_attribute.map((test, ind) => {
-      const issueType = test.issue_type ? test.issue_type : "N/A";
+      const issueType = test.issue_type ? test.issue_type : 'N/A';
       return (
         // eslint-disable-next-line react/no-array-index-key
         <tr key={ind} className="validation-results-test-pane-table-row">
@@ -114,22 +114,22 @@ const ValidationResultsActions = {
         <th>Distribution Shift</th>
         <th>Measure Type</th>
         <th>Validation Outcome</th>
-      </tr>
+      </tr>,
     ];
 
     const rows = validationTestResult.population_shift.details_by_attribute.map((test, ind) => {
-      let measureType = "L-infinity" in test ? "L-infinity" : "PSI";
-      let distShift = measureType === "L-infinity" ? test["L-infinity"] : test.PSI;
+      let measureType = 'L-infinity' in test ? 'L-infinity' : 'PSI';
+      let distShift = measureType === 'L-infinity' ? test['L-infinity'] : test.PSI;
       let validationOutcome = test.validation_outcome;
 
       if (distShift === null) {
-        distShift = "N/A";
+        distShift = 'N/A';
       }
 
       if (test.validation_outcome === null) {
-        distShift = "N/A";
-        measureType = "N/A";
-        validationOutcome = "N/A";
+        distShift = 'N/A';
+        measureType = 'N/A';
+        validationOutcome = 'N/A';
       }
       return (
         // eslint-disable-next-line react/no-array-index-key
@@ -155,7 +155,7 @@ const ValidationResultsActions = {
         <th>Actual (%)</th>
         <th>Difference</th>
         <th>Validation Outcome</th>
-      </tr>
+      </tr>,
     ];
     const rows = validationTestResult.data_quality.details_by_attribute.map((test, ind) => (
       // eslint-disable-next-line react/no-array-index-key
@@ -181,14 +181,14 @@ const ValidationResultsActions = {
         <th>Actual Minimum Value</th>
         <th>Percentage out of Bounds</th>
         <th>Validation Outcome</th>
-      </tr>
+      </tr>,
     ];
 
     const rows = validationTestResult.min.details_by_attribute.map((test, ind) => {
       const outOfBounds = (
-        "percentage_out_of_bounds" in test
+        'percentage_out_of_bounds' in test
           ? CommonActions.decimalToPercentage(test.percentage_out_of_bounds)
-          : "N/A"
+          : 'N/A'
       );
       return (
         // eslint-disable-next-line react/no-array-index-key
@@ -214,14 +214,14 @@ const ValidationResultsActions = {
         <th>Actual Maximum Value</th>
         <th>Percentage out of Bounds</th>
         <th>Validation Outcome</th>
-      </tr>
+      </tr>,
     ];
 
     const rows = validationTestResult.max.details_by_attribute.map((test, ind) => {
       const outOfBounds = (
-        "percentage_out_of_bounds" in test
+        'percentage_out_of_bounds' in test
           ? CommonActions.decimalToPercentage(test.percentage_out_of_bounds)
-          : "N/A"
+          : 'N/A'
       );
       return (
         // eslint-disable-next-line react/no-array-index-key
@@ -242,19 +242,19 @@ const ValidationResultsActions = {
   getTestTableRows: validationTestResult => {
     const testType = Object.keys(validationTestResult)[0];
 
-    if (testType === "schema") {
+    if (testType === 'schema') {
       return ValidationResultsActions.getSchemaRows(validationTestResult);
     }
-    if (testType === "population_shift") {
+    if (testType === 'population_shift') {
       return ValidationResultsActions.getPopShiftRows(validationTestResult);
     }
-    if (testType === "data_quality") {
+    if (testType === 'data_quality') {
       return ValidationResultsActions.getSpecialValuesRows(validationTestResult);
     }
-    if (testType === "min") {
+    if (testType === 'min') {
       return ValidationResultsActions.getMinRows(validationTestResult);
     }
-    if (testType === "max") {
+    if (testType === 'max') {
       return ValidationResultsActions.getMaxRows(validationTestResult);
     }
     return [];
@@ -270,7 +270,7 @@ const ValidationResultsActions = {
       .catch(() => {
         return [];
       });
-  }
+  },
 };
 
 export default ValidationResultsActions;

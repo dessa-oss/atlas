@@ -1,12 +1,12 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { getAtlas } from "../../../actions/BaseActions";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { getAtlas } from '../../../actions/BaseActions';
 
 class MonitorLogs extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { message: "" };
+    this.state = { message: '' };
 
     this.reload = this.reload.bind(this);
   }
@@ -29,7 +29,7 @@ class MonitorLogs extends React.Component {
       getAtlas(`projects/${projectName}/job_listing/${jobID}/logs`)
         .then(result => {
           this.setState({
-            message: result.log
+            message: result.log,
           });
         });
     }
@@ -49,12 +49,12 @@ class MonitorLogs extends React.Component {
 
 MonitorLogs.propTypes = {
   jobID: PropTypes.string,
-  projectName: PropTypes.string
+  projectName: PropTypes.string,
 };
 
 MonitorLogs.defaultProps = {
-  jobID: "",
-  projectName: ""
+  jobID: '',
+  projectName: '',
 };
 
 export default MonitorLogs;

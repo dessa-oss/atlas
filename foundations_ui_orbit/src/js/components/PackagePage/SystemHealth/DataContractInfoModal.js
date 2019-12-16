@@ -1,9 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import { Modal, ModalBody } from "reactstrap";
-import ModalInfo from "../../common/ModalInfo";
-import { get } from "../../../actions/BaseActions";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import { Modal, ModalBody } from 'reactstrap';
+import ModalInfo from '../../common/ModalInfo';
+import { get } from '../../../actions/BaseActions';
 
 class DataContractInfoModal extends React.Component {
   constructor(props) {
@@ -19,7 +19,7 @@ class DataContractInfoModal extends React.Component {
   render() {
     const {
       isOpen,
-      uuid
+      uuid,
     } = this.props;
 
     return (
@@ -52,13 +52,13 @@ class DataContractInfoModal extends React.Component {
 DataContractInfoModal.propTypes = {
   isOpen: PropTypes.bool,
   toggle: PropTypes.func,
-  uuid: PropTypes.string
+  uuid: PropTypes.string,
 };
 
 DataContractInfoModal.defaultProps = {
   isOpen: false,
   toggle: () => {},
-  uuid: ""
+  uuid: '',
 };
 
 export default withRouter(DataContractInfoModal);

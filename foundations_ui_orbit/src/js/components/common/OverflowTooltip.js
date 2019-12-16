@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 
 class OverflowTooltip extends Component {
@@ -7,7 +7,7 @@ class OverflowTooltip extends Component {
     super(props);
 
     this.state = {
-      divReference: null
+      divReference: null,
     };
   }
 
@@ -53,11 +53,11 @@ class OverflowTooltip extends Component {
 }
 
 OverflowTooltip.propTypes = {
-  text: PropTypes.string
+  text: PropTypes.string,
 };
 
 OverflowTooltip.defaultProps = {
-  text: ""
+  text: '',
 };
 
 export default OverflowTooltip;

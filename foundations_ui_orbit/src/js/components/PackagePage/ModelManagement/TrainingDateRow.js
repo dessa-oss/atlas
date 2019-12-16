@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class TrainingDateRow extends Component {
   constructor(props) {
@@ -11,7 +11,7 @@ class TrainingDateRow extends Component {
     this.state = {
       date: date,
       isAddRow: isAddRow,
-      removeDate: removeDate
+      removeDate: removeDate,
     };
   }
 
@@ -39,12 +39,12 @@ class TrainingDateRow extends Component {
 TrainingDateRow.propTypes = {
   date: PropTypes.string,
   isAddRow: PropTypes.bool,
-  removeDate: PropTypes.func
+  removeDate: PropTypes.func,
 };
 
 TrainingDateRow.defaultProps = {
-  date: "",
+  date: '',
   isAddRow: false,
-  removeDate: () => { }
+  removeDate: () => { },
 };
 export default TrainingDateRow;

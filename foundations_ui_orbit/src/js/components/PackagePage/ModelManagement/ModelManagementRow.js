@@ -1,9 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
-import ModelManagementDetail from "./ModelManagementDetails";
-import { put } from "../../../actions/BaseActions";
-import NewModelRecalibrationModal from "./NewModelRecalibrationModal";
-import moment from "moment";
+import React from 'react';
+import PropTypes from 'prop-types';
+import ModelManagementDetail from './ModelManagementDetails';
+import { put } from '../../../actions/BaseActions';
+import NewModelRecalibrationModal from './NewModelRecalibrationModal';
+import moment from 'moment';
 
 
 const ModelManagementRow = props => {
@@ -36,12 +36,12 @@ const ModelManagementRow = props => {
 
     if (rowData.default === false) {
       const body = {
-        default_model: rowData.model_name
+        default_model: rowData.model_name,
       };
 
       put(
         `/projects/${location.state.project.name}`,
-        body
+        body,
       ).then(() => {
         reload();
       });
@@ -53,12 +53,12 @@ const ModelManagementRow = props => {
 
     const body = {
       model_name: rowData.model_name,
-      serving: true
+      serving: true,
     };
 
     put(
       `/projects/${location.state.project.name}`,
-      body
+      body,
     ).then(() => {
       reload();
     });
@@ -69,19 +69,19 @@ const ModelManagementRow = props => {
 
     const body = {
       model_name: rowData.model_name,
-      serving: false
+      serving: false,
     };
 
     put(
       `/projects/${location.state.project.name}`,
-      body
+      body,
     ).then(() => {
       reload();
     });
   };
 
   const { rowData, isDetail, reload } = props;
-  const convertedDate = moment.unix(rowData.created_at).format("YYYY-MM-DD HH:mm").toString();
+  const convertedDate = moment.unix(rowData.created_at).format('YYYY-MM-DD HH:mm').toString();
 
   return (
     <div className="model-management-row">
@@ -105,19 +105,19 @@ const ModelManagementRow = props => {
       <div className="model-management-cell">
         <p
           className={
-            rowData.status === "activated" ? "hide-text status-text active" : "hide-text status-text"
+            rowData.status === 'activated' ? 'hide-text status-text active' : 'hide-text status-text'
           }
         >
           {rowData.status}
         </p>
-        <div className={rowData.status === "activated"
-          ? "model-status-circle active"
-          : "model-status-circle"}
+        <div className={rowData.status === 'activated'
+          ? 'model-status-circle active'
+          : 'model-status-circle'}
         />
       </div>
       <div
-        className={isDetail === true ? "model-management-cell last-child-details-open"
-          : "model-management-cell"}
+        className={isDetail === true ? 'model-management-cell last-child-details-open'
+          : 'model-management-cell'}
       >
         <div className="container-cell-buttons">
           <button type="button" className="b--secondary-text button-management recalibrate" onClick={clickRecalibrate}>
@@ -125,22 +125,22 @@ const ModelManagementRow = props => {
           </button>
           <button
             type="button"
-            className={rowData.status === "activated"
-              ? "b--secondary-text button-management deactivate"
-              : "b--secondary-text button-management activate"
+            className={rowData.status === 'activated'
+              ? 'b--secondary-text button-management deactivate'
+              : 'b--secondary-text button-management activate'
             }
             onClick={
-              rowData.status === "activated" ? clickRetire : clickActivate
+              rowData.status === 'activated' ? clickRetire : clickActivate
             }
           >
-            {rowData.status === "activated" ? "deactivate" : "activate"}
+            {rowData.status === 'activated' ? 'deactivate' : 'activate'}
           </button>
           <button
             type="button"
             className={
               isDetail
-                ? "b--secondary-text button-management details active"
-                : "b--secondary-text button-management details"
+                ? 'b--secondary-text button-management details active'
+                : 'b--secondary-text button-management details'
             }
             onClick={clickDetails}
           >
@@ -178,7 +178,7 @@ ModelManagementRow.propTypes = {
   location: PropTypes.object,
   reload: PropTypes.func,
   startTimer: PropTypes.func,
-  stopTimer: PropTypes.func
+  stopTimer: PropTypes.func,
 };
 
 ModelManagementRow.defaultProps = {
@@ -190,7 +190,7 @@ ModelManagementRow.defaultProps = {
   location: { state: {} },
   reload: () => null,
   startTimer: () => null,
-  stopTimer: () => null
+  stopTimer: () => null,
 };
 
 export default ModelManagementRow;

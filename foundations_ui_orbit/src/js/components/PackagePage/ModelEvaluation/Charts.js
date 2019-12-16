@@ -1,8 +1,8 @@
-import React from "react";
-import { get } from "../../../actions/BaseActions";
-import Loading from "../../common/Loading";
-import PropTypes from "prop-types";
-import Preview from "./Preview";
+import React from 'react';
+import { get } from '../../../actions/BaseActions';
+import Loading from '../../common/Loading';
+import PropTypes from 'prop-types';
+import Preview from './Preview';
 
 class Charts extends React.Component {
   constructor(props) {
@@ -11,25 +11,25 @@ class Charts extends React.Component {
     this.state = {
       evaluations: [],
       loading: false,
-      timerId: -1
+      timerId: -1,
     };
   }
 
   setTimer() {
     const value = setInterval(() => {
       get(
-        `projects/${this.props.location.state.project.name}/metrics`
+        `projects/${this.props.location.state.project.name}/metrics`,
       ).then(result => {
         if (result) {
           this.setState({
-            evaluations: result
+            evaluations: result,
           });
         }
       });
     }, 1000);
 
     this.setState({
-      timerId: value
+      timerId: value,
     });
   }
 
@@ -40,11 +40,11 @@ class Charts extends React.Component {
 
   reload() {
     this.setState({
-      loading: true
+      loading: true,
     });
 
     get(
-      `projects/${this.props.location.state.project.name}/metrics`
+      `projects/${this.props.location.state.project.name}/metrics`,
     ).then(result => {
       let newEvaluations = [];
       if (result) {
@@ -54,7 +54,7 @@ class Charts extends React.Component {
 
       this.setState({
         evaluations: newEvaluations,
-        loading: false
+        loading: false,
       });
     });
   }
@@ -106,11 +106,11 @@ class Charts extends React.Component {
 }
 
 Charts.propTypes = {
-  location: PropTypes.object
+  location: PropTypes.object,
 };
 
 Charts.defaultProps = {
-  location: { state: {} }
+  location: { state: {} },
 };
 
 export default Charts;

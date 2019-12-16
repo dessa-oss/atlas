@@ -30,7 +30,7 @@ const getAtlas = url => {
 const delAtlas = url => {
   const fullURL = atlasURL.concat(url);
   return fetch(fullURL, {
-    method: "delete"
+    method: 'delete',
   })
     .then(res => res.json())
     .then(result => {
@@ -63,12 +63,12 @@ const getMaster = url => {
 const post = (url, body) => {
   const fullURL = baseURL.concat(url);
   return fetch(fullURL, {
-    method: "post",
+    method: 'post',
     body: JSON.stringify(body),
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
   })
     .then(res => res.json())
     .then(result => {
@@ -82,12 +82,12 @@ const post = (url, body) => {
 const patch = (url, body) => {
   const fullURL = baseURL.concat(url);
   return fetch(fullURL, {
-    method: "PATCH",
+    method: 'PATCH',
     body: JSON.stringify(body),
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
   })
     .then(res => res.json())
     .then(result => {
@@ -101,12 +101,12 @@ const patch = (url, body) => {
 const postApiary = (url, body) => {
   const fullURL = baseApiaryURL.concat(url);
   return fetch(fullURL, {
-    method: "post",
+    method: 'post',
     body: JSON.stringify(body),
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
   })
     .then(res => res.json())
     .then(result => {
@@ -120,12 +120,12 @@ const postApiary = (url, body) => {
 const postMaster = (url, body) => {
   const fullURL = baseMasterURL.concat(url);
   return fetch(fullURL, {
-    method: "post",
+    method: 'post',
     body: JSON.stringify(body),
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
   })
     .then(res => res.json())
     .then(result => {
@@ -139,12 +139,12 @@ const postMaster = (url, body) => {
 const put = (url, body) => {
   const fullURL = baseURL.concat(url);
   return fetch(fullURL, {
-    method: "put",
+    method: 'put',
     body: JSON.stringify(body),
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
   })
     .then(res => res.json())
     .then(result => {
@@ -159,12 +159,12 @@ const put = (url, body) => {
 const putApiary = (url, body) => {
   const fullURL = baseApiaryURL.concat(url);
   return fetch(fullURL, {
-    method: "put",
+    method: 'put',
     body: JSON.stringify(body),
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
   })
     .then(res => res.json())
     .then(result => {
@@ -178,10 +178,10 @@ const putApiary = (url, body) => {
 const del = url => {
   const fullURL = baseURL.concat(url);
   return fetch(fullURL, {
-    method: "DELETE",
+    method: 'DELETE',
     headers: {
-      Accept: "application/json"
-    }
+      Accept: 'application/json',
+    },
   })
     .then(res => res.json())
     .then(result => {
@@ -196,12 +196,12 @@ const del = url => {
 const postJSONFile = (url, fileName, data) => {
   const fullURL = baseApiaryURL.concat(url);
   return fetch(fullURL, {
-    method: "post",
+    method: 'post',
     body: JSON.stringify({ file: fileName, data: data }),
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
   })
     .then(res => res.json())
     .then(result => {
@@ -225,5 +225,5 @@ export {
   putApiary,
   del,
   postJSONFile,
-  patch
+  patch,
 };

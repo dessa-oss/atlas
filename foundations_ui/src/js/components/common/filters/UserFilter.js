@@ -40,7 +40,7 @@ class SelectColumnFilter extends Component {
 
   onHideAll() {
     const { columns } = this.props;
-    const filteredColumns = columns.map((filter) => {
+    const filteredColumns = columns.map(filter => {
       return filter.name;
     });
     this.setState({ changedParams: filteredColumns, hideAllFilters: true, showAllFilters: false });
@@ -110,7 +110,7 @@ class SelectColumnFilter extends Component {
       this.unsetHideAll,
     );
 
-    const input = <input ref={(inputRef) => { this.input = inputRef; }} type="text" onChange={this.updateSearchText} />;
+    const input = <input ref={inputRef => { this.input = inputRef; }} type="text" onChange={this.updateSearchText} />;
 
     const applyClass = CommonActions.getApplyClass(this.isDisabled);
 

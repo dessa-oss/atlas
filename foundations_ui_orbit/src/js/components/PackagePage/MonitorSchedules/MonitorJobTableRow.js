@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import moment from "moment";
-import OverflowTooltip from "../../common/OverflowTooltip";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import moment from 'moment';
+import OverflowTooltip from '../../common/OverflowTooltip';
 
 class MonitorJobTableRow extends Component {
   constructor(props) {
@@ -33,21 +33,21 @@ class MonitorJobTableRow extends Component {
       status,
       completed,
       started,
-      jobID
+      jobID,
     } = this.props;
 
-    const selectedClass = this.isSelectedRow() ? "selected-row" : "";
-    const formattedLaunchedTime = completed ? moment.unix(completed).format("YYYY-MM-DD HH:mm:ss") : "Not available";
+    const selectedClass = this.isSelectedRow() ? 'selected-row' : '';
+    const formattedLaunchedTime = completed ? moment.unix(completed).format('YYYY-MM-DD HH:mm:ss') : 'Not available';
     const launchTime = moment(started);
     const endTime = moment(completed);
-    const timeDiff = completed ? `${endTime.diff(launchTime)}s` : "Not available";
+    const timeDiff = completed ? `${endTime.diff(launchTime)}s` : 'Not available';
 
     function addStatus(rowStatus) {
-      if (rowStatus === "completed") {
+      if (rowStatus === 'completed') {
         return <div className="status-icon status-green" />;
       }
 
-      if (rowStatus === "failed") {
+      if (rowStatus === 'failed') {
         return <div className="status-icon status-red" />;
       }
       return <div className="status-icon status-running" />;
@@ -77,17 +77,17 @@ MonitorJobTableRow.propTypes = {
   started: PropTypes.number,
   onSelect: PropTypes.func,
   selectedRows: PropTypes.object,
-  onClickLogs: PropTypes.func
+  onClickLogs: PropTypes.func,
 };
 
 MonitorJobTableRow.defaultProps = {
-  jobID: "Invalid job ID",
-  status: "Missing",
-  completed: "Missing",
-  started: "Missing",
+  jobID: 'Invalid job ID',
+  status: 'Missing',
+  completed: 'Missing',
+  started: 'Missing',
   onSelect: () => {},
   selectedRows: new Set(),
-  onClickLogs: () => {}
+  onClickLogs: () => {},
 };
 
 

@@ -106,10 +106,10 @@ class JobTable extends Component {
     const { filterSearchText, allMetrics, allInputParams } = this.state;
     const allFilterableColumns = allMetrics.concat(allInputParams);
     if (filterSearchText.trim().length > 0) {
-      const filteredColumns = allFilterableColumns.filter((col) => {
+      const filteredColumns = allFilterableColumns.filter(col => {
         return col.name.includes(filterSearchText);
       });
-      this.setState({ filteredColumns });
+      this.setState({ filteredColumns: filteredColumns });
     } else {
       this.setState({ filteredColumns: allFilterableColumns });
     }
@@ -140,7 +140,7 @@ class JobTable extends Component {
       isAscending = false;
     }
 
-    this.setState({ sortedColumn: { column: clickedColumnWithMainHeader, isAscending } }, () => {
+    this.setState({ sortedColumn: { column: clickedColumnWithMainHeader, isAscending: isAscending } }, () => {
       getJobs(this.state.sortedColumn);
     });
   }
@@ -149,12 +149,12 @@ class JobTable extends Component {
     const { selectedJobs, jobs } = this.state;
     let newSelectedJobs = Array.from(selectedJobs);
     if (selectedJobs.includes(jobID)) {
-      newSelectedJobs = newSelectedJobs.filter((job) => {
+      newSelectedJobs = newSelectedJobs.filter(job => {
         return job !== jobID;
       });
     } else {
       newSelectedJobs.push(jobID);
-      const selectedJob = jobs.find((job) => {
+      const selectedJob = jobs.find(job => {
         return job.job_id === jobID;
       });
     }
@@ -175,13 +175,13 @@ class JobTable extends Component {
   canGoToTensorboard(newSelectedJobs) {
     const { jobs } = this.state;
     const jobsByID = {};
-    jobs.forEach((job) => {
+    jobs.forEach(job => {
       jobsByID[job.job_id] = job;
     });
-    const selectedJobObjects = newSelectedJobs.map((singleJobID) => {
+    const selectedJobObjects = newSelectedJobs.map(singleJobID => {
       return jobsByID[singleJobID];
     });
-    return !!selectedJobObjects.length && selectedJobObjects.every((job) => {
+    return !!selectedJobObjects.length && selectedJobObjects.every(job => {
       return !!job.tags.tf;
     });
   }
@@ -191,7 +191,7 @@ class JobTable extends Component {
     let jobIds = [];
     let areAllSelected = false;
     if (selectedJobs.length !== jobs.length) {
-      jobIds = jobs.map((job) => {
+      jobIds = jobs.map(job => {
         return job.job_id;
       });
       areAllSelected = true;
@@ -221,20 +221,20 @@ class JobTable extends Component {
     const rowNum = 1;
     const rowNumbers = [];
 
-    const handleClick = (job) => {};
+    const handleClick = job => {};
 
     const allFilterableColumns = allMetrics.concat(allInputParams);
-    const visibleMetrics = allMetrics.filter((col) => {
+    const visibleMetrics = allMetrics.filter(col => {
       return !hiddenColumns.includes(col.name);
     });
-    const visibleParams = allInputParams.filter((col) => {
+    const visibleParams = allInputParams.filter(col => {
       return !hiddenColumns.includes(col.name);
     });
 
     const curVisibleColumns = filteredColumns !== null && filteredColumns.length < allFilterableColumns.length
       ? filteredColumns : allFilterableColumns;
 
-    curVisibleColumns.forEach((col) => {
+    curVisibleColumns.forEach(col => {
       if (hiddenColumns.includes(col.name)) {
         col.hidden = true;
       } else {
@@ -365,7 +365,7 @@ JobTable.defaultProps = {
   filters: [],
   selectedRow: -1,
   onDataUpdated: () => window.location.reload(),
-  onClickJob: (job) => {},
+  onClickJob: job => {},
   getJobs: () => {},
   reload: () => {},
 };

@@ -1,73 +1,73 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import Select from "react-select";
-import { get, postJSONFile } from "../../../actions/BaseActions";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import Select from 'react-select';
+import { get, postJSONFile } from '../../../actions/BaseActions';
 
 const AddPredictor = props => {
-  const [name, setName] = React.useState("");
+  const [name, setName] = React.useState('');
   const [models, setModels] = React.useState([]);
-  const [model, setModel] = React.useState("");
+  const [model, setModel] = React.useState('');
   const [actions, setActions] = React.useState([]);
   const [selectedActions, setSelectedActions] = React.useState([]);
-  const [description, setDescription] = React.useState("");
-  const [strategy, setStrategy] = React.useState("");
-  const [explorationStrategy, setExplorationStrategy] = React.useState("");
+  const [description, setDescription] = React.useState('');
+  const [strategy, setStrategy] = React.useState('');
+  const [explorationStrategy, setExplorationStrategy] = React.useState('');
   const [explorationPercentage, setExplorationPercentage] = React.useState(0);
-  const [error, setError] = React.useState("");
-  const [environment, setEnvironment] = React.useState("");
+  const [error, setError] = React.useState('');
+  const [environment, setEnvironment] = React.useState('');
   const strategies = [
     {
-      value: "uncertainty_with_exploration",
-      label: "uncertainty_with_exploration"
+      value: 'uncertainty_with_exploration',
+      label: 'uncertainty_with_exploration',
     },
     {
-      value: "none",
-      label: "none"
-    }
+      value: 'none',
+      label: 'none',
+    },
   ];
 
   const explorationStrategies = [
     {
-      value: "action_counts",
-      label: "action_counts"
+      value: 'action_counts',
+      label: 'action_counts',
     },
     {
-      value: "ncp",
-      label: "ncp"
+      value: 'ncp',
+      label: 'ncp',
     },
     {
-      value: "none",
-      label: "none"
-    }
+      value: 'none',
+      label: 'none',
+    },
   ];
 
   const environments = [
     {
-      value: "local",
-      label: "local"
-    }
+      value: 'local',
+      label: 'local',
+    },
   ];
 
   React.useEffect(() => {
-    get("management").then(result => {
+    get('management').then(result => {
       const modelsData = [];
 
       result.data.forEach(item => {
         modelsData.push({
           value: item.model_package_name,
-          label: item.model_package_name
+          label: item.model_package_name,
         });
       });
       setModels(modelsData);
 
-      get("actions").then(resultActions => {
+      get('actions').then(resultActions => {
         const actionsData = [];
 
         resultActions.data.forEach(item => {
           actionsData.push({
             value: item.name,
-            label: item.name
+            label: item.name,
           });
         });
         setActions(actionsData);
@@ -95,7 +95,7 @@ const AddPredictor = props => {
     setSelectedActions(prevSelectedActions => (insertValue === true
       ? [...prevSelectedActions, action]
       : prevSelectedActions.filter(
-        prevSelectedAction => prevSelectedAction.value !== action.value
+        prevSelectedAction => prevSelectedAction.value !== action.value,
       )));
   };
 
@@ -120,19 +120,19 @@ const AddPredictor = props => {
   };
 
   const validateData = () => {
-    let message = "";
+    let message = '';
     let validated = true;
 
     if (
-      name === ""
-      || model === ""
+      name === ''
+      || model === ''
       || selectedActions.length === 0
-      || description === ""
-      || strategy === ""
-      || explorationStrategy === ""
-      || environment === ""
+      || description === ''
+      || strategy === ''
+      || explorationStrategy === ''
+      || environment === ''
     ) {
-      message = "Error: one or more fields are left empty. Please fill the form.";
+      message = 'Error: one or more fields are left empty. Please fill the form.';
       validated = false;
     } else {
       const explorationPercentageValue = parseFloat(explorationPercentage);
@@ -142,7 +142,7 @@ const AddPredictor = props => {
         || explorationPercentageValue < 0
         || explorationPercentageValue > 1
       ) {
-        message = "Exploration percentage must be a number between 0 and 1";
+        message = 'Exploration percentage must be a number between 0 and 1';
         validated = false;
       }
     }
@@ -152,7 +152,7 @@ const AddPredictor = props => {
   };
 
   const onClickSave = () => {
-    setError("");
+    setError('');
 
     if (validateData()) {
       const explorationPercentageValue = parseFloat(explorationPercentage);
@@ -175,19 +175,19 @@ const AddPredictor = props => {
           post_predict_selection: {
             exploration_percentage: explorationPercentageValue,
             exploration_strategy: explorationStrategyValue,
-            strategy: strategyValue
+            strategy: strategyValue,
           },
-          status: "running",
-          environment: environmentValue
+          status: 'running',
+          environment: environmentValue,
         },
-        split_mechanism: props.splitMechanism
+        split_mechanism: props.splitMechanism,
       };
 
-      postJSONFile("predictors", "predictors.json", data).then(
+      postJSONFile('predictors', 'predictors.json', data).then(
         () => {
           props.reload();
           props.onClose();
-        }
+        },
       );
     }
   };
@@ -280,7 +280,7 @@ const AddPredictor = props => {
         </button>
       </div>
       <div className="new-dep-container-button">
-        {error !== "" && <p>{error}</p>}
+        {error !== '' && <p>{error}</p>}
       </div>
     </div>
   );
@@ -289,13 +289,13 @@ const AddPredictor = props => {
 AddPredictor.propTypes = {
   splitMechanism: PropTypes.string,
   onClose: PropTypes.func,
-  reload: PropTypes.func
+  reload: PropTypes.func,
 };
 
 AddPredictor.defaultProps = {
-  splitMechanism: "Random split (specified proportion)",
+  splitMechanism: 'Random split (specified proportion)',
   onClose: () => null,
-  reload: () => null
+  reload: () => null,
 };
 
 export default withRouter(AddPredictor);

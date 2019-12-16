@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import OverflowTooltip from "../../common/OverflowTooltip";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import OverflowTooltip from '../../common/OverflowTooltip';
 
 class MonitorListTableRow extends Component {
   constructor(props) {
@@ -24,17 +24,17 @@ class MonitorListTableRow extends Component {
     const {
       monitorNameLabel,
       status,
-      user
+      user,
     } = this.props;
 
-    const selectedClass = this.isSelectedRow() ? "selected-row" : "";
+    const selectedClass = this.isSelectedRow() ? 'selected-row' : '';
 
     function addStatus(rowStatus) {
-      if (rowStatus === "paused") {
+      if (rowStatus === 'paused') {
         return <div className="status-icon status-paused-orange" />;
       }
 
-      if (rowStatus === "active") {
+      if (rowStatus === 'active') {
         return <div className="status-icon status-green" />;
       }
     }
@@ -57,16 +57,16 @@ MonitorListTableRow.propTypes = {
   status: PropTypes.string,
   user: PropTypes.string,
   onClick: PropTypes.func,
-  selectedRow: PropTypes.string
+  selectedRow: PropTypes.string,
 };
 
 MonitorListTableRow.defaultProps = {
-  monitorName: "Invalid monitor name",
-  monitorNameLabel: "Invalid monitor name",
-  status: "Invalid contract name",
-  user: "",
+  monitorName: 'Invalid monitor name',
+  monitorNameLabel: 'Invalid monitor name',
+  status: 'Invalid contract name',
+  user: '',
   onClick: () => {},
-  selectedRow: ""
+  selectedRow: '',
 };
 
 

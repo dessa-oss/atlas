@@ -1,9 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import { Modal, ModalBody } from "reactstrap";
-import HighchartsReact from "highcharts-react-official";
-import Highcharts from "highcharts";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import { Modal, ModalBody } from 'reactstrap';
+import HighchartsReact from 'highcharts-react-official';
+import Highcharts from 'highcharts';
 
 const ModelEvaluation = props => {
   const [open, setOpen] = React.useState(false);
@@ -28,21 +28,21 @@ const ModelEvaluation = props => {
     chart: {},
     title: {
       style: {
-        color: "#004A9C",
-        fontSize: 14
+        color: '#004A9C',
+        fontSize: 14,
       },
       text: evaluation.title.text,
-      align: "left"
+      align: 'left',
     },
     subtitle: {
       style: {
-        color: "#9c9c9c"
+        color: '#9c9c9c',
       },
       text: `<span class="highcharts-sub">${
         evaluation.series.length
       }</span> predictors`,
       useHTML: true,
-      align: "left"
+      align: 'left',
     },
     legend: {
       // layout: "vertical",
@@ -50,36 +50,36 @@ const ModelEvaluation = props => {
       // verticalAlign: "middle",
       // itemMarginTop: 10,
       // itemMarginBottom: 10
-      enabled: false
+      enabled: false,
     },
     credits: {
-      enabled: false
+      enabled: false,
     },
     xAxis: evaluation.xAxis,
     yAxis: getPreviewyAxisData(evaluation.yAxis),
-    series: evaluation.series
+    series: evaluation.series,
   };
 
   const optionsModal = {
     chart: {
-      width: 1500
+      width: 1500,
     },
     title: {
-      text: evaluation.title.text
+      text: evaluation.title.text,
     },
     legend: {
-      layout: "vertical",
-      align: "left",
-      verticalAlign: "middle",
+      layout: 'vertical',
+      align: 'left',
+      verticalAlign: 'middle',
       itemMarginTop: 10,
-      itemMarginBottom: 10
+      itemMarginBottom: 10,
     },
     credits: {
-      enabled: false
+      enabled: false,
     },
     xAxis: options.xAxis,
     yAxis: evaluation.yAxis,
-    series: evaluation.series
+    series: evaluation.series,
   };
 
   return (
@@ -104,11 +104,11 @@ const ModelEvaluation = props => {
 };
 
 ModelEvaluation.propTypes = {
-  evaluation: PropTypes.object
+  evaluation: PropTypes.object,
 };
 
 ModelEvaluation.defaultProps = {
-  evaluation: {}
+  evaluation: {},
 };
 
 export default withRouter(ModelEvaluation);

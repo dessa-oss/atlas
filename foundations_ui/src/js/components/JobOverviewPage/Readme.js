@@ -24,8 +24,8 @@ class Readme extends React.Component {
   reload() {
     const { location } = this.props;
     const { projectName } = this.props.match.params;
-    let selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
-    BaseActions.getFromStaging(`projects/${selectedProjectName}/description`).then((result) => {
+    const selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
+    BaseActions.getFromStaging(`projects/${selectedProjectName}/description`).then(result => {
       result.project_description = String.raw`${result.project_description.replace(/(\r\n|\n|\r)/g, '<br/>')}`;
       let rawDescription = String.raw`${result.project_description}`;
       // eslint-disable-next-line no-useless-escape
@@ -55,13 +55,13 @@ class Readme extends React.Component {
   onClickEdit() {
     const { input, editMode } = this.state;
     const { location } = this.props;
-    let projectDescription = { project_description: input };
+    const projectDescription = { project_description: input };
     const { projectName } = this.props.match.params;
-    let selectedProjectName = location.state.project ? location.state.project.name : projectName;
-    let descriptionUrl = `projects/${selectedProjectName}/description`;
+    const selectedProjectName = location.state.project ? location.state.project.name : projectName;
+    const descriptionUrl = `projects/${selectedProjectName}/description`;
 
     if (editMode === true) {
-      BaseActions.putStaging(descriptionUrl, projectDescription).then((result) => {
+      BaseActions.putStaging(descriptionUrl, projectDescription).then(result => {
         this.reload();
       });
     }
