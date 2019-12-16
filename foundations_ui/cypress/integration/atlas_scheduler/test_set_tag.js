@@ -74,7 +74,7 @@ describe('Test Set Tag', () => {
       it('Tags exist in job row hover', () => {
         cy.contains(state.projectName).click({ force: true }).then(() => {
           cy.contains('[data-class=job-table-cell-with-header-Tags]', '...').trigger('mouseover', { force: true });
-          cy.get('[data-class=hover-cell-tags-details]')
+          cy.get('[data-class=hover-cell]')
           .should('contain', 'Str')
           .should('contain', 'Int')
           .should('contain', 'Float')
