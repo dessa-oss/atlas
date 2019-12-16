@@ -44,6 +44,16 @@ pipeline{
         }
       }
     }
+    stage('Retag Scheduler for Orbit'){
+      steps {
+        container("python3"){
+          dir('f9s') {
+            sh "docker pull $NEXUS_DOCKER_STAGING/scheduler:latest"
+            sh "docker tag $NEXUS_DOCKER_STAGING/scheduler:latest $NEXUS_DOCKER_STAGING/orbit-team/scheduler:latest"
+          }
+        }
+      }
+    }
     stage("Calculate Recovery Metrics") {
       steps {
         script {
