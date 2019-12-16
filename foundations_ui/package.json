@@ -153,6 +153,7 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react-hooks": "^2.3.0",
     "faker": "^4.1.0",
     "jest": "23.6.0",
     "jest-dom": "^2.1.1",
