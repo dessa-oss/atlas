@@ -23,9 +23,10 @@ describe('Test Fast Job', () => {
       before(() => {
         cy.exec(`redis-cli -h ${schedulerIP} -p ${schedulerRedisPort} flushall`);
 
-        for (let i=0; i < 10; i++) {
+        for (let i=0; i < 9; i++) {
           cy.exec(state.command);
         }
+        cy.exec(state.command.substring(0, state.command.length - 1));
       });
 
       beforeEach(() => {
