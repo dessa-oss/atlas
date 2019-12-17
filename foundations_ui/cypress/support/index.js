@@ -15,7 +15,7 @@ before(() => {
     cy.exec(`redis-cli -h ${schedulerIP} -p ${schedulerRedisPort} flushall`);
     cy.exec(command_to_run.command);
     cy.visit(`http://${guiHost}:${guiPort}/projects`);
-    cy.contains(command_to_run.projectName).should('exist');
+    cy.contains(command_to_run.projectName, { timeout: 120000 }).should('exist');
 });
 
 
