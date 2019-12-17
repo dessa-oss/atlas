@@ -74,16 +74,6 @@ pipeline{
         }
       }
     }
-    stage('Retag Scheduler for Atlas'){
-      steps {
-        container("python3"){
-          dir('f9s') {
-            sh "docker pull $NEXUS_DOCKER_STAGING/scheduler:latest"
-            sh "docker tag $NEXUS_DOCKER_STAGING/scheduler:latest $NEXUS_DOCKER_STAGING/atlas-common/scheduler:latest"
-          }
-        }
-      }
-    }
     stage('Trigger Atlas CE Build Pipeline') {
       steps {
         container("python3"){
@@ -95,10 +85,10 @@ pipeline{
               build job: "build-installer-atlas-ce", wait: false, parameters: [
                 [$class: 'StringParameterValue', name: 'atlas_ce_rest_api', value: "docker-staging.shehanigans.net/atlas-ce/foundations-rest-api:${version}"],
                 [$class: 'StringParameterValue', name: 'atlas_ce_gui', value: "docker-staging.shehanigans.net/atlas-ce/foundations-gui:${version}"],
-                [$class: 'StringParameterValue', name: 'atlas_ce_tracker', value: "docker-staging.shehanigans.net/atlas-common/tracker:latest"],
-                [$class: 'StringParameterValue', name: 'scheduler', value: "docker-staging.shehanigans.net/atlas-common/scheduler:latest"],
-                [$class: 'StringParameterValue', name: 'atlas_ce_worker', value: "docker-staging.shehanigans.net/atlas-ce/worker:${version}"],
-                [$class: 'StringParameterValue', name: 'archive_server', value: "docker-staging.shehanigans.net/atlas-common/archive_server:latest"],
+                [$class: 'StringParameterValue', name: 'atlas_ce_tracker', value: "docker-staging.shehanigans.net/foundations/tracker:latest"],
+                [$class: 'StringParameterValue', name: 'scheduler', value: "docker-staging.shehanigans.net/foundations/scheduler:latest"],
+                [$class: 'StringParameterValue', name: 'atlas_ce_worker', value: "docker-staging.shehanigans.net/atlas-common/worker:${version}"],
+                [$class: 'StringParameterValue', name: 'archive_server', value: "docker-staging.shehanigans.net/foundations/archive_server:latest"],
                 [$class: 'StringParameterValue', name: 'tensorboard_server', value: "docker-staging.shehanigans.net/atlas-common/tensorboard-server:${version}"],
                 [$class: 'StringParameterValue', name: 'tensorboard_rest_api', value: "docker-staging.shehanigans.net/atlas-common/tensorboard-rest-api:${version}"],
                 [$class: 'StringParameterValue', name: 'auth_proxy', value: "docker-staging.shehanigans.net/atlas-ce/auth-proxy:latest"],

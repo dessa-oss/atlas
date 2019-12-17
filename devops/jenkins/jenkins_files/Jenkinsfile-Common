@@ -53,42 +53,15 @@ pipeline{
         }
       }
     }
-    stage('Build Tracker Images') {
+    stage('Retag and Push Tracker Images') {
       steps {
         container("python3") {
           sh "docker pull redis:5 "
-          sh "docker tag redis:5 $NEXUS_DOCKER_STAGING/atlas-common/tracker:5"
-          sh "docker tag $NEXUS_DOCKER_STAGING/atlas-common/tracker:5 $NEXUS_DOCKER_STAGING/atlas-common/tracker:latest"
-          sh "docker tag redis:5 $NEXUS_DOCKER_STAGING/orbit-team/tracker:5"
-          sh "docker tag $NEXUS_DOCKER_STAGING/orbit-team/tracker:5 $NEXUS_DOCKER_STAGING/orbit-team/tracker:latest"
+          sh "docker tag redis:5 $NEXUS_DOCKER_STAGING/foundations/tracker:5"
+          sh "docker tag $NEXUS_DOCKER_STAGING/foundations/tracker:5 $NEXUS_DOCKER_STAGING/foundations/tracker:latest"
+          sh "docker push $NEXUS_DOCKER_STAGING/foundations/tracker:5"
+          sh "docker push $NEXUS_DOCKER_STAGING/foundations/tracker:latest"
 
-        }
-      }
-    }
-    stage('Build Archive Server') {
-      steps {
-        container("python3") {
-          sh "docker pull $NEXUS_DOCKER_REGISTRY/archive_server:latest"
-          sh "docker tag $NEXUS_DOCKER_REGISTRY/archive_server:latest $NEXUS_DOCKER_STAGING/atlas-common/archive_server:latest"
-          sh "docker tag $NEXUS_DOCKER_REGISTRY/archive_server:latest $NEXUS_DOCKER_STAGING/orbit-team/archive_server:latest"
-        }
-      }
-    }
-    stage('Push Tracker Image') {
-      steps {
-        container("python3") {
-          sh "docker push $NEXUS_DOCKER_STAGING/atlas-common/tracker:5"
-          sh "docker push $NEXUS_DOCKER_STAGING/atlas-common/tracker:latest"
-          sh "docker push $NEXUS_DOCKER_STAGING/orbit-team/tracker:5"
-          sh "docker push $NEXUS_DOCKER_STAGING/orbit-team/tracker:latest"
-        }
-      }
-    }
-    stage('Push Archive Server Image') {
-      steps {
-        container("python3") {
-          sh "docker push $NEXUS_DOCKER_STAGING/atlas-common/archive_server:latest"
-          sh "docker push $NEXUS_DOCKER_STAGING/orbit-team/archive_server:latest"
         }
       }
     }
