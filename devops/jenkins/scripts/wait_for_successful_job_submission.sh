@@ -9,7 +9,7 @@ until $(foundations submit scheduler test main.py >> /dev/null); do
 
     printf '.'
     attempt_counter=$(($attempt_counter+1))
-    sleep 1
+    sleep 2
 done
 
 echo "Able to submit job"
