@@ -12,5 +12,5 @@ yes | ./atlas_ce_installer.sh
 atlas-server start > /dev/null 2>&1 &
 mkdir -p test && \
 echo import foundations >> test/main.py && \
-chmod +x wait_for_successful_job_submission.sh && \
-./wait_for_successful_job_submission.sh 20
+chmod +x /home/ubuntu/wait_for_successful_job_submission.sh && \
+bash /home/ubuntu/wait_for_successful_job_submission.sh 20
