@@ -8,3 +8,5 @@ orbit_gui_Dockerfile
 README.md
 yarn.lock
 package-lock.json
+cypress
+cypress.json
