@@ -92,7 +92,7 @@ class DataContract(object):
         column_values = self._dataframe[column_name]
         num_unique_values = column_values.nunique()
         num_total_values = len(column_values)
-        if num_unique_values/num_total_values > threshold: 
+        if num_unique_values/num_total_values > threshold:
             return False
         return True
 
@@ -215,6 +215,13 @@ class DataContract(object):
 
         return validation_report
 
+    def _columns_with_all_nans(self, dataframe):
+        columns_with_all_nans = []
+        for column in dataframe:
+            if dataframe[column].isnull().all():
+                columns_with_all_nans.append(column)
+        return columns_with_all_nans
+
     def _run_checkers_and_get_validation_report(self, dataframe_to_validate, attributes_to_ignore):
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
 
@@ -231,8 +238,9 @@ class DataContract(object):
             if 'missing_in_ref' in validation_report['schema_check_results']:
                 for column_to_ignore in validation_report['schema_check_results']['missing_in_ref']:
                     attributes_to_ignore.append(column_to_ignore)
-                
-            self._exclude_from_current_validation(attributes=attributes_to_ignore)
+
+        columns_to_exclude_from_current_validation = self._columns_with_all_nans(dataframe_to_validate)
+        self._exclude_from_current_validation(attributes=columns_to_exclude_from_current_validation + attributes_to_ignore)
 
         if self.options.check_row_count:
             validation_report['row_count'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)

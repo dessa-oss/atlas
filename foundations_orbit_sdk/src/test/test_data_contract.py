@@ -1004,6 +1004,19 @@ class TestDataContract(Spec):
         except Exception as ex:
             raise ex
 
+    def test_data_contract_validate_excludes_columns_that_have_all_nans(self):
+        import numpy, pandas
+
+        reference_data = {'A': [numpy.nan, numpy.nan], 'B': [1, 2]}
+        reference_dataframe = pandas.DataFrame(data=reference_data)
+        dataframe_to_validate = pandas.DataFrame(data=reference_data)
+
+        data_contract = DataContract("my_contract", reference_dataframe)
+        results = data_contract.validate(dataframe_to_validate)
+
+        self.assertNotIn('A', results['dist_check_results'].keys())
+
+
     def _test_special_values_checker_for_datatype_input_returns_expected_results(self, data):
         import pandas, numpy
         dataframe = pandas.DataFrame(data)
