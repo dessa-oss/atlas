@@ -60,7 +60,7 @@ pipeline{
               [$class: 'StringParameterValue', name: 'scheduler', value: "docker-staging.shehanigans.net/foundations/scheduler:latest"],
               [$class: 'StringParameterValue', name: 'tracker', value: "docker-staging.shehanigans.net/foundations/tracker:latest"],
               [$class: 'StringParameterValue', name: 'worker', value: "docker-staging.shehanigans.net/orbit-team/worker:${version}"],
-              [$class: 'StringParameterValue', name: 'orbit_server', value: '1.1.dev5'], // How to install the latest version for pip packages
+              [$class: 'StringParameterValue', name: 'orbit_server', value: 'latest'],
               [$class: 'StringParameterValue', name: 'foundations_orbit_ce_pi_py', value: version],
               [$class: 'StringParameterValue', name: 'ORBIT_TEAM_VERSION', value: version],
               [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: params.f9s_commit_hash]
