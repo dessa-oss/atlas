@@ -53,7 +53,7 @@ pipeline{
             build job: "build-installer-orbit-team", wait: false, parameters: [
               [$class: 'StringParameterValue', name: 'atlas_rest_api', value: "docker-staging.shehanigans.net/atlas-ce/foundations-rest-api:${version}"],
               [$class: 'StringParameterValue', name: 'archive_server', value: "docker-staging.shehanigans.net/foundations/archive_server:latest"],
-              [$class: 'StringParameterValue', name: 'auth_proxy', value: "docker-staging.shehanigans.net/atlas-ce/auth-proxy:latest"],
+              [$class: 'StringParameterValue', name: 'auth_proxy', value: "docker-staging.shehanigans.net/orbit-team/auth-proxy:latest"],
               [$class: 'StringParameterValue', name: 'auth_server', value: "docker-staging.shehanigans.net/foundations/auth-server:latest"],
               [$class: 'StringParameterValue', name: 'orbit_gui', value: "docker-staging.shehanigans.net/orbit-team/orbit-gui:${version}"],
               [$class: 'StringParameterValue', name: 'orbit_rest_api', value: "docker-staging.shehanigans.net/orbit-team/foundations-orbit-rest-api:${version}"],
