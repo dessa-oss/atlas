@@ -47,26 +47,24 @@ pipeline{
     stage('Trigger Orbit Team Build Pipeline') {
       steps {
         container("python3"){
-          dir('f9s') {
-            script {
-              version = sh(script: 'python get_version.py', returnStdout: true).trim()
-              println("Attempting to trigger pipeline with version of ${version}")
-              build job: "build-installer-atlas-ce", wait: false, parameters: [
-                [$class: 'StringParameterValue', name: 'atlas_rest_api', value: "docker-staging.shehanigans.net/atlas-ce/foundations-rest-api:${version}"],
-                [$class: 'StringParameterValue', name: 'archive_server', value: "docker-staging.shehanigans.net/foundations/archive_server:${version}"],
-                [$class: 'StringParameterValue', name: 'auth_proxy', value: "docker-staging.shehanigans.net/atlas-ce/auth-proxy:latest"],
-                [$class: 'StringParameterValue', name: 'auth_server', value: "docker-staging.shehanigans.net/foundations/auth-server:latest"],
-                [$class: 'StringParameterValue', name: 'orbit_gui', value: "docker-staging.shehanigans.net/orbit-team/orbit-gui:${version}"],
-                [$class: 'StringParameterValue', name: 'orbit_rest_api', value: "docker-staging.shehanigans.net/orbit-team/foundations-orbit-rest-api:${version}"],
-                [$class: 'StringParameterValue', name: 'scheduler', value: "docker-staging.shehanigans.net/foundations/scheduler:latest"],
-                [$class: 'StringParameterValue', name: 'tracker', value: "docker-staging.shehanigans.net/foundations/tracker:latest"],
-                [$class: 'StringParameterValue', name: 'worker', value: "docker-staging.shehanigans.net/orbit-team/worker:${version}"],
-                [$class: 'StringParameterValue', name: 'orbit_server', value: '1.1.dev5'], // How to install the latest version for pip packages
-                [$class: 'StringParameterValue', name: 'foundations_orbit_ce_pi_py', value: version],
-                [$class: 'StringParameterValue', name: 'ORBIT_TEAM_VERSION', value: version],
-                [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: params.f9s_commit_hash]
-              ]
-            }
+          script {
+            version = sh(script: 'python get_version.py', returnStdout: true).trim()
+            println("Attempting to trigger pipeline with version of ${version}")
+            build job: "build-installer-atlas-ce", wait: false, parameters: [
+              [$class: 'StringParameterValue', name: 'atlas_rest_api', value: "docker-staging.shehanigans.net/atlas-ce/foundations-rest-api:${version}"],
+              [$class: 'StringParameterValue', name: 'archive_server', value: "docker-staging.shehanigans.net/foundations/archive_server:${version}"],
+              [$class: 'StringParameterValue', name: 'auth_proxy', value: "docker-staging.shehanigans.net/atlas-ce/auth-proxy:latest"],
+              [$class: 'StringParameterValue', name: 'auth_server', value: "docker-staging.shehanigans.net/foundations/auth-server:latest"],
+              [$class: 'StringParameterValue', name: 'orbit_gui', value: "docker-staging.shehanigans.net/orbit-team/orbit-gui:${version}"],
+              [$class: 'StringParameterValue', name: 'orbit_rest_api', value: "docker-staging.shehanigans.net/orbit-team/foundations-orbit-rest-api:${version}"],
+              [$class: 'StringParameterValue', name: 'scheduler', value: "docker-staging.shehanigans.net/foundations/scheduler:latest"],
+              [$class: 'StringParameterValue', name: 'tracker', value: "docker-staging.shehanigans.net/foundations/tracker:latest"],
+              [$class: 'StringParameterValue', name: 'worker', value: "docker-staging.shehanigans.net/orbit-team/worker:${version}"],
+              [$class: 'StringParameterValue', name: 'orbit_server', value: '1.1.dev5'], // How to install the latest version for pip packages
+              [$class: 'StringParameterValue', name: 'foundations_orbit_ce_pi_py', value: version],
+              [$class: 'StringParameterValue', name: 'ORBIT_TEAM_VERSION', value: version],
+              [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: params.f9s_commit_hash]
+            ]
           }
         }
       }
