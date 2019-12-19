@@ -9,9 +9,26 @@ else
     network_name="${network_name}-$1"
 fi
 
+if [ -z "$2" ]; then
+    redis_port=6379
+else
+    redis_port=$2
+fi
 
-echo "Redis will be added to ${network_name}"
+echo "Creating network ${network_name}"
+docker network create -d bridge $network_name >/dev/null 2>&1 || true
 
-echo "docker network create -d bridge $network_name >/dev/null 2>&1 || true"
-echo "mkdir -p $FOUNDATIONS_HOME/database"
-echo "docker run --rm --name redis -p 6379:6379 --network=$network_name --volume $FOUNDATIONS_HOME/database:/data -d redis redis-server --appendonly yes"
+redis_container_id=$(docker ps --filter "name=redis" -q)
+if [ -z "$redis_container_id" ]; then
+    echo "Creating redis container at port ${redis_port}"
+    mkdir -p $FOUNDATIONS_HOME/database \
+        && docker run \
+            --rm \
+            --name redis \
+            -p 6379:$redis_port \
+            --network=$network_name \
+            --volume $FOUNDATIONS_HOME/database:/data \
+            -d redis redis-server --appendonly yes
+else
+    docker network connect $network_name $redis_container_id --alias redis
+fi
