@@ -24,15 +24,15 @@ echo "Running Atlas REST API on port ${ATLAS_PORT}"
 python devops/startup_atlas_api.py ${ATLAS_PORT} &
 
 echo "Attempting to run scheduler with foundations home set to $FOUNDATIONS_HOME"
-start_scheduler()
+start_scheduler
 
-echo 'Starting up the auth proxy' \
-  && echo '' \
-  && start_auth_proxy()
+start_auth_proxy
 
 echo "Starting the Auth Server (keycloak)" \
-  && echo '' \
-  && ./foundations_contrib/src/foundations_contrib/authentication/launch.sh
+  && echo "" \
+  && export AUTH_SERVER_NAME=foundations-authentication-server \
+  && ./foundations_contrib/src/foundations_contrib/authentication/launch.sh \
+  && docker network connect foundations-atlas foundations-authentication-server
 
 cd foundations_ui && \
   echo "Install UIs dependencies" && \

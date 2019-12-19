@@ -1,8 +1,10 @@
 #!/bin/bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+AUTH_SERVER_NAME=${AUTH_SERVER_NAME:-keycloak}
 
-docker run -d --rm --name keycloak \
+
+docker run -d --rm --name $AUTH_SERVER_NAME \
     -e KEYCLOAK_USER=admin \
     -e KEYCLOAK_PASSWORD=admin \
     -e KEYCLOAK_IMPORT=/keycloak/atlas.json \

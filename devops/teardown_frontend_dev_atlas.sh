@@ -12,3 +12,4 @@ echo "Attempting to kill proccess for the Auth Proxy"
 kill -9 $(lsof -i:5558 -t) > /dev/null 2>&1
 echo "Attmpting to stop keycloak (auth server)"
 docker stop keycloak > /dev/null 2>&1
+docker stop foundations-authentication-server > /dev/null 2>&1
