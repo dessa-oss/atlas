@@ -7,9 +7,17 @@ export REACT_APP_API_URL="http://127.0.0.1:${ORBIT_PORT}/api/v1/"
 export REACT_APP_ATLAS_URL="http://127.0.0.1:${ATLAS_PORT}/api/v2beta/"
 export REACT_APP_APIARY_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v1/"
 
+echo "Ensuring that atlas is not also running"
+echo ""
+./devops/teardown_frontend_dev_atlas.sh
+
+echo " Ensuring stoping previous running orbit"
+echo ""
 ./devops/teardown_frontend_dev_orbit.sh
 
-echo "Note: Ensure you have redis running and accessible at ${REDIS_URL}"
+
+echo "Attempting to run redis at ${REDIS_PORT}. NB If redis is already running port flag will not have an effect"
+./devops/start_redis.sh orbit $REDIS_PORT
 
 echo "Running Atlas REST API on port ${ATLAS_PORT}"
 python devops/startup_atlas_api.py ${ATLAS_PORT} &
@@ -17,40 +25,16 @@ python devops/startup_atlas_api.py ${ATLAS_PORT} &
 echo "Running Orbit REST API on port ${ORBIT_PORT}"
 python devops/startup_orbit_api.py ${ORBIT_PORT} &
 
-echo "Generating database.config.yaml at $FOUNDATIONS_HOME/config/local_docker_scheduler/" \
-  && mkdir -p $FOUNDATIONS_HOME/config/local_docker_scheduler \
-  && cat ./devops/envsubsts/database.config.envsubst.yaml | envsubst > $FOUNDATIONS_HOME/config/local_docker_scheduler/database.config.yaml \
-  && echo '' \
-  && echo 'Creating a symbolic link for the scheduler to run locally between $FOUNDATIONS_HOME/config/local_docker_scheduler/database.config.yaml -> $LOCAL_DOCKER_SCHEDULER_DIR/database.config.yaml' \
-  && echo '' \
-  && rm -f $LOCAL_DOCKER_SCHEDULER_DIR/database.config.yaml \
-  && ln -s $FOUNDATIONS_HOME/config/local_docker_scheduler/database.config.yaml $LOCAL_DOCKER_SCHEDULER_DIR/database.config.yaml \
-  && echo "Generating tracker.config.yaml at $FOUNDATIONS_HOME/config/local_docker_scheduler/" \
-  && cat ./devops/envsubsts/tracker_client_plugins.envsubst.yaml | envsubst > $FOUNDATIONS_HOME/config/local_docker_scheduler/tracker_client_plugins.yaml \
-  && echo '' \
-  && echo 'Creating a symbolic link for the scheduler to run locally between $FOUNDATIONS_HOME/config/local_docker_scheduler/tracker_client_plugins.yaml -> $LOCAL_DOCKER_SCHEDULER_DIR/tracker_client_plugins.yaml' \
-  && echo '' \
-  && rm -f $LOCAL_DOCKER_SCHEDULER_DIR/tracker_client_plugins.yaml \
-  && ln -s $FOUNDATIONS_HOME/config/local_docker_scheduler/tracker_client_plugins.yaml $LOCAL_DOCKER_SCHEDULER_DIR/tracker_client_plugins.yaml \
-  && cd $LOCAL_DOCKER_SCHEDULER_DIR \
-  && pip install -r requirements_dev.txt \
-  && python -m local_docker_scheduler -p ${SCHEDULER_PORT} > $FOUNDATIONS_HOME/logs/scheduler.log 2>&1 &
+echo "Attempting to run scheduler with foundations home set to $FOUNDATIONS_HOME"
+start_scheduler()
 
 echo 'Starting up the auth proxy' \
   && echo '' \
-  && cd ../foundations-auth-proxy \
-  && pip install -r requirements.txt \
-  && python -m auth_proxy -n -p 5558 --dev > $FOUNDATIONS_HOME/logs/auth_proxy.log 2>&1 &
-
+  && start_auth_proxy()
+  
 echo "Starting the Auth Server (keycloak)" \
   && echo '' \
   && ./foundations_contrib/src/foundations_contrib/authentication/launch.sh
-
-echo "Ensuring that the docker network is configured for the orbit workers" \
-  && echo '' \
-  && docker network create foundations-orbit || true \
-  && redis_docker_id=$(docker ps --filter "name=redis" --quiet) \
-  && docker network connect foundations-orbit $redis_docker_id || true
 
 cd foundations_ui_orbit \
   && echo "Install UI dependencies" \
