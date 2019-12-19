@@ -11,7 +11,7 @@ def get_empty_columns(col_names, col_types, dataframe):
 
     for col_name in float_columns:
         if dataframe[col_name].isna().sum() / len(dataframe) == 1.0:
-            col_types[col_name] = 'empty'
+            col_types.pop(col_name)
             empty_columns.append(col_name)
 
     col_names = [column for column in col_names if column not in empty_columns]

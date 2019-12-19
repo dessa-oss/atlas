@@ -1048,11 +1048,11 @@ class TestDataContract(Spec):
                 },
                 'bin_stats': {},
                 'reference_column_names': {'B'},
-                'reference_column_types': {'A': 'empty', 'B': 'int64'}
+                'reference_column_types': {'B': 'int64'}
             },
             'schema_test': {
                 'column_names': ['B'],
-                'column_types': {'A': 'empty', 'B': 'int64'}
+                'column_types': {'B': 'int64'}
             }
         }
 
