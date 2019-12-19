@@ -68,7 +68,7 @@ def distribution_check(distribution_check_config, column_names, bin_stats, curre
 
         if categorical_attributes[col]:
             dist_check_results[col] = {}
-            column_values = current_df[col]
+            column_values = current_df[col].dropna()
             ref_column_bin_stats = bin_stats[col]
 
             value_to_percentage_map = {}
@@ -85,7 +85,7 @@ def distribution_check(distribution_check_config, column_names, bin_stats, curre
                 ref_bin_percentages.append(ref_value_percentage)
                 current_bin_percentages.append(current_value_percentage)
         else:
-            current_values = current_df[col]
+            current_values = current_df[col].dropna()
             n_current_vals = len(current_values)
             dist_check_results[col] = {}
             # bin the col in current_df using edges from reference

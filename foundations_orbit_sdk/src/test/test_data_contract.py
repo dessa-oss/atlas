@@ -1012,7 +1012,6 @@ class TestDataContract(Spec):
 
         self.assertNotIn('A', results['dist_check_results'].keys())
 
-
     def test_creating_data_contract_with_reference_dataframe_containing_all_nans_column_excludes_column(self):
         import numpy, pandas
 
@@ -1056,9 +1055,27 @@ class TestDataContract(Spec):
             }
         }
 
-
-
         self.assertEqual(expected_info, info)
+
+    def test_validating_against_reference_dataframe_with_column_of_mostly_nans_passes_distribution_test(self):
+        import numpy, pandas
+
+        reference_data = {self.column_name: [1, numpy.nan, numpy.nan, numpy.nan]}
+        reference_dataframe = pandas.DataFrame(data=reference_data)
+        dataframe_to_validate = pandas.DataFrame(data=reference_data)
+
+        contract = DataContract('my_contract', reference_dataframe)
+
+        results = contract.validate(dataframe_to_validate)
+
+        expected_dist_check_results = {
+            self.column_name: {
+                'binned_l_infinity': 0.0,
+                'binned_passed': True
+            }
+        }
+
+        self.assertDictEqual(expected_dist_check_results, results['dist_check_results'])
 
 
     def _test_special_values_checker_for_datatype_input_returns_expected_results(self, data):

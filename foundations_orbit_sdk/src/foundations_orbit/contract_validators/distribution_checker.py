@@ -129,11 +129,11 @@ class DistributionChecker(object):
 
         for column_name in self._reference_column_names:
             if self._categorical_attributes[column_name]:
-                self._bin_stats[column_name] = create_bin_stats_categorical(reference_dataframe[column_name])
+                self._bin_stats[column_name] = create_bin_stats_categorical(reference_dataframe[column_name].dropna())
             elif column_name not in self._invalid_attributes:
                 self._bin_stats[column_name] = create_bin_stats(
                     self._distribution_options['max_bins'],
-                    reference_dataframe[column_name]
+                    reference_dataframe[column_name].dropna()
                 )
             else:
                 self._bin_stats[column_name] = None
