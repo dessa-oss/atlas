@@ -21,11 +21,8 @@ class SchemaChecker(object):
             'column_types': self._column_types
         }
 
-    def validate(self, current_dataframe):
+    def validate(self,columns_to_validate, types_to_validate):
         import pandas
-        from foundations_orbit.utils.get_column_types import get_column_types
-
-        columns_to_validate, types_to_validate = get_column_types(current_dataframe)
 
         schema_check_results = {}
         if self._reference_column_names_match(columns_to_validate):
@@ -55,6 +52,7 @@ class SchemaChecker(object):
     def _reference_column_names_match(self, columns_to_validate):
         return self._reference_column_names == columns_to_validate
 
+    # TODO: change this to checking equivalence between two dicts (dict1 == dict2)
     def _data_types_match(self, types_to_validate):
         for column, col_type in types_to_validate.items():
             if self._column_types[column] != col_type:

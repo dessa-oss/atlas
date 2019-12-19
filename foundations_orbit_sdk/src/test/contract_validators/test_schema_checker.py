@@ -286,5 +286,7 @@ class TestSchemaChecker(Spec):
         return SchemaChecker(column_names, column_types)
 
     def _assert_schema_check_results_for_dataframe(self, ref_dataframe, current_dataframe, expected_results):
+        from foundations_orbit.utils.get_column_types import get_column_types
         schema_checker = self._schema_checker_from_dataframe(ref_dataframe)
-        self.assertEqual(expected_results, schema_checker.validate(current_dataframe))
+        columns_to_validate, types_to_validate = get_column_types(current_dataframe)
+        self.assertEqual(expected_results, schema_checker.validate(columns_to_validate, types_to_validate))

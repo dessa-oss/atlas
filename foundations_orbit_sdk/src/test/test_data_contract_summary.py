@@ -112,9 +112,14 @@ class TestDataContractSummary(Spec):
         return pandas.DataFrame(data={'feat_1': values}, dtype=numpy.float64)
 
     @let
+    def types_of_dataframe_to_validate_with_one_numerical_column(self):
+        return {
+            'feat_1': 'float64'
+        }
+
+    @let
     def dataframe_to_validate_with_one_str_column(self):
         import pandas
-        import numpy
 
         values = []
         for i in range(1, 12):
@@ -124,12 +129,24 @@ class TestDataContractSummary(Spec):
         return pandas.DataFrame(data={'feat_1': values})
 
     @let
+    def types_of_dataframe_to_validate_with_one_str_column(self):
+        return {
+            'feat_1': 'str'
+        }
+
+    @let
     def dataframe_to_validate_with_one_bool_column(self):
         import pandas
 
         values = [True] * 10 + [False] * 5
 
         return pandas.DataFrame(data={'feat_1': values})
+
+    @let
+    def types_of_dataframe_to_validate_with_one_bool_column(self):
+        return {
+            'feat_1': 'bool'
+        }
 
     @let
     def dataframe_to_validate_with_one_numerical_column_and_different_attribute_name(self):
@@ -144,6 +161,12 @@ class TestDataContractSummary(Spec):
         return pandas.DataFrame(data={'feat_3': values}, dtype=numpy.float64)
 
     @let
+    def types_of_dataframe_to_validate_with_one_numerical_column_and_different_attribute_name(self):
+        return {
+            'feat_3': 'float64'
+        }
+
+    @let
     def dataframe_to_validate_with_one_numerical_column_and_different_attribute_type(self):
         import pandas
         import numpy
@@ -154,6 +177,12 @@ class TestDataContractSummary(Spec):
                 values.append(12 - i)
 
         return pandas.DataFrame(data={'feat_1': values}, dtype=numpy.int64)
+
+    @let
+    def types_of_dataframe_to_validate_with_one_numerical_column_and_different_attribute_type(self):
+        return {
+            'feat_1': 'int64'
+        }
 
     @let
     def dataframe_to_validate_with_one_numerical_column_and_nans(self):
@@ -185,6 +214,10 @@ class TestDataContractSummary(Spec):
                 values_2.append(i)
 
         return pandas.DataFrame(data={'feat_1': values_1, 'feat_2': values_2}, dtype=numpy.float64)
+
+    @let
+    def types_of_dataframe_to_validate_with_two_numerical_columns(self):
+        return {'feat_1': 'float64', 'feat_2': 'float64'}
 
     def _create_data_contract_summary(self, dataframe, column_types=None, categorical_columns=None):
         from foundations_orbit.data_contract_summary import DataContractSummary
@@ -247,7 +280,8 @@ class TestDataContractSummary(Spec):
         data_contract_summary = self._create_data_contract_summary(self.reference_dataframe_with_one_numerical_column)
         data_contract_summary.validate(
             self.dataframe_to_validate_with_one_numerical_column,
-            self._create_formatted_report(self.reference_dataframe_with_one_numerical_column)
+            self._create_formatted_report(self.reference_dataframe_with_one_numerical_column),
+            self.types_of_dataframe_to_validate_with_one_numerical_column
         )
         attribute_summary = data_contract_summary.data_contract_summary['attribute_summaries']['feat_1']
         self.assertIn('actual_data_summary', attribute_summary)
@@ -348,7 +382,8 @@ class TestDataContractSummary(Spec):
         data_contract_summary = self._create_data_contract_summary(self.reference_dataframe_with_two_numerical_columns)
         data_contract_summary.validate(
             self.dataframe_to_validate_with_two_numerical_columns,
-            self._create_formatted_report(self.reference_dataframe_with_two_numerical_columns)
+            self._create_formatted_report(self.reference_dataframe_with_two_numerical_columns),
+            self.types_of_dataframe_to_validate_with_two_numerical_columns
         )
         attribute_summaries = data_contract_summary.data_contract_summary['attribute_summaries']
 
@@ -400,7 +435,8 @@ class TestDataContractSummary(Spec):
         data_contract_summary = self._create_data_contract_summary(self.reference_dataframe_with_one_numerical_column)
         data_contract_summary.validate(
             self.dataframe_to_validate_with_one_numerical_column_and_different_attribute_name,
-            self._create_formatted_report(self.reference_dataframe_with_one_numerical_column)
+            self._create_formatted_report(self.reference_dataframe_with_one_numerical_column),
+            self.types_of_dataframe_to_validate_with_one_numerical_column_and_different_attribute_name
         )
         attribute_summaries = data_contract_summary.data_contract_summary['attribute_summaries']
 
@@ -428,7 +464,8 @@ class TestDataContractSummary(Spec):
         data_contract_summary = self._create_data_contract_summary(self.reference_dataframe_with_one_numerical_column)
         data_contract_summary.validate(
             self.dataframe_to_validate_with_one_numerical_column_and_different_attribute_type,
-            self._create_formatted_report(self.reference_dataframe_with_one_numerical_column)
+            self._create_formatted_report(self.reference_dataframe_with_one_numerical_column),
+            self.types_of_dataframe_to_validate_with_one_numerical_column_and_different_attribute_type
         )
         attribute_summaries = data_contract_summary.data_contract_summary['attribute_summaries']
 
@@ -458,7 +495,8 @@ class TestDataContractSummary(Spec):
         data_contract_summary = self._create_data_contract_summary(self.reference_dataframe_with_one_numerical_column)
         data_contract_summary.validate(
             self.dataframe_to_validate_with_one_numerical_column,
-            self._create_formatted_report(self.reference_dataframe_with_one_numerical_column)
+            self._create_formatted_report(self.reference_dataframe_with_one_numerical_column),
+            self.types_of_dataframe_to_validate_with_one_numerical_column
         )
 
         expected_data = {
@@ -533,7 +571,8 @@ class TestDataContractSummary(Spec):
         data_contract_summary = self._create_data_contract_summary(self.reference_dataframe_with_one_str_column, {'feat_1': 'str'}, {'feat_1': True})
         data_contract_summary.validate(
             self.dataframe_to_validate_with_one_str_column,
-            self._create_formatted_report(self.reference_dataframe_with_one_str_column)
+            self._create_formatted_report(self.reference_dataframe_with_one_str_column),
+            self.types_of_dataframe_to_validate_with_one_str_column
         )
         attribute_summaries = data_contract_summary.data_contract_summary['attribute_summaries']
 
@@ -564,7 +603,8 @@ class TestDataContractSummary(Spec):
         data_contract_summary = self._create_data_contract_summary(self.reference_dataframe_with_one_bool_column, {'feat_1': 'bool'}, {'feat_1': True})
         data_contract_summary.validate(
             self.dataframe_to_validate_with_one_bool_column,
-            self._create_formatted_report(self.reference_dataframe_with_one_bool_column)
+            self._create_formatted_report(self.reference_dataframe_with_one_bool_column),
+            self.types_of_dataframe_to_validate_with_one_bool_column
         )
         attribute_summaries = data_contract_summary.data_contract_summary['attribute_summaries']
 

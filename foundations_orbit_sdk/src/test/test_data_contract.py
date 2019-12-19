@@ -387,19 +387,13 @@ class TestDataContract(Spec):
         self.assertEqual(contract, loaded_contract)
 
     def test_data_contract_validate_performs_schema_check_by_default(self):
-        mock_schema_check_results = {'passed': True}
-        mock_schema_checker_class = self.patch('foundations_orbit.contract_validators.schema_checker.SchemaChecker', ConditionalReturn())
-        mock_schema_checker = Mock()
-
-        mock_schema_checker_class.return_when(mock_schema_checker, [self.column_name, self.column_name_2], {self.column_name: 'int64', self.column_name_2: 'float64'})
-        mock_schema_checker.validate = ConditionalReturn()
-        mock_schema_checker.validate.return_when(mock_schema_check_results, self.two_column_dataframe_no_rows_different_second_column)
+        expected_schema_check_results = {'passed': True}
 
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         contract.options.check_distribution = False
         contract.options.check_special_values = False
-        validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
-        self.assertEqual(mock_schema_check_results, validation_report['schema_check_results'])
+        validation_report = contract.validate(self.two_column_dataframe, self.datetime_today)
+        self.assertEqual(expected_schema_check_results, validation_report['schema_check_results'])
     
     def test_data_contract_validate_excludes_columns_that_failed_from_other_tests(self):
         import pandas, numpy
@@ -416,10 +410,12 @@ class TestDataContract(Spec):
         contract.min_max_test.configure(attributes=[list(current_dataframe.columns)[0]], lower_bound=0, upper_bound=2)
         validation_report = contract.validate(current_dataframe, self.datetime_today)
 
+
         del validation_report['metadata']
         del validation_report['min_max_test_results']
         del validation_report['row_count']
         del validation_report['schema_check_results']
+
         for test_dict in validation_report.values():
             cols_to_ignore = {self.column_name_2, self.column_name_3, self.column_name_4}
             self.assertTrue(cols_to_ignore.issubset(set(test_dict.keys())))
@@ -747,7 +743,7 @@ class TestDataContract(Spec):
         self.assertEqual(expected_output, deserialized_report)
 
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_different_types(self):
-        inference_period=self.inference_period
+        inference_period = self.inference_period
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         contract.options.check_special_values = False
 
@@ -1017,6 +1013,54 @@ class TestDataContract(Spec):
         self.assertNotIn('A', results['dist_check_results'].keys())
 
 
+    def test_creating_data_contract_with_reference_dataframe_containing_all_nans_column_excludes_column(self):
+        import numpy, pandas
+
+        reference_data = {'A': [numpy.nan, numpy.nan, numpy.nan, numpy.nan], 'B': [1, 2, 3, 99]}
+        reference_dataframe = pandas.DataFrame(data=reference_data)
+
+        contract = DataContract('my_contract', reference_dataframe)
+
+        contract.special_value_test.configure(attributes=['B'], thresholds={99: 0.1})
+        contract.min_max_test.configure(attributes=['B'], lower_bound=0, upper_bound=100)
+
+        info = contract.info()
+
+        expected_info = {
+            'special_values_test': {
+                'B': {
+                    99: 0.1
+                }
+            },
+            'min_max_test': {
+                'B': {
+                    'lower_bound': 0,
+                    'upper_bound': 100
+                }
+            },
+            'distribution_test': {
+                'distribution_options': {
+                    'distance_metric': 'l_infinity',
+                    'default_threshold': 0.1,
+                    'custom_thresholds': {},
+                    'custom_methods': {},
+                    'max_bins': 50
+                },
+                'bin_stats': {},
+                'reference_column_names': {'B'},
+                'reference_column_types': {'A': 'empty', 'B': 'int64'}
+            },
+            'schema_test': {
+                'column_names': ['B'],
+                'column_types': {'A': 'empty', 'B': 'int64'}
+            }
+        }
+
+
+
+        self.assertEqual(expected_info, info)
+
+
     def _test_special_values_checker_for_datatype_input_returns_expected_results(self, data):
         import pandas, numpy
         dataframe = pandas.DataFrame(data)
@@ -1048,6 +1092,7 @@ class TestDataContract(Spec):
         results = data_contract.validate(dataframe_to_validate)['special_values_check_results']
 
         self.assertEqual(expected_results, results)
+
 
     def _find_if_key_in_dictionary(self, dictionary_to_search, key):
         if key in dictionary_to_search: return True

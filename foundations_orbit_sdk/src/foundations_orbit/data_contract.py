@@ -11,6 +11,7 @@ class DataContract(object):
     def __init__(self, contract_name, df=None):
         from foundations_orbit.data_contract_summary import DataContractSummary
         from foundations_orbit.utils.get_column_types import get_column_types
+        from foundations_orbit.utils.get_empty_columns import get_empty_columns
         import uuid
 
         self.options = self._default_options()
@@ -25,6 +26,10 @@ class DataContract(object):
 
         self._number_of_rows = len(self._dataframe)
         self._column_names, self._column_types = get_column_types(self._dataframe)
+        self._column_names, self._column_types, self._empty_reference_column_names = \
+            get_empty_columns(self._column_names, self._column_types, self._dataframe)
+        if self._empty_reference_column_names:
+            self._warn_for_empty_columns()
         self._bin_stats = {}
         self._uuid = uuid.uuid4()
 
@@ -44,6 +49,9 @@ class DataContract(object):
             'distribution_test': self.distribution_test.info(),
             'schema_test': self.schema_test.info()
         }
+
+    def _warn_for_empty_columns(self):
+        self._log().warning(f'Reference dataframe contains the following empty columns: \n{self._empty_reference_column_names}\nNo tests will be run on these columns.')
 
     @staticmethod
     def _default_options():
@@ -82,6 +90,8 @@ class DataContract(object):
             elif 'category' in col_type:
                 self._categorical_attributes[col_name] = True
             elif 'object' in col_type:
+                self._categorical_attributes[col_name] = False
+            elif 'empty' in col_type:
                 self._categorical_attributes[col_name] = False
 
     def _initialize_schema_checker(self):
@@ -189,9 +199,11 @@ class DataContract(object):
         inference_period = str(inference_period)
 
         columns_to_validate, types_to_validate = get_column_types(dataframe_to_validate)
-        
+        if self._empty_reference_column_names:
+            columns_to_validate, types_to_validate = self._filter_nan_columns_from_dataframe(columns_to_validate, types_to_validate)
         attributes_to_ignore = []
-        validation_report = self._run_checkers_and_get_validation_report(dataframe_to_validate, attributes_to_ignore)
+        validation_report = self._run_checkers_and_get_validation_report(dataframe_to_validate, attributes_to_ignore,
+                                                                         columns_to_validate, types_to_validate)
         self._add_metadata_to_validation_report(validation_report, columns_to_validate, types_to_validate)
 
         report_formatter = ReportFormatter(inference_period=inference_period,
@@ -203,17 +215,27 @@ class DataContract(object):
                                     options=self.options)
         serialized_output = report_formatter.serialized_output()
 
-        self.summary.validate(dataframe_to_validate, report_formatter.formatted_report())
+        self.summary.validate(dataframe_to_validate, report_formatter.formatted_report(), types_to_validate)
 
         try:
             save_project_to_redis(project_name)
             self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output, self.summary.serialized_output())
         except ConnectionError as e:
-            self._log().warn('WARNING: Unable to connect to redis. Data contract results will not be saved')
+            self._log().warning('WARNING: Unable to connect to redis. Data contract results will not be saved')
 
         self._modify_validation_report_with_schema_failures(validation_report, attributes_to_ignore)
 
         return validation_report
+
+    def _filter_nan_columns_from_dataframe(self, columns_to_validate, types_to_validate):
+
+        columns_to_validate = [column for column in columns_to_validate if column not in self._empty_reference_column_names]
+        types_to_validate = {key: value for key, value in types_to_validate.items() if key not in self._empty_reference_column_names}
+        self._log().warning(f'Reference dataframe contains the following empty columns: \n{self._empty_reference_column_names}\n'
+                            f'No tests will be run on these columns even if they exist in the current dataframe.\n'
+                            f'Please re-create your Data Contract using a dataset with these columns populated if you wish to validate these columns.')
+
+        return columns_to_validate, types_to_validate
 
     def _columns_with_all_nans(self, dataframe):
         columns_with_all_nans = []
@@ -222,11 +244,12 @@ class DataContract(object):
                 columns_with_all_nans.append(column)
         return columns_with_all_nans
 
-    def _run_checkers_and_get_validation_report(self, dataframe_to_validate, attributes_to_ignore):
+    def _run_checkers_and_get_validation_report(self, dataframe_to_validate, attributes_to_ignore, columns_to_validate,
+                                                types_to_validate):
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
 
         validation_report = {
-            'schema_check_results': self.schema_test.validate(dataframe_to_validate)
+            'schema_check_results': self.schema_test.validate(columns_to_validate, types_to_validate)
         }
         if not validation_report['schema_check_results']['passed']:
             if validation_report['schema_check_results'].get('cols', None):
@@ -309,6 +332,6 @@ class DataContract(object):
 
     @staticmethod
     def _log():
-        from foundations.global_state import log_manager
+        from foundations_contrib.global_state import log_manager
         return log_manager.get_logger(__name__)
 
