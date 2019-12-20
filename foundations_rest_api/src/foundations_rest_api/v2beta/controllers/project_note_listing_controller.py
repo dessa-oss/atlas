@@ -16,8 +16,8 @@ class ProjectNoteListingController(object):
 
     def __init__(self):
         from foundations_contrib.authentication.authentication_client import AuthenticationClient
-        # from foundations_contrib.authentication.configs import ATLAS
-        # self.client = AuthenticationClient(ATLAS, '/api/v2beta/auth/login')
+        from foundations_contrib.authentication.configs import ATLAS
+        self.client = AuthenticationClient(ATLAS, '/api/v2beta/auth/login')
 
     def post(self):
         from foundations_contrib.global_state import redis_connection
@@ -57,5 +57,4 @@ class ProjectNoteListingController(object):
 
     def _author_name_from_id(self, author_id):
         token = get_token_from_header()
-        return ''
-        # return self.client.users_info(token)[author_id]
+        return self.client.users_info(token)[author_id]
