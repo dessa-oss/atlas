@@ -39,6 +39,7 @@ class AuthenticationController(Resource):
         from foundations_contrib.authentication.authentication_client import (
             AuthenticationClient,
         )
+        print(ATLAS)
         self.client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth/login")
 
     def get(self, action: str) -> Response:

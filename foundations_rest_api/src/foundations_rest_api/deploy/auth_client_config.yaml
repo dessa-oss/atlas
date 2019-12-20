@@ -1,0 +1,8 @@
+realm: Atlas
+auth-server-url: http://localhost:8080/auth
+ssl-required: none
+resource: foundations
+public-client: True
+verify-token-audience: True
+use-resource-role-mappings: True
+confidential-port: 0
