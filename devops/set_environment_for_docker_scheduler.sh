@@ -35,6 +35,7 @@ export REMOTE_FOUNDATIONS_HOME=${REMOTE_FOUNDATIONS_HOME:-$FOUNDATIONS_HOME}
 
 
 function start_scheduler() {
+    echo "Attempting to run scheduler with foundations home set to $FOUNDATIONS_HOME"
     echo "Generating database.config.yaml at $FOUNDATIONS_HOME/config/local_docker_scheduler/" \
         && mkdir -p $FOUNDATIONS_HOME/config/local_docker_scheduler \
         && cat ./devops/envsubsts/database.config.envsubst.yaml | envsubst > $FOUNDATIONS_HOME/config/local_docker_scheduler/database.config.yaml \
@@ -77,4 +78,12 @@ function start_auth_proxy () {
         echo "Unable to start auth proxy"
         exit 1
     fi
+}
+
+function start_auth_server() {
+    export AUTH_SERVER_NAME=foundations-authentication-server \
+        && echo "Attempting to start the auth server as ${AUTH_SERVER_NAME}" \
+        && ./foundations_contrib/src/foundations_contrib/authentication/launch.sh \
+        && echo "Connecting the auth server ${AUTH_SERVER_NAME} to network ${network_name}" \
+        && docker network connect $network_name $AUTH_SERVER_NAME
 }

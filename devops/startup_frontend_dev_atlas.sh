@@ -9,13 +9,10 @@ export REACT_APP_API_STAGING_URL="http://localhost:5558/api/v2beta/"
 
 
 echo "Ensuring that orbit is not also running"
-echo ""
 ./devops/teardown_frontend_dev_orbit.sh
 
 echo " Ensuring stoping previous running altas"
-echo ""
 ./devops/teardown_frontend_dev_atlas.sh
-
 
 echo "Attempting to run redis at ${REDIS_PORT}. NB If redis is already running port flag will not have an effect"
 ./devops/start_redis.sh atlas $REDIS_PORT
@@ -23,16 +20,14 @@ echo "Attempting to run redis at ${REDIS_PORT}. NB If redis is already running p
 echo "Running Atlas REST API on port ${ATLAS_PORT}"
 python devops/startup_atlas_api.py ${ATLAS_PORT} &
 
-echo "Attempting to run scheduler with foundations home set to $FOUNDATIONS_HOME"
+echo "Starting the Scheduler ......."
 start_scheduler
 
+echo "Starting Auth Proxy ....."
 start_auth_proxy
 
-echo "Starting the Auth Server (keycloak)" \
-  && echo "" \
-  && export AUTH_SERVER_NAME=foundations-authentication-server \
-  && ./foundations_contrib/src/foundations_contrib/authentication/launch.sh \
-  && docker network connect foundations-atlas foundations-authentication-server
+echo "Starting the Auth Server (keycloak) ....." 
+start_auth_server
 
 cd foundations_ui && \
   echo "Install UIs dependencies" && \
@@ -41,11 +36,9 @@ cd foundations_ui && \
   yarn start > $FOUNDATIONS_HOME/logs/yarn.log 2>&1 &
 
 
-
-
-echo "Running UI on port 3000"
-
 echo "Check log files for status of programs:"
-echo "    $FOUNDATIONS_HOME/logs/scheduler.log"
-echo "    $FOUNDATIONS_HOME/logs/yarn.log"
-echo "    $FOUNDATIONS_HOME/logs/orbit_rest_api.log"
+echo "    tail -f $FOUNDATIONS_HOME/logs/scheduler.log"
+echo "    tail -f $FOUNDATIONS_HOME/logs/yarn.log"
+echo "    tail -f $FOUNDATIONS_HOME/logs/atlas_rest_api.log"
+echo "    tail -f $FOUNDATIONS_HOME/logs/auth_proxy.log"
+echo "    docker logs -f ${AUTH_SERVER_NAME}"
