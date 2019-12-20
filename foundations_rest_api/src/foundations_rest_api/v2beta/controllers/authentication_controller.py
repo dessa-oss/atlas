@@ -12,7 +12,7 @@ from flask_restful import Resource
 
 from werkzeug.wrappers import Response
 
-
+from foundations_rest_api.config.configs import ATLAS
 from foundations_contrib.authentication.utils import (
     get_token_from_header,
     verify_token,
@@ -38,10 +38,6 @@ class AuthenticationController(Resource):
         from foundations_contrib.authentication.authentication_client import (
             AuthenticationClient,
         )
-        import yaml
-        import os
-
-        ATLAS = yaml.load(open(os.getenv('AUTH_CLIENT_CONFIG_PATH', 'foundations_rest_api/src/foundations_rest_api/deploy/auth_client_config.yaml')))
         self.client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth/login")
 
     def get(self, action: str) -> Response:

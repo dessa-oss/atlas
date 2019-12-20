@@ -43,7 +43,7 @@ WORKDIR /app/
 COPY docker/${main_file} /app/main.py
 
 RUN mkdir /configs
-COPY foundations_rest_api/src/foundations_rest_api/deploy/ /configs/
+COPY foundations_rest_api/src/foundations_rest_api/config/ /configs/
 CMD ["/bin/sh", "configs/envsubst.sh"]
 
 ENV AUTH_SERVER_URL=http://foundations-authentication-server:8080/auth

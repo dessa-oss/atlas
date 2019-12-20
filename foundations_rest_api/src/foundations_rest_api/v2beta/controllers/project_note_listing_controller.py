@@ -16,7 +16,7 @@ class ProjectNoteListingController(object):
 
     def __init__(self):
         from foundations_contrib.authentication.authentication_client import AuthenticationClient
-        from foundations_contrib.authentication.configs import ATLAS
+        from foundations_rest_api.config.configs import ATLAS
         self.client = AuthenticationClient(ATLAS, '/api/v2beta/auth/login')
 
     def post(self):
