@@ -8,6 +8,8 @@ FROM tiangolo/uwsgi-nginx-flask:python3.6-alpine3.8
 ARG main_file
 
 ENV SERVER_NAME=localhost
+ENV AUTH_SERVER_URL=http://foundations-authentication-server:8080/auth
+ENV AUTH_CLIENT_CONFIG_PATH=/configs/auth_client_config.yaml
 
 RUN mkdir -p /var/foundations ~/.ssh
 WORKDIR /var/foundations
@@ -26,3 +28,7 @@ RUN find -iname "foundations_internal-*.whl" | xargs pip install \
 
 WORKDIR /app/
 COPY docker/${main_file} /app/main.py
+
+RUN mkdir /configs
+COPY foundations_rest_api/src/foundations_rest_api/config/ /configs/
+CMD ["/bin/sh", "/configs/envsubst.sh"]
