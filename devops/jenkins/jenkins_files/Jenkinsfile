@@ -153,6 +153,16 @@ pipeline{
                                 }
                             }
                         }
+                        stage('Atlas Auth Acceptance Tests'){
+                            steps {
+                                container("python3-3") {
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'cp -r ../testing/* . || true'
+                                        sh 'python -Wi -m unittest -f -v auth_acceptance'
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 stage('Orbit Acceptance Tests') {
