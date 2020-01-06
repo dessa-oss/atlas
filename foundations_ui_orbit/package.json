@@ -35,6 +35,8 @@
     "jest-pnp-resolver": "1.0.1",
     "jest-resolve": "23.6.0",
     "jquery": "^3.3.1",
+    "js-cookie": "^2.2.1",
+    "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
     "mini-css-extract-plugin": "0.4.3",
     "moment": "^2.24.0",

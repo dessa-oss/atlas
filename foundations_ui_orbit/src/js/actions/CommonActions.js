@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie';
+
 const CommonActions = {
   deepEqual: (x, y) => {
     const ok = Object.keys;
@@ -19,6 +21,16 @@ const CommonActions = {
 
   nullToNA: val => {
     return val === null ? 'N/A' : val;
+  },
+
+  getAccessCookie: () => {
+    return Cookies.get('atlas_access_token');
+  },
+
+  checkStatusResponse: response => {
+    if (response.status === 401) {
+      window.location = '/login';
+    }
   },
 };
 

@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import {
+  BrowserRouter as Router, Route, Switch, Redirect,
+} from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
 import './scss/app.scss';
 import App from './js/components/App';
@@ -12,6 +14,7 @@ import Timeline from './js/components/PackagePage/Timeline';
 import ModelManagement from './js/components/PackagePage/ModelManagement';
 import Settings from './js/components/PackagePage/Settings/Settings';
 import ProjectPage from './js/components/ProjectPage/ProjectPage';
+import LoginPage from './js/components/LoginPage/LoginPage';
 
 const app = document.getElementById('root');
 
@@ -28,7 +31,8 @@ ReactDOM.render(
         <Route path="/projects/:name/evaluation" component={ModelEvaluation} />
         <Route path="/projects/:name/schedules" component={MonitorSchedules} />
         <Route path="/projects" component={ProjectPage} />
-        <Route path="/" component={App} />
+        <Route path="/login" component={LoginPage} />
+        <Redirect from="/" to="/login" />
         <Route component={App} />
       </Switch>
     </Router>
