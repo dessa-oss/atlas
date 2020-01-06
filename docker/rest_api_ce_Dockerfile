@@ -11,6 +11,8 @@ ENV SERVER_NAME=localhost
 ENV AUTH_SERVER_URL=http://foundations-authentication-server:8080/auth
 ENV AUTH_CLIENT_CONFIG_PATH=/configs/auth_client_config.yaml
 
+COPY --from=loicmahieu/alpine-envsubst /usr/local/bin/envsubst /usr/local/bin/envsubst
+
 RUN mkdir -p /var/foundations ~/.ssh
 WORKDIR /var/foundations
 
