@@ -15,6 +15,8 @@ from foundations_spec import *
 class TestAuthViaClient(Spec):
 
     max_time_out_in_sec = 60
+    running_on_jenkins = os.environ.get('RUNNING_ON_CI', 'FALSE')
+    auth_server_host = 'keycloak-headless.ci-pipeline.svc.cluster.local' if running_on_jenkins == 'TRUE' else 'localhost'
 
     @staticmethod
     def resolve_f9s_auth():
@@ -27,7 +29,7 @@ class TestAuthViaClient(Spec):
             self.resolve_f9s_auth(), "foundations_contrib/authentication"
         )
         
-        res = requests.get("http://localhost:8080/auth/")
+        res = requests.get(f"http://{auth_server_host}:8080/auth/")
         if res.status_code == 200:
             return
             
@@ -36,7 +38,7 @@ class TestAuthViaClient(Spec):
         start_time = time.time()
         while time.time() - start_time < self.max_time_out_in_sec:
             try:
-                res = requests.get("http://localhost:8080/auth/")
+                res = requests.get(f"http://{auth_server_host}:8080/auth/")
                 if res.status_code == 200:
                     return
             except Exception as e:
