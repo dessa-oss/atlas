@@ -157,7 +157,7 @@ pipeline{
                             steps {
                                 container("python3-3") {
                                     ws("${WORKSPACE}/devops") {
-                                        sh 'python startup_atlas_api.py 37722 &'
+                                        sh 'export FOUNDATIOINS_SCHEDULER_URL=LOCALHOST:5000 && python startup_atlas_api.py 37722 &'
                                         sh 'docker run -d --rm --name auth-proxy -p 5558:5558 docker.shehanigans.net/auth-proxy:latest'
                                     }
                                 }
