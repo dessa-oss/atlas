@@ -153,6 +153,16 @@ pipeline{
                                 }
                             }
                         }
+                        stage('Build and Run Auth Proxy for Acceptance Test'){
+                            steps {
+                                container("python3-3") {
+                                    ws("${WORKSPACE}/devops") {
+                                        sh 'python startup_atlas_api.py 37722 &'
+                                        sh 'docker run -d --rm --name auth-proxy -p 5558:5558 docker.shehanigans.net/auth-proxy:latest'
+                                    }
+                                }
+                            }
+                        }
                         stage('Atlas Auth Acceptance Tests'){
                             steps {
                                 container("python3-3") {
