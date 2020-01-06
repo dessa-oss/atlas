@@ -22,15 +22,19 @@ class TestAuthViaClient(Spec):
 
         return path.realpath("../foundations_contrib/src/")
 
-    def start_and_wait_for_keycloak(self, klass):
+    def start_and_wait_for_keycloak(self):
         full_path = os.path.join(
-            klass.resolve_f9s_auth(), "foundations_contrib/authentication"
+            self.resolve_f9s_auth(), "foundations_contrib/authentication"
         )
-
+        
+        res = requests.get("http://localhost:8080/auth/")
+        if res.status_code == 200:
+            return
+            
         subprocess.run(["bash", "launch.sh"], cwd=full_path, stdout=subprocess.PIPE)
 
         start_time = time.time()
-        while time.time() - start_time < klass.max_time_out_in_sec:
+        while time.time() - start_time < self.max_time_out_in_sec:
             try:
                 res = requests.get("http://localhost:8080/auth/")
                 if res.status_code == 200:
@@ -40,6 +44,7 @@ class TestAuthViaClient(Spec):
         self.fail("auth server never started")
 
     def test_cli_login(self):
+        self.start_and_wait_for_keycloak()
         with self.assert_does_not_raise():
             result = subprocess.run(
                 "foundations login http://localhost:5558 -u test -p test",
