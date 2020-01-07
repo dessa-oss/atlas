@@ -85,7 +85,7 @@ function start_auth_proxy_orbit () {
     cd ../foundations-auth-proxy \
         && pip install -r requirements.txt \
         && pip install -e . \
-        && python -m auth_proxy -t -p $AUTH_PROXY_PORT --dev > $FOUNDATIONS_HOME/logs/auth_proxy.log 2>&1 &
+        && python -m auth_proxy -t orbit -p $AUTH_PROXY_PORT --dev > $FOUNDATIONS_HOME/logs/auth_proxy.log 2>&1 &
     
     # TODO - Need a better check if the auth is running (maybe check the port)
     if [ $? == 0 ]; then
