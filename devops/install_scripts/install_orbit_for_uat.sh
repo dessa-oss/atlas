@@ -12,5 +12,5 @@ yes | ./orbit_installer.sh
 orbit-server start > /dev/null 2>&1 &
 mkdir -p test && \
 echo import foundations >> test/main.py && \
-chmod +x /home/ubuntu/wait_for_successful_job_submission.sh && \
-bash /home/ubuntu/wait_for_successful_job_submission.sh 50
+chmod +x /home/ubuntu/wait_for_successful_monitor_creation.sh && \
+bash /home/ubuntu/wait_for_successful_monitor_creation.sh 50
