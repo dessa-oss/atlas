@@ -86,6 +86,7 @@ def update_version_file(version):
 
 if __name__ == "__main__":
     import os
+    
     os.environ['docker_build_version'] = ''
 
     manifest = load_manifest()
