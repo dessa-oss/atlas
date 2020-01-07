@@ -157,7 +157,7 @@ pipeline{
                             steps {
                                 container("python3-3") {
                                     ws("${WORKSPACE}/devops") {
-                                        sh 'FOUNDATIONS_SCHEDULER_URL=localhost:5000 && python startup_atlas_api.py 37722 &'
+                                        sh 'export FOUNDATIONS_SCHEDULER_URL=localhost:5000 && python startup_atlas_api.py 37722 &'
                                     }
                                 }
                             }
