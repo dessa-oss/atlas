@@ -88,18 +88,6 @@ if __name__ == "__main__":
     import os
     os.environ['docker_build_version'] = ''
 
-    with open('./devops/uat_helpers/temp_manifest.txt') as stream:
-        os.environ['manifest'] = stream.read()
-
-    with open('./devops/uat_helpers/temp_requirements.txt') as stream:
-        os.environ['requirements'] = stream.read()
-
-    with open('./devops/uat_helpers/temp_installer.txt') as stream:
-        os.environ['installer'] = stream.read()
-
-    with open('./devops/uat_helpers/requirements.txt', 'w') as requirements:
-        requirements.write(os.environ['requirements'])
-
     manifest = load_manifest()
     updated_manifest = retag_docker_images(manifest)
 
