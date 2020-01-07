@@ -33,7 +33,7 @@ const SideBar = props => {
   const onClickDashboard = () => {
     const { history, location } = props;
 
-    history.push('/', {
+    history.push('/projects', {
       project: location.state.project,
     });
   };
