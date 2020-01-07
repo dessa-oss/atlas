@@ -80,6 +80,22 @@ function start_auth_proxy () {
     fi
 }
 
+function start_auth_proxy_orbit () {
+    echo "Attempting to start the auth proxy at port ${AUTH_PROXY_PORT}"
+    cd ../foundations-auth-proxy \
+        && pip install -r requirements.txt \
+        && pip install -e . \
+        && python -m auth_proxy -t -p $AUTH_PROXY_PORT --dev > $FOUNDATIONS_HOME/logs/auth_proxy.log 2>&1 &
+    
+    # TODO - Need a better check if the auth is running (maybe check the port)
+    if [ $? == 0 ]; then
+        echo "Successfully started the auth proxy"
+    else
+        echo "Unable to start auth proxy"
+        exit 1
+    fi
+}
+
 function start_auth_server() {
     export AUTH_SERVER_NAME=foundations-authentication-server \
         && echo "Attempting to start the auth server as ${AUTH_SERVER_NAME}" \

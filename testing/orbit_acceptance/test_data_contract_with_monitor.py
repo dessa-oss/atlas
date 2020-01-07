@@ -88,7 +88,7 @@ class TestDataContractWithMonitor(Spec):
     def _start_monitor(self):
         import subprocess
         command = f'python -m foundations monitor create --name={self.monitor_name} --project_name={self.project_name} --env={self.env} {self.monitor_package_dir} validate.py '
-        return subprocess.run(command.split(), cwd=self.project_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return subprocess.run(command.split(), cwd=self.project_dir)
 
     def _create_rows(self, num=1):
         import numpy
