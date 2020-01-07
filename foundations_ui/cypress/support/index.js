@@ -2,7 +2,6 @@ before(() => {
     cy.exec('python cypress/fixtures/atlas_scheduler/envsubst.py');
 });
 
-
 beforeEach(() => {
   if (Cypress.env('ATLAS_EDITION') === 'TEAM') {
     const schedulerIP = Cypress.env('SCHEDULER_IP');
