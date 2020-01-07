@@ -24,7 +24,7 @@ class CommonHeader extends React.Component {
         Cookies.remove('atlas_refresh_token');
         this.props.history.push('/login');
       }
-    });key.sv
+    });
   }
 
   onChangeMenu(selectedOptions) {
