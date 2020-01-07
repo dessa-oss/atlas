@@ -97,6 +97,9 @@ if __name__ == "__main__":
     with open('./devops/uat_helpers/temp_installer.txt') as stream:
         os.environ['installer'] = stream.read()
 
+    with open('./devops/uat_helpers/requirements.txt', 'w') as requirements:
+        requirements.write(os.environ['requirements'])
+
     manifest = load_manifest()
     updated_manifest = retag_docker_images(manifest)
 
@@ -109,7 +112,6 @@ if __name__ == "__main__":
     new_version['docker'] = updated_manifest
     new_version['git'] = installer['python_script']
     
-
     new_version['pypi'] = {
         'atlas_server': {
             'name': 'foundations-atlas',
