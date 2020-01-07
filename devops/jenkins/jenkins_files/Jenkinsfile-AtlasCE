@@ -35,6 +35,15 @@ pipeline{
         }
       }
     }
+    stage('Upload Altas Wheels to Staging PyPi') {
+      steps {
+        container("python3") {
+            dir('atlas-ce') {
+                sh "./devops/build_scripts/upload_modules_to_artifactory.sh $NEXUS_PYPI_STAGING"
+            }
+        }
+      }
+    }
     stage('Build Atlas GUI and Rest API Images'){
       steps {
         container("python3"){

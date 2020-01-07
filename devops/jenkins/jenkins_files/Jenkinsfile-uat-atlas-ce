@@ -92,6 +92,38 @@ pipeline{
                 }
             }
         }
+        stage('Pulling Atlas-CE Versioned Repo'){
+            steps {
+                container("python3") {
+                    sh "rm -r atlas-ce"
+                    dir('atlas-ce') {
+                        sh "git clone git@github.com:DeepLearnI/atlas-ce.git ."
+                    }
+                }
+            }
+        }
+        stage('Update the component versions for Atlas'){
+            steps {
+                container("python3") {
+                    sh "python devops/uat_helpers/atlas_version_updater.py"
+                }
+            }
+        }
+        stage('Upload Foundations wheels to Production'){
+            sh "./devops/build_scripts/build_ce_dist.sh"
+            sh "pip download -r ./devops/uat_helpers/requirements.txt  --no-deps -d `pwd`/dist"
+            sh "./devops/build_scripts/upload_modules_to_artifactory.sh $NEXUS_PYPI"
+            
+        }
+        stage('Push updated versions to the repo') {
+            steps {
+                container("python3") {
+                    dir('atlas-ce') {
+                        sh "git add . && git commit -m 'updated with f9s version ${params.f9s_commit_hash}' && git push"
+                    }
+                }
+            }
+        }
     }
     post {
         always {

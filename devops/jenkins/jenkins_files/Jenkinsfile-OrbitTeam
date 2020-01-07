@@ -29,6 +29,13 @@ pipeline{
         }
       }
     }
+    stage('Upload Altas Wheels to Staging PyPi') {
+      steps {
+        container("python3") {
+            sh "./devops/build_scripts/upload_modules_to_artifactory.sh $NEXUS_PYPI_STAGING"
+        }
+      }
+    }
     stage('Build Orbit Team GUI and Rest API Images'){
       steps {
         container("python3"){

@@ -10,11 +10,23 @@ build_version = os.environ['docker_build_version']
 nexus_registry = os.environ.get('NEXUS_DOCKER_REGISTRY', 'docker.shehanigans.net')
 
 
-def print_logs(logs):
-    for line in logs:
-        if 'stream' in line:
-            print(line['stream'].strip())
+def print_logs(logs, is_generator=True):
+    if is_generator:
+        for line in logs:
+            print(line)
+            if 'error' in line:
+                raise RuntimeError(line)
+    else:
+        print(logs)
 
+def get_authenticated_docker_low_level_client():
+    import docker
+
+    nexus_password = os.environ['NEXUS_PASSWORD']
+    nexus_username = os.environ['NEXUS_USER']
+    api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
+    api_client.login(username=nexus_username, password=nexus_password, registry=nexus_registry)
+    return api_client
 
 def run_docker_build(path, dockerfile, build_tag, latest_tag, buildargs):
     import docker
