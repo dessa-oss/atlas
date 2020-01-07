@@ -157,7 +157,7 @@ pipeline{
                             steps {
                                 container("python3-3") {
                                     ws("${WORKSPACE}/devops") {
-                                        sh 'export AUTH_SERVER_URL=keycloak-headless.ci-pipeline.svc.cluster.local && cd .. && sh ../foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh && cd -'
+                                        sh 'export AUTH_SERVER_URL=keycloak-headless.ci-pipeline.svc.cluster.local && cd .. && sh ./foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh && cd -'
                                         sh 'export FOUNDATIONS_SCHEDULER_URL=localhost:5000 && python startup_atlas_api.py 37722 &'
                                     }
                                 }
