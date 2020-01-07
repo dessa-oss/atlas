@@ -130,3 +130,5 @@ testing/orbit_acceptance/fixtures/end-to-end-acceptance/foundations_home/local_d
 
 # We should investigate why this is happening
 foundations_ui/cypress/**/foundations_ui
+
+foundations_ui_orbit/cypress/screenshots/
