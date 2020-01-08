@@ -54,9 +54,11 @@ package_source = "src"
 if environ.get("BUILD_FOUNDATIONS_OBFUSCATED", False):
     package_source = "obfuscated_dist"
 
+version_suffix = 'o' if cli == 'orbit' else ''
+
 setup(
     name='foundations-contrib',
-    version=build_version,
+    version=build_version + version_suffix,
     description='A tool for machine learning development - files for contribution',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
