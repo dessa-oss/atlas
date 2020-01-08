@@ -19,9 +19,9 @@ def load_manifest():
     return manifest_content
 
 def retag_docker_images(manifest):
-    from helpers.docker_utils import get_authenticated_docker_low_level_client, nexus_registry, print_logs
+    from helpers.docker_utils import get_docker_low_level_client, nexus_registry, print_logs
 
-    client = get_authenticated_docker_low_level_client()
+    client = get_docker_low_level_client()
     stream = True
 
     updated_manifest = {}
