@@ -46,7 +46,7 @@ def _config():
         output_file_name = template_file_name[:-len('.envsubst.yaml')] + '.yaml'
         subprocess.run(f'envsubst < {template_file_name} > {output_file_name}', shell=True)
 
-    _load_execution_config()
+    # _load_execution_config()
 
 
 def setup_auth_home_config():
