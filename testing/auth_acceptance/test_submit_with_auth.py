@@ -26,4 +26,4 @@ class TestSubmitWithAuth(Spec):
         result = subprocess.run('foundations submit scheduler auth_acceptance/fixtures foundations_job.py',\
              shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
-        self.assertEqual(result.stdout.decode().strip(), 'Error running command: Not Authorized')
+        self.assertEqual(result.stdout.decode().strip(), 'Error running command: Unable to submit job bundle. Token is not valid')
