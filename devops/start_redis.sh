@@ -24,11 +24,11 @@ if [ -z "$redis_container_id" ]; then
     mkdir -p $FOUNDATIONS_HOME/database \
         && docker run \
             --rm \
-            --name redis \
+            --name foundations-tracker \
             -p 6379:$redis_port \
             --network=$network_name \
             --volume $FOUNDATIONS_HOME/database:/data \
             -d redis redis-server --appendonly yes
 else
-    docker network connect $network_name $redis_container_id --alias redis
+    docker network connect $network_name $redis_container_id --alias foundations-tracker
 fi
