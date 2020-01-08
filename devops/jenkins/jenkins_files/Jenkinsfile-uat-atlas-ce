@@ -12,6 +12,9 @@ pipeline{
                     sh "mkdir -p ~/.ssh/"
                     sh "ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts"
                     sh "cp /tmp/deployment_credentials/ssh/* ~/.ssh/"
+                    
+                    sh "gcloud auth activate-service-account ${GOOGLE_ACCOUNT} --key-file=${GOOGLE_APPLICATION_CREDENTIALS}"
+                    sh "gcloud auth configure-docker"
                 }
             }
         }
@@ -70,18 +73,6 @@ pipeline{
             steps {
                 container("python3") {
                     dir('f9s') {
-                        sh "apt install redis-tools -y"
-                        sh "curl -sL https://deb.nodesource.com/setup_10.x | bash -"
-                        sh "apt install nodejs -y"
-                        sh "apt update"
-                        sh "apt-get install -y"
-                        sh "apt-get install -y libgtk2.0-0"
-                        sh "apt-get install -y libnotify-dev"
-                        sh "apt-get install -y libgconf-2-4"
-                        sh "apt-get install -y libnss3"
-                        sh "apt-get install -y libxss1"
-                        sh "apt-get install -y libasound2"
-                        sh "apt-get install -y xvfb"
                         sh "cd foundations_ui && npm install"
                     }
                 }
@@ -127,24 +118,31 @@ pipeline{
             steps {
                 container("python3") {
                     dir('f9s') {
-                        sh "python devops/uat_helpers/atlas_version_updater.py"
+                        sh "NEXUS_DOCKER_REGISTRY='us.gcr.io/atlas-ce-dev' python devops/uat_helpers/atlas_version_updater.py"
                     }
                 }
             }
         }
         stage('Upload Foundations wheels to Production'){
-            dir('f9s') {
-                sh "./devops/build_scripts/build_ce_dist.sh"
-                sh "pip download -r ./devops/uat_helpers/requirements.txt  --no-deps -d `pwd`/dist"
-                sh "./devops/build_scripts/upload_modules_to_artifactory.sh $NEXUS_PYPI"
+            steps {
+                container("python3") {
+                    dir('f9s') {
+                        sh "./devops/build_scripts/build_ce_dist.sh"
+                        sh "pip download -r ./devops/uat_helpers/requirements.txt  --no-deps -d `pwd`/dist"
+                        sh "./devops/build_scripts/upload_modules_to_artifactory.sh $NEXUS_PYPI"
+                    }
+                }
             }
-            
         }
         stage('Push updated versions to the repo') {
             steps {
                 container("python3") {
                     dir('atlas-ce') {
-                        sh "git add . && git commit -m 'updated with f9s version ${params.f9s_commit_hash}' && git push"
+                        sh 'git config --global user.email "devops@dessa.com"'
+                        sh 'git config --global user.name "dessa-devops"'
+                        sh "git add ."
+                        sh "git commit -m 'updated with f9s version ${params.f9s_commit_hash}' || true"
+                        sh "git push"
                     }
                 }
             }
