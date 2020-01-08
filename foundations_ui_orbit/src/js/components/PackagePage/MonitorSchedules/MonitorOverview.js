@@ -232,7 +232,7 @@ class MonitorOverview extends Component {
             <button className="monitor-btn" type="button" onClick={this.resumeMonitor}>
               <div className="i--icon-start" />
             </button>
-            <button className="monitor-btn" type="button" onClick={this.pauseMonitor}>
+            <button className="monitor-btn" type="button" data-class="pause-button" onClick={this.pauseMonitor}>
               <div className="i--icon-pause" />
             </button>
             <button className="monitor-btn" type="button" onClick={this.deleteMonitor}>
@@ -242,7 +242,7 @@ class MonitorOverview extends Component {
           <ul>
             <li>
               <div className="monitor-overview-key">Status:</div>
-              <div className="monitor-overview-value">{status}</div>
+              <div className="monitor-overview-value" data-class="status">{status}</div>
             </li>
             <li>
               <div className="monitor-overview-key">User:</div>
@@ -264,6 +264,7 @@ class MonitorOverview extends Component {
               onClick={this.updateMonitorSchedule}
               type="button"
               disabled={!scheduleValid}
+              data-class="save-schedule"
             >
               Save
             </button>
@@ -272,21 +273,25 @@ class MonitorOverview extends Component {
             <li className="monitor-overview-schedule">
               <div className="monitor-overview-key">Repeat every</div>
               <div className="monitor-overview-value">
-                <Select
-                  options={scheduleOptions}
-                  className="react-select"
-                  value={scheduleRepeatUnitOption}
-                  onChange={this.onChangeScheduleRepeatUnit}
-                />
+                <div data-class="repeat-unit">
+                  <Select
+                    options={scheduleOptions}
+                    className="react-select"
+                    value={scheduleRepeatUnitOption}
+                    onChange={this.onChangeScheduleRepeatUnit}
+                  />
+                </div>
                 <p>on</p>
-                <Select
-                  defaultValue=""
-                  options={MonitorSchedulesActions.getScheduleRepeatValueOptions(scheduleRepeatUnit)}
-                  className="react-select-multi"
-                  value={scheduleRepeatValue}
-                  onChange={this.onChangeScheduleRepeatValue}
-                  isMulti
-                />
+                <div data-class="repeat-on">
+                  <Select
+                    defaultValue=""
+                    options={MonitorSchedulesActions.getScheduleRepeatValueOptions(scheduleRepeatUnit)}
+                    className="react-select-multi"
+                    value={scheduleRepeatValue}
+                    onChange={this.onChangeScheduleRepeatValue}
+                    isMulti
+                  />
+                </div>
               </div>
             </li>
             <li>
@@ -332,7 +337,7 @@ class MonitorOverview extends Component {
                 <p> at </p>
                 <Flatpickr
                   value={clockTimeEnd}
-                  className="schedule-flatpickr"
+                  className="schedule-flatpickr end-time"
                   onChange={this.onChangeTimeEnd}
                   options={{
                     enableTime: true,

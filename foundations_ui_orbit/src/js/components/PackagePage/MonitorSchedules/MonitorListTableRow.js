@@ -43,7 +43,7 @@ class MonitorListTableRow extends Component {
 
     return (
       <div className={`monitor-table-row ${selectedClass}`} onClick={this.onClick}>
-        <div className="monitor-table-cell"><OverflowTooltip text={monitorNameLabel} /></div>
+        <div className="monitor-table-cell" data-class="monitor-name"><OverflowTooltip text={monitorNameLabel} /></div>
         <div className="monitor-user-table-cell"><OverflowTooltip text={user} /></div>
         <div className="monitor-status-table-cell">{statusIcon}</div>
       </div>

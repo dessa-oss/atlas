@@ -104,12 +104,12 @@ class MonitorJobsTable extends Component {
       <div className="monitor-jobs">
         <div className="monitor-jobs-heading">
           <h3>Monitor Jobs</h3>
-          <div className="i--icon-refresh" onClick={this.reload} />
+          <div className="i--icon-refresh" data-class="refresh-job-table" onClick={this.reload} />
           <div className="i--icon-delete" onClick={this.deleteJobs} />
         </div>
         <div className="monitor-job-listing">
           <div className="monitor-job-items">
-            <div className="monitor-job-table-row" onClick={this.onClick}>
+            <div className="monitor-job-table-row" data-class="monitor-job-table-row" onClick={this.onClick}>
               <div className="monitor-job-checkbox" />
               <div className="monitor-job-name-cell">Job ID</div>
               <div className="monitor-job-status-cell">Status</div>

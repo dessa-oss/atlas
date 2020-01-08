@@ -11,63 +11,63 @@ describe('Test Job Submission', () => {
       {
         testName: `Test Job Submission with CLI with project ${projectName}: current working directory outside job directory, relative path to job directory`,
         projectName: projectName,
-        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit --debug scheduler ${projectName} main.py 0 "Complete_Task_1" dummy`
+        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit --debug scheduler ${projectName} main.py 0 "Complete_Task_1" dummy`,
       },
       {
         testName: `Test Job Submission with CLI with project ${projectName}: current working directory outside job directory, absolute path to job directory`,
         projectName: projectName,
-        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit scheduler \`pwd\`/${projectName} main.py 0 "Complete_Task_2" dummy`
+        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit scheduler \`pwd\`/${projectName} main.py 0 "Complete_Task_2" dummy`,
       },
       {
         testName: `Test Job Submission with CLI with project ${projectName}: current working directory inside job directory, relative path to job directory`,
         projectName: projectName,
-        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/${projectName} && foundations submit scheduler . main.py 0 "Complete_Task_3" dummy`
+        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/${projectName} && foundations submit scheduler . main.py 0 "Complete_Task_3" dummy`,
       },
       {
         testName: `Test Job Submission with CLI with project ${projectName}: current working directory inside job directory, absolute path to job directory`,
         projectName: projectName,
-        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/${projectName} && foundations submit scheduler \`pwd\` main.py 0 "Complete_Task_4" dummy`
+        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/${projectName} && foundations submit scheduler \`pwd\` main.py 0 "Complete_Task_4" dummy`,
       },
       {
         testName: `Test Job Submission with SDK with project ${projectName}: current working directory outside job directory, script outside job directory, relative path to job directory`,
         projectName: projectName,
-        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && python submit.py ${projectName} 0 "Complete_in 5" dummy`
+        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && python submit.py ${projectName} 0 "Complete_in 5" dummy`,
       },
       {
         testName: `Test Job Submission with SDK with project ${projectName}: current working directory outside job directory, script outside job directory, absolute path to job directory`,
         projectName: projectName,
-        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && python submit.py \`pwd\`/${projectName} 0 "Complete_Task_6" dummy`
+        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && python submit.py \`pwd\`/${projectName} 0 "Complete_Task_6" dummy`,
       },
       {
         testName: `Test Job Submission with SDK with project ${projectName}: current working directory inside job directory, script outside job directory, relative path to job directory`,
         projectName: projectName,
-        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/${projectName} && python ../submit.py . 0 "Complete_Task_7" dummy`
+        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/${projectName} && python ../submit.py . 0 "Complete_Task_7" dummy`,
       },
       {
         testName: `Test Job Submission with SDK with project ${projectName}: current working directory inside job directory, script outside job directory, absolute path to job directory`,
         projectName: projectName,
-        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/${projectName} && python ../submit.py \`pwd\` 0 "Complete_Task_8" dummy`
+        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/${projectName} && python ../submit.py \`pwd\` 0 "Complete_Task_8" dummy`,
       },
       {
         testName: `Test Job Submission with SDK with project ${projectName}: current working directory outside job directory, script inside job directory, relative path to job directory, relative path to script`,
         projectName: projectName,
-        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission && python ${projectName}/submit.py ${projectName} 0 "Complete_Task_9" dummy`
+        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission && python ${projectName}/submit.py ${projectName} 0 "Complete_Task_9" dummy`,
       },
       {
         testName: `Test Job Submission with SDK with project ${projectName}: current working directory outside job directory, script inside job directory, relative path to job directory, absolute path to script`,
         projectName: projectName,
-        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission && python \`pwd\`/${projectName}/submit.py ${projectName} 0 "Complete_Task_10" dummy`
+        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission && python \`pwd\`/${projectName}/submit.py ${projectName} 0 "Complete_Task_10" dummy`,
       },
       {
         testName: `Test Job Submission with SDK with project ${projectName}: current working directory inside job directory, script inside job directory, relative path to job directory`,
         projectName: projectName,
-        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/${projectName} && python submit.py . 0 "Complete_Task_11" dummy`
+        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/${projectName} && python submit.py . 0 "Complete_Task_11" dummy`,
       },
       {
         testName: `Test Job Submission with SDK with project ${projectName}: current working directory inside job directory, script inside job directory, absolute path to job directory`,
         projectName: projectName,
-        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/${projectName} && python submit.py \`pwd\` 0 "Complete_Task_12" dummy`
-      }
+        command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/${projectName} && python submit.py \`pwd\` 0 "Complete_Task_12" dummy`,
+      },
     ]);
   }, []);
 
@@ -76,8 +76,8 @@ describe('Test Job Submission', () => {
       before(() => {
         cy.exec(`redis-cli -h ${schedulerIP} -p ${schedulerRedisPort} flushall`);
         cy.request('GET', `http://${guiHost}:${guiPort}/api/v2beta/cli_login`, {
-          headers: {Authorization: "Basic dGVzdDp0ZXN0Cg=="}
-        })
+          headers: { Authorization: 'Basic dGVzdDp0ZXN0Cg==' },
+        });
         cy.exec(state.command);
       });
 
@@ -91,15 +91,15 @@ describe('Test Job Submission', () => {
 
       it('Job exists on projects page', () => {
         cy.contains(state.projectName).click({ force: true }).then(() => {
-         cy.get('[data-class=job-table-row]').should('exist');
+          cy.get('[data-class=job-table-row]').should('exist');
         });
       });
 
       it('Job is completed', () => {
         cy.contains(state.projectName).click({ force: true }).then(() => {
-         cy.get('[data-class=job-table-row]')
-          .find('[data-class=job-status-completed]')
-          .should('exist');
+          cy.get('[data-class=job-table-row]')
+            .find('[data-class=job-status-completed]')
+            .should('exist');
         });
       });
     });

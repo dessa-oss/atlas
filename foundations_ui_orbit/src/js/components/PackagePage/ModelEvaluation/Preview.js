@@ -85,7 +85,7 @@ const ModelEvaluation = props => {
   return (
     <div className="container-preview">
       <p className="view-report" onClick={onClickOpenChart} />
-      <div className="container-chart">
+      <div className="container-chart" data-class="metric-chart">
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
       <Modal

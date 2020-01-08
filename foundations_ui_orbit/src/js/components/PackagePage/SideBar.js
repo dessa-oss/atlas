@@ -99,6 +99,7 @@ const SideBar = props => {
       </div> */}
       <div
         onClick={onClickEvaluation}
+        data-class="model-metrics-tab"
         className={
           tab === 'Evaluation'
             ? 'sidebar-item active icon-chart-blue'
@@ -113,6 +114,7 @@ const SideBar = props => {
       </div>
       <div
         onClick={onClickHealth}
+        data-class="data-health-tab"
         className={
           tab === 'Health'
             ? 'sidebar-item active icon-monitor-blue'

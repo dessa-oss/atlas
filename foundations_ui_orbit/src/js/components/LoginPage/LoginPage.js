@@ -93,6 +93,7 @@ class LoginPage extends Component {
                   value={username}
                   onChange={this.handleUsernameChange}
                   placeholder="username"
+                  data-class="username"
                 />
               </li>
               <li>
@@ -103,10 +104,11 @@ class LoginPage extends Component {
                   value={password}
                   onChange={this.handlePasswordChange}
                   placeholder="password"
+                  data-class="password"
                 />
               </li>
               <li>
-                <input className="login-submit" type="submit" value="Login" />
+                <input className="login-submit" type="submit" value="Login" data-class="submit-login" />
               </li>
               <li>
                 <p className="auth-error">{passwordError}</p>

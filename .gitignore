@@ -132,3 +132,8 @@ testing/orbit_acceptance/fixtures/end-to-end-acceptance/foundations_home/local_d
 foundations_ui/cypress/**/foundations_ui
 
 foundations_ui_orbit/cypress/screenshots/
+foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/credentials.yaml
+foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/config/execution/default.config.yaml
+foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/config/submission/scheduler.config.yaml
+foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/job_data/archive/e8b8346e-324c-4a62-bbc1-b0328c61bdfb/artifacts/`pwd`/cypress/fixtures/orbit_acceptance/.foundations/logs/system.log
+foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/job_data/*
