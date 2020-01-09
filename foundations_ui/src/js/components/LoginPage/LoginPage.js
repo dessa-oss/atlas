@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import Toolbar from '../common/Toolbar';
 import LoginActions from '../../actions/LoginActions';
-import Header from '../common/Header';
 import ErrorMessage from '../common/ErrorMessage';
 import CommonHeader from '../common/CommonHeader';
 

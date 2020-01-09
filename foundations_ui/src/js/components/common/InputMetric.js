@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ScrollSyncPane } from 'react-scroll-sync';
-import TableSectionHeader from './TableSectionHeader';
 import CommonActions from '../../actions/CommonActions';
 import NoRowsImage from '../../../assets/svgs/clipboards.svg';
 

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Toolbar from '../common/Toolbar';
-import Header from '../common/Header';
 
 class ContactPage extends Component {
   render() {
