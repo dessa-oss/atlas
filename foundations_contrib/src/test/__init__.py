@@ -29,6 +29,7 @@ from test.test_null_pipeline_archive_listing import TestNullPipelineArchiveListi
 from test.test_prefixed_bucket import TestPrefixedBucket
 from test.test_scheduler_legacy_backend import TestSchedulerLegacyBackend
 from test.test_scheduler_local_backend import TestSchedulerLocalBackend
+from test.test_stage_logger import TestStageLogger
 from test.test_stage_parameter import TestStageParameter
 from test.test_redis_pipeline_wrapper import TestRedisPipelineWrapper
 from test.test_job_data_redis import TestJobDataRedis

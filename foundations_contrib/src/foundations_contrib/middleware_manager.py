@@ -38,6 +38,7 @@ class MiddlewareManager(object):
     def _set_initial_middleware(self):
         from foundations_contrib.middleware.argument_middleware import ArgumentMiddleware
         from foundations_contrib.middleware.argument_filling_middleware import ArgumentFillingMiddleware
+        from foundations_contrib.middleware.new_stage_log_middleware import NewStageLogMiddleware
         from foundations_contrib.middleware.metric_log_middleware import MetricLogMiddleware
 
         self._stage_middleware = []
@@ -58,6 +59,8 @@ class MiddlewareManager(object):
         self._append_middleware(
             'StageLogging', MiddlewareManager._create_stage_logging_middleware)
         self._append_middleware('MetricLog', MetricLogMiddleware)
+        self._append_middleware(
+            'NewStageLog', NewStageLogMiddleware)
 
     def _append_middleware(self, name, callback):
         middleware = self._make_middleware(name, callback)
