@@ -5,11 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.job import Job
-from foundations_internal.stage_context import StageContext
-from foundations.context_aware import ContextAware
-
-
 class StageConnectorWrapper(object):
     """
     ### The three numerals at the begining are a marker for not generating user documentation for the class.
