@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import JobTable from '../JobListPage/JobTable';
-import JobHeader from '../JobListPage/JobHeader';
 import ParCoordsGraph from '../JobListPage/ParCoordsGraph';
 import CommonActions from '../../actions/CommonActions';
 import JobListActions from '../../actions/JobListActions';
