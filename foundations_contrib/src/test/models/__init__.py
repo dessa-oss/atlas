@@ -5,7 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.models.test_pipeline_context_with_archive import TestPipelineContextWithArchive
 from test.models.test_completed_job_data_listing import TestCompletedJobDataListing
 from test.models.test_project_listing import TestProjectListing
 from test.models.test_property_model import TestPropertyModel
