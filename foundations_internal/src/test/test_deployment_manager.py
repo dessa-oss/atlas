@@ -38,7 +38,7 @@ class TestDeploymentManager(unittest.TestCase):
             self.value = name
 
     def setUp(self):
-        from foundations.config_manager import ConfigManager
+        from foundations_contrib.config_manager import ConfigManager
         from foundations_internal.deployment_manager import DeploymentManager
         from foundations_internal.pipeline import Pipeline
         from foundations_internal.pipeline_context import PipelineContext

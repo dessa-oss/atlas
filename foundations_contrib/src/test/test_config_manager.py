@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations.config_manager import ConfigManager
+from foundations_contrib.config_manager import ConfigManager
 from mock import patch
 
 class TestConfigManager(Spec):

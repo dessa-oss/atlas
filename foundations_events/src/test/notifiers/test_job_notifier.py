@@ -33,7 +33,7 @@ class TestJobNotifier(Spec):
 
     @let
     def config_manager(self):
-        from foundations.config_manager import ConfigManager
+        from foundations_contrib.config_manager import ConfigManager
         return ConfigManager()
     
     slack_notifier = let_mock()

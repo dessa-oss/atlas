@@ -13,7 +13,7 @@ class TestRedisConnector(unittest.TestCase):
 
     def setUp(self):
         from foundations_contrib.helpers.redis_connector import RedisConnector
-        from foundations.config_manager import ConfigManager
+        from foundations_contrib.config_manager import ConfigManager
 
         self._config_manager = ConfigManager()
         self._connection_callback = Mock()

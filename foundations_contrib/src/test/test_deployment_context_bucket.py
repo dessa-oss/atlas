@@ -15,7 +15,7 @@ class TestDeploymentContextBucket(Spec):
 
     @let
     def config_manager(self):
-        from foundations.config_manager import ConfigManager
+        from foundations_contrib.config_manager import ConfigManager
 
         config_manager = ConfigManager()
         return self.patch('foundations_contrib.global_state.config_manager', config_manager)

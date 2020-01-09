@@ -24,7 +24,7 @@ class TestMiddlewareManager(unittest.TestCase):
         from foundations_internal.stage_config import StageConfig
         from foundations_internal.stage_context import StageContext
         from foundations_internal.stage import Stage
-        from foundations.config_manager import ConfigManager
+        from foundations_contrib.config_manager import ConfigManager
 
         from uuid import uuid4
 

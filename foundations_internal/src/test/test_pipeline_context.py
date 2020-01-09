@@ -162,7 +162,7 @@ class TestPipelineContext(Spec):
                          pipeline_context.stage_contexts)
 
     def test_fill_provenance(self):
-        from foundations.config_manager import ConfigManager
+        from foundations_contrib.config_manager import ConfigManager
         self.config_manager = ConfigManager()
         pipeline_context = PipelineContext()
 
