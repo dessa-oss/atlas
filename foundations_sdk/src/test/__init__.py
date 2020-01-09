@@ -13,7 +13,6 @@ from test.parameters import *
 from test.test_default_stage_logging import TestDefaultStageLogging
 from test.test_argument_hasher import TestArgumentHasher
 from test.test_global_import_serialize import TestGlobalImportSerialization
-from test.test_state_changer import TestStateChanger
 from test.test_scheduler_job_information import TestSchedulerJobInformation
 from test.test_job import TestJob
 from test.test_utils import TestUtils
