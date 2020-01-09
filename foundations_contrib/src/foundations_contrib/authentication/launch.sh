@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-AUTH_SERVER_NAME=${AUTH_SERVER_NAME:-keycloak}
+AUTH_SERVER_NAME=${AUTH_SERVER_NAME:-foundations-authentication-server}
 
 
 docker run -d --rm --name $AUTH_SERVER_NAME \
