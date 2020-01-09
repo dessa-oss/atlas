@@ -20,7 +20,7 @@ class CommandLineJobDeployer(object):
         import sys
 
         import foundations
-        from foundations_cli.environment_fetcher import EnvironmentFetcher
+        from foundations_core_cli.environment_fetcher import EnvironmentFetcher
         from foundations_contrib.global_state import config_manager
         
         if self._job_directory is not None:
@@ -96,18 +96,18 @@ class CommandLineJobDeployer(object):
     def _stream_logs_if_possible(self, deployment_wrapper):
         from foundations_contrib.global_state import log_manager
 
-        foundations_cli_logger = log_manager.get_logger(__name__)
+        foundations_core_cli_logger = log_manager.get_logger(__name__)
 
         log_stream = self._get_log_stream(deployment_wrapper)
 
         if self._log_streaming_is_enabled() and log_stream is not None:
-            foundations_cli_logger.info('Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.')
+            foundations_core_cli_logger.info('Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.')
             is_running = False
 
             for log_line in log_stream:
                 if not is_running:
                     is_running = True
-                    foundations_cli_logger.info('Job running, streaming logs')
+                    foundations_core_cli_logger.info('Job running, streaming logs')
 
                 print(log_line, flush=True)
 

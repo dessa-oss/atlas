@@ -9,7 +9,7 @@ import unittest
 from mock import patch
 from pathlib import Path
 
-from foundations_cli.project import Project
+from foundations_core_cli.project import Project
 
 class TestProject(unittest.TestCase):
 

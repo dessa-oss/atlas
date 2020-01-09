@@ -45,7 +45,7 @@ def set_environment(environment_name):
     config_manager.add_simple_config_path(path)
 
 def _environment_path(environment_name):
-    from foundations_cli.environment_fetcher import EnvironmentFetcher
+    from foundations_core_cli.environment_fetcher import EnvironmentFetcher
 
     environment_fetcher = EnvironmentFetcher()
     paths = environment_fetcher.find_environment(environment_name)

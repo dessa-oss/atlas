@@ -27,7 +27,7 @@ def _flattened_config_walk():
 
 
 def _load_execution_config():
-    from foundations_cli.typed_config_listing import TypedConfigListing
+    from foundations_core_cli.typed_config_listing import TypedConfigListing
     from foundations_internal.config.execution import translate
     TypedConfigListing('execution').update_config_manager_with_config('default', translate)
 

@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations_cli.config_listing import ConfigListing
+from foundations_core_cli.config_listing import ConfigListing
 
 from contextlib import contextmanager
 

@@ -11,8 +11,8 @@ import sys, os
 import unittest
 from mock import Mock, patch, call, mock_open
 
-from foundations_cli.command_line_interface import CommandLineInterface
-from foundations_cli.environment_fetcher import EnvironmentFetcher
+from foundations_core_cli.command_line_interface import CommandLineInterface
+from foundations_core_cli.environment_fetcher import EnvironmentFetcher
 from foundations import ConfigManager
 
 from foundations_spec import *
@@ -38,7 +38,7 @@ class TestCommandLineInterface(Spec):
     current_foundations_context = let_patch_mock('foundations_contrib.global_state.current_foundations_context')
     mock_message_router = let_patch_mock('foundations_contrib.global_state.message_router')
     print_mock = let_patch_mock('builtins.print')
-    environment_fetcher_mock = let_patch_mock('foundations_cli.environment_fetcher.EnvironmentFetcher.get_all_environments')
+    environment_fetcher_mock = let_patch_mock('foundations_core_cli.environment_fetcher.EnvironmentFetcher.get_all_environments')
     mock_input = let_patch_mock('builtins.input')
     mock_getpass = let_patch_mock('getpass.getpass')
     mock_get = let_patch_mock('requests.get')
@@ -130,7 +130,7 @@ class TestCommandLineInterface(Spec):
 
     @patch('argparse.ArgumentParser')
     def test_correct_option_setup(self, parser_class_mock):
-        mock_str_to_bool = self.patch('foundations_cli.command_line_interface.CommandLineInterface._str_to_bool')
+        mock_str_to_bool = self.patch('foundations_core_cli.command_line_interface.CommandLineInterface._str_to_bool')
 
         parser_mock = Mock()
         parser_class_mock.return_value = parser_mock
@@ -218,17 +218,17 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['--version']).execute()
         self.print_mock.assert_called_with('Running Foundations version 7.3.3')
 
-    @patch('foundations_cli.scaffold.Scaffold')
+    @patch('foundations_core_cli.scaffold.Scaffold')
     def test_scaffold_creates_scaffold_with_project_name(self, scaffold_mock):
         CommandLineInterface(['init', 'my project']).execute()
         scaffold_mock.assert_called_with('my project') 
 
-    @patch('foundations_cli.scaffold.Scaffold')
+    @patch('foundations_core_cli.scaffold.Scaffold')
     def test_scaffold_creates_scaffold_with_project_name_different_project(self, scaffold_mock):
         CommandLineInterface(['init', 'my different project']).execute()
         scaffold_mock.assert_called_with('my different project')
 
-    scaffold_project_mock = let_patch_mock('foundations_cli.scaffold.Scaffold.scaffold_project')
+    scaffold_project_mock = let_patch_mock('foundations_core_cli.scaffold.Scaffold.scaffold_project')
 
     def test_scaffold_scaffolds_with_project_name_different_project(self):
         CommandLineInterface(['init', 'my project']).execute()

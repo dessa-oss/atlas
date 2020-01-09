@@ -7,14 +7,14 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
-from foundations_cli.job_submission.submit_job import submit
+from foundations_core_cli.job_submission.submit_job import submit
 
 class TestJobSubmissionSubmit(Spec):
     
     mock_arguments = let_mock()
-    mock_load_config = let_patch_mock('foundations_cli.job_submission.config.load')
-    mock_stream_logs = let_patch_mock('foundations_cli.job_submission.logs.stream_job_logs')
-    mock_deploy_deployment = let_patch_mock_with_conditional_return('foundations_cli.job_submission.deployment.deploy')
+    mock_load_config = let_patch_mock('foundations_core_cli.job_submission.config.load')
+    mock_stream_logs = let_patch_mock('foundations_core_cli.job_submission.logs.stream_job_logs')
+    mock_deploy_deployment = let_patch_mock_with_conditional_return('foundations_core_cli.job_submission.deployment.deploy')
     mock_deployment = let_mock()
     mock_os_chdir = let_patch_mock('os.chdir')
     mock_os_getcwd = let_patch_mock('os.getcwd')

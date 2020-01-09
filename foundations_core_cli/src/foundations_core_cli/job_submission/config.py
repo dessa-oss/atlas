@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 def load(config_name):
     import sys
-    from foundations_cli.typed_config_listing import TypedConfigListing
+    from foundations_core_cli.typed_config_listing import TypedConfigListing
     from foundations_local_docker_scheduler_plugin.config.scheduler import translate
 
     listing = TypedConfigListing('submission')

@@ -24,7 +24,7 @@ _deployment_arguments.__new__.__defaults__ = (None,) * len(_attribute_list)
 
 
 def submit(**kwargs):
-    from foundations_cli.job_submission.submit_job import submit
+    from foundations_core_cli.job_submission.submit_job import submit
     from foundations_contrib.global_state import push_state, pop_state
 
     arguments = _deployment_arguments(**kwargs)

@@ -15,19 +15,13 @@ class CommandLineInterface(object):
         self._subparsers = self._argument_parser.add_subparsers()
 
         try:
-            from foundations_cli.sub_parsers.setup.setup_parser import SetupParser
-            SetupParser(self).add_sub_parser()
-        except ModuleNotFoundError:
-            pass
-
-        try:
-            from foundations_cli.sub_parsers.monitor.monitor_parser import MonitorParser
+            from foundations_core_cli.sub_parsers.monitor.monitor_parser import MonitorParser
             MonitorParser(self).add_sub_parser()
         except ModuleNotFoundError:
             pass
 
         try:
-            from foundations_cli.sub_parsers.atlas.atlas_parser import AtlasParser
+            from foundations_core_cli.sub_parsers.atlas.atlas_parser import AtlasParser
             AtlasParser(self).add_sub_parser()
         except ModuleNotFoundError:
             pass
@@ -111,7 +105,7 @@ class CommandLineInterface(object):
             self._argument_parser.print_help()
 
     def _init(self):
-        from foundations_cli.scaffold import Scaffold
+        from foundations_core_cli.scaffold import Scaffold
 
         project_name = self._arguments.project_name
         result = Scaffold(project_name).scaffold_project()
@@ -121,7 +115,7 @@ class CommandLineInterface(object):
             print('Error: project directory for `{}` already exists'.format(project_name))
 
     def _info(self):
-        from foundations_cli.environment_fetcher import EnvironmentFetcher
+        from foundations_core_cli.environment_fetcher import EnvironmentFetcher
 
         env_name = self._arguments.env
 
@@ -183,7 +177,7 @@ class CommandLineInterface(object):
         return environment_names
 
     def _load_configuration(self):
-        from foundations_cli.environment_fetcher import EnvironmentFetcher
+        from foundations_core_cli.environment_fetcher import EnvironmentFetcher
         from foundations_contrib.global_state import config_manager
 
         env_name = self._arguments.env

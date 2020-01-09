@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
-from foundations_cli.job_submission.logs import stream_job_logs
+from foundations_core_cli.job_submission.logs import stream_job_logs
 
 class TestJobSubmissionLogs(Spec):
     
@@ -34,7 +34,7 @@ class TestJobSubmissionLogs(Spec):
     @set_up
     def set_up(self):
         self.deployment.stream_job_logs.return_value = self.log_stream
-        self.mock_get_logger.return_when(self.mock_logger, 'foundations_cli.job_submission.logs')
+        self.mock_get_logger.return_when(self.mock_logger, 'foundations_core_cli.job_submission.logs')
 
     def test_logs_user_feedback_when_streaming_started(self):
         stream_job_logs(self.deployment)

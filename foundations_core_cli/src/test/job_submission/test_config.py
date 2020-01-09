@@ -7,11 +7,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
-from foundations_cli.job_submission.config import load
+from foundations_core_cli.job_submission.config import load
 
 class TestJobSubmissionConfig(Spec):
     
-    mock_config_listing_klass = let_patch_mock_with_conditional_return('foundations_cli.typed_config_listing.TypedConfigListing')
+    mock_config_listing_klass = let_patch_mock_with_conditional_return('foundations_core_cli.typed_config_listing.TypedConfigListing')
     exit_mock = let_patch_mock('sys.exit')
     print_mock = let_patch_mock('builtins.print')
 

@@ -13,7 +13,7 @@ from foundations.submission import submit
 class TestSubmit(Spec):
 
     random_parameter = let_mock()
-    mock_submit = let_patch_mock('foundations_cli.job_submission.submit_job.submit')
+    mock_submit = let_patch_mock('foundations_core_cli.job_submission.submit_job.submit')
     mock_push_state = let_patch_mock('foundations_contrib.global_state.push_state')
     mock_pop_state = let_patch_mock('foundations_contrib.global_state.pop_state')
 

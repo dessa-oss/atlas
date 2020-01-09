@@ -22,7 +22,7 @@ class TestOrbitMonitorPackageServer(Spec):
         self.mock_config_manager.config.return_value = {'scheduler_url': 'https://localhost:5000'}
 
         mock_get_logger = ConditionalReturn()
-        mock_get_logger.return_when(self.mock_logger, 'foundations_cli.orbit_monitor_package_server')
+        mock_get_logger.return_when(self.mock_logger, 'foundations_core_cli.orbit_monitor_package_server')
         self.mock_log_manager.get_logger = mock_get_logger
 
         self.patch('builtins.print')
@@ -61,56 +61,56 @@ class TestOrbitMonitorPackageServer(Spec):
     
     @let_now
     def load(self):
-        return self.patch('foundations_cli.job_submission.config.load')
+        return self.patch('foundations_core_cli.job_submission.config.load')
 
     def test_pause_called_cron_job_scheduler_pause_job(self):
-        from foundations_cli.orbit_monitor_package_server import pause
+        from foundations_core_cli.orbit_monitor_package_server import pause
         pause(self.project_name, self.monitor_name, self.env)
         self.cron_job_scheduler.pause_job.assert_called_once_with(self.monitor_package_id)
 
     def test_pause_called_cron_job_scheduler_resume_job(self):
-        from foundations_cli.orbit_monitor_package_server import resume
+        from foundations_core_cli.orbit_monitor_package_server import resume
         resume(self.project_name, self.monitor_name, self.env)
         self.cron_job_scheduler.resume_job.assert_called_once_with(self.monitor_package_id)
 
     def test_pause_uses_update_config_with_values_from_env(self):
-        from foundations_cli.orbit_monitor_package_server import pause
+        from foundations_core_cli.orbit_monitor_package_server import pause
         pause(self.project_name, self.monitor_name, self.env)
         self.load.assert_called_once_with(self.env)
     
     def test_resume_uses_update_config_with_values_from_env(self):
-        from foundations_cli.orbit_monitor_package_server import resume
+        from foundations_core_cli.orbit_monitor_package_server import resume
         resume(self.project_name, self.monitor_name, self.env)
         self.load.assert_called_once_with(self.env)
 
     def test_delete_called_cron_job_scheduler_pause_job(self):
-        from foundations_cli.orbit_monitor_package_server import delete
+        from foundations_core_cli.orbit_monitor_package_server import delete
         delete(self.project_name, self.monitor_name, self.env)
         self.cron_job_scheduler.delete_job.assert_called_once_with(self.monitor_package_id)
 
     def test_delete_uses_update_config_with_values_from_env(self):
-        from foundations_cli.orbit_monitor_package_server import delete
+        from foundations_core_cli.orbit_monitor_package_server import delete
         delete(self.project_name, self.monitor_name, self.env)
         self.load.assert_called_once_with(self.env)
 
     def test_get_called_cron_job_scheduler_get_job_with_params_with_project_name_as_parameter(self):
-        from foundations_cli.orbit_monitor_package_server import get_by_project
+        from foundations_core_cli.orbit_monitor_package_server import get_by_project
         get_by_project(self.project_name, self.env)
         self.cron_job_scheduler.get_job_with_params.assert_called_once_with({'project':  self.project_name})
 
     def test_start_handles_no_job_config_case(self):
-        from foundations_cli.orbit_monitor_package_server import start
+        from foundations_core_cli.orbit_monitor_package_server import start
 
-        self.patch('foundations_cli.orbit_monitor_package_server.get_by_project')
+        self.patch('foundations_core_cli.orbit_monitor_package_server.get_by_project')
         mock_yaml_load = self.patch('yaml.load')
         mock_yaml_load.side_effect = IOError
         with self.assertRaises(KeyError):
             start(self.cwd, self.command, None, None, None)
 
     def test_start_fails_with_correct_error_if_monitor_already_exists(self):
-        from foundations_cli.orbit_monitor_package_server import start
+        from foundations_core_cli.orbit_monitor_package_server import start
 
-        mock_get_by_project = self.patch('foundations_cli.orbit_monitor_package_server.get_by_project', ConditionalReturn())
+        mock_get_by_project = self.patch('foundations_core_cli.orbit_monitor_package_server.get_by_project', ConditionalReturn())
         mock_get_by_project.return_when({f'{self.project_name}-{self.monitor_name}': ''}, self.project_name)
 
         with self.assertRaises(ValueError) as error:
@@ -121,9 +121,9 @@ class TestOrbitMonitorPackageServer(Spec):
     def test_monitor_create_logs_correct_message_when_start_called(self):
         self.mock_config_manager.config.return_value = {'scheduler_url': 'https://localhost:5000', 'worker_container_overrides': {'args': ''}}
 
-        from foundations_cli.orbit_monitor_package_server import start
+        from foundations_core_cli.orbit_monitor_package_server import start
 
-        mock_get_by_project = self.patch('foundations_cli.orbit_monitor_package_server.get_by_project')
+        mock_get_by_project = self.patch('foundations_core_cli.orbit_monitor_package_server.get_by_project')
         mock_get_by_project.return_value = []
 
         self.patch('foundations_local_docker_scheduler_plugin.bundle_deployment.job_bundle')
@@ -137,9 +137,9 @@ class TestOrbitMonitorPackageServer(Spec):
     def test_monitor_create_logs_correct_message_when_job_bundle_submitted(self):
         self.mock_config_manager.config.return_value = {'scheduler_url': 'https://localhost:5000', 'worker_container_overrides': {'args': ''}}
 
-        from foundations_cli.orbit_monitor_package_server import start
+        from foundations_core_cli.orbit_monitor_package_server import start
 
-        mock_get_by_project = self.patch('foundations_cli.orbit_monitor_package_server.get_by_project')
+        mock_get_by_project = self.patch('foundations_core_cli.orbit_monitor_package_server.get_by_project')
         mock_get_by_project.return_value = []
 
         self.patch('foundations_local_docker_scheduler_plugin.bundle_deployment.job_bundle')
@@ -156,9 +156,9 @@ class TestOrbitMonitorPackageServer(Spec):
     def test_monitor_create_logs_correct_message_when_job_scheduled(self):
         self.mock_config_manager.config.return_value = {'scheduler_url': 'https://localhost:5000', 'worker_container_overrides': {'args': ''}}
 
-        from foundations_cli.orbit_monitor_package_server import start
+        from foundations_core_cli.orbit_monitor_package_server import start
 
-        mock_get_by_project = self.patch('foundations_cli.orbit_monitor_package_server.get_by_project')
+        mock_get_by_project = self.patch('foundations_core_cli.orbit_monitor_package_server.get_by_project')
         mock_get_by_project.return_value = []
 
         self.patch('foundations_local_docker_scheduler_plugin.bundle_deployment.job_bundle')
@@ -172,8 +172,8 @@ class TestOrbitMonitorPackageServer(Spec):
         mock_cron_job_scheduler.schedule_job.return_value = Mock()
         mock_cron_job_scheduler_class.return_when(mock_cron_job_scheduler, 'https://localhost:5000')
 
-        self.patch('foundations_cli.orbit_monitor_package_server._get_monitor_job_spec')
-        self.patch('foundations_cli.orbit_monitor_package_server._get_monitor_gpu_spec')
+        self.patch('foundations_core_cli.orbit_monitor_package_server._get_monitor_job_spec')
+        self.patch('foundations_core_cli.orbit_monitor_package_server._get_monitor_gpu_spec')
 
         start(self.cwd, self.command, None, None, None)
 

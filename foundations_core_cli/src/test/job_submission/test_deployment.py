@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
-from foundations_cli.job_submission.deployment import deploy
+from foundations_core_cli.job_submission.deployment import deploy
 
 class TestJobSubmissionDeployment(Spec):
 
@@ -63,7 +63,7 @@ class TestJobSubmissionDeployment(Spec):
 
     mock_context_wrapper_klass = let_patch_mock_with_conditional_return('foundations_internal.pipeline_context_wrapper.PipelineContextWrapper')
     mock_context_wrapper = let_mock()
-    mock_get_user_name_from_token = let_patch_mock('foundations_cli.job_submission.deployment._get_user_name_from_token')
+    mock_get_user_name_from_token = let_patch_mock('foundations_core_cli.job_submission.deployment._get_user_name_from_token')
 
     @set_up
     def set_up(self):

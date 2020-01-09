@@ -27,7 +27,7 @@ class TestTypeConfigListing(Spec):
 
     local_config_listing = let_mock()
     foundations_config_listing = let_mock()
-    mock_listing_constructor = let_patch_mock_with_conditional_return('foundations_cli.config_listing.ConfigListing')
+    mock_listing_constructor = let_patch_mock_with_conditional_return('foundations_core_cli.config_listing.ConfigListing')
 
     config_name = let_mock()
 
@@ -42,7 +42,7 @@ class TestTypeConfigListing(Spec):
 
     @let
     def typed_listing(self):
-        from foundations_cli.typed_config_listing import TypedConfigListing
+        from foundations_core_cli.typed_config_listing import TypedConfigListing
         return TypedConfigListing(self.config_type)
 
     @let

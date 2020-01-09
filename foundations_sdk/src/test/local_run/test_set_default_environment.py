@@ -12,7 +12,7 @@ import sys
 
 class TestSetDefaultEnvironment(Spec):
 
-    mock_environment_fetcher = let_patch_instance('foundations_cli.environment_fetcher.EnvironmentFetcher')
+    mock_environment_fetcher = let_patch_instance('foundations_core_cli.environment_fetcher.EnvironmentFetcher')
     mock_set_environment = let_patch_mock('foundations.config.set_environment')
     mock_uuid4 = let_patch_mock('uuid.uuid4')
     mock_message_router = let_patch_mock('foundations_contrib.global_state.message_router')
@@ -96,7 +96,7 @@ class TestSetDefaultEnvironment(Spec):
         context = FoundationsContext(pipeline)
         return self.patch('foundations_contrib.global_state.foundations_context', context)
 
-    mock_config_listing_klass = let_patch_mock_with_conditional_return('foundations_cli.typed_config_listing.TypedConfigListing')
+    mock_config_listing_klass = let_patch_mock_with_conditional_return('foundations_core_cli.typed_config_listing.TypedConfigListing')
 
     @let
     def mock_config_listing(self):

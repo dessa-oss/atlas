@@ -5,8 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 from foundations_spec import *
-from foundations_cli.command_line_interface import CommandLineInterface
-from foundations_cli.sub_parsers.monitor.monitor_parser import MonitorParser
+from foundations_core_cli.command_line_interface import CommandLineInterface
+from foundations_core_cli.sub_parsers.monitor.monitor_parser import MonitorParser
 from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobSchedulerError
 
 class TestMonitorParser(Spec):
@@ -16,7 +16,7 @@ class TestMonitorParser(Spec):
         mock_config_manager = self.patch('foundations_contrib.foundations_contrib.global_state.config_manager')
         mock_config_manager.config.return_value = {'scheduler_url': self.scheduler_url}
         self.mock_print = self.patch('builtins.print')
-        self.patch('foundations_cli.job_submission.config.load')
+        self.patch('foundations_core_cli.job_submission.config.load')
 
     @let
     def monitor_name(self):
@@ -59,23 +59,23 @@ class TestMonitorParser(Spec):
         self.assertTrue(type(sub_parser._cli) is CommandLineInterface)
 
     def test_sub_parser_setup_parser_on_cli_instantiation(self):
-        mock_add_parser = self.patch('foundations_cli.sub_parsers.monitor.monitor_parser.MonitorParser.add_sub_parser')
+        mock_add_parser = self.patch('foundations_core_cli.sub_parsers.monitor.monitor_parser.MonitorParser.add_sub_parser')
         CommandLineInterface([''])
         mock_add_parser.assert_called_once()
 
     def test_sub_parser_called_specifically_for_monitor(self):
-        mock_argument_parser = self.patch('foundations_cli.command_line_interface.CommandLineInterface.add_sub_parser')
+        mock_argument_parser = self.patch('foundations_core_cli.command_line_interface.CommandLineInterface.add_sub_parser')
         CommandLineInterface([''])
         help_msg = 'Provides operations for managing monitors in Orbit'
         mock_argument_parser.assert_any_call('monitor', help=help_msg)
 
     def test_monitor_calls_start_method_when_create_command_is_triggered(self):
-        mock_method = self.patch('foundations_cli.orbit_monitor_package_server.start')
+        mock_method = self.patch('foundations_core_cli.orbit_monitor_package_server.start')
         self._call_monitor_command('create')
         mock_method.assert_called_once()
 
     def test_monitor_calls_pause_monitor_when_pause_command_is_triggered(self):
-        mock_method = self.patch('foundations_cli.sub_parsers.monitor.monitor_parser.MonitorParser._pause_monitor')
+        mock_method = self.patch('foundations_core_cli.sub_parsers.monitor.monitor_parser.MonitorParser._pause_monitor')
         self._call_monitor_command('pause')
         mock_method.assert_called_once()
 
@@ -99,7 +99,7 @@ class TestMonitorParser(Spec):
         CommandLineInterface(cmd.split()).execute()
 
     def test_monitor_delete_with_specified_monitor_name_and_project_name_calls_delete(self):
-        mock_monitor_delete = self.patch('foundations_cli.orbit_monitor_package_server.delete')
+        mock_monitor_delete = self.patch('foundations_core_cli.orbit_monitor_package_server.delete')
         mock_monitor_delete.__name__ = 'delete'
         self._call_monitor_command('delete')
         mock_monitor_delete.assert_called_with(self.project_name, self.monitor_name, 'scheduler')
@@ -112,13 +112,13 @@ class TestMonitorParser(Spec):
         mock_exit.assert_called_once_with(f'Command failed with error: {error_message}')
 
     def test_monitor_prints_success_message_when_delete_executes_successfully(self):
-        mock_monitor_delete = self.patch('foundations_cli.orbit_monitor_package_server.delete')
+        mock_monitor_delete = self.patch('foundations_core_cli.orbit_monitor_package_server.delete')
         mock_monitor_delete.__name__ = 'delete'
         self._call_monitor_command('delete')
         self.mock_print.assert_called_with(f'Successfully deleted monitor {self.monitor_name} from project {self.project_name}')
 
     def test_monitor_calls_resume_monitor_when_resume_command_is_triggered(self):
-        mock_method = self.patch('foundations_cli.sub_parsers.monitor.monitor_parser.MonitorParser._resume_monitor')
+        mock_method = self.patch('foundations_core_cli.sub_parsers.monitor.monitor_parser.MonitorParser._resume_monitor')
         self._call_monitor_command('resume')
         mock_method.assert_called_once()
 
@@ -138,19 +138,19 @@ class TestMonitorParser(Spec):
         self.mock_print.assert_called_with(f'Successfully resumed monitor {self.monitor_name} from project {self.project_name}')
 
     def test_monitor_calls_pause_sends_project_name_model_name_and_env_to_monitor_package_server(self):
-        mock_pause = self.patch('foundations_cli.orbit_monitor_package_server.pause')
+        mock_pause = self.patch('foundations_core_cli.orbit_monitor_package_server.pause')
         mock_pause.__name__ = 'pause'
         self._call_monitor_command('pause')
         mock_pause.assert_called_once_with(self.project_name, self.monitor_name, self.env)
 
     def test_monitor_calls_resume_sends_project_name_model_name_and_env_to_monitor_package_server(self):
-        mock_resume = self.patch('foundations_cli.orbit_monitor_package_server.resume')
+        mock_resume = self.patch('foundations_core_cli.orbit_monitor_package_server.resume')
         mock_resume.__name__ = 'resume'
         self._call_monitor_command('resume')
         mock_resume.assert_called_once_with(self.project_name, self.monitor_name, self.env)
 
     def test_monitor_prints_failure_message_when_start_raises_value_error(self):
-        mock_monitor_start = self.patch('foundations_cli.orbit_monitor_package_server.start')
+        mock_monitor_start = self.patch('foundations_core_cli.orbit_monitor_package_server.start')
         self.patch('sys.exit')
         mock_monitor_start.side_effect = ValueError('Creating failed')
         command = f'monitor create --project_name={self.project_name} --name={self.monitor_name} --env={self.env} . main.py'
@@ -160,7 +160,7 @@ class TestMonitorParser(Spec):
     def test_monitor_prints_failure_message_when_start_raises_value_error_when_name_and_project_name_not_set(self):
         mock_getcwd = self.patch('os.getcwd')
         mock_getcwd.return_value = self.job_directory
-        mock_monitor_start = self.patch('foundations_cli.orbit_monitor_package_server.start')
+        mock_monitor_start = self.patch('foundations_core_cli.orbit_monitor_package_server.start')
         self.patch('sys.exit')
         mock_monitor_start.side_effect = ValueError('Creating failed')
 
@@ -171,7 +171,7 @@ class TestMonitorParser(Spec):
     def test_monitor_returns_exit_non_zero_when_start_raises_value_error(self):
         error_message_thrown = 'Creating failed'
         mock_system_exit = self.patch('sys.exit')
-        mock_monitor_start = self.patch('foundations_cli.orbit_monitor_package_server.start')
+        mock_monitor_start = self.patch('foundations_core_cli.orbit_monitor_package_server.start')
 
         mock_monitor_start.side_effect = ValueError(error_message_thrown)
         command = f'monitor create --project_name={self.project_name} --name={self.monitor_name} --env={self.env} . main.py'
@@ -181,7 +181,7 @@ class TestMonitorParser(Spec):
     def test_create_monitor_prints_failure_message_when_start_raises_connection_error(self):
         from requests.exceptions import ConnectionError
 
-        mock_monitor_start = self.patch('foundations_cli.orbit_monitor_package_server.start')
+        mock_monitor_start = self.patch('foundations_core_cli.orbit_monitor_package_server.start')
         self.patch('sys.exit')
         mock_monitor_start.side_effect = ConnectionError
         command = f'monitor create --project_name={self.project_name} --name={self.monitor_name} --env={self.env} . main.py'
@@ -193,7 +193,7 @@ class TestMonitorParser(Spec):
 
         mock_getcwd = self.patch('os.getcwd')
         mock_getcwd.return_value = self.job_directory
-        mock_monitor_start = self.patch('foundations_cli.orbit_monitor_package_server.start')
+        mock_monitor_start = self.patch('foundations_core_cli.orbit_monitor_package_server.start')
         self.patch('sys.exit')
         mock_monitor_start.side_effect = ConnectionError
 
@@ -206,7 +206,7 @@ class TestMonitorParser(Spec):
 
         error_message_thrown = f'Could not connect to scheduler at {self.scheduler_url}'
         mock_system_exit = self.patch('sys.exit')
-        mock_monitor_start = self.patch('foundations_cli.orbit_monitor_package_server.start')
+        mock_monitor_start = self.patch('foundations_core_cli.orbit_monitor_package_server.start')
         mock_monitor_start.side_effect = ConnectionError
 
         command = f'monitor create --project_name={self.project_name} --name={self.monitor_name} --env={self.env} . main.py'
@@ -214,7 +214,7 @@ class TestMonitorParser(Spec):
         mock_system_exit.assert_called_once_with(f'Command failed with error: {error_message_thrown}')
 
     def test_monitor_prints_success_message_when_created_successfully(self):
-        self.patch('foundations_cli.orbit_monitor_package_server.start')
+        self.patch('foundations_core_cli.orbit_monitor_package_server.start')
         self._call_monitor_command('resume')
 
         command = f'monitor create --project_name={self.project_name} --name={self.monitor_name} --env={self.env} . main.py'
@@ -225,7 +225,7 @@ class TestMonitorParser(Spec):
     def test_monitor_prints_success_message_when_created_successfully_without_project_name_or_monitor_name_specified(self):
         mock_getcwd = self.patch('os.getcwd')
         mock_getcwd.return_value = self.job_directory
-        self.patch('foundations_cli.orbit_monitor_package_server.start')
+        self.patch('foundations_core_cli.orbit_monitor_package_server.start')
         self._call_monitor_command('resume')
 
         command = f'monitor create --env={self.env} . main.py'
@@ -280,7 +280,7 @@ class TestMonitorParser(Spec):
     def _patch_monitor_command_with_connection_error(self, command):
         from requests.exceptions import ConnectionError
 
-        mock = self.patch(f'foundations_cli.orbit_monitor_package_server.{command}')
+        mock = self.patch(f'foundations_core_cli.orbit_monitor_package_server.{command}')
         mock.__name__ = command
         mock.side_effect = ConnectionError
         self._call_monitor_command(command)

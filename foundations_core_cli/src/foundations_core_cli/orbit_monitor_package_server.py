@@ -125,7 +125,7 @@ def _modify_monitor(project_name, monitor_name, env, cron_scheduler_callback):
 
 
 def _update_config(env):
-    from foundations_cli.job_submission.config import load
+    from foundations_core_cli.job_submission.config import load
     load(env)
 
 

@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 def create_config_file():
     import yaml
     import os
-    from foundations_cli.typed_config_listing import TypedConfigListing
+    from foundations_core_cli.typed_config_listing import TypedConfigListing
 
     os.makedirs('config/execution', exist_ok=True)
 

@@ -40,7 +40,7 @@ class TestScheduledMonitorController(Spec):
         return self.monitor_controller.put()
 
     def test_put_request_for_resume_returns_status_code_204_if_successful(self):
-        self.patch('foundations_cli.orbit_monitor_package_server.resume')
+        self.patch('foundations_core_cli.orbit_monitor_package_server.resume')
         response = self._set_params_and_put({'status': 'resume'})
         self.assertEqual(204, response.status())
 
@@ -55,7 +55,7 @@ class TestScheduledMonitorController(Spec):
         mock_scheduled_monitor.put.assert_called_once_with(project_name=self.project_name, name=self.monitor_name, status='active')
 
     def test_put_request_for_pause_returns_status_code_204_if_successful(self):
-        self.patch('foundations_cli.orbit_monitor_package_server.pause')
+        self.patch('foundations_core_cli.orbit_monitor_package_server.pause')
         response = self._set_params_and_put({'status': 'pause'})
         self.assertEqual(204, response.status())
 

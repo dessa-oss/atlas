@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 from mock import patch
 
-from foundations_cli.environment_fetcher import EnvironmentFetcher
+from foundations_core_cli.environment_fetcher import EnvironmentFetcher
 from pathlib import Path
 
 class TestEnvironmentFetcher(Spec):

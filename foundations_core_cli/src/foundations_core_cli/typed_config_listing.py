@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class TypedConfigListing(object):
     
     def __init__(self, config_type):
-        from foundations_cli.config_listing import ConfigListing
+        from foundations_core_cli.config_listing import ConfigListing
         from foundations_contrib.utils import foundations_home
         import os.path
 

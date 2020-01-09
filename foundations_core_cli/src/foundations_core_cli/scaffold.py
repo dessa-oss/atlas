@@ -18,7 +18,7 @@ class Scaffold(object):
     """
 
     def __init__(self, project_name):
-        from foundations_cli.project import Project
+        from foundations_core_cli.project import Project
         self._project = Project(project_name)
 
     def scaffold_project(self):

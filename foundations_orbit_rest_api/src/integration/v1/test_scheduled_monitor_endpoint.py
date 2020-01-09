@@ -77,7 +77,7 @@ class TestScheduledMonitorEndpoint(Spec):
         self.assertEqual('paused', results['status'])
 
     def _start_monitor(self):
-        from foundations_cli.orbit_monitor_package_server import start
+        from foundations_core_cli.orbit_monitor_package_server import start
         import os
 
         self.set_foundations_home()
@@ -90,7 +90,7 @@ class TestScheduledMonitorEndpoint(Spec):
         self.cron_job_scheduler.resume_job(self.monitor_id)
 
     def _delete_monitor_via_orbit_monitor_package(self):
-        from foundations_cli.orbit_monitor_package_server import delete
+        from foundations_core_cli.orbit_monitor_package_server import delete
         delete(self.project_name, self.monitor_name)
 
     @staticmethod
