@@ -21,11 +21,6 @@ build_module () {
 
     cd ${directory} && \
 
-    if [ ${directory} = 'foundations_contrib' ]
-    then
-        export FOUNDATIONS_CLI=${cli}
-    fi
-
     python setup.py sdist bdist_wheel && \
     cd .. && \
     python -m pip install -U $wheel_path && \

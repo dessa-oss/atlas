@@ -2,7 +2,6 @@
 
 cli=$1
 
-unset FOUNDATIONS_CLI
 script_location="$(pwd)/devops/build_scripts"
 source "$script_location/build_common.sh"
 
@@ -22,6 +21,4 @@ rm -rf dist/* && \
     build_module foundations_sdk dessa_foundations $cwd && \
     build_module foundations_core_rest_api_components foundations_core_rest_api_components $cwd && \
     build_module foundations_rest_api foundations_rest_api $cwd && \
-    build_module foundations_orbit_rest_api foundations_orbit_rest_api $cwd && \
-
-unset FOUNDATIONS_CLI
+    build_module foundations_orbit_rest_api foundations_orbit_rest_api $cwd

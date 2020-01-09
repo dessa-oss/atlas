@@ -20,18 +20,6 @@ if 'dist' in listdir():
 if 'foundations_contrib.egg-info' in listdir('src'):
     rmtree('src/foundations_contrib.egg-info')
 
-cli = environ.get('FOUNDATIONS_CLI', '')
-exclude = []
-
-if cli == 'atlas':
-    exclude.append('*sub_parsers.monitor*')
-    exclude.append('*sub_parsers.orbit*')
-    exclude.append('*sub_parsers.setup*')
-elif cli == 'orbit':
-    exclude.append('*sub_parsers.orbit*')
-    exclude.append('*sub_parsers.atlas*')
-    exclude.append('*sub_parsers.setup*')
-
 here = path.abspath(path.dirname(__file__))
 build_version = environ.get('build_version', '0.0.0')
 
@@ -72,7 +60,7 @@ setup(
         'foundations-internal=={}'.format(build_version),
         'foundations-events=={}'.format(build_version)
     ],
-    packages=find_packages(package_source, exclude=exclude),
+    packages=find_packages(package_source),
     package_dir={'': package_source},
     package_data={
         'foundations_contrib': package_data,
