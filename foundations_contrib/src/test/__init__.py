@@ -27,7 +27,6 @@ from test.test_local_shell_job_deployment import TestLocalShellJobDeployment
 from test.test_middleware_manager import TestMiddlewareManager
 from test.test_null_cache_backend import TestNullCacheBackend
 from test.test_null_pipeline_archive_listing import TestNullPipelineArchiveListing
-from test.test_null_stage_logger import TestNullStageLogger
 from test.test_prefixed_bucket import TestPrefixedBucket
 from test.test_scheduler_legacy_backend import TestSchedulerLegacyBackend
 from test.test_scheduler_local_backend import TestSchedulerLocalBackend
