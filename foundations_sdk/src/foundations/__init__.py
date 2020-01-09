@@ -60,7 +60,6 @@ import foundations_events
 from foundations_contrib.set_job_resources import set_job_resources
 from foundations.submission import *
 #Commented for Atlas CE
-#from foundations.backup_before_teardown import BackupBeforeTeardown
 from foundations.artifacts import *
 from foundations.local_run import set_up_default_environment_if_present
 #Commented for Atlas CE
