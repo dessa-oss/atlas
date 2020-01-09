@@ -178,31 +178,6 @@ class TestCommandLineInterface(Spec):
             any_order=True
         )
 
-    @patch('argparse.ArgumentParser')
-    def test_setup_has_correct_options(self, parser_class_mock):
-        parser_mock = Mock()
-        parser_class_mock.return_value = parser_mock
-
-        parser_mock.add_subparsers.return_value = self.level_1_subparsers_mock
-
-        self.level_1_subparsers_mock.add_parser.return_value = self.level_2_parser_mock
-
-        CommandLineInterface([])
-
-        parser_class_mock.assert_called_with(prog='foundations')
-
-        setup_call = call('setup', help='Sets up Foundations for local experimentation')
-
-        self.level_1_subparsers_mock.add_parser.assert_has_calls([setup_call])
-
-    def test_setup_atlas_calls_setup_atlas_script(self):
-        CommandLineInterface(['setup', 'atlas']).execute()
-        self.mock_subprocess_run.assert_called_with(['bash', './foundations_gui.sh', 'start', 'ui', 'foundations'], cwd=self.mock_contrib_root / 'resources')
-
-    def test_setup_orbit_calls_setup_orbit_script(self):
-        CommandLineInterface(['setup', 'orbit']).execute()
-        self.mock_subprocess_run.assert_called_with(['bash', './foundations_gui.sh', 'start', 'ui', 'foundations-orbit'], cwd=self.mock_contrib_root / 'resources')
-
     def test_execute_spits_out_help(self):
         with patch('argparse.ArgumentParser.print_help') as mock:
             CommandLineInterface([]).execute()

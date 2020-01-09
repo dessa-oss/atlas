@@ -74,14 +74,14 @@ class AtlasParser(object):
         delete_job_parser.set_defaults(function=self._delete_job)
 
     def _submit(self):
-        from foundations_cli.job_submission.submit_job import submit
+        from foundations_core_cli.job_submission.submit_job import submit
         submit(self._cli.arguments())
     
     def _retrieve_artifacts(self):
         from foundations_contrib.global_state import config_manager
         from foundations_contrib.archiving.artifact_downloader import ArtifactDownloader
         from foundations_contrib.archiving import get_pipeline_archiver_for_job
-        from foundations_cli.job_submission.config import load
+        from foundations_core_cli.job_submission.config import load
         from foundations_contrib.change_directory import ChangeDirectory
         import os
 
@@ -112,7 +112,7 @@ class AtlasParser(object):
 
     def _retrieve_logs(self):
         from foundations_contrib.global_state import config_manager
-        from foundations_cli.job_submission.config import load
+        from foundations_core_cli.job_submission.config import load
         from foundations_contrib.change_directory import ChangeDirectory
         import os
 
@@ -141,7 +141,7 @@ class AtlasParser(object):
 
     def _stop(self):
         from foundations_contrib.global_state import config_manager
-        from foundations_cli.job_submission.config import load
+        from foundations_core_cli.job_submission.config import load
         from foundations_contrib.change_directory import ChangeDirectory
         import os
 
@@ -176,7 +176,7 @@ class AtlasParser(object):
 
     def _clear_queue(self):
         from foundations_contrib.global_state import config_manager
-        from foundations_cli.job_submission.config import load
+        from foundations_core_cli.job_submission.config import load
         from foundations_contrib.change_directory import ChangeDirectory
         import os
 
@@ -198,7 +198,7 @@ class AtlasParser(object):
 
     def _delete_job(self):
         from foundations_contrib.global_state import config_manager
-        from foundations_cli.job_submission.config import load
+        from foundations_core_cli.job_submission.config import load
         from foundations_contrib.change_directory import ChangeDirectory
         import os
 

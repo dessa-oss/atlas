@@ -46,7 +46,7 @@ class MonitorParser(object):
 
     def _start_monitor(self):
         from requests.exceptions import ConnectionError
-        from foundations_cli.orbit_monitor_package_server import start
+        from foundations_core_cli.orbit_monitor_package_server import start
 
         arguments = self._cli.arguments()
         job_directory = arguments.job_directory
@@ -110,13 +110,13 @@ class MonitorParser(object):
         return config_manager.config().get('scheduler_url', 'http://localhost:5000')
 
     def _delete_monitor(self):
-        from foundations_cli.orbit_monitor_package_server import delete
+        from foundations_core_cli.orbit_monitor_package_server import delete
         self._modify_monitor(delete)
 
     def _pause_monitor(self):
-        from foundations_cli.orbit_monitor_package_server import pause
+        from foundations_core_cli.orbit_monitor_package_server import pause
         self._modify_monitor(pause)
 
     def _resume_monitor(self):
-        from foundations_cli.orbit_monitor_package_server import resume
+        from foundations_core_cli.orbit_monitor_package_server import resume
         self._modify_monitor(resume)
