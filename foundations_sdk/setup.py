@@ -32,7 +32,7 @@ setup(
     install_requires=[
         'pandas==0.23.3',
         f'foundations-contrib=={build_version}',
-        # f'foundations-atlas-cli=={build_version}'
+        f'foundations-core-cli=={build_version}'
     ],
     packages=find_packages(package_source),
     package_dir={'': package_source},
