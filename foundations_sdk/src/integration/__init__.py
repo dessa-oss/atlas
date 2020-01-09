@@ -10,8 +10,6 @@ import foundations
 from foundations.global_state import redis_connection
 import integration.config
 
-from integration.test_persist_unserializable_data import TestPersistUnserializableData
-from integration.test_result_reader import TestResultReader
 from integration.test_caching import TestCaching
 from integration.test_placeholder_parameters import TestPlaceHolderParameters
 from integration.test_pipeline_interface import TestPipelineInterface

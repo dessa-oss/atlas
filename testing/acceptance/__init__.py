@@ -7,7 +7,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 import acceptance.config
-from acceptance.test_duplicate_job_source import TestDuplicateJobSource
 from acceptance.test_recursion_limit import TestRecursionLimit
 from acceptance.test_job_data_producers import TestJobDataProducers
 from acceptance.test_cli_init import TestCLIInit

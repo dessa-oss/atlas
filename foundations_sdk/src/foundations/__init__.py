@@ -25,7 +25,6 @@ _check_if_in_cli()
 
 from foundations.hyperparameter import Hyperparameter
 from foundations.job import Job
-from foundations.result_reader import ResultReader
 from foundations_internal.pipeline_archiver import PipelineArchiver
 from foundations.context_aware import context_aware
 from foundations.pipeline_archiver_fetch import PipelineArchiverFetch
