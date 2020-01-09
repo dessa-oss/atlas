@@ -29,7 +29,7 @@ pipeline{
         }
       }
     }
-    stage('Upload Orbit Wheels to Staging PyPi') {
+    stage('Upload Altas Wheels to Staging PyPi') {
       steps {
         container("python3") {
             sh "./devops/build_scripts/upload_modules_to_artifactory.sh $NEXUS_PYPI_STAGING"
