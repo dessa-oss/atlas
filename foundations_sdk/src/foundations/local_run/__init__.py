@@ -30,7 +30,7 @@ def set_up_default_environment_if_present():
                 'Without a default configuration file, no foundations code will be executed.')
 
 def load_execution_environment():
-    from foundations_contrib.cli.typed_config_listing import TypedConfigListing
+    from foundations_cli.typed_config_listing import TypedConfigListing
     from foundations_internal.config.execution import translate
 
     listing = TypedConfigListing('execution')
@@ -118,7 +118,7 @@ def _default_environment_present():
     return 'default.config.yaml' in environments
 
 def _environment_listing():
-    from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
+    from foundations_cli.environment_fetcher import EnvironmentFetcher
             
     environment_fetcher = EnvironmentFetcher()
     local_environments, global_environments = environment_fetcher.get_all_environments()

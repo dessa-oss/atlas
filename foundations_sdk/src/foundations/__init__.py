@@ -59,6 +59,8 @@ import foundations_events.consumers
 import foundations_events
 from foundations_contrib.set_job_resources import set_job_resources
 from foundations.submission import *
+import foundations_cli
+
 #Commented for Atlas CE
 from foundations.artifacts import *
 from foundations.local_run import set_up_default_environment_if_present

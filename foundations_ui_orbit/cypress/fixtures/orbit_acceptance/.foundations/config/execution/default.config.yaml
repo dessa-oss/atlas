@@ -2,5 +2,5 @@ cache_config:
   end_point: /cache
 log_level: INFO
 results_config:
-  archive_end_point: /Users/calvinchoi/Documents/dev/foundations/foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/job_data
-  redis_end_point: redis://3.88.187.139:5556
+  archive_end_point: /home/pairing/dev/foundations/testing/local_docker_scheduler_acceptance/foundations_home/job_data
+  redis_end_point: redis://localhost:6379

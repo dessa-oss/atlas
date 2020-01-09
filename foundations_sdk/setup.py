@@ -31,7 +31,8 @@ setup(
     ],
     install_requires=[
         'pandas==0.23.3',
-        'foundations-contrib=={}'.format(build_version)
+        f'foundations-contrib=={build_version}',
+        f'foundations-cli=={build_version}'
     ],
     packages=find_packages(package_source),
     package_dir={'': package_source},

@@ -8,6 +8,7 @@ venv*
 **/*.config.yaml
 **/*.tgz
 **/.hypothesis
+*.egg-info
 foundations_sdk/build
 foundations_sdk/dist
 foundations_sdk/dessa_foundations.egg-info
@@ -126,7 +127,10 @@ foundations_ui/cypress/screenshots/*
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/config/submission/scheduler.config.yaml
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/config/execution/default.config.yaml
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/job_data
+foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/logs/
+
 testing/orbit_acceptance/fixtures/end-to-end-acceptance/foundations_home/local_docker_scheduler/work_dir
+testing/local_docker_scheduler_acceptance/foundations_home
 
 # We should investigate why this is happening
 foundations_ui/cypress/**/foundations_ui

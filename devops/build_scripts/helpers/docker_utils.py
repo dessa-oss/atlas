@@ -21,9 +21,6 @@ def print_logs(logs, is_generator=True):
 
 def get_docker_low_level_client():
     import docker
-
-    nexus_password = os.environ['NEXUS_PASSWORD']
-    nexus_username = os.environ['NEXUS_USER']
     return docker.APIClient(base_url='unix://var/run/docker.sock')
 
 def run_docker_build(path, dockerfile, build_tag, latest_tag, buildargs):

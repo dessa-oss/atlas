@@ -26,7 +26,8 @@ setup(
         'Intended Audience :: Developers',
     ],
     install_requires=[
-        'foundations-contrib=={}'.format(build_version),
+        f'foundations-contrib=={build_version}',
+        f'foundations-cli=={build_version}',
         'pandas<=0.23.3'
     ],
     packages=find_packages('src'),

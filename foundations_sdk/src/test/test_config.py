@@ -22,7 +22,7 @@ class TestConfig(Spec):
     def non_existent_environment_name(self):
         return self.faker.name()
 
-    mock_environment_fetcher = let_patch_instance('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher')
+    mock_environment_fetcher = let_patch_instance('foundations_cli.environment_fetcher.EnvironmentFetcher')
     mock_config_manager = let_patch_mock('foundations_contrib.global_state.config_manager')
 
     @set_up

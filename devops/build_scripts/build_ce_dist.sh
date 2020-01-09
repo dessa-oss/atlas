@@ -8,6 +8,7 @@ cwd=`pwd`
 rm -rf dist/* && \
     build_module foundations_internal foundations_internal $cwd atlas && \
     build_module foundations_events foundations_events $cwd atlas && \
+    build_module foundations_cli foundations_cli $cwd atlas && \
     build_module foundations_contrib foundations_contrib $cwd atlas && \
     build_module foundations_local_docker_scheduler_plugin foundations_local_docker_scheduler_plugin $cwd atlas && \
     build_module foundations_sdk dessa_foundations $cwd atlas && \

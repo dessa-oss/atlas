@@ -12,7 +12,7 @@ class TestInitializeDefaultEnvironment(Spec):
 
     mock_open = let_patch_mock_with_conditional_return('builtins.open')
     mock_mkdirs = let_patch_mock('os.makedirs')
-    mock_typed_config_klass = let_patch_mock_with_conditional_return('foundations_contrib.cli.typed_config_listing.TypedConfigListing')
+    mock_typed_config_klass = let_patch_mock_with_conditional_return('foundations_cli.typed_config_listing.TypedConfigListing')
     mock_typed_config = let_mock()
 
     @let
