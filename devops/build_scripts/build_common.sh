@@ -17,11 +17,6 @@ build_module () {
     wheel_path=${directory}/dist/${module_name}-${wheel_name_tail}
     cli=$4
 
-    if [ $module_name == "foundations_contrib" ] && [ $cli == "orbit" ];
-    then
-        wheel_path=${directory}/dist/${module_name}-${pip_build_version}o-py${wheel_suffix}-none-any.whl
-    fi
-
     unset BUILD_FOUNDATIONS_OBFUSCATED
 
     cd ${directory} && \
