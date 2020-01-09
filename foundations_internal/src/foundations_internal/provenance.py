@@ -8,7 +8,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import os
 import random
 
-from foundations_internal.local_directory import LocalDirectory
 from foundations_internal.stage_hierarchy import StageHierarchy
 
 
