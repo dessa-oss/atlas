@@ -123,11 +123,7 @@ PAGES = [
     },
     {
         'page': 'stage_search.md',
-        'all_module_classes': [foundations.stage_connector_wrapper],
-        'functions': [
-            foundations.stage_connector_wrapper.StageConnectorWrapper.random_search,
-            foundations.stage_connector_wrapper.StageConnectorWrapper.grid_search,
-        ]
+        'all_module_classes': [foundations.stage_connector_wrapper]
     },
         {
         'page': 'set_deployment_env.md',
