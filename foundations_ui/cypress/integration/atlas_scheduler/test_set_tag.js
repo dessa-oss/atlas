@@ -8,13 +8,13 @@ describe('Test Set Tag', () => {
     {
       testName: 'Test Set Tag Local',
       projectName: 'set_tag_project',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/set_tag/set_tag_project && python main.py`
+      command: 'export FOUNDATIONS_HOME=`pwd`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/set_tag/set_tag_project && python main.py',
     },
     {
       testName: 'Test Set Tag with Scheduler',
       projectName: 'set_tag_with_scheduler_project',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/set_tag_with_scheduler && foundations submit scheduler set_tag_with_scheduler_project main.py`
-    }
+      command: 'export FOUNDATIONS_HOME=`pwd`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/set_tag_with_scheduler && foundations submit scheduler set_tag_with_scheduler_project main.py',
+    },
   ];
 
   states.forEach(state => {
@@ -75,10 +75,10 @@ describe('Test Set Tag', () => {
         cy.contains(state.projectName).click({ force: true }).then(() => {
           cy.contains('[data-class=job-table-cell-with-header-Tags]', '...').trigger('mouseover', { force: true });
           cy.get('[data-class=hover-cell]')
-          .should('contain', 'Str')
-          .should('contain', 'Int')
-          .should('contain', 'Float')
-          .should('contain', 'None');
+            .should('contain', 'Str')
+            .should('contain', 'Int')
+            .should('contain', 'Float')
+            .should('contain', 'None');
         });
       });
     });

@@ -10,15 +10,15 @@ describe('Test Invalid Image', () => {
       projectName: 'invalid_image_project',
       jobStatus: 'failed',
       logs: '404 Client Error',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/invalid_image && foundations submit scheduler invalid_image_project main.py`
+      command: 'export FOUNDATIONS_HOME=`pwd`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/invalid_image && foundations submit scheduler invalid_image_project main.py',
     },
     {
       testName: 'Test Invalid Image through the SDK',
       projectName: 'invalid_image_project',
       jobStatus: 'completed',
       logs: '',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/invalid_image/invalid_image_project && python main.py`
-    }
+      command: 'export FOUNDATIONS_HOME=`pwd`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/invalid_image/invalid_image_project && python main.py',
+    },
   ];
 
   states.forEach(state => {

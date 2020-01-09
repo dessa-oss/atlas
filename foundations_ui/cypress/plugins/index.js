@@ -1,2 +1,2 @@
 module.exports = (on, config) => {
-}
+};

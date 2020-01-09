@@ -1,7 +1,8 @@
 module.exports = {
   "extends": [
     "airbnb",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "plugin:cypress/recommended"
   ],
   "env": {
           "browser": true,
@@ -9,7 +10,8 @@ module.exports = {
           "es6": true
   },
   plugins: [
-    "react-hooks"
+    "react-hooks",
+    "cypress"
   ],
   "parserOptions": {
     "ecmaFeatures": {
@@ -26,7 +28,7 @@ module.exports = {
     "react/forbid-prop-types": 0,
     "react/jsx-one-expression-per-line": 0,
     "react/no-unused-prop-types": [1],
-    "max-len": [2, {"code": 120, "tabWidth": 2, "ignoreUrls": true}],
+    "max-len": [1, {"code": 120, "tabWidth": 2, "ignoreUrls": true}],
     "import/no-cycle": 1,
     "jsx-a11y/label-has-associated-control": 0,
     "jsx-a11y/label-has-for": 0,
@@ -43,6 +45,7 @@ module.exports = {
     "jsx-a11y/click-events-have-key-events": 0,
     "object-shorthand": ["error", "never"],
     "arrow-parens": ["error", "as-needed"],
-    "linebreak-style": 0
+    "linebreak-style": 0,
+    "cypress/no-unnecessary-waiting": 0,
   }
 };

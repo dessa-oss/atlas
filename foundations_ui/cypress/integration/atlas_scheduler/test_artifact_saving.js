@@ -8,17 +8,17 @@ describe('Test Artifact Saving', () => {
     {
       testName: 'Test Artifact Saving through the CLI',
       projectName: 'artifact_saving_project',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/artifact_saving && foundations submit scheduler artifact_saving_project main.py`
+      command: 'export FOUNDATIONS_HOME=`pwd`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/artifact_saving && foundations submit scheduler artifact_saving_project main.py',
     },
     {
       testName: 'Test Artifact Saving through the SDK',
       projectName: 'artifact_saving_project',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/artifact_saving/artifact_saving_project && python main.py`
+      command: 'export FOUNDATIONS_HOME=`pwd`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/artifact_saving/artifact_saving_project && python main.py',
     },
   ];
 
   const artifactNames = [
-    'fan-man.png', 'ICQ Uh Oh.mp3', 'dogge.mp4', 'cat.gif', 'wilhelm.wav'
+    'fan-man.png', 'ICQ Uh Oh.mp3', 'dogge.mp4', 'cat.gif', 'wilhelm.wav',
   ];
 
   states.forEach(state => {
@@ -38,9 +38,9 @@ describe('Test Artifact Saving', () => {
 
       it('Job is completed', () => {
         cy.contains(state.projectName).click({ force: true }).then(() => {
-         cy.get('[data-class=job-table-row]')
-          .find('[data-class=job-status-completed]')
-          .should('exist');
+          cy.get('[data-class=job-table-row]')
+            .find('[data-class=job-status-completed]')
+            .should('exist');
         });
       });
 
@@ -51,7 +51,7 @@ describe('Test Artifact Saving', () => {
           artifactNames.forEach(artifact => {
             cy.get('[data-class=artifacts-table-row]').should('contain', artifact);
           });
-         });
+        });
       });
     });
   });

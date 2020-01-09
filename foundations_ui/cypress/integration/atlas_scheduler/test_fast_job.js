@@ -9,13 +9,13 @@ describe('Test Fast Job', () => {
     {
       testName: 'Test Ten Fast Jobs through CLI',
       projectName: projectName,
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/fast_job/ && foundations submit scheduler ${projectName} main.py &`
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/fast_job/ && foundations submit scheduler ${projectName} main.py &`,
     },
     {
       testName: 'Test Ten Fast Jobs through SDK',
       projectName: projectName,
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/fast_job/${projectName}/ && python main.py &`
-    }
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/fast_job/${projectName}/ && python main.py &`,
+    },
   ];
 
   states.forEach(state => {
@@ -23,7 +23,7 @@ describe('Test Fast Job', () => {
       before(() => {
         cy.exec(`redis-cli -h ${schedulerIP} -p ${schedulerRedisPort} flushall`);
 
-        for (let i=0; i < 9; i++) {
+        for (let i = 0; i < 9; i += 1) {
           cy.exec(state.command);
         }
         cy.exec(state.command.substring(0, state.command.length - 1));
@@ -39,15 +39,15 @@ describe('Test Fast Job', () => {
 
       it('Job exists on projects page', () => {
         cy.contains(state.projectName).click({ force: true }).then(() => {
-         cy.get('[data-class=job-table-row]').should('exist');
+          cy.get('[data-class=job-table-row]').should('exist');
         });
       });
 
       it('Job is completed', () => {
         cy.contains(state.projectName).click({ force: true }).then(() => {
-         cy.get('[data-class=job-table-row]')
-          .find('[data-class=job-status-completed]')
-          .should('exist');
+          cy.get('[data-class=job-table-row]')
+            .find('[data-class=job-status-completed]')
+            .should('exist');
         });
       });
     });

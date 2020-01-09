@@ -14,5 +14,5 @@ describe.skip('Test Data Contract Info', () => {
     cy.get('[data-cy=data-contract-info-modal').should('not.exist');
     cy.get('.i--icon-open').click({ force: true });
     cy.get('[data-cy=data-contract-info-modal').should('exist');
-  })
+  });
 });

@@ -6,15 +6,15 @@ describe('Test Job Submission that Fails', () => {
 
   const states = [
     {
-      testName: `Test Job Submission that Fails with CLI with project job_submission_project`,
+      testName: 'Test Job Submission that Fails with CLI with project job_submission_project',
       projectName: 'job_submission_project',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit scheduler job_submission_project main.py 0 "Complete_Failed_Task_1"`
+      command: 'export FOUNDATIONS_HOME=`pwd`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit scheduler job_submission_project main.py 0 "Complete_Failed_Task_1"',
     },
     {
-      testName: `Test Job Submission that Fails with CLI with project job_submission_project_with_foundations`,
+      testName: 'Test Job Submission that Fails with CLI with project job_submission_project_with_foundations',
       projectName: 'job_submission_project_with_foundations',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit scheduler job_submission_project_with_foundations main.py 0 "Complete_Failed_Task_2"`
-    }
+      command: 'export FOUNDATIONS_HOME=`pwd`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/job_submission/ && foundations submit scheduler job_submission_project_with_foundations main.py 0 "Complete_Failed_Task_2"',
+    },
   ];
 
   states.forEach(state => {
@@ -34,15 +34,15 @@ describe('Test Job Submission that Fails', () => {
 
       it('Job exists on projects page', () => {
         cy.contains(state.projectName).click({ force: true }).then(() => {
-         cy.get('[data-class=job-table-row]').should('exist');
+          cy.get('[data-class=job-table-row]').should('exist');
         });
       });
 
       it('Job has failed', () => {
         cy.contains(state.projectName).click({ force: true }).then(() => {
-         cy.get('[data-class=job-table-row]')
-          .find('[data-class=job-status-failed]')
-          .should('exist');
+          cy.get('[data-class=job-table-row]')
+            .find('[data-class=job-status-failed]')
+            .should('exist');
         });
       });
     });

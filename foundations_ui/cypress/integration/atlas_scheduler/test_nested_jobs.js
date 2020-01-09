@@ -1,4 +1,4 @@
-describe.skip('Test Nested Jobs', () => {  // wait_for_deployment_to_complete doesn't seem to work properly with nested jobs from remote deployments; unskip this when the pipeline is properly built
+describe.skip('Test Nested Jobs', () => { // wait_for_deployment_to_complete doesn't seem to work properly with nested jobs from remote deployments; unskip this when the pipeline is properly built
   const schedulerIP = Cypress.env('SCHEDULER_IP');
   const schedulerRedisPort = Cypress.env('SCHEDULER_REDIS_PORT');
   const guiHost = Cypress.env('GUI_HOST');
@@ -29,8 +29,8 @@ describe.skip('Test Nested Jobs', () => {  // wait_for_deployment_to_complete do
   it('All jobs are completed', () => {
     cy.contains(projectName).click({ force: true }).then(() => {
       cy.get('[data-class=job-table-row]')
-      .find('[data-class=job-status-completed]')
-      .should('have.length', 2);
+        .find('[data-class=job-status-completed]')
+        .should('have.length', 2);
     });
   });
 

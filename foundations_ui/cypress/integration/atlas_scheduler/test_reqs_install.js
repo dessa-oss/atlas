@@ -4,10 +4,10 @@ describe('Test Requirements Install', () => {
   const guiHost = Cypress.env('GUI_HOST');
   const guiPort = Cypress.env('GUI_PORT');
 
-  const command = `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/reqs_install && foundations submit scheduler reqs_install_project main.py testarg1 testarg2`
+  const command = 'export FOUNDATIONS_HOME=`pwd`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/reqs_install && foundations submit scheduler reqs_install_project main.py testarg1 testarg2';
   const projectName = 'reqs_install_project';
   const expectedLogs = 'xgboost';
-  
+
   before(() => {
     cy.exec(`redis-cli -h ${schedulerIP} -p ${schedulerRedisPort} flushall`);
     cy.exec(command);
@@ -24,7 +24,7 @@ describe('Test Requirements Install', () => {
   it('Job status is as expected', () => {
     cy.contains(projectName).click({ force: true }).then(() => {
       cy.get('[data-class=job-table-row]')
-        .find(`[data-class=job-status-completed]`)
+        .find('[data-class=job-status-completed]')
         .should('exist');
     });
   });
