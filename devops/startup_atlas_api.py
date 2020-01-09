@@ -2,14 +2,13 @@
 # Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
 # Proprietary and confidential
 # Written by Susan Davis <s.davis@dessa.com>, 12 2019
-
+import sys
 try:
     from foundations_contrib.global_state import config_manager
     from foundations_rest_api.global_state import app_manager
     from foundations_local_docker_scheduler_plugin.job_deployment import JobDeployment
     import logging
     import os
-    import sys
 
     foundations_home = os.path.abspath(os.path.expanduser(os.environ.get('FOUNDATIONS_HOME', '~/.foundations')))
     redis_url = f"redis://{os.environ.get('REDIS_HOST', 'redis')}:{os.environ.get('REDIS_PORT', 6379)}"

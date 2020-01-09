@@ -3,9 +3,9 @@
 source activate_dev_env.sh
 source ./devops/set_environment_for_docker_scheduler.sh
 
-export REACT_APP_ATLAS_URL="http://127.0.0.1:${AUTH_PROXY_PORT}/api/v2beta/"
+export REACT_APP_API_URL="http://127.0.0.1:${AUTH_PROXY_PORT}/api/v1/"
 export REACT_APP_APIARY_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v1/"
-export REACT_APP_API_STAGING_URL="http://localhost:5558/api/v2beta/"
+export REACT_APP_API_STAGING_URL="http://localhost:${AUTH_PROXY_PORT}/api/v2beta/"
 
 
 echo "Ensuring that orbit is not also running"
