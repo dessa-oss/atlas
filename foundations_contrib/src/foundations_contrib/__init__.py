@@ -22,11 +22,11 @@ def _append_module():
     module_manager.append_module(sys.modules[__name__])
 
 
-def _inject_config_translate():
-    from foundations_internal.global_state import config_translator
-    import foundations_contrib.config.local_config_translate as translator
+# def _inject_config_translate():
+#     from foundations_internal.global_state import config_translator
+#     import foundations_contrib.config.local_config_translate as translator
 
-    config_translator.add_translator('local', translator)
+#     config_translator.add_translator('local', translator)
 
 
 def hide_yaml_warnings_for_deprecated_version():
@@ -37,4 +37,4 @@ def hide_yaml_warnings_for_deprecated_version():
 
 hide_yaml_warnings_for_deprecated_version()
 _append_module()
-_inject_config_translate()
+# _inject_config_translate()
