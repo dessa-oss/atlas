@@ -120,57 +120,11 @@ const disabled = () => { return true; };
 const notDisabled = () => { return false; };
 const rowNumber = 1;
 
-it('getTableSectionHeaderDiv empty header', () => {
-  const header = '';
-  const className = CommonActions.getTableSectionHeaderDiv(header);
-  expect(className).toBe('table-section-header');
-});
-
-it('getTableSectionHeaderArrow empty header', () => {
-  const header = '';
-  const className = CommonActions.getTableSectionHeaderArrow(header);
-  expect(className).toBe('');
-});
-
-it('getTableSectionHeaderText empty header', () => {
-  const header = '';
-  const className = CommonActions.getTableSectionHeaderText(header);
-  expect(className).toBe('table-header-text text-white no-margin');
-});
-
-it('getTableSectionHeaderDiv with header', () => {
-  const header = 'header';
-  const className = CommonActions.getTableSectionHeaderDiv(header);
-  expect(className).toBe('table-section-header table-header');
-});
-
-it('getTableSectionHeaderArrow with header', () => {
-  const header = 'header';
-  const className = CommonActions.getTableSectionHeaderArrow(header);
-  expect(className).toBe('table-header-arrow border-input-metric-arrow');
-});
-
-it('getTableSectionHeaderText with header', () => {
-  const header = 'header';
-  const className = CommonActions.getTableSectionHeaderText(header);
-  expect(className).toBe('table-header-text text-white');
-});
-
 xit('get InputMetricColumnHeaders', () => {
   const headers = CommonActions.getInputMetricColumnHeaders(inputParams, hiddenParams, emptyFunc, noMetric, emptyArray,
     emptyFunc, emptyFunc, emptyFunc);
   expect(headers.length).toBe(2);
 });
-
-it('isHeaderNotEmpty isFull', () => {
-  const headers = CommonActions.isHeaderNotEmpty(header);
-  expect(headers).toBe(true);
-})
-
-it('isHeaderNotEmpty isEmpty', () => {
-  const headers = CommonActions.isHeaderNotEmpty(emptyHeader);
-  expect(headers).toBe(false);
-})
 
 it('get InputMetricCells no metric, has jobs', () => {
   const cells = CommonActions.getInputMetricCells(job, error, noMetric, columns, hidden);
@@ -204,16 +158,6 @@ it('get InputMetricRows jobs', () => {
   expect(rows[1]).not.toBe(null);
 });
 
-it('get transformArraysToString jobs', () => {
-  const transformedList = CommonActions.transformArraysToString(listParam);
-  expect(transformedList).toBe('[1, 2, 3]')
-});
-
-it('get transformArraysToString jobs, array of strings', () => {
-  const transformedList = CommonActions.transformArraysToString(stringListParam);
-  expect(transformedList).toBe('[1, 2, 3]') 
-});
-
 it('get InputMetricCellPClass', () => {
   const metricClass = CommonActions.getInputMetricCellPClass(noError, cellType);
   expect(metricClass).toBe('type-number');
@@ -234,29 +178,9 @@ it('get InputMetricCellDivClass error', () => {
   expect(metricClass).toBe('job-cell error row-1 key-undefined');
 });
 
-xit('get InputParamHeaders', () => {
-  const headers = CommonActions.getInputParamHeaders(inputParams, hidden, emptyFunc, noMetric, emptyArray,
-    emptyFunc, emptyFunc, emptyFunc);
-  expect(headers.length).toBe(2);
-});
-
 it('isError', () => {
   const isError = CommonActions.isError(jobs[0].status);
   expect(isError).toBe(false);
-});
-
-it('get InputCellsFromInputParams', () => {
-  const cells = CommonActions.getInputCellsFromInputParams(job, noError, columns, noMetric, hidden);
-  expect(cells.length).toBe(1);
-  expect(cells[0]).not.toBe(null);
-});
-
-it('get MetricCellsFromOutputMetrics', () => {
-  const cells = CommonActions.getMetricCellsFromOutputMetrics(job, noError, metricCols, metric, hidden);
-  expect(cells.length).toBe(3);
-  expect(cells[0]).not.toBe(null);
-  expect(cells[1]).not.toBe(null);
-  expect(cells[2]).toBe(null);
 });
 
 it('formatColumns, no cols', () => {
@@ -304,36 +228,6 @@ it('get ChangedCheckboxes, 0 elements', () => {
   expect(changedArray[0]).toBe(newParam);
 });
 
-it('get RowKey', () => {
-  const key = CommonActions.getRowKey(job);
-  expect(key).toBe('myid-input-metric-row');
-});
-
-it('addBorderToElementWidth', () => {
-  const size = CommonActions.addBorderToElementWidth(element, border, hiddenSize);
-  expect(size).toBe(102);
-});
-
-it('elementsWidthLargerThanParent smaller', () => {
-  const isLarger = CommonActions.elementsWidthLargerThanParent(smallElementWidth, parentWidth);
-  expect(isLarger).toBe(false);
-});
-
-it('elementsWidthLargerThanParent larger', () => {
-  const isLarger = CommonActions.elementsWidthLargerThanParent(largeElementWidth, parentWidth);
-  expect(isLarger).toBe(true);
-});
-
-it('getInputMetricCellType, has type', () => {
-  const type = CommonActions.getInputMetricCellType(jobs[1].input_params[0]);
-  expect(type).toBe('number');
-});
-
-it('getInputMetricCellType, not available', () => {
-  const type = CommonActions.getInputMetricCellType(jobs[1].input_params[1]);
-  expect(type).toBe('not-available');
-});
-
 it('getFlatArray', () => {
   const flatArray = CommonActions.getFlatArray(columnsToFormat);
   expect(flatArray.length).toBe(3);
@@ -343,16 +237,6 @@ it('getFlatArray', () => {
 it('getNumberFilters', () => {
   const numberFilters = CommonActions.getNumberFilters(allFilters, min, max, colName);
   expect(numberFilters.length).toBe(2);
-});
-
-it('getOldFiltersWithoutColumn, has column to remove', () => {
-  const newFilters = CommonActions.getOldFiltersWithoutColumn(allFilters, existingColName);
-  expect(newFilters.length).toBe(0);
-});
-
-it('getOldFiltersWithoutColumn, missing column to remove', () => {
-  const newFilters = CommonActions.getOldFiltersWithoutColumn(allFilters, missingColName);
-  expect(newFilters.length).toBe(1); 
 });
 
 it('getContainFilters, existing column', () => {

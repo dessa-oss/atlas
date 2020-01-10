@@ -283,20 +283,6 @@ it('parseDuration should return the duration in milliseconds with different days
   expect(durationMilliseconds).toBe(604800000);
 });
 
-it('checks if field hidden, is not hidden', () => {
-  const hidden = ['hidden1', 'hidden2'];
-  const fieldToCheck = 'visibleField';
-  const isHidden = JobListActions.isFieldHidden(hidden, fieldToCheck);
-  expect(isHidden).toBe(false);
-});
-
-it('checks if field hidden, is hidden', () => {
-  const hidden = ['hidden1', 'hidden2'];
-  const fieldToCheck = 'hidden1';
-  const isHidden = JobListActions.isFieldHidden(hidden, fieldToCheck);
-  expect(isHidden).toBe(true);
-});
-
 it('getStatusCircle green', () => {
   const status = 'completed';
   const circleClass = JobListActions.getStatusCircle(status);
@@ -313,54 +299,9 @@ it('gets JobColumnHeaderH4Class isStatus', () => {
   expect(header).toBe('status-header');
 });
 
-it('gets JobColumnHeaderArrowClass', () => {
-  const arrow = JobListActions.getJobColumnHeaderArrowClass(isNotStatus, colType, isMetric);
-  expect(arrow).toBe('arrow-down float-right number is-metric');
-});
-
-it('gets JobColumnHeaderArrowClass isStatus', () => {
-  const arrow = JobListActions.getJobColumnHeaderArrowClass(isStatus, colType, isMetric);
-  expect(arrow).toBe('arrow-down number is-metric');
-});
-
 it('getJobColumnHeaderDivClass', () => {
   const div = JobListActions.getJobColumnHeaderDivClass(colType, isMetric);
   expect(div).toBe('number status-header');
-});
-
-it('getJobColumnHeaderPresentationClass', () => {
-  const div = JobListActions.getJobColumnHeaderPresentationClass(colType, isMetric);
-  expect(div).toBe('arrow-container number is-metric');
-});
-
-it('gets TableSectionHeaderDivClass', () => {
-  const div = JobListActions.getTableSectionHeaderDivClass(header);
-  expect(div).toBe('table-section-header table-header');
-});
-
-it('gets TableSectionHeaderDivClass emptyHeader', () => {
-  const div = JobListActions.getTableSectionHeaderDivClass(emptyHeader);
-  expect(div).toBe('table-section-header');
-});
-
-it('gets TableSectionHeaderArrowClass', () => {
-  const arrow = JobListActions.getTableSectionHeaderArrowClass(header);
-  expect(arrow).toBe('arrow-down table-header-arrow');
-});
-
-it('gets TableSectionHeaderArrowClass emptyHeader', () => {
-  const arrow = JobListActions.getTableSectionHeaderArrowClass(emptyHeader);
-  expect(arrow).toBe('');
-});
-
-it('gets TableSectionHeaderTextClass', () => {
-  const text = JobListActions.getTableSectionHeaderTextClass(header);
-  expect(text).toBe('table-header-text');
-});
-
-it('gets TableSectionHeaderTextClass emptyHeader', () => {
-  const text = JobListActions.getTableSectionHeaderTextClass(emptyHeader);
-  expect(text).toBe('table-header-text no-margin');
 });
 
 it('getStatusCircle red', () => {
@@ -415,16 +356,6 @@ it('getDurationClass seconds', () => {
   // Note JSON Stringify is needed for test to pass, known jest issue: https://github.com/facebook/jest/issues/5998
   timeUI = JSON.stringify(timeUI);
   expect(timeUI).toBe(JSON.stringify(<span className="font-bold">30<span className="">s</span></span>));
-});
-
-it('getConstantInputParams all const', () => {
-  const constInputParams = JobListActions.getConstantInputParams(allJobs[0].input_params);
-  expect(constInputParams.length).toBe(3);
-});
-
-it('getConstantInputParams with non const', () => {
-  const constInputParams = JobListActions.getConstantInputParams(allJobs[0].input_params);
-  expect(constInputParams.length).toBe(3);
 });
 
 it('getInputMetricValue metric const', () => {
@@ -728,46 +659,6 @@ it('removeFilterByName, exists', () => {
   expect(updatedFilters.length).toBe(0);
 });
 
-it('addToURLContainFilter', () => {
-  const newURL = JobListActions.addToURLContainFilter(url, containValue, colName)
-  expect(newURL).toBe('localhost/myCol_contains=testPhrase');
-});
-
-it('getContainFilter', () => {
-  const containFilter = JobListActions.getContainFilter(colName, containValue);
-  expect(containFilter).toEqual({"column": "myCol", "value": "\"testPhrase\""});
-});
-
-it('boolFilterArrayHasHidden, has hidden', () => {
-  const hasHidden = JobListActions.boolFilterArrayHasHidden(hiddenBoolFilter);
-  expect(hasHidden).toBe(true);
-});
-
-it('boolFilterArrayHasHidden, none hidden', () => {
-  const hasHidden = JobListActions.boolFilterArrayHasHidden(noneHiddenBoolFilter);
-  expect(hasHidden).toBe(false);
-});
-
-it('boolFilterHasHidden, had hidden', () => {
-  const hasHidden = JobListActions.boolFilterHasHidden(hiddenBoolFilter[0]);
-  expect(hasHidden).toBe(true);
-});
-
-it('boolFilterHasHidden, none hidden', () => {
-  const hasHidden = JobListActions.boolFilterHasHidden(noneHiddenBoolFilter[0]);
-  expect(hasHidden).toBe(false);
-});
-
-it('boolFilterGetNonHidden, has hidden', () => {
-  const hidden = JobListActions.boolFilterGetNonHidden(hiddenBoolFilter[0]);
-  expect(hidden.length).toBe(0);
-});
-
-it('boolFilterGetNonHidden, none hidden', () => {
-  const hidden = JobListActions.boolFilterGetNonHidden(noneHiddenBoolFilter[0]);
-  expect(hidden.length).toBe(1);
-});
-
 it('boolFilterGetHidden, has hidden', () => {
   const hidden = JobListActions.boolFilterGetHidden(hiddenBoolFilter[0].boolCheckboxes);
   expect(hidden.length).toBe(1);
@@ -776,48 +667,6 @@ it('boolFilterGetHidden, has hidden', () => {
 it('boolFilterGetHidden, none hidden', () => {
   const hidden = JobListActions.boolFilterGetHidden(noneHiddenBoolFilter[0].boolCheckboxes);
   expect(hidden.length).toBe(0);
-});
-
-it('getTimeForDurationURL', () => {
-  const urlTime = JobListActions.getTimeForDurationURL(time);
-  expect(urlTime).toBe('1_2_3_4');
-});
-
-it('getTimeForDurationBubble', () => {
-  const bubbleTime = JobListActions.getTimeForDurationBubble(time);
-  expect(bubbleTime).toBe('1d2h3m4s');
-});
-
-it('areNoFilters, no filters', () => {
-  const noFilters = JobListActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
-  expect(noFilters).toBe(true);
-});
-
-it('areNoFilters, has filters', () => {
-  const noFilters = JobListActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, hiddenBoolFilter, emptyFilters, emptyFilters, emptyFilters);
-  expect(noFilters).toBe(false);
-});
-
-// Pending cause of Jenkins Timezone UTC vs EST issue
-xit('getTimeForStartTimeURL', () => {
-  const newURL = JobListActions.getTimeForStartTimeURL(dateTime);
-  expect(newURL).toBe('03_24_2015_20_00');
-});
-
-it('prependZero, single digit', () =>{
-  const newDigit = JobListActions.prependZero(singleDigit);
-  expect(newDigit).toBe('01');
-});
-
-it('prependZero, 2 digit', () => {
-  const newDigit = JobListActions.prependZero(doubleDigit);
-  expect(newDigit).toBe('11');
-});
-
-// Pending cause of Jenkins Timezone UTC vs EST issue
-xit('getTimeForStartTimeBubble', () => {
-  const bubble = JobListActions.getTimeForStartTimeBubble(dateTime);
-  expect(bubble).toBe('03/24/15 20:00');
 });
 
 it('isColumnFiltered, is filtered', () => {

@@ -36,7 +36,7 @@ const ProjectPage = props => {
   const reload = () => {
     setIsLoading(true);
 
-    BaseActions.get('projects').then(result => {
+    BaseActions.getFromStaging('projects').then(result => {
       if (result != null) {
         result.sort((a, b) => {
           const dateA = new Date(a.created_at);

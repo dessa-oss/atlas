@@ -78,34 +78,6 @@ class CommonActions {
     return strTime;
   }
 
-  static getTableSectionHeaderDiv(header) {
-    let divClass = 'table-section-header';
-    if (this.isHeaderNotEmpty(header)) {
-      divClass = 'table-section-header table-header';
-    }
-    return divClass;
-  }
-
-  static getTableSectionHeaderArrow(header) {
-    let arrowClass = '';
-    if (this.isHeaderNotEmpty(header)) {
-      arrowClass = 'table-header-arrow border-input-metric-arrow';
-    }
-    return arrowClass;
-  }
-
-  static getTableSectionHeaderText(header) {
-    let textClass = 'table-header-text text-white no-margin';
-    if (this.isHeaderNotEmpty(header)) {
-      textClass = 'table-header-text text-white';
-    }
-    return textClass;
-  }
-
-  static isHeaderNotEmpty(header) {
-    return header !== '';
-  }
-
   static getInputMetricCells(job, isError, isMetric, columns, hiddenInputParams,
     rowNumber, onClickOpenModalJobDetails, isSelected) {
     if (isMetric && job.output_metrics) {
@@ -276,16 +248,6 @@ class CommonActions {
     return job.job_id.concat('-input-metric-row');
   }
 
-  static addBorderToElementWidth(element, borderWidth, hiddenWidth) {
-    if (hiddenWidth !== null) {
-      return hiddenWidth + borderWidth;
-    }
-    return element.clientWidth + borderWidth;
-  }
-
-  static elementsWidthLargerThanParent(elementWidth, parentWidth) {
-    return elementWidth > parentWidth;
-  }
 
   static getInputMetricCellType(inputMetric) {
     if (inputMetric && inputMetric.type) {
@@ -409,10 +371,6 @@ class CommonActions {
       key = input.name;
     }
     return key;
-  }
-
-  static isConstant(input) {
-    return input.source === 'constant';
   }
 
   static getCheckboxes(

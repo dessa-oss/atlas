@@ -31,7 +31,7 @@ class Header extends React.Component {
 
     if (name === '' || dateCreated === '' || projectOwners === '') {
       const { projectName } = this.props.match.params;
-      const fetchedProjects = await BaseActions.get('projects');
+      const fetchedProjects = await BaseActions.getFromStaging('projects');
       const selectedProject = fetchedProjects.filter(item => item.name === projectName)[0];
 
       if (selectedProject && selectedProject.length > 0) {

@@ -2,30 +2,7 @@ import Cookies from 'js-cookie';
 import CommonActions from './CommonActions';
 
 const BaseActions = {
-  baseURL: process.env.REACT_APP_API_URL,
   baseStagingURL: process.env.REACT_APP_API_STAGING_URL,
-  baseApiaryURL: process.env.REACT_APP_APIARY_URL || 'http://private-d03986-iannelladessa.apiary-mock.com/api/v1/',
-
-  get: function (url) {
-    const fullURL = this.baseURL.concat(url);
-    const accessToken = CommonActions.getAccessCookie();
-    return fetch(fullURL, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-      .then(res => {
-        CommonActions.checkStatusResponse(res);
-        return res.json();
-      })
-      .then(result => {
-        return result;
-      })
-      .catch(error => {
-        console.log('baseURL get error: ', error);
-        return null;
-      });
-  },
 
   getFromStaging: function (url) {
     const fullURL = this.baseStagingURL.concat(url);
@@ -82,39 +59,6 @@ const BaseActions = {
       });
   },
 
-  getFromApiary: function (url) {
-    const fullURL = this.baseApiaryURL.concat(url);
-    return fetch(fullURL)
-      .then(res => res.json())
-      .then(result => {
-        return result;
-      })
-      .catch(error => {
-        console.log('getFromApiary error: ', error);
-        return null;
-      });
-  },
-
-  post: function (url, body) {
-    const fullURL = this.baseURL.concat(url);
-    return fetch(fullURL, {
-      method: 'post',
-      body: JSON.stringify(body),
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => res.json())
-      .then(result => {
-        return result;
-      })
-      .catch(error => {
-        console.log(error);
-        return null;
-      });
-  },
-
   postStaging: function (url, body) {
     const fullURL = this.baseStagingURL.concat(url);
     const accessToken = CommonActions.getAccessCookie();
@@ -131,46 +75,6 @@ const BaseActions = {
         CommonActions.checkStatusResponse(res);
         return res.json();
       })
-      .then(result => {
-        return result;
-      })
-      .catch(error => {
-        console.log(error);
-        return null;
-      });
-  },
-
-  postApiary: function (url, body) {
-    const fullURL = this.baseApiaryURL.concat(url);
-    return fetch(fullURL, {
-      method: 'post',
-      body: JSON.stringify(body),
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => res.json())
-      .then(result => {
-        return result;
-      })
-      .catch(error => {
-        console.log(error);
-        return null;
-      });
-  },
-
-  put: function (url, body) {
-    const fullURL = this.baseURL.concat(url);
-    return fetch(fullURL, {
-      method: 'put',
-      body: JSON.stringify(body),
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => res.json())
       .then(result => {
         return result;
       })
@@ -205,46 +109,6 @@ const BaseActions = {
       });
   },
 
-
-  putApiary: function (url, body) {
-    const fullURL = this.baseApiaryURL.concat(url);
-    return fetch(fullURL, {
-      method: 'put',
-      body: JSON.stringify(body),
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => res.json())
-      .then(result => {
-        return result;
-      })
-      .catch(error => {
-        console.log(error);
-        return null;
-      });
-  },
-
-  del: function (url) {
-    const fullURL = this.baseURL.concat(url);
-    return fetch(fullURL, {
-      method: 'delete',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => res.json())
-      .then(result => {
-        return result;
-      })
-      .catch(error => {
-        console.log(error);
-        return null;
-      });
-  },
-
   delStaging: function (url) {
     const fullURL = this.baseStagingURL.concat(url);
     const accessToken = CommonActions.getAccessCookie();
@@ -260,45 +124,6 @@ const BaseActions = {
         CommonActions.checkStatusResponse(res);
         return res.json();
       })
-      .then(result => {
-        return result;
-      })
-      .catch(error => {
-        console.log(error);
-        return null;
-      });
-  },
-
-  delAPIary: function (url) {
-    const fullURL = this.baseApiaryURL.concat(url);
-    return fetch(fullURL, {
-      method: 'delete',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => res.json())
-      .then(result => {
-        return result;
-      })
-      .catch(error => {
-        console.log(error);
-        return null;
-      });
-  },
-
-  postJSONFile: function (url, fileName, data) {
-    const fullURL = this.baseApiaryURL.concat(url);
-    return fetch(fullURL, {
-      method: 'post',
-      body: JSON.stringify({ file: fileName, data: data }),
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => res.json())
       .then(result => {
         return result;
       })

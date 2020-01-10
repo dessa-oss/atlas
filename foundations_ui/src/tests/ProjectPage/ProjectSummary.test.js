@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import ProjectSummary from '../../js/components/ProjectPage/ProjectSummary';
 import { shallow, mount } from 'enzyme';
 import configureTests from '../setupTests';
-import ProjectActions from '../../js/actions/ProjectActions';
 
 configureTests();
 
