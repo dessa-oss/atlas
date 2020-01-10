@@ -9,7 +9,7 @@ from unittest import mock
 from unittest.mock import patch
 from foundations_spec import *
 from foundations_core_cli.command_line_interface import CommandLineInterface
-from foundations_core_cli.sub_parsers.atlas.atlas_parser import AtlasParser
+from foundations_atlas_cli.sub_parsers.atlas.atlas_parser import AtlasParser
 
 class TestAtlasParser(Spec):
 
@@ -174,7 +174,7 @@ class TestAtlasParser(Spec):
         self.assertTrue(type(atlas_sub_parser._cli) is CommandLineInterface)
 
     def test_sub_parser_setup_parser_on_cli_instantiation(self):
-        mock_add_parser = self.patch('foundations_core_cli.sub_parsers.atlas.atlas_parser.AtlasParser.add_sub_parser')
+        mock_add_parser = self.patch('foundations_atlas_cli.sub_parsers.atlas.atlas_parser.AtlasParser.add_sub_parser')
         CommandLineInterface([''])
         mock_add_parser.assert_called_once()
 

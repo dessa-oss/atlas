@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 from foundations_spec import *
 from foundations_core_cli.command_line_interface import CommandLineInterface
-from foundations_core_cli.sub_parsers.monitor.monitor_parser import MonitorParser
+from foundations_orbit_cli.sub_parsers.monitor.monitor_parser import MonitorParser
 from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobSchedulerError
 
 class TestMonitorParser(Spec):
@@ -59,7 +59,7 @@ class TestMonitorParser(Spec):
         self.assertTrue(type(sub_parser._cli) is CommandLineInterface)
 
     def test_sub_parser_setup_parser_on_cli_instantiation(self):
-        mock_add_parser = self.patch('foundations_core_cli.sub_parsers.monitor.monitor_parser.MonitorParser.add_sub_parser')
+        mock_add_parser = self.patch('foundations_orbit_cli.sub_parsers.monitor.monitor_parser.MonitorParser.add_sub_parser')
         CommandLineInterface([''])
         mock_add_parser.assert_called_once()
 
@@ -75,7 +75,7 @@ class TestMonitorParser(Spec):
         mock_method.assert_called_once()
 
     def test_monitor_calls_pause_monitor_when_pause_command_is_triggered(self):
-        mock_method = self.patch('foundations_core_cli.sub_parsers.monitor.monitor_parser.MonitorParser._pause_monitor')
+        mock_method = self.patch('foundations_orbit_cli.sub_parsers.monitor.monitor_parser.MonitorParser._pause_monitor')
         self._call_monitor_command('pause')
         mock_method.assert_called_once()
 
@@ -118,7 +118,7 @@ class TestMonitorParser(Spec):
         self.mock_print.assert_called_with(f'Successfully deleted monitor {self.monitor_name} from project {self.project_name}')
 
     def test_monitor_calls_resume_monitor_when_resume_command_is_triggered(self):
-        mock_method = self.patch('foundations_core_cli.sub_parsers.monitor.monitor_parser.MonitorParser._resume_monitor')
+        mock_method = self.patch('foundations_orbit_cli.sub_parsers.monitor.monitor_parser.MonitorParser._resume_monitor')
         self._call_monitor_command('resume')
         mock_method.assert_called_once()
 

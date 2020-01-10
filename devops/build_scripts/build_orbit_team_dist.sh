@@ -10,6 +10,7 @@ rm -rf dist/* && \
     build_module foundations_events foundations_events $cwd orbit && \
     build_module foundations_contrib foundations_contrib $cwd orbit && \
     build_module foundations_core_cli foundations_core_cli $cwd orbit && \
+    build_module foundations_orbit_cli foundations_orbit_cli $cwd orbit && \
     build_module foundations_local_docker_scheduler_plugin foundations_local_docker_scheduler_plugin $cwd orbit && \
     build_module foundations_sdk dessa_foundations $cwd orbit && \
     build_module foundations_orbit_sdk foundations_orbit $cwd orbit && \

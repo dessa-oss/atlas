@@ -13,6 +13,8 @@ rm -rf dist/* && \
     build_module foundations_events foundations_events $cwd && \
     build_module foundations_contrib foundations_contrib $cwd && \
     build_module foundations_core_cli foundations_core_cli $cwd && \
+    build_module foundations_atlas_cli foundations_atlas_cli $cwd && \
+    build_module foundations_orbit_cli foundations_orbit_cli $cwd && \
     build_module foundations_orbit_sdk foundations_orbit $cwd && \
     build_module gcp_utils foundations_gcp $cwd && \
     build_module ssh_utils foundations_ssh $cwd && \

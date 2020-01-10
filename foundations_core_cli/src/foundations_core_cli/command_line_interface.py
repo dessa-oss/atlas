@@ -15,13 +15,13 @@ class CommandLineInterface(object):
         self._subparsers = self._argument_parser.add_subparsers()
 
         try:
-            from foundations_core_cli.sub_parsers.monitor.monitor_parser import MonitorParser
+            from foundations_orbit_cli.sub_parsers.monitor.monitor_parser import MonitorParser
             MonitorParser(self).add_sub_parser()
         except ModuleNotFoundError:
             pass
 
         try:
-            from foundations_core_cli.sub_parsers.atlas.atlas_parser import AtlasParser
+            from foundations_atlas_cli.sub_parsers.atlas.atlas_parser import AtlasParser
             AtlasParser(self).add_sub_parser()
         except ModuleNotFoundError:
             pass

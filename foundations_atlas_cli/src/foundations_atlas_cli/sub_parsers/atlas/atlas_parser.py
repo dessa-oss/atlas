@@ -182,7 +182,6 @@ class AtlasParser(object):
 
         arguments = self._cli.arguments()
 
-        env_name = arguments.scheduler_config
         current_directory = os.getcwd()
 
         with ChangeDirectory(current_directory):
