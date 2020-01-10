@@ -5,7 +5,6 @@ import {
 } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
 import './scss/app.scss';
-import App from './js/components/App';
 import SystemHealth from './js/components/PackagePage/SystemHealth';
 import NewDeployment from './js/components/PackagePage/NewDeployment';
 import ModelEvaluation from './js/components/PackagePage/ModelEvaluation';
@@ -33,7 +32,6 @@ ReactDOM.render(
         <Route path="/projects" component={ProjectPage} />
         <Route path="/login" component={LoginPage} />
         <Redirect from="/" to="/login" />
-        <Route component={App} />
       </Switch>
     </Router>
   </div>,
