@@ -8,5 +8,4 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 import os
 os.environ['FOUNDATIONS_ARCHIVE_HOST'] = 'https://archive.dessa.com'
 
-from acceptance.v1 import *
 from acceptance.v2beta import *

@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_rest_api.v1.models.property_model import PropertyModel
+from foundations_rest_api.v2beta.models.property_model import PropertyModel
 
 
 class Project(PropertyModel):
@@ -79,8 +79,8 @@ class Project(PropertyModel):
 
     @staticmethod
     def _find_by_internal(name):
-        from foundations_rest_api.v1.models.running_job import RunningJob
-        from foundations_rest_api.v1.models.queued_job import QueuedJob
+        from foundations_rest_api.v2beta.models.running_job import RunningJob
+        from foundations_rest_api.v2beta.models.queued_job import QueuedJob
 
         project = Project(name=name)
         project.created_at = None

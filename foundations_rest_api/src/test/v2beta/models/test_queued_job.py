@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from foundations_rest_api.v1.models.queued_job import QueuedJob
+from foundations_rest_api.v2beta.models.queued_job import QueuedJob
 from foundations_contrib.scheduler_legacy_backend import LegacyBackend
 from .jobs_tests_helper_mixin import JobsTestsHelperMixin
 

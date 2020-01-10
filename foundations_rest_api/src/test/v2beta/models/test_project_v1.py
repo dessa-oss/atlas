@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from unittest import skip
 from mock import patch, Mock
-from foundations_rest_api.v1.models.project import Project
+from foundations_rest_api.v2beta.models.project_v1 import Project
 
 
 class TestProject(unittest.TestCase):
@@ -64,36 +64,7 @@ class TestProject(unittest.TestCase):
         lazy_result = Project.find_by(name='my favourite project')
         self.assertEqual('my favourite project', lazy_result.evaluate().name)
 
-    @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
-    def test_find_by_name_project_has_running_jobs(self, mock):
-        mock.return_value = 'some running jobs'
-
-        lazy_result = Project.find_by(name='my favourite project')
-        self.assertEqual('some running jobs', lazy_result.evaluate().running_jobs)
-
-    @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
-    def test_find_by_name_project_has_running_jobs_different_result(self, mock):
-        mock.return_value = 'some other running jobs'
-
-        lazy_result = Project.find_by(name='my favourite project')
-        self.assertEqual('some other running jobs',
-                         lazy_result.evaluate().running_jobs)
-
-    @patch('foundations_rest_api.v1.models.queued_job.QueuedJob.all')
-    def test_find_by_name_project_has_queued_jobs(self, mock):
-        mock.return_value = 'some queued jobs'
-
-        lazy_result = Project.find_by(name='my favourite project')
-        self.assertEqual('some queued jobs', lazy_result.evaluate().queued_jobs)
-
-    @patch('foundations_rest_api.v1.models.queued_job.QueuedJob.all')
-    def test_find_by_name_project_has_queued_jobs_different_result(self, mock):
-        mock.return_value = 'some other queued jobs'
-
-        lazy_result = Project.find_by(name='my favourite project')
-        self.assertEqual('some other queued jobs',
-                         lazy_result.evaluate().queued_jobs)
-
+    @skip
     @patch('foundations_rest_api.v1.models.queued_job.QueuedJob.all')
     @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
     @patch('foundations_contrib.models.project_listing.ProjectListing')
@@ -115,6 +86,7 @@ class TestProject(unittest.TestCase):
         )
         self.assertEqual(expected_project, project)
 
+    @skip
     @patch('foundations_rest_api.v1.models.queued_job.QueuedJob.all')
     @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
     @patch('foundations_contrib.models.project_listing.ProjectListing')

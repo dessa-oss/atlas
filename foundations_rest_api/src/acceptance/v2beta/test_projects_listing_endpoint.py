@@ -11,7 +11,7 @@ from foundations_rest_api.global_state import app_manager
 
 class TestProjectsListingEndpoint(Spec):
     client = app_manager.app().test_client()
-    url = '/api/v1/projects'
+    url = '/api/v2beta/projects'
 
     @let
     def redis(self):
