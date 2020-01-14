@@ -142,17 +142,21 @@ pipeline{
                         }
                     }
                 }
-                stage('REST API Acceptance Tests') {
+                stage('Atlas Acceptance Tests') {
                     stages{
                         stage('Atlas REST API Acceptance Tests') {
                             steps {
-                                container("python3-3") {
+                                container("python3-2") {
                                     ws("${WORKSPACE}/foundations_rest_api/src") {
                                         sh "python -Wi -m unittest -f -v acceptance"
                                     }
                                 }
                             }
                         }
+                    }
+                }
+                stage('Auth Acceptance Tests') {
+                    stages{
                         stage('Build and Run Auth Proxy for Acceptance Test'){
                             steps {
                                 container("python3-3") {
@@ -163,7 +167,7 @@ pipeline{
                                 }
                             }
                         }
-                        stage('Atlas Auth Acceptance Tests'){
+                        stage('Auth Acceptance Tests'){
                             steps {
                                 container("python3-3") {
                                     ws("${WORKSPACE}/testing") {
