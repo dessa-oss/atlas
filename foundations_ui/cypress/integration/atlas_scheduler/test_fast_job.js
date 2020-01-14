@@ -9,12 +9,12 @@ describe('Test Fast Job', () => {
     {
       testName: 'Test Ten Fast Jobs through CLI',
       projectName: projectName,
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/fast_job/ && foundations submit scheduler ${projectName} main.py &`,
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/fast_job/ && foundations login http://localhost:5558 -u test -p test && foundations submit scheduler ${projectName} main.py &`,
     },
     {
       testName: 'Test Ten Fast Jobs through SDK',
       projectName: projectName,
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/fast_job/${projectName}/ && python main.py &`,
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/fast_job/${projectName}/ && foundations login http://localhost:5558 -u test -p test && python main.py &`,
     },
   ];
 

@@ -46,7 +46,7 @@ describe('Test Log Param', () => {
           hasHover: false,
         },
       ],
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_param/ && foundations submit scheduler ${projectName} ints.py`,
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_param/ && foundations login http://localhost:5558 -u test -p test && foundations submit scheduler ${projectName} ints.py`,
     },
     {
       testName: 'Test Logging Params of Type Float',
@@ -88,7 +88,7 @@ describe('Test Log Param', () => {
           hasHover: false,
         },
       ],
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_param/ && foundations submit scheduler ${projectName} floats.py`,
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_param/ && foundations login http://localhost:5558 -u test -p test && foundations submit scheduler ${projectName} floats.py`,
     },
     {
       testName: 'Test Logging Params of Type Str',
@@ -120,7 +120,7 @@ describe('Test Log Param', () => {
           hasHover: false,
         },
       ],
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_param/ && foundations submit scheduler ${projectName} strs.py`,
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/log_param/ && foundations login http://localhost:5558 -u test -p test && foundations submit scheduler ${projectName} strs.py`,
     },
   ];
 

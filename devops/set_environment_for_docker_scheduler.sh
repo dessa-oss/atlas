@@ -27,7 +27,7 @@ mkdir -p $WORKING_DIR
 export JOB_BUNDLE_STORE_DIR=$FOUNDATIONS_HOME/job_bundle_store_dir
 mkdir -p $JOB_BUNDLE_STORE_DIR
 
-export NUM_WORKERS=0
+export NUM_WORKERS=1
 export LOCAL_DOCKER_SCHEDULER_DIR=../local-docker-scheduler
 
 export LOCAL_DOCKER_SCHEDULER_HOST=${LOCAL_DOCKER_SCHEDULER_HOST:-localhost}
@@ -69,7 +69,7 @@ function start_auth_proxy () {
     cd ../foundations-auth-proxy \
         && pip install -r requirements.txt \
         && pip install -e . \
-        && python -m auth_proxy -n -p $AUTH_PROXY_PORT --dev > $FOUNDATIONS_HOME/logs/auth_proxy.log 2>&1 &
+        && python -m auth_proxy -p $AUTH_PROXY_PORT --dev > $FOUNDATIONS_HOME/logs/auth_proxy.log 2>&1 &
     
     # TODO - Need a better check if the auth is running (maybe check the port)
     if [ $? == 0 ]; then
