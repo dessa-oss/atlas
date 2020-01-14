@@ -1,6 +1,7 @@
 attempt_counter=0
 max_attempts=$1
 
+foundations login http://localhost:5558 -u test -p test
 until $(foundations monitor create test main.py >> /dev/null); do
   if [ ${attempt_counter} -eq ${max_attempts} ];then
     echo "Max attempts reached"
