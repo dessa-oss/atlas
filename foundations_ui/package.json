@@ -156,9 +156,10 @@
     "eslint-plugin-react-hooks": "^2.3.0",
     "faker": "^4.1.0",
     "jest": "23.6.0",
-    "jest-dom": "^2.1.1",
+    "jest-dom": "2.1.1",
     "jest-pnp-resolver": "1.0.1",
-    "jest-resolve": "23.6.0"
+    "jest-resolve": "23.6.0",
+    "jsdom": "15.2.1"
   },
   "resolutions": {
     "svgo": "1.3.0"
