@@ -1,10 +1,8 @@
 #!/bin/bash
 
 attempt_counter=0
-SERVICE_IP=$1
-SERVICE_PORT=$2
-SERVICE="http://$SERVICE_IP:$SERVICE_PORT"
-max_attempts=$3
+SERVICE=$1
+max_attempts=$2
 
 until $(curl --output /dev/null --silent --head --fail $SERVICE); do
     if [ ${attempt_counter} -eq ${max_attempts} ];then
@@ -17,4 +15,4 @@ until $(curl --output /dev/null --silent --head --fail $SERVICE); do
     sleep 1
 done
 
-echo "Connection $SERVICE to found"
+echo "Connection $SERVICE found"

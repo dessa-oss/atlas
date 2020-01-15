@@ -52,7 +52,7 @@ function start_scheduler() {
         && rm -f $LOCAL_DOCKER_SCHEDULER_DIR/tracker_client_plugins.yaml \
         && ln -s $FOUNDATIONS_HOME/config/local_docker_scheduler/tracker_client_plugins.yaml $LOCAL_DOCKER_SCHEDULER_DIR/tracker_client_plugins.yaml \
         && cd $LOCAL_DOCKER_SCHEDULER_DIR \
-        && pip install -r requirements_dev.txt \
+        && pip install -r requirements_dev.txt > $F9S_LOG_DIR/install.log 2>&1 \
         && python -m local_docker_scheduler -d -p ${SCHEDULER_PORT} > $FOUNDATIONS_HOME/logs/scheduler.log 2>&1 &
     
     # TODO - Need a better check if the scheduler is running (maybe check the port)
@@ -67,8 +67,8 @@ function start_scheduler() {
 function start_auth_proxy () {
     echo "Attempting to start the auth proxy at port ${AUTH_PROXY_PORT}"
     cd ../foundations-auth-proxy \
-        && pip install -r requirements.txt \
-        && pip install -e . \
+        && pip install -r requirements.txt > $F9S_LOG_DIR/install.log 2>&1 \
+        && pip install -e . > $F9S_LOG_DIR/install.log 2>&1 \
         && python -m auth_proxy -p $AUTH_PROXY_PORT --dev > $FOUNDATIONS_HOME/logs/auth_proxy.log 2>&1 &
     
     # TODO - Need a better check if the auth is running (maybe check the port)
@@ -83,8 +83,8 @@ function start_auth_proxy () {
 function start_auth_proxy_orbit () {
     echo "Attempting to start the auth proxy at port ${AUTH_PROXY_PORT}"
     cd ../foundations-auth-proxy \
-        && pip install -r requirements.txt \
-        && pip install -e . \
+        && pip install -r requirements.txt > $F9S_LOG_DIR/install.log 2>&1 \
+        && pip install -e . > $F9S_LOG_DIR/install.log 2>&1 \
         && python -m auth_proxy -t orbit -p $AUTH_PROXY_PORT --dev > $FOUNDATIONS_HOME/logs/auth_proxy.log 2>&1 &
     
     # TODO - Need a better check if the auth is running (maybe check the port)
@@ -102,4 +102,15 @@ function start_auth_server() {
         && ./foundations_contrib/src/foundations_contrib/authentication/launch.sh \
         && echo "Connecting the auth server ${AUTH_SERVER_NAME} to network ${network_name}" \
         && docker network connect $network_name $AUTH_SERVER_NAME
+}
+
+function check_status_of_process() {
+    process_name=$1
+    RESULT=$2
+    script_pid=$3
+
+    if [ $RESULT -ne 0  ]; then
+        echo "Failed to connect to ${process_name}"
+        kill -s TERM $script_pid
+    fi
 }

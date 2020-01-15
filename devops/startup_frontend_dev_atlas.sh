@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export SCRIPT_PID=$$
 source activate_dev_env.sh
 source ./devops/set_environment_for_docker_scheduler.sh
 
@@ -7,6 +8,7 @@ export REACT_APP_API_URL="http://127.0.0.1:${AUTH_PROXY_PORT}/api/v1/"
 export REACT_APP_APIARY_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v1/"
 export REACT_APP_API_STAGING_URL="http://localhost:${AUTH_PROXY_PORT}/api/v2beta/"
 
+# ***************************************************************************************************************
 
 echo "Ensuring that orbit is not also running"
 ./devops/teardown_frontend_dev_orbit.sh
@@ -14,27 +16,69 @@ echo "Ensuring that orbit is not also running"
 echo " Ensuring stoping previous running altas"
 ./devops/teardown_frontend_dev_atlas.sh
 
+# ***************************************************************************************************************
+
 echo "Attempting to run redis at ${REDIS_PORT}. NB If redis is already running port flag will not have an effect"
-./devops/start_redis.sh atlas $REDIS_PORT
+source ./devops/start_redis.sh atlas $REDIS_PORT
+
+# Place wait for port script in a better locations
+# echo "Waiting for redis to start at redis://${REDIS_HOST}:${REDIS_PORT}"
+# ./devops/build_scripts/helpers/wait_for_url.sh $REDIS_HOST $REDIS_PORT 50 # Only works for HTTP ports
+
+***************************************************************************************************************
 
 echo "Running Atlas REST API on port ${ATLAS_PORT}"
 python devops/startup_atlas_api.py ${ATLAS_PORT} &
 
+echo "Waiting for Atlas REST API to start at http://localhost:${ATLAS_PORT}"
+./devops/build_scripts/helpers/wait_for_url.sh "http://localhost:${ATLAS_PORT}/api/v2beta/projects" 10
+
+check_status_of_process "Atlas REST API" $? $SCRIPT_PID
+
+# ***************************************************************************************************************
+
 echo "Starting the Scheduler ......."
 start_scheduler
+
+echo "Waiting for Scheduler to start at http://localhost:${SCHEDULER_PORT}"
+./devops/build_scripts/helpers/wait_for_url.sh "http://localhost:${SCHEDULER_PORT}" 10
+
+check_status_of_process "Scheduler" $? $SCRIPT_PID
+
+# ***************************************************************************************************************
 
 echo "Starting Auth Proxy ....."
 start_auth_proxy
 
+echo "Waiting for Auth Proxy to start at http://localhost:${AUTH_PROXY_PORT}"
+./devops/build_scripts/helpers/wait_for_url.sh "http://localhost:${AUTH_PROXY_PORT}" 10
+
+check_status_of_process "Auth Proxy" $? $SCRIPT_PID
+
+# ***************************************************************************************************************
+
 echo "Starting the Auth Server (keycloak) ....." 
 start_auth_server
 
+echo "Waiting for Auth Server to start at http://localhost:8080"
+./devops/build_scripts/helpers/wait_for_url.sh "http://localhost:8080" 80
+
+check_status_of_process "Auth Server" $? $SCRIPT_PID
+
+# ***************************************************************************************************************
+
 cd foundations_ui && \
   echo "Install UIs dependencies" && \
-  yarn install && \
+  yarn install --silent && \
   echo "Starting the UI in development mode with yarn" && \
   yarn start > $FOUNDATIONS_HOME/logs/yarn.log 2>&1 &
 
+echo "Waiting for Atlas GUI to start at http://localhost:3000"
+./devops/build_scripts/helpers/wait_for_url.sh "http://localhost:3000" 80
+
+check_status_of_process "Atlas GUI" $? $SCRIPT_PID
+
+# ***************************************************************************************************************
 
 echo "Check log files for status of programs:"
 echo "    tail -f $FOUNDATIONS_HOME/logs/scheduler.log"

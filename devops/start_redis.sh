@@ -1,34 +1,36 @@
 #!/bin/bash
 
 FOUNDATIONS_HOME=${FOUNDATIONS_HOME:-$(realpath ~)/.foundations}
-
+TRACKER_NAME=${TRACKER_NAME:-"foundations-tracker"}
 network_name="foundations"
+
 if [ -z "$1" ];then
     echo "No product specified, using default of ${network_name}"
 else
-    network_name="${network_name}-$1"
+    export network_name="${network_name}-$1"
 fi
 
 if [ -z "$2" ]; then
-    redis_port=6379
+    REDIS_PORT=6379
 else
-    redis_port=$2
+    REDIS_PORT=$2
 fi
 
 echo "Creating network ${network_name}"
-docker network create -d bridge $network_name >/dev/null 2>&1 || true
+docker network create -d bridge $network_name > /dev/null 2>&1 || true
 
-redis_container_id=$(docker ps --filter "name=redis" -q)
+redis_container_id=$(docker ps --filter "name=${TRACKER_NAME}" -q)
 if [ -z "$redis_container_id" ]; then
-    echo "Creating redis container at port ${redis_port}"
+    echo "Creating redis container at redis://${TRACKER_NAME}:${REDIS_PORT}"
     mkdir -p $FOUNDATIONS_HOME/database \
         && docker run \
             --rm \
-            --name foundations-tracker \
-            -p 6379:$redis_port \
+            --name $TRACKER_NAME \
+            -p 6379:$REDIS_PORT \
             --network=$network_name \
             --volume $FOUNDATIONS_HOME/database:/data \
             -d redis redis-server --appendonly yes
 else
-    docker network connect $network_name $redis_container_id --alias foundations-tracker
+    echo "Connecting existing REDIS ${TRACKER_NAME} to network ${network_name}"
+    docker network connect $network_name $redis_container_id --alias $TRACKER_NAME > /dev/null 2>&1 || true
 fi
