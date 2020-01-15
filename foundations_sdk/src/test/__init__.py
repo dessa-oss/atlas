@@ -10,7 +10,6 @@ from test.job_parameters import *
 from test.job_metrics import *
 from test.parameters import *
 
-from test.test_default_stage_logging import TestDefaultStageLogging
 from test.test_argument_hasher import TestArgumentHasher
 from test.test_global_import_serialize import TestGlobalImportSerialization
 from test.test_scheduler_job_information import TestSchedulerJobInformation

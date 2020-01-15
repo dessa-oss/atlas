@@ -9,9 +9,10 @@ import foundations
 from foundations import set_project_name, Hyperparameter
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 from acceptance.v2beta.jobs_tests_helper_mixin_v2 import JobsTestsHelperMixinV2
+from foundations_spec import *
 
 
-class TestJobListingParametrics(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
+class TestJobListingParametrics(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase, Spec):
     url = '/api/v2beta/projects/{_project_name}/job_listing'
     sorting_columns = []
     filtering_columns = []
@@ -20,153 +21,53 @@ class TestJobListingParametrics(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     def setUpClass(klass):
         JobsTestsHelperMixinV2.setUpClass()
         klass._set_project_name('hanna')
-        klass._first_job_name = 'test job 1'
-        klass._second_job_name = 'test job 2'
-        klass._third_job_name = 'test job 3'
-        klass._run_stages()
-
+        
     @classmethod
     def tearDownClass(klass):
         from foundations_contrib.global_state import redis_connection as redis
-
         redis.flushall()
 
-    @classmethod
-    def _run_stages(klass):
+    @set_up
+    def set_up(self):
+        from foundations_contrib.global_state import redis_connection
 
-        def make_job(job_name, stage, **kwargs):
-            klass._pipeline_context.file_name = job_name
-            stage.run_same_process(**kwargs)
-            klass._make_completed_job(job_name,  'default user', **kwargs)
+        redis_connection.flushall()
+        self.submit_job()
 
-        def make_pipeline_context():
-            from foundations_internal.pipeline_context import PipelineContext
+    def submit_job(self):
+        import subprocess
+        import os
 
-            klass._pipeline_context = PipelineContext()
-            klass._pipeline_context.provenance.project_name = klass._project_name
-            klass._pipeline._pipeline_context = klass._pipeline_context
-
-        def stage0(value0):
-            return float('nan') if value0 is False else str(value0)
-
-        def stage1(value1, value2):
-            return '{} {}'.format(str(value1), str(value2))
-
-        def stage2(value1, value2, value3, value4, dummy_value):
-            from foundations.stage_logging import log_metric
-            
-            log_metric('metric_1', value1)
-            log_metric('metric_2', value2)
-            log_metric('metric_3', value3)
-            log_metric('metric_4', value4)
-
-        def run_first_job():
-            make_pipeline_context()
-            final_stage = klass._pipeline.stage(stage0, value0=Hyperparameter())
-            make_job(klass._first_job_name, final_stage, value0=False)
-
-        def run_second_job():
-            make_pipeline_context()
-            final_stage = klass._pipeline.stage(
-                stage1, 
-                value1=Hyperparameter(), 
-                value2=Hyperparameter()
-            )
-            make_job(klass._second_job_name, final_stage, value1=np.nan, value2=37)
-
-        def run_third_job():
-            make_pipeline_context()
-            input_stage = klass._pipeline.stage(
-                stage1, 
-                value1=Hyperparameter(), 
-                value2=Hyperparameter()
-            )
-            final_stage = klass._pipeline.stage(
-                stage2,
-                value1=Hyperparameter(), 
-                value2=Hyperparameter(), 
-                value3=Hyperparameter(),
-                value4=Hyperparameter(),
-                dummy_value=input_stage
-            )
-            make_job(klass._third_job_name, final_stage, value1='hello', value2=True, value3=47.5, value4=np.nan)
-
-        run_first_job()
-        run_second_job()
-        run_third_job()
+        submit_result = subprocess.run("foundations submit --project-name hanna scheduler acceptance/fixtures log_metric_log_param_set_tag.py", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        assert submit_result.returncode == 0
 
     def test_get_route(self):
         data = super(TestJobListingParametrics, self).test_get_route()
 
-        self.assertEqual(data['jobs'][0]['job_id'], self._third_job_name)
+        job_data = data['jobs'][0]
 
-        self.assertEqual(data['jobs'][0]['input_params'][0]['name'], 'value1')
-        self.assertEqual(data['jobs'][0]['input_params'][1]['name'], 'value2')
-        self.assertEqual(data['jobs'][0]['input_params'][2]['name'], 'value2')
-        self.assertEqual(data['jobs'][0]['input_params'][3]['name'], 'value3')
-        self.assertEqual(data['jobs'][0]['input_params'][4]['name'], 'value4')
-        self.assertEqual(data['jobs'][0]['input_params'][5]['name'], 'dummy_value')
-        self.assertEqual(data['jobs'][0]['input_params'][0]['value'], 'hello')
-        self.assertEqual(data['jobs'][0]['input_params'][1]['value'], True)
-        self.assertEqual(data['jobs'][0]['input_params'][2]['value'], 'hello')
-        self.assertEqual(data['jobs'][0]['input_params'][3]['value'], True)
-        self.assertEqual(data['jobs'][0]['input_params'][4]['value'], 47.5)
-        self.assertEqual(data['jobs'][0]['input_params'][5]['value'], None)
+        expected_output_metrics = [{
+            'name': 'key',
+            'type': 'string',
+            'value': 'value'
+        }]
 
-        self.assertEqual(data['jobs'][0]['output_metrics'][0]['value'], 'hello')
-        self.assertEqual(data['jobs'][0]['output_metrics'][1]['value'], True)
-        self.assertEqual(data['jobs'][0]['output_metrics'][2]['value'], 47.5)
-        self.assertEqual(data['jobs'][0]['output_metrics'][3]['value'], None)
+        expected_input_params = [{
+            'name': 'param',
+            'source': 'placeholder',
+            'type': 'string',
+            'value': 'param_value'
+        }]
 
-        self.assertEqual(data['jobs'][1]['job_id'], self._second_job_name)
+        for key in ['artifacts', 'completed_time', 'creation_time', 'duration', 'job_id', 'start_time']:
+            self.assertIn(key, job_data)
+            self.assertIsNotNone(job_data[key])
 
-        self.assertEqual(data['jobs'][1]['input_params'][0]['name'], 'value1')
-        self.assertEqual(data['jobs'][1]['input_params'][1]['name'], 'value2')
-        self.assertIsNone(data['jobs'][1]['input_params'][0]['value'])
+        self.assertEqual(expected_output_metrics, job_data['output_metrics'])
+        self.assertEqual('hanna', job_data['project'])
+        self.assertEqual('completed', job_data['status'])
+        self.assertEqual({'key': 'value'}, job_data['tags'])
+        self.assertEqual(expected_input_params, job_data['input_params'])
 
-        self.assertEqual(data['jobs'][2]['job_id'], self._first_job_name)
-
-        self.assertEqual(data['jobs'][2]['input_params'][0]['name'], 'value0')
-        self.assertFalse(data['jobs'][2]['input_params'][0]['value'])
-
-    def test_filter_bool_true(self):
-        query_string = '?metric_2=true'
-        custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
-        data = custom_method(self)
-        self.assertEqual(len(data['jobs']), 1)
-        self.assertEqual(data['jobs'][0]['job_id'], self._third_job_name)
-
-    def test_filter_bool_false(self):
-        query_string = '?value0=false'
-        custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
-        data = custom_method(self)
-        self.assertEqual(len(data['jobs']), 1)
-        self.assertEqual(data['jobs'][0]['job_id'], self._first_job_name)
-
-    def test_filter_input_parameter_is_null(self):
-        query_string = '?value1_isnull=true'
-        custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
-        data = custom_method(self)
-        self.assertEqual(len(data['jobs']), 1)
-        self.assertEqual(data['jobs'][0]['job_id'], self._second_job_name)
-
-    def test_filter_input_parameter_is_not_null(self):
-        query_string = '?value1_isnull=false'
-        custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
-        data = custom_method(self)
-        self.assertEqual(len(data['jobs']), 1)
-        self.assertEqual(data['jobs'][0]['job_id'], self._third_job_name)
-
-    def test_filter_metric_is_null(self):
-        query_string = '?metric_4_isnull=true'
-        custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
-        data = custom_method(self)
-        self.assertEqual(len(data['jobs']), 1)
-        self.assertEqual(data['jobs'][0]['job_id'], self._third_job_name)
-
-    def test_filter_metric_is_not_null(self):
-        query_string = '?metric_2_isnull=false'
-        custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
-        data = custom_method(self)
-        self.assertEqual(len(data['jobs']), 1)
-        self.assertEqual(data['jobs'][0]['job_id'], self._third_job_name)
+        self.assertEqual([{'name': 'key', 'type': 'string'}], data['output_metric_names'])
+        self.assertEqual('hanna', data['name'])
