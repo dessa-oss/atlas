@@ -1,0 +1,3 @@
+redis_tracker_client:
+  host: ${REDIS_HOST}
+  port: 6379
