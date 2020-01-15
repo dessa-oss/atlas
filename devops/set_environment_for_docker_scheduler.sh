@@ -119,6 +119,7 @@ function start_auth_proxy_orbit () {
 }
 
 function start_auth_server() {
+    network_name=foundations-atlas
     export AUTH_SERVER_NAME=foundations-authentication-server \
         && echo "Attempting to start the auth server as ${AUTH_SERVER_NAME}" \
         && ./foundations_contrib/src/foundations_contrib/authentication/launch.sh \
