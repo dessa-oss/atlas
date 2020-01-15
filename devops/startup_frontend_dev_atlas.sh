@@ -1,12 +1,17 @@
 #!/bin/bash
 
 export SCRIPT_PID=$$
+export F9S_ENV_TYPE="atlas"
+
 source activate_dev_env.sh
 source ./devops/set_environment_for_docker_scheduler.sh
 
 export REACT_APP_API_URL="http://127.0.0.1:${AUTH_PROXY_PORT}/api/v1/"
 export REACT_APP_APIARY_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v1/"
 export REACT_APP_API_STAGING_URL="http://localhost:${AUTH_PROXY_PORT}/api/v2beta/"
+
+# ***************************************************************************************************************
+
 
 # ***************************************************************************************************************
 
@@ -25,7 +30,7 @@ source ./devops/start_redis.sh atlas $REDIS_PORT
 # echo "Waiting for redis to start at redis://${REDIS_HOST}:${REDIS_PORT}"
 # ./devops/build_scripts/helpers/wait_for_url.sh $REDIS_HOST $REDIS_PORT 50 # Only works for HTTP ports
 
-***************************************************************************************************************
+# ***************************************************************************************************************
 
 echo "Running Atlas REST API on port ${ATLAS_PORT}"
 python devops/startup_atlas_api.py ${ATLAS_PORT} &
@@ -73,8 +78,8 @@ cd foundations_ui && \
   echo "Starting the UI in development mode with yarn" && \
   yarn start > $FOUNDATIONS_HOME/logs/yarn.log 2>&1 &
 
-echo "Waiting for Atlas GUI to start at http://localhost:3000"
-./devops/build_scripts/helpers/wait_for_url.sh "http://localhost:3000" 80
+echo "Waiting for Atlas GUI to start at http://localhost:${GUI_PORT}"
+./devops/build_scripts/helpers/wait_for_url.sh "http://localhost:${GUI_PORT}" 80
 
 check_status_of_process "Atlas GUI" $? $SCRIPT_PID
 

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export SCRIPT_PID=$$
+export F9S_ENV_TYPE="orbit"
+
 source activate_dev_env.sh
 source ./devops/set_environment_for_docker_scheduler.sh
 

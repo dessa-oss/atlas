@@ -1,9 +1,11 @@
 #!/bin/bash
 
 export FOUNDATIONS_HOME=${FOUNDATIONS_HOME:-~/.foundations}
+export F9S_ENV_TYPE=${F9S_ENV_TYPE:-atlas}
 
 export ATLAS_PORT=${ATLAS_PORT:-37722}
 export ORBIT_PORT=${ORBIT_PORT:-37222}
+export GUI_PORT=3000
 
 export SCHEDULER_PORT=${SCHEDULER_PORT:-5000}
 export SCHEDULER_HOST=${SCHEDULER_HOST:-localhost}
@@ -33,6 +35,26 @@ export LOCAL_DOCKER_SCHEDULER_DIR=../local-docker-scheduler
 export LOCAL_DOCKER_SCHEDULER_HOST=${LOCAL_DOCKER_SCHEDULER_HOST:-localhost}
 export REMOTE_FOUNDATIONS_HOME=${REMOTE_FOUNDATIONS_HOME:-$FOUNDATIONS_HOME}
 
+# ***************************************************************************************************************
+
+# CYPRESS Environment Variables
+
+if [[ $F9S_ENV_TYPE == "atlas" ]]; then
+    UI_FOLDER="foundations_ui"
+else
+    UI_FOLDER="foundations_ui_orbit"
+fi
+
+
+export CYPRESS_LOCAL_FOUNDATIONS_HOME="`pwd`/${UI_FOLDER}/cypress/fixtures/atlas_scheduler/.foundations"
+export CYPRESS_SCHEDULER_IP="localhost"
+export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$FOUNDATIONS_HOME 
+export CYPRESS_SCHEDULER_REDIS_PORT=$REDIS_PORT 
+export CYPRESS_GUI_HOST="localhost"
+export CYPRESS_GUI_PORT=$GUI_PORT 
+export CYPRESS_ATLAS_EDITION=CE
+
+# ***************************************************************************************************************
 
 function start_scheduler() {
     echo "Attempting to run scheduler with foundations home set to $FOUNDATIONS_HOME"
