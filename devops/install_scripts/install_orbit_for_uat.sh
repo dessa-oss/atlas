@@ -10,6 +10,8 @@ echo 'Downloaded successfully' && \
 chmod +x orbit_installer.sh && \
 yes | ./orbit_installer.sh
 orbit-server start > /dev/null 2>&1 &
+chmod +x /home/ubuntu/wait_for_port.sh
+/home/ubuntu/wait_for_port.sh localhost 8080 30
 mkdir -p test && \
 echo import foundations >> test/main.py && \
 chmod +x /home/ubuntu/wait_for_successful_monitor_creation.sh && \
