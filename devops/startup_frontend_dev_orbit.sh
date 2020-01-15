@@ -29,7 +29,7 @@ echo "Starting the Scheduler ......."
 start_scheduler
 
 echo "Starting Auth Proxy ....."
-start_auth_proxy_orbit
+start_auth_proxy orbit
 
 echo "Starting the Auth Server (keycloak) ....." 
 start_auth_server

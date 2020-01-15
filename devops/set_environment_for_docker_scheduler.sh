@@ -87,27 +87,12 @@ function start_scheduler() {
 }
 
 function start_auth_proxy () {
+    TYPE=$1
     echo "Attempting to start the auth proxy at port ${AUTH_PROXY_PORT}"
     cd ../foundations-auth-proxy \
         && pip install -r requirements.txt > $F9S_LOG_DIR/install.log 2>&1 \
         && pip install -e . > $F9S_LOG_DIR/install.log 2>&1 \
-        && python -m auth_proxy -p $AUTH_PROXY_PORT --dev > $FOUNDATIONS_HOME/logs/auth_proxy.log 2>&1 &
-    
-    # TODO - Need a better check if the auth is running (maybe check the port)
-    if [ $? == 0 ]; then
-        echo "Successfully started the auth proxy"
-    else
-        echo "Unable to start auth proxy"
-        exit 1
-    fi
-}
-
-function start_auth_proxy_orbit () {
-    echo "Attempting to start the auth proxy at port ${AUTH_PROXY_PORT}"
-    cd ../foundations-auth-proxy \
-        && pip install -r requirements.txt > $F9S_LOG_DIR/install.log 2>&1 \
-        && pip install -e . > $F9S_LOG_DIR/install.log 2>&1 \
-        && python -m auth_proxy -t orbit -p $AUTH_PROXY_PORT --dev > $FOUNDATIONS_HOME/logs/auth_proxy.log 2>&1 &
+        && python -m auth_proxy -t $TYPE -p $AUTH_PROXY_PORT --dev > $FOUNDATIONS_HOME/logs/auth_proxy.log 2>&1 &
     
     # TODO - Need a better check if the auth is running (maybe check the port)
     if [ $? == 0 ]; then

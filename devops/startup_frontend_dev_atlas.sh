@@ -53,7 +53,7 @@ check_status_of_process "Scheduler" $? $SCRIPT_PID
 # ***************************************************************************************************************
 
 echo "Starting Auth Proxy ....."
-start_auth_proxy
+start_auth_proxy atlas
 
 echo "Waiting for Auth Proxy to start at http://localhost:${AUTH_PROXY_PORT}"
 ./devops/build_scripts/helpers/wait_for_url.sh "http://localhost:${AUTH_PROXY_PORT}" 10
