@@ -145,3 +145,4 @@ foundations_rest_api/src/acceptance/v2beta/fixtures/foundations_home/job_data/*
 !foundations_ui_orbit/package.json
 !foundations_ui_orbit/package-lock.json
 !foundations_ui_orbit/cypress.json
+testing/auth_acceptance/foundations_home/logs/*
