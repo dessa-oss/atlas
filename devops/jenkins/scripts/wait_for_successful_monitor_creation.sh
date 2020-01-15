@@ -15,8 +15,9 @@ done
 
 attempt_counter=0
 
+cd ~/orbit_install/test/
 echo "Attempting to create a monitor."
-until $(foundations monitor create test main.py >> /dev/null); do
+until $(foundations monitor create . main.py >> /dev/null); do
   if [ ${attempt_counter} -eq ${max_attempts} ];then
     echo "Max attempts reached"
     exit 1
