@@ -1,0 +1,24 @@
+completed_jobs:
+  args:
+    host: 54.158.42.161
+    key: completed_jobs
+    port: 5556
+  type: redis_connection.RedisDict
+failed_jobs:
+  args:
+    host: 54.158.42.161
+    key: failed_jobs
+    port: 5556
+  type: redis_connection.RedisDict
+queue:
+  args:
+    host: 54.158.42.161
+    key: queued_jobs
+    port: 5556
+  type: redis_connection.RedisList
+running_jobs:
+  args:
+    host: 54.158.42.161
+    key: running_jobs
+    port: 5556
+  type: redis_connection.RedisDict
