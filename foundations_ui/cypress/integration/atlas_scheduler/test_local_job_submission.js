@@ -9,12 +9,12 @@ describe('Test Local Job Submission', () => {
     {
       testName: 'Test Local Job Submission with CLI from outside job directory',
       projectName: 'local_job_submission',
-      command: 'export FOUNDATIONS_HOME=`pwd`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/local_job_submission/ && foundations login http://localhost:5558 -u test -p test && python local_job_submission_project/main.py 0 "Complete_Task_1" dummy',
+      command: 'export FOUNDATIONS_HOME=`pwd`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/local_job_submission/ && foundations login http://' + schedulerIP + ':5558 -u test -p test && python local_job_submission_project/main.py 0 "Complete_Task_1" dummy',
     },
     {
       testName: 'Test Local Job Submission with CLI from inside job directory',
       projectName: 'local_job_submission_project',
-      command: 'export FOUNDATIONS_HOME=`pwd`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/local_job_submission/local_job_submission_project && foundations login http://localhost:5558 -u test -p test && python main.py 0 "Complete_Task_2" dummy',
+      command: 'export FOUNDATIONS_HOME=`pwd`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/local_job_submission/local_job_submission_project && foundations login http://' + schedulerIP + ':5558 -u test -p test && python main.py 0 "Complete_Task_2" dummy',
     },
   ];
 
