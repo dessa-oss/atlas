@@ -2,23 +2,23 @@ completed_jobs:
   args:
     host: ${REDIS_HOST}
     key: completed_jobs
-    port: 6379
+    port: ${REDIS_PORT}
   type: redis_connection.RedisDict
 failed_jobs:
   args:
     host: ${REDIS_HOST}
     key: failed_jobs
-    port: 6379
+    port: ${REDIS_PORT}
   type: redis_connection.RedisDict
 queue:
   args:
     host: ${REDIS_HOST}
     key: queued_jobs
-    port: 6379
+    port: ${REDIS_PORT}
   type: redis_connection.RedisList
 running_jobs:
   args:
     host: ${REDIS_HOST}
     key: running_jobs
-    port: 6379
+    port: ${REDIS_PORT}
   type: redis_connection.RedisDict
