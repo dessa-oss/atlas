@@ -30,6 +30,7 @@ const CommonActions = {
   checkStatusResponse: response => {
     if (response.status === 401) {
       window.location = '/login';
+      return Promise.reject(new Error('Failed credential validation.'));
     }
   },
 };
