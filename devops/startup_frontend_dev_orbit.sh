@@ -6,8 +6,8 @@ export F9S_ENV_TYPE="orbit"
 source activate_dev_env.sh
 source ./devops/set_environment_for_docker_scheduler.sh
 
-export REACT_APP_API_URL="http://127.0.0.1:${ORBIT_PORT}/api/v1/"
-export REACT_APP_ATLAS_URL="http://127.0.0.1:${ATLAS_PORT}/api/v2beta/"
+export REACT_APP_API_URL="http://127.0.0.1:${AUTH_PROXY_PORT}/api/v1/"
+export REACT_APP_ATLAS_URL="http://127.0.0.1:${AUTH_PROXY_PORT}/api/v2beta/"
 export REACT_APP_APIARY_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v1/"
 
 echo "Ensuring that orbit is not also running"
