@@ -3,6 +3,7 @@ describe('Test Monitor and Job', () => {
   const schedulerRedisPort = Cypress.env('SCHEDULER_REDIS_PORT');
   const guiHost = Cypress.env('GUI_HOST');
   const guiPort = Cypress.env('GUI_PORT');
+  const proxyPort = Cypress.env('PROXY_PORT');
 
   const projectName = `my_project${Math.floor(Math.random() * 100)}`;
   const monitorName = `my_monitor${Math.floor(Math.random() * 100)}`;
@@ -10,8 +11,9 @@ describe('Test Monitor and Job', () => {
   before(() => {
     cy.exec(`redis-cli -h ${schedulerIP} -p ${schedulerRedisPort} flushall`);
 
-    cy.request('GET', `http://${guiHost}:${guiPort}/api/v2beta/cli_login`, {
-      headers: { Authorization: 'Basic dGVzdDp0ZXN0Cg==' },
+    cy.request({
+      url: `http://${guiHost}:${proxyPort}/api/v2beta/auth/cli_login`,
+      headers: { Authorization: 'Basic dGVzdDp0ZXN0' },
     })
     .then(response => {
       cy.setCookie('atlas_access_token', response.body.access_token);
