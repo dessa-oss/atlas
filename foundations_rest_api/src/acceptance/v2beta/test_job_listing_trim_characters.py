@@ -11,7 +11,7 @@ from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 from acceptance.v2beta.jobs_tests_helper_mixin_v2 import JobsTestsHelperMixinV2
 from foundations_spec import *
 
-@skip('skipped for now')
+@skip
 class TestJobListingTrimCharacters(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
     url = '/api/v2beta/projects/{_project_name}/job_listing'
     sorting_columns = []
@@ -23,11 +23,20 @@ class TestJobListingTrimCharacters(JobsTestsHelperMixinV2, APIAcceptanceTestCase
         klass._set_project_name('hanna')
         klass._run_stages()
 
-    @classmethod
-    def tearDownClass(klass):
-        from foundations_contrib.global_state import redis_connection as redis
+    @set_up
+    def set_up(self):
+        import os
+        from foundations_contrib.global_state import redis_connection
 
-        redis.flushall()
+        os.environ['FOUNDATIONS_HOME'] = os.getenv('FOUNDATIONS_HOME', '')
+        redis_connection.flushall()
+        self.submit_job()
+
+    def submit_job(self):
+        import subprocess
+
+        submit_result = subprocess.run('foundations submit scheduler acceptance/v2beta/fixtures log_int_metric.py')
+        self.assertEqual(0, submit_result.returncode)
 
     @classmethod
     def _run_stages(klass):

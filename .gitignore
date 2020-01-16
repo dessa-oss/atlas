@@ -90,10 +90,6 @@ dist
 **/.coverage
 **/htmlcov
 
-!foundations_ui/package.json
-!foundations_ui/cypress.json
-!foundations_ui_orbit/package.json
-!foundations_ui_orbit/package-lock.json
 !examples/example_configs/*.config.yaml
 !foundations_contrib/src/foundations_contrib/resources/template/*.config.yaml
 !**/fixtures/**/*.config.yaml
@@ -141,3 +137,11 @@ foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/config/execu
 foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/config/submission/scheduler.config.yaml
 foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/job_data/archive/e8b8346e-324c-4a62-bbc1-b0328c61bdfb/artifacts/`pwd`/cypress/fixtures/orbit_acceptance/.foundations/logs/system.log
 foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/job_data/*
+
+foundations_rest_api/src/acceptance/v2beta/fixtures/foundations_home/job_data/*
+
+!foundations_ui/package.json
+!foundations_ui/cypress.json
+!foundations_ui_orbit/package.json
+!foundations_ui_orbit/package-lock.json
+!foundations_ui_orbit/cypress.json

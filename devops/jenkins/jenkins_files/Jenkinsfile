@@ -148,7 +148,13 @@ pipeline{
                             steps {
                                 container("python3-3") {
                                     ws("${WORKSPACE}/foundations_rest_api/src") {
-                                        sh "python -Wi -m unittest -f -v acceptance"
+                                        sh """export LOCAL_DOCKER_SCHEDULER_HOST=$ATLAS_LOCAL_SCHEDULER && \
+                                            export FOUNDATIONS_HOME=`pwd`/acceptance/v2beta/fixtures/foundations_home && \
+                                            export REMOTE_FOUNDATIONS_HOME=`pwd`/acceptance/v2beta/fixtures/foundations_home && \
+                                            export REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && \
+                                            export REDIS_PORT=5556 && \
+                                            sh `pwd`/foundations_rest_api/config/job_submission_envsubst.sh && \
+                                            python -Wi -m unittest -f -v acceptance""".stripMargin()
                                     }
                                 }
                             }
