@@ -9,10 +9,13 @@ describe('Test Monitor and Job', () => {
 
   before(() => {
     cy.exec(`redis-cli -h ${schedulerIP} -p ${schedulerRedisPort} flushall`);
-    cy.visit(`http://${guiHost}:${guiPort}/projects`);
 
     cy.request('GET', `http://${guiHost}:${guiPort}/api/v2beta/cli_login`, {
       headers: { Authorization: 'Basic dGVzdDp0ZXN0Cg==' },
+    })
+    .then(response => {
+      cy.setCookie('atlas_access_token', response.body.access_token);
+      cy.setCookie('atlas_refresh_token', response.body.refresh_token);
     });
 
     cy.exec(`export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/orbit_acceptance/.foundations && foundations login -u test -p test http://${schedulerIP}:5558 && cd cypress/fixtures/orbit_acceptance/my_project/ && foundations monitor create --name=${monitorName} --project_name=${projectName} . validate.py`);
@@ -34,7 +37,7 @@ describe('Test Monitor and Job', () => {
 
   it.only('Monitor can be scheduled', () => {
     cy.contains(projectName).forceClick()
-    // Schedule jobs with the monitor and run one
+      // Schedule jobs with the monitor and run one
       .then(() => {
         cy.cyGet('monitor-name')
           .within(() => {
@@ -56,7 +59,7 @@ describe('Test Monitor and Job', () => {
               .then(() => cy.cyGet('status').should('contain', 'Active'));
           });
       })
-    // Wait for a job to complete and pause the monitor
+      // Wait for a job to complete and pause the monitor
       .then(() => {
         cy.wait(15000);
         cy.cyGet('refresh-job-table').forceClick()
@@ -66,7 +69,7 @@ describe('Test Monitor and Job', () => {
               .then(() => cy.cyGet('status').should('contain', 'Paused'));
           });
       })
-    // Check that a validation report exists
+      // Check that a validation report exists
       .then(() => {
         cy.cyGet('data-health-tab').forceClick()
           .then(() => {
@@ -74,7 +77,7 @@ describe('Test Monitor and Job', () => {
             cy.contains(monitorName).should('exist');
           });
       })
-    // Check that a metric exists
+      // Check that a metric exists
       .then(() => {
         cy.cyGet('model-metrics-tab').forceClick()
           .then(() => cy.cyGet('metric-chart').should('exist'));
