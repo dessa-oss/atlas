@@ -13,5 +13,5 @@ beforeEach(() => {
   cy.get('.login-submit').click({ force: true });
   cy.wait(200);
 
-  cy.exec(`foundations login http://${schedulerIP}:5558 -u test -p test`);
+  // cy.exec(`foundations login http://${schedulerIP}:5558 -u test -p test`);
 });
