@@ -158,7 +158,10 @@ pipeline{
                                 container("python3-3") {
                                     ws("${WORKSPACE}/devops") {
                                         sh 'export AUTH_SERVER_URL=http://keycloak-headless.ci-pipeline.svc.cluster.local:8080/auth && cd .. && sh ./foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh && cd -'
-                                        sh 'export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && export FOUNDATIONS_SCHEDULER_URL=localhost:5000 && python startup_atlas_api.py 37722 &'
+                                        sh """export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
+                                              export FOUNDATIONS_SCHEDULER_URL=localhost:5000 && \
+                                              export REDIS_HOST=localhost && \
+                                              python startup_atlas_api.py 37722 &""".stripMargin()
                                     }
                                     ws("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
