@@ -112,4 +112,21 @@ if __name__ == "__main__":
         }
     }
 
+    new_version['yaml_auth_proxy_config'] = {
+        "atlas_installer": {
+            "repo": "git@github.com:DeepLearnI/foundations-auth-proxy.git",
+            "checkout": "master",
+            "route_mapping": "route_mapping_atlas.yaml",
+            "proxy_config": "proxy_config_atlas.yaml"
+        }
+    }
+    
+    new_version['yaml_auth_server_config'] = {
+        "atlas_installer": {
+            "repo": "git@github.com:DeepLearnI/foundations.git",
+            "checkout": "master",
+            "source": "foundations_contrib/src/foundations_contrib/authentication/keycloak/atlas.json"
+        }
+    }
+
     update_version_file(new_version)
