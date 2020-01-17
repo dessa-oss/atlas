@@ -11,7 +11,7 @@ import os
 import time
 
 from foundations_internal.utils import *
-from typing import Callable
+from typing import Callable, Any
 
 
 def foundations_home():
@@ -117,7 +117,9 @@ def save_project_to_redis(project_name):
     redis_connection.execute_command("ZADD", "projects", "NX", timestamp, project_name)
 
 
-def wait_for_condition(condition: Callable[..., bool], timeout: int) -> None:
+def wait_for_condition(
+    condition: Callable[..., bool], timeout: int, fail_hook: Callable[[], None] = None
+) -> None:
     """Wait for some condition to be true.
     
     :param condition: Some callable that returns a bool.
@@ -132,4 +134,6 @@ def wait_for_condition(condition: Callable[..., bool], timeout: int) -> None:
         timer += 0.5
 
     if timer > timeout:
+        if fail_hook:
+            fail_hook()
         raise TimeoutError

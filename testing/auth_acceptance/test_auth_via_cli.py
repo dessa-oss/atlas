@@ -10,13 +10,15 @@ import os
 import time
 
 from foundations_spec import *
+from foundations_contrib.utils import wait_for_condition
 
 
 class TestAuthViaClient(Spec):
 
     max_time_out_in_sec = 60
-    running_on_jenkins = os.environ.get('RUNNING_ON_CI', 'FALSE')
-    auth_server_host = 'keycloak-headless.ci-pipeline.svc.cluster.local' if running_on_jenkins == 'TRUE' else 'localhost'
+    ci_keycloak_host = "keycloak-headless.ci-pipeline.svc.cluster.local"
+    running_on_ci = os.getenv("RUNNING_ON_CI")
+    auth_server_host = ci_keycloak_host if running_on_ci else "localhost"
 
     @staticmethod
     def resolve_f9s_auth():
@@ -24,29 +26,41 @@ class TestAuthViaClient(Spec):
 
         return path.realpath("../foundations_contrib/src/")
 
+    def keycloak_is_available(self):
+        try:
+            requests.get(
+                f"http://{self.auth_server_host}:8080/auth/"
+            ).raise_for_status()
+            return
+        except requests.ConnectionError:
+            if self.running_on_ci:
+                self.fail("Keycloack is unavailable in our cluster.")
+
     def start_and_wait_for_keycloak(self):
         full_path = os.path.join(
             self.resolve_f9s_auth(), "foundations_contrib/authentication"
         )
-        
-        res = requests.get(f"http://{self.auth_server_host}:8080/auth/")
-        if res.status_code == 200:
-            return
-            
         subprocess.run(["bash", "launch.sh"], cwd=full_path, stdout=subprocess.PIPE)
 
-        start_time = time.time()
-        while time.time() - start_time < self.max_time_out_in_sec:
+        def keycloak_is_ready() -> bool:
             try:
                 res = requests.get(f"http://{self.auth_server_host}:8080/auth/")
-                if res.status_code == 200:
-                    return
-            except Exception as e:
-                time.sleep(1)
-        self.fail("auth server never started")
+            except requests.exceptions.ConnectionError:
+                return False
+            if res.status_code == 200:
+                return True
+            return False
+
+        wait_for_condition(
+            keycloak_is_ready,
+            60,
+            fail_hook=lambda: self.fail("keycloak failed to start"),
+        )
 
     def test_cli_login(self):
-        self.start_and_wait_for_keycloak()
+        if not self.keycloak_is_available():
+            self.start_and_wait_for_keycloak()
+            
         with self.assert_does_not_raise():
             result = subprocess.run(
                 "foundations login http://localhost:5558 -u test -p test",
@@ -54,6 +68,5 @@ class TestAuthViaClient(Spec):
                 shell=True,
                 check=True,
             )
-            self.assertEqual(result.stdout.decode().strip(), 'Login Succeeded!')
-
+            self.assertEqual(result.stdout.decode().strip(), "Login Succeeded!")
 
