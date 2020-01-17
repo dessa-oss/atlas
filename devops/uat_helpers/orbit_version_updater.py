@@ -86,7 +86,8 @@ def update_version_file(version):
 
 if __name__ == "__main__":
     import os
-    
+    import yaml
+
     os.environ['docker_build_version'] = ''
 
     manifest = load_manifest()
@@ -97,7 +98,8 @@ if __name__ == "__main__":
 
     installer = load_and_format_installer()
 
-    new_version = {}
+    with open('./orbit/version.yaml') as stream:
+        new_version = yaml.load(stream)
     new_version['docker'] = updated_manifest
     new_version['git'] = installer['python_script']
     
