@@ -10,6 +10,8 @@ foundation_components = [
     'foundations_contrib',
     'foundations_local_docker_scheduler_plugin',
     'dessa_foundations',
+    'foundations_core_cli',
+    'foundations_atlas_cli',
     'foundations_core_rest_api_components',
     'foundations_rest_api',
 ]
