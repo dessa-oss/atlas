@@ -34,6 +34,8 @@ class TestAuthViaClient(Spec):
             return True
         except requests.ConnectionError:
             return False
+        except requests.HTTPError as err:
+            self.fail(err)
 
     def start_and_wait_for_keycloak(self) -> None:
         full_path = os.path.join(
@@ -70,4 +72,3 @@ class TestAuthViaClient(Spec):
                 check=True,
             )
             self.assertEqual(result.stdout.decode().strip(), "Login Succeeded!")
-
