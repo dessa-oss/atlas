@@ -81,7 +81,7 @@ def update_version_file(version):
     import yaml
     from yaml import Dumper
     
-    with open('../orbit/version.yaml', 'w') as stream:
+    with open('./orbit/version.yaml', 'w') as stream:
         yaml.dump(version, stream, Dumper=Dumper)
 
 if __name__ == "__main__":
