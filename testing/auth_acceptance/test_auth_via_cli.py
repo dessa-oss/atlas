@@ -46,7 +46,10 @@ class TestAuthViaClient(Spec):
         except requests.ConnectionError:
             return False
         except requests.HTTPError as err:
-            self.fail(err)
+            log_file = f"{os.getenv('FOUNDATIONS_HOME', '~/.foundations')}/logs/atlas_rest_api.log"
+            with open(log_file) as logs:
+                msg = "/n".join([str(err), "REST_API_LOGS:", logs.read()])
+            self.fail(msg)
 
     def start_and_wait_for_keycloak(self) -> None:
         full_path = os.path.join(
@@ -72,13 +75,14 @@ class TestAuthViaClient(Spec):
     def start_and_wait_for_rest_api(self) -> None:
         import subprocess
 
-        subprocess.run("export REDIS_HOST=localhost && export FOUNDATIONS_SCHEDULER_URL=localhost && cd ../devops && python startup_atlas_api.py 37722 &", shell=True)
+        subprocess.run(
+            "export REDIS_HOST=localhost && export FOUNDATIONS_SCHEDULER_URL=localhost && cd ../devops && python startup_atlas_api.py 37722 &",
+            shell=True,
+        )
 
         def rest_api_is_ready() -> bool:
             try:
-                res = requests.get(
-                    "http://localhost:37722/api/v2beta/projects"
-                )
+                res = requests.get("http://localhost:37722/api/v2beta/projects")
             except requests.exceptions.ConnectionError:
                 return False
             if res.status_code == 200:
