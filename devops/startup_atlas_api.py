@@ -27,6 +27,7 @@ try:
     root_logger.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     if not path.exists(f'{foundations_home}/logs'):
+        print(foundations_home)
         os.mkdir(f'{foundations_home}/logs')
     file_handler = logging.FileHandler(f'{foundations_home}/logs/atlas_rest_api.log')
     file_handler.setLevel(logging.DEBUG)
