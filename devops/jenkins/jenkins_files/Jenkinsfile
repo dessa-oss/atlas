@@ -161,6 +161,9 @@ pipeline{
                                         sh """export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
                                               export FOUNDATIONS_SCHEDULER_URL=localhost:5000 && \
                                               export REDIS_HOST=localhost && \
+                                              cd ../testing && \
+                                              export FOUNDATIONS_HOME=`pwd`/auth_acceptance/foundations_home
+                                              cd - && \
                                               python startup_atlas_api.py 37722 &""".stripMargin()
                                     }
                                     ws("${WORKSPACE}/testing") {

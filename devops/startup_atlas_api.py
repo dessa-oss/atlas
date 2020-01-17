@@ -11,7 +11,7 @@ try:
     import os
     import os.path as path
 
-    foundations_home = os.path.abspath(os.path.expanduser(os.environ.get('FOUNDATIONS_HOME', '~/.foundations')))
+    foundations_home = os.path.abspath(os.path.expanduser(os.getenv('FOUNDATIONS_HOME', '~/.foundations')))
     redis_url = f"redis://{os.environ.get('REDIS_HOST', 'redis')}:{os.environ.get('REDIS_PORT', 6379)}"
     translated_submission_config = {
         'redis_url': redis_url,
