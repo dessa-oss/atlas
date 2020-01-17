@@ -72,8 +72,8 @@ def write_needed_requirements_to_file(requirements):
 
 def load_and_format_installer():
     installer_env = yaml.load(os.getenv('installer'), Loader=Loader)
-    del installer_env['python_script']['atlas_installer']['source']
-    del installer_env['python_script']['atlas_installer']['build_script']
+    del installer_env['python_script']['orbit_installer']['source']
+    del installer_env['python_script']['orbit_installer']['build_script']
 
     return installer_env
 
@@ -81,7 +81,7 @@ def update_version_file(version):
     import yaml
     from yaml import Dumper
     
-    with open('../atlas-ce/version.yaml', 'w') as stream:
+    with open('../orbit/version.yaml', 'w') as stream:
         yaml.dump(version, stream, Dumper=Dumper)
 
 if __name__ == "__main__":
@@ -102,9 +102,9 @@ if __name__ == "__main__":
     new_version['git'] = installer['python_script']
     
     new_version['pypi'] = {
-        'atlas_server': {
-            'name': 'foundations-atlas',
-            'version': requirements['foundations-atlas']
+        'orbit_server': {
+            'name': 'orbit-server',
+            'version': requirements['orbit-server']
         },
         'foundations': {
             'version': requirements['dessa_foundations'],

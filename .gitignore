@@ -123,7 +123,8 @@ foundations_ui/cypress/screenshots/*
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/config/submission/scheduler.config.yaml
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/config/execution/default.config.yaml
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/job_data
-foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/logs/
+foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/credentials.yaml
+
 
 testing/orbit_acceptance/fixtures/end-to-end-acceptance/foundations_home/local_docker_scheduler/work_dir
 testing/local_docker_scheduler_acceptance/foundations_home
@@ -137,6 +138,8 @@ foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/config/execu
 foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/config/submission/scheduler.config.yaml
 foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/job_data/archive/e8b8346e-324c-4a62-bbc1-b0328c61bdfb/artifacts/`pwd`/cypress/fixtures/orbit_acceptance/.foundations/logs/system.log
 foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/job_data/*
+foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/credentials.yaml
+foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/logs/
 
 foundations_rest_api/src/acceptance/v2beta/fixtures/foundations_home/job_data/*
 

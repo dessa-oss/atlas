@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cwd=`pwd`
+
 export FOUNDATIONS_HOME=${FOUNDATIONS_HOME:-~/.foundations}
 export F9S_ENV_TYPE=${F9S_ENV_TYPE:-atlas}
 
@@ -41,12 +43,13 @@ export REMOTE_FOUNDATIONS_HOME=${REMOTE_FOUNDATIONS_HOME:-$FOUNDATIONS_HOME}
 
 if [[ $F9S_ENV_TYPE == "atlas" ]]; then
     UI_FOLDER="foundations_ui"
+    FIXTURE_FOLDER="atlas_scheduler"
 else
     UI_FOLDER="foundations_ui_orbit"
+    FIXTURE_FOLDER="orbit_acceptance"
 fi
 
-
-export CYPRESS_LOCAL_FOUNDATIONS_HOME="`pwd`/${UI_FOLDER}/cypress/fixtures/atlas_scheduler/.foundations"
+export CYPRESS_LOCAL_FOUNDATIONS_HOME="${cwd}/${UI_FOLDER}/cypress/fixtures/${FIXTURE_FOLDER}/.foundations" \
 export CYPRESS_SCHEDULER_IP="localhost"
 export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$FOUNDATIONS_HOME 
 export CYPRESS_SCHEDULER_REDIS_PORT=$REDIS_PORT 
