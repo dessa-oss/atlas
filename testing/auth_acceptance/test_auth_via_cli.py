@@ -39,15 +39,14 @@ class TestAuthViaClient(Spec):
 
     def rest_api_is_available(self) -> bool:
         try:
-            res = requests.get(
-                "http://localhost:37722/api/v2beta/projects"
-            )
-        except requests.exceptions.ConnectionError:
-            return False
-        if res.status_code == 200:
+            requests.get(
+                f"http://localhost:37722/api/v2beta/projects"
+            ).raise_for_status()
             return True
-        else:
+        except requests.ConnectionError:
             return False
+        except requests.HTTPError as err:
+            self.fail(err)
 
     def start_and_wait_for_keycloak(self) -> None:
         full_path = os.path.join(
@@ -70,17 +69,39 @@ class TestAuthViaClient(Spec):
             fail_hook=lambda: self.fail("keycloak failed to start"),
         )
 
+    def start_and_wait_for_rest_api(self) -> None:
+        import subprocess
+
+        subprocess.run("export REDIS_HOST=localhost && export FOUNDATIONS_SCHEDULER_URL=localhost && cd ../devops && python startup_atlas_api.py 37722 &", shell=True)
+
+        def rest_api_is_ready() -> bool:
+            try:
+                res = requests.get(
+                    "http://localhost:37722/api/v2beta/projects"
+                )
+            except requests.exceptions.ConnectionError:
+                return False
+            if res.status_code == 200:
+                return True
+            else:
+                return False
+
+        wait_for_condition(
+            rest_api_is_ready,
+            5,
+            fail_hook=lambda: self.fail("Atlas REST API failed to start"),
+        )
+
     def test_cli_login(self):
         if not self.keycloak_is_available():
             if self.running_on_ci:
                 self.fail("Keycloak is unavailable in our cluster.")
             self.start_and_wait_for_keycloak()
 
-        wait_for_condition(
-            self.rest_api_is_available,
-            5,
-            fail_hook=lambda: self.fail("rest api failed to start")
-        )
+        if not self.rest_api_is_available():
+            if self.running_on_ci:
+                self.fail("Atlas REST API is unavailable in our cluster.")
+            self.start_and_wait_for_rest_api()
 
         with self.assert_does_not_raise():
             result = subprocess.run(
