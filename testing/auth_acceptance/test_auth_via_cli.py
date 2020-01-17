@@ -48,7 +48,7 @@ class TestAuthViaClient(Spec):
         except requests.HTTPError as err:
             log_file = f"{os.getenv('FOUNDATIONS_HOME', '~/.foundations')}/logs/atlas_rest_api.log"
             with open(log_file) as logs:
-                msg = "/n".join([str(err), "REST_API_LOGS:", logs.read()])
+                msg = "\n".join([str(err), "REST_API_LOGS:", logs.read()])
             self.fail(msg)
 
     def start_and_wait_for_keycloak(self) -> None:
