@@ -1,7 +1,0 @@
-cache_config:
-  end_point: /cache_end_point
-container_config_root: /home/pairing/dev/foundations/testing/local_docker_scheduler_acceptance/foundations_home/config/local_docker_scheduler/worker_config
-job_deployment_env: local_docker_scheduler_plugin
-job_results_root: /home/pairing/dev/foundations/testing/local_docker_scheduler_acceptance/foundations_home/job_data
-scheduler_url: http://localhost:5558
-working_dir_root: /home/pairing/dev/foundations/testing/local_docker_scheduler_acceptance/foundations_home/local_docker_scheduler/work_dir

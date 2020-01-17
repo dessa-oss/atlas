@@ -10,6 +10,9 @@ export REACT_APP_API_URL="http://127.0.0.1:${AUTH_PROXY_PORT}/api/v1/"
 export REACT_APP_ATLAS_URL="http://127.0.0.1:${AUTH_PROXY_PORT}/api/v2beta/"
 export REACT_APP_APIARY_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v1/"
 
+echo "Installing requirements for foundations ........."
+pip install -r requirements_test.txt > $F9S_LOG_DIR/install.log 2>&1
+
 echo "Ensuring that orbit is not also running"
 ./devops/teardown_frontend_dev_orbit.sh
 
