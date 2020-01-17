@@ -133,7 +133,7 @@ def wait_for_condition(
         time.sleep(0.5)
         timer += 0.5
 
-    if timer > timeout:
+    if timer >= timeout:
         if fail_hook:
             fail_hook()
         raise TimeoutError

@@ -37,6 +37,18 @@ class TestAuthViaClient(Spec):
         except requests.HTTPError as err:
             self.fail(err)
 
+    def rest_api_is_available(self) -> bool:
+        try:
+            res = requests.get(
+                "http://localhost:37722/api/v2beta/projects"
+            )
+        except requests.exceptions.ConnectionError:
+            return False
+        if res.status_code == 200:
+            return True
+        else:
+            return False
+
     def start_and_wait_for_keycloak(self) -> None:
         full_path = os.path.join(
             self.resolve_f9s_auth(), "foundations_contrib/authentication"
@@ -61,8 +73,14 @@ class TestAuthViaClient(Spec):
     def test_cli_login(self):
         if not self.keycloak_is_available():
             if self.running_on_ci:
-                self.fail("Keycloack is unavailable in our cluster.")
+                self.fail("Keycloak is unavailable in our cluster.")
             self.start_and_wait_for_keycloak()
+
+        wait_for_condition(
+            self.rest_api_is_available,
+            5,
+            fail_hook=lambda: self.fail("rest api failed to start")
+        )
 
         with self.assert_does_not_raise():
             result = subprocess.run(
