@@ -26,17 +26,16 @@ class TestAuthViaClient(Spec):
 
         return path.realpath("../foundations_contrib/src/")
 
-    def keycloak_is_available(self):
+    def keycloak_is_available(self) -> bool:
         try:
             requests.get(
                 f"http://{self.auth_server_host}:8080/auth/"
             ).raise_for_status()
-            return
+            return True
         except requests.ConnectionError:
-            if self.running_on_ci:
-                self.fail("Keycloack is unavailable in our cluster.")
+            return False
 
-    def start_and_wait_for_keycloak(self):
+    def start_and_wait_for_keycloak(self) -> None:
         full_path = os.path.join(
             self.resolve_f9s_auth(), "foundations_contrib/authentication"
         )
@@ -59,8 +58,10 @@ class TestAuthViaClient(Spec):
 
     def test_cli_login(self):
         if not self.keycloak_is_available():
+            if self.running_on_ci:
+                self.fail("Keycloack is unavailable in our cluster.")
             self.start_and_wait_for_keycloak()
-            
+
         with self.assert_does_not_raise():
             result = subprocess.run(
                 "foundations login http://localhost:5558 -u test -p test",
