@@ -15,10 +15,10 @@ describe('Test Monitor and Job', () => {
       url: `http://${guiHost}:${proxyPort}/api/v2beta/auth/cli_login`,
       headers: { Authorization: 'Basic dGVzdDp0ZXN0' },
     })
-    .then(response => {
-      cy.setCookie('atlas_access_token', response.body.access_token);
-      cy.setCookie('atlas_refresh_token', response.body.refresh_token);
-    });
+      .then(response => {
+        cy.setCookie('atlas_access_token', response.body.access_token);
+        cy.setCookie('atlas_refresh_token', response.body.refresh_token);
+      });
 
     cy.exec(`export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/orbit_acceptance/.foundations && foundations login -u test -p test http://${schedulerIP}:5558 && cd cypress/fixtures/orbit_acceptance/my_project/ && foundations monitor create --name=${monitorName} --project_name=${projectName} . validate.py`);
   });
