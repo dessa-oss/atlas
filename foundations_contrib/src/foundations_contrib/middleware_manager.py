@@ -41,8 +41,6 @@ class MiddlewareManager(object):
 
         self._stage_middleware = []
         self._append_middleware(
-            'Redundant', MiddlewareManager._create_redundant_middleware)
-        self._append_middleware(
             'StageOutput', MiddlewareManager._create_stage_output_middleware)
         self._append_middleware('Argument', ArgumentMiddleware)
         self._append_middleware(
@@ -80,11 +78,6 @@ class MiddlewareManager(object):
     def _log(self):
         from foundations_contrib.global_state import log_manager
         return log_manager.get_logger(__name__)
-
-    @staticmethod
-    def _create_redundant_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations_contrib.middleware.redundant_execution_middleware import RedundantExecutionMiddleware
-        return RedundantExecutionMiddleware(stage)
 
     @staticmethod
     def _create_stage_output_middleware(pipeline_context, stage_config, stage_context, stage):

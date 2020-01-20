@@ -11,17 +11,6 @@ from foundations.global_state import foundations_context
 
 class TestCaching(unittest.TestCase):
 
-    def test_local_caching(self):
-        self.value = 3
-
-        def method():
-            self.value = self.value * 2
-
-        stage = foundations_context.pipeline().stage(method)
-        stage.run_same_process()
-        stage.run_same_process()
-        self.assertEqual(6, self.value)
-
     def test_simple_cross_stage_caching(self):
         self.value = 3
 

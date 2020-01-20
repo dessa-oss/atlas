@@ -4,7 +4,7 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
-from test.middleware.test_redundant_execution_middleware import TestRedundantExecutionMiddleware
+
 from test.middleware.test_stage_output_middleware import TestStageOutputMiddleware
 from test.middleware.test_new_cache_middleware import TestNewCacheMiddleware
 from test.middleware.test_argument_middleware import TestArgumentMiddleware
