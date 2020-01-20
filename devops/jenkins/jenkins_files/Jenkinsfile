@@ -164,6 +164,7 @@ pipeline{
                             steps {
                                 container("python3-2") {
                                     ws("${WORKSPACE}/devops") {
+                                        sh "kill -9 $(lsof -i:37722 -t) > /dev/null 2>&1"
                                         sh """export AUTH_SERVER_URL=http://keycloak-headless.ci-pipeline.svc.cluster.local:8080/auth && \
                                                 cd .. && sh /home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh && cd - && \
                                                 export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
@@ -178,6 +179,7 @@ pipeline{
                                     ws("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'python -Wi -m unittest -f -v auth_acceptance'
+                                        sh "kill -9 $(lsof -i:37722 -t) > /dev/null 2>&1"
                                     }
                                 }
                             }
