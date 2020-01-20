@@ -52,8 +52,6 @@ class MiddlewareManager(object):
         self._append_middleware(
             'NewCache', MiddlewareManager._create_new_cache_middleware)
         self._append_middleware('ArgumentFilling', ArgumentFillingMiddleware)
-        self._append_middleware(
-            'ContextAware', MiddlewareManager._create_context_aware_middleware)
 
     def _append_middleware(self, name, callback):
         middleware = self._make_middleware(name, callback)
@@ -108,11 +106,6 @@ class MiddlewareManager(object):
         from foundations_internal.stage_cache import StageCache
 
         return NewCacheMiddleware(StageCache, pipeline_context, stage_config, stage_context, stage)
-
-    @staticmethod
-    def _create_context_aware_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations_contrib.middleware.context_aware_middleware import ContextAwareMiddleware
-        return ContextAwareMiddleware(stage_context, stage)
 
     @staticmethod
     def _create_exception_hook_middleware(pipeline_context, stage_config, stage_context, stage):
