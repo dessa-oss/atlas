@@ -63,7 +63,7 @@ pipeline{
               [$class: 'StringParameterValue', name: 'orbit_rest_api', value: "docker-staging.shehanigans.net/orbit-team/foundations-orbit-rest-api:${version}"],
               [$class: 'StringParameterValue', name: 'worker', value: "docker-staging.shehanigans.net/orbit-team/worker:${version}"],
               [$class: 'StringParameterValue', name: 'foundations_orbit_ce_pi_py', value: version],
-              [$class: 'StringParameterValue', name: 'ORBIT_TEAM_VERSION', value: version],
+              [$class: 'StringParameterValue', name: 'orbit_version', value: version],
               [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: params.f9s_commit_hash]
             ]
           }
