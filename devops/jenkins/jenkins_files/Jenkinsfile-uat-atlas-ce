@@ -40,7 +40,7 @@ pipeline{
                         sh "aws configure set default.region us-east-1"
                         sh "apt-get update"
                         sh "apt-get install -y jq"
-                        sh "aws ec2 run-instances --image-id ami-0d21095cdfb1566c2 --security-group-ids sg-06ba22060dcf1d641 sg-095885e5826b662a9 sg-01ccc2bb7a7fb755e sg-0c2e6585e6fd8c276 --subnet-id subnet-0c4adb4108230c27d --associate-public-ip-address --count 1 --instance-type t2.large --key-name dessa_office --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=uat-atlas-ce}]' --iam-instance-profile Arn=\"arn:aws:iam::451430605210:instance-profile/devops-NODE-GROUP-NodeInstanceProfile-1HP6MB24QQZEO\" > /tmp/aws-uat-atlas-output.json"
+                        sh "aws ec2 run-instances --image-id ami-0d21095cdfb1566c2 --security-group-ids sg-06ba22060dcf1d641 sg-095885e5826b662a9 sg-01ccc2bb7a7fb755e sg-0c2e6585e6fd8c276 --subnet-id subnet-0c4adb4108230c27d --associate-public-ip-address --count 1 --instance-type t2.large --key-name dessa_office --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=uat-atlas}]' --iam-instance-profile Arn=\"arn:aws:iam::451430605210:instance-profile/devops-NODE-GROUP-NodeInstanceProfile-1HP6MB24QQZEO\" > /tmp/aws-uat-atlas-output.json"
 
                         script {
                             env.SCHEDULER_ID = sh(script: 'echo `cat /tmp/aws-uat-atlas-output.json | jq -r \'.Instances[0].InstanceId\'`', returnStdout: true).trim()
