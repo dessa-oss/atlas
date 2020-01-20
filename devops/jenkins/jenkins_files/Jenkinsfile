@@ -29,17 +29,22 @@ pipeline{
                 }
             }
         }
-        stage('Run Unit Tests') {
-            steps {
-                container("python3") {
-                    sh "./run_unit_tests.sh"
+        stage('Run Unit test and coverage'){
+            failFast true
+            parallel{
+                stage('Run Unit Tests') {
+                    steps {
+                        container("python3") {
+                            sh "./run_unit_tests.sh"
+                        }
+                    }
                 }
-            }
-        }
-        stage('Run Coverage Tests') {
-            steps {
-                container("python3") {
-                    sh "./run_coverage_tests.sh"
+                stage('Run Coverage Tests') {
+                    steps {
+                        container("python3") {
+                            sh "./run_coverage_tests.sh"
+                        }
+                    }
                 }
             }
         }
