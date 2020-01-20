@@ -41,7 +41,6 @@ from test.test_lazy_bucket import TestLazyBucket
 from test.test_obfuscator import TestObfuscator
 from test.test_job_bundler import TestJobBundler
 from test.test_job_source_bundle import TestJobSourceBundle
-from test.test_obfuscation_detection_mixin import TestObfuscationDetectionMixin
 from test.test_set_job_resources import TestSetJobResources
 from test.test_global_metric_logger import TestGlobalMetricLogger
 from test.test_bucket_pipeline_archive import TestBucketPipelineArchive
