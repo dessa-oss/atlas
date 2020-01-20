@@ -43,8 +43,6 @@ class MiddlewareManager(object):
         self._append_middleware(
             'Redundant', MiddlewareManager._create_redundant_middleware)
         self._append_middleware(
-            'ExceptionHook', MiddlewareManager._create_exception_hook_middleware)
-        self._append_middleware(
             'StageOutput', MiddlewareManager._create_stage_output_middleware)
         self._append_middleware('Argument', ArgumentMiddleware)
         self._append_middleware(
@@ -99,8 +97,3 @@ class MiddlewareManager(object):
         from foundations_internal.stage_cache import StageCache
 
         return NewCacheMiddleware(StageCache, pipeline_context, stage_config, stage_context, stage)
-
-    @staticmethod
-    def _create_exception_hook_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations_contrib.middleware.exception_hook_middleware import ExceptionHookMiddleware
-        return ExceptionHookMiddleware()
