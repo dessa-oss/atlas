@@ -77,10 +77,6 @@ class TestMiddlewareManager(unittest.TestCase):
         from foundations_contrib.middleware.argument_filling_middleware import ArgumentFillingMiddleware
         self._test_has_middleware('ArgumentFilling', ArgumentFillingMiddleware)
 
-    def test_has_metric_log_middleware(self):
-        from foundations_contrib.middleware.metric_log_middleware import MetricLogMiddleware
-        self._test_has_middleware('MetricLog', MetricLogMiddleware)
-
     def test_has_argument_filling_middleware_configured(self):
         self._test_constructor_attributes('ArgumentFilling')
 

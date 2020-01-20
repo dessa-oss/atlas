@@ -4,7 +4,6 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
-from test.middleware.test_metric_log_middleware import TestMetricLogMiddleware
 from test.middleware.test_redundant_execution_middleware import TestRedundantExecutionMiddleware
 from test.middleware.test_exception_hook_middleware import TestExceptionHookMiddleware
 from test.middleware.test_error_middleware import TestErrorMiddleware
