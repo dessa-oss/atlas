@@ -55,7 +55,6 @@ export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$FOUNDATIONS_HOME
 export CYPRESS_SCHEDULER_REDIS_PORT=$REDIS_PORT 
 export CYPRESS_GUI_HOST="localhost"
 export CYPRESS_GUI_PORT=$GUI_PORT 
-export CYPRESS_ATLAS_EDITION=CE
 
 # ***************************************************************************************************************
 

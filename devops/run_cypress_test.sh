@@ -22,5 +22,4 @@ cd $UI_FOLDER \
     && export CYPRESS_SCHEDULER_REDIS_PORT=6379 \
     && export CYPRESS_GUI_HOST=127.0.0.1\
     && export CYPRESS_GUI_PORT=3000 \
-    && export CYPRESS_ATLAS_EDITION=CE \
     && npm run cy:run -- --headed
