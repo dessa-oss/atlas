@@ -69,6 +69,11 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         return self.faker.word()
 
     @let
+    def rest_api_port(self):
+        import os
+        return os.environ.get('REST_API_PORT', 37222)
+
+    @let
     def env(self):
         return self.faker.word()
 
@@ -82,11 +87,11 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
 
     @let
     def orbit_monitor_base_api_url(self):
-        return f'http://localhost:37222/api/v1/projects/{self.project_name}/monitors'
+        return f'http://localhost:{self.rest_api_port}/api/v1/projects/{self.project_name}/monitors'
 
     @let
     def atlas_job_listing_base_api_url(self):
-        return f'http://localhost:37223/api/v2beta/projects/{self.project_name}/job_listing'
+        return f'http://localhost:{self.rest_api_port}/api/v2beta/projects/{self.project_name}/job_listing'
 
     @let
     def valid_schedule_every_5_secs(self):
