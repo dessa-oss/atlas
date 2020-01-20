@@ -45,13 +45,6 @@ class TestMiddlewareManager(unittest.TestCase):
     def test_has_redundant_middleware_configured(self):
         self._test_constructor_attributes('Redundant')
 
-    def test_has_error_middleware(self):
-        from foundations_contrib.middleware.error_middleware import ErrorMiddleware
-        self._test_has_middleware('Error', ErrorMiddleware)
-
-    def test_has_error_middleware_configured(self):
-        self._test_constructor_attributes('Error')
-
     def test_has_stage_output_middleware(self):
         from foundations_contrib.middleware.stage_output_middleware import StageOutputMiddleware
         self._test_has_middleware('StageOutput', StageOutputMiddleware)

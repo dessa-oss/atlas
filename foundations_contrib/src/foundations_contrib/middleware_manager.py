@@ -45,8 +45,6 @@ class MiddlewareManager(object):
         self._append_middleware(
             'ExceptionHook', MiddlewareManager._create_exception_hook_middleware)
         self._append_middleware(
-            'Error', MiddlewareManager._create_error_middleware)
-        self._append_middleware(
             'StageOutput', MiddlewareManager._create_stage_output_middleware)
         self._append_middleware('Argument', ArgumentMiddleware)
         self._append_middleware(
@@ -89,11 +87,6 @@ class MiddlewareManager(object):
     def _create_redundant_middleware(pipeline_context, stage_config, stage_context, stage):
         from foundations_contrib.middleware.redundant_execution_middleware import RedundantExecutionMiddleware
         return RedundantExecutionMiddleware(stage)
-
-    @staticmethod
-    def _create_error_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations_contrib.middleware.error_middleware import ErrorMiddleware
-        return ErrorMiddleware(stage_context)
 
     @staticmethod
     def _create_stage_output_middleware(pipeline_context, stage_config, stage_context, stage):
