@@ -8,7 +8,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 
 from foundations_contrib.stage_parameter import StageParameter
-from foundations_contrib.middleware.basic_stage_middleware import BasicStageMiddleware
 
 
 class TestStageParameter(unittest.TestCase):

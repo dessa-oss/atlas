@@ -10,7 +10,6 @@ import unittest
 from mock import Mock
 
 from foundations_contrib.dict_parameter import DictParameter
-from foundations_contrib.middleware.basic_stage_middleware import BasicStageMiddleware
 
 
 class TestDictParameter(unittest.TestCase):

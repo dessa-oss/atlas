@@ -10,7 +10,6 @@ import unittest
 from mock import Mock
 
 from foundations_contrib.list_parameter import ListParameter
-from foundations_contrib.middleware.basic_stage_middleware import BasicStageMiddleware
 
 
 class TestListParameter(unittest.TestCase):

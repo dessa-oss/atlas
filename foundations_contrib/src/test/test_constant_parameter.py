@@ -7,7 +7,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 from foundations_contrib.constant_parameter import ConstantParameter
-from foundations_contrib.middleware.basic_stage_middleware import BasicStageMiddleware
 
 class TestConstantParameter(Spec):
 

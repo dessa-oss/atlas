@@ -8,7 +8,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 
 from foundations_contrib.dynamic_parameter import DynamicParameter
-from foundations_contrib.middleware.basic_stage_middleware import BasicStageMiddleware
 
 
 class TestDynamicParameter(unittest.TestCase):
