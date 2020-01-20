@@ -3,4 +3,3 @@ results_config:
   artifact_path: 'some_result_files'
   archive_end_point: /tmp/foundations_acceptance
 cache_config: {}
-obfuscate_foundations: False

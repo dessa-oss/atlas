@@ -39,8 +39,6 @@ def list_files_recursively(root, start_directory):
 package_data = list(list_files_recursively('src/foundations_contrib', 'resources')) + ['resources/*', "**/*pytransform*", "**/license.lic", "*pytransform*", "license.lic", "pytransform.py", "*", "**/*", 'licenses/*/*', 'licenses/*']
 
 package_source = "src"
-if environ.get("BUILD_FOUNDATIONS_OBFUSCATED", False):
-    package_source = "obfuscated_dist"
 
 setup(
     name='foundations-contrib',

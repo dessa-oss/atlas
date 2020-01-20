@@ -29,8 +29,7 @@ class ModelServingConfigurator(Spec):
             'results_config': {
                 'archive_end_point': 'local://' + path.dirname(ARCHIVE_ROOT)
             },
-            'cache_config': {},
-            'obfuscate_foundations': False
+            'cache_config': {}
         }
 
         with open(self.model_server_config_path, 'w') as config_file:

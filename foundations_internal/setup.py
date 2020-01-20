@@ -18,8 +18,6 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 package_source = "src"
-if environ.get("BUILD_FOUNDATIONS_OBFUSCATED", False):
-    package_source = "obfuscated_dist"
 
 setup(
     name='foundations-internal',

@@ -70,20 +70,6 @@ class TestExecution(Spec):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['redis_url'], 'redis://11.22.33.44:9738')
 
-    def test_returns_obfuscate_false_if_not_set(self):
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['obfuscate_foundations'], False)
-
-    def test_returns_obfuscate_true_if_set_true(self):
-        self._configuration['obfuscate_foundations'] = True
-        result_config = self.translator.translate(self._configuration)
-        self.assertTrue(result_config['obfuscate_foundations'])
-    
-    def test_returns_obfuscate_false_if_set_false(self):
-        self._configuration['obfuscate_foundations'] = False
-        result_config = self.translator.translate(self._configuration)
-        self.assertFalse(result_config['obfuscate_foundations'])
-
     def test_returns_enable_stages_false_if_not_set(self):
         result_config = self.translator.translate(self._configuration)
         self.assertFalse(result_config['enable_stages'])

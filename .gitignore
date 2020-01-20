@@ -115,8 +115,6 @@ test_data_contract_with_monitor.pkl
 coverage_results/
 htmlcov/
 
-obfuscated_dist/*
-
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/logs/system.log
 foundations_ui/cypress/videos/*
 foundations_ui/cypress/screenshots/*

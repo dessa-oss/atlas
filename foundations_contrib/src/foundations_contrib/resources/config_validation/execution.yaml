@@ -21,4 +21,3 @@ properties:
       user: {type: string}
       key_path: {type: string}
   log_level: {type: string}
-  obfuscate_foundations: {type: boolean}

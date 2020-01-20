@@ -26,7 +26,6 @@ class TestJobBundler(Spec):
     @let
     def _default_config(self):
         return {
-            'obfuscate_foundations': False,
             'deployment_implementation': {
                 'deployment_type': 'something'
             }

@@ -36,7 +36,6 @@ def get_translate_implementation(get_translator_config):
             'log_level': _log_level(config),
             'enable_stages': _enable_stages(config),
             'shell_command': find_bash(),
-            'obfuscate_foundations': _obfuscate_foundations(config),
             'run_script_environment': {
                 'log_level': _log_level(config),
                 'enable_stages': _enable_stages(config)
@@ -56,9 +55,6 @@ def _log_level(config):
 
 def _redis_url(config):
     return config['results_config'].get('redis_end_point', 'redis://localhost:6379')
-
-def _obfuscate_foundations(config):
-    return config.get('obfuscate_foundations', False)
 
 def _artifact_path(config):
     return config['results_config'].get('artifact_path', 'results')

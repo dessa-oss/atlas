@@ -7,7 +7,6 @@ properties:
     properties:
       redis_end_point:
         type: string
-  obfuscate_foundations: {type: boolean}
   ssh_config:
     type: object
     additionalProperties: false

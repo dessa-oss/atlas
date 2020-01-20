@@ -31,7 +31,6 @@ def translate(config):
         'redis_url': _redis_url(config),
         'cache_implementation': _cache_implementation(config),
         'log_level': _log_level(config),
-        'obfuscate_foundations': _obfuscate_foundations(config),
         'run_script_environment': {
             'log_level': _log_level(config),
             'enable_stages': False
@@ -97,6 +96,3 @@ def _archive_implementation(result_end_point):
     from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
 
     return archive_implementation(result_end_point, LocalFileSystemBucket)
-
-def _obfuscate_foundations(config):
-    return config.get('obfuscate_foundations', False)
