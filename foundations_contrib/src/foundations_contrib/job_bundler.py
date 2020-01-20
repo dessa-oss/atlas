@@ -113,12 +113,11 @@ class JobBundler(object):
 
     def _tar_resources(self, tarfile): 
         import os
-        from foundations_contrib.resources_obfuscation_controller import ResourcesObfuscationController
 
-        with ResourcesObfuscationController(self._config) as resources_obfuscation_controller:
-            resources_directory = resources_obfuscation_controller.get_resources()
-            os.chdir(resources_directory)
-            tarfile.add(".", arcname=self._job_name)
+        module_directory = os.path.dirname(os.path.abspath(__file__))
+        resource_directory = os.path.join(module_directory, "resources")
+        os.chdir(resource_directory)
+        tarfile.add(".", arcname=self._job_name)
 
     def _tar_foundations_modules(self, tarfile):
         import os
