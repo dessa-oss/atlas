@@ -33,7 +33,6 @@ class ArtifactDownloader(object):
             'docker_image_version.sh',
             'download_gui_images.sh',
             'foundations_gui.sh',
-            'foundations_main.py',
             'foundations_package_manifest.yaml',
             'foundations_requirements.txt',
             'get_version.sh',
