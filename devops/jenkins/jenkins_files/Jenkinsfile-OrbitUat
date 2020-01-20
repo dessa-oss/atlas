@@ -1,0 +1,198 @@
+def customMetrics = [: ]
+def customMetricsMap = [: ]
+
+pipeline{
+  agent {
+    label 'ci-pipeline-jenkins-slave'
+  }
+  stages {
+    stage('Preparation') {
+      steps {
+        script {
+          git branch: 'master', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations.git'
+          sh "git checkout ${params.f9s_commit_hash}"
+        }
+      }
+    }
+    stage('Configure Credentials'){
+      steps {
+        container('python3') {
+          sh "gcloud auth activate-service-account ${GOOGLE_ACCOUNT} --key-file=${GOOGLE_APPLICATION_CREDENTIALS}"
+          sh "gcloud auth configure-docker"
+          sh "mkdir -p ~/.ssh/"
+          sh "ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts"
+          sh "cp /tmp/deployment_credentials/ssh/* ~/.ssh/"
+          sh 'docker login $NEXUS_DOCKER_REGISTRY -u $NEXUS_USER -p $NEXUS_PASSWORD'
+          sh 'docker login $NEXUS_DOCKER_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD'
+        }
+      }
+    }
+    stage('Spin up a remote AWS instance') {
+      steps {
+        container("python3") {
+          sh "rm -rf ./awscli-bundle/packages"
+          sh "curl \"https://s3.amazonaws.com/aws-cli/awscli-bundle.zip\" -o \"awscli-bundle.zip\""
+          sh "unzip -o awscli-bundle.zip"
+          sh "chmod u+x ./awscli-bundle/install"
+          sh "./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws"
+          sh "aws configure set default.region us-east-1"
+          sh "apt-get update"
+          sh "apt-get install -y jq"
+          sh "aws ec2 run-instances --image-id ami-0d21095cdfb1566c2 --security-group-ids sg-06ba22060dcf1d641 sg-095885e5826b662a9 sg-01ccc2bb7a7fb755e sg-0c2e6585e6fd8c276 --subnet-id subnet-0c4adb4108230c27d --associate-public-ip-address --count 1 --instance-type t2.large --key-name dessa_office --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=uat-orbit}]' --iam-instance-profile Arn=\"arn:aws:iam::451430605210:instance-profile/devops-NODE-GROUP-NodeInstanceProfile-1HP6MB24QQZEO\" > /tmp/aws-uat-orbit-output.json"
+
+          script {
+            env.SCHEDULER_ID = sh(script: 'echo `cat /tmp/aws-uat-orbit-output.json | jq -r \'.Instances[0].InstanceId\'`', returnStdout: true).trim()
+            env.SCHEDULER_IP = sh(script: 'echo `aws ec2 describe-instances --instance-ids ${SCHEDULER_ID} --query \'Reservations[0].Instances[0].PublicIpAddress\' --output text`', returnStdout: true).trim()
+          }
+        }
+      }
+    }
+    stage('Foundations Install Test Requirements') {
+      steps {
+        container("python3") {
+          sh "./ci_install_requirements.sh"
+        }
+      }
+    }
+    stage('Build and Install Foundations') {
+      steps {
+        container("python3") {
+          sh "./devops/build_scripts/build_all_dist.sh"
+          sh 'python -m pip install ./dist/*.whl'
+        }
+      }
+    }
+    stage('Install test dependencies') {
+      steps {
+        container("python3") {
+          sh "apt install redis-tools -y"
+          sh "curl -sL https://deb.nodesource.com/setup_10.x | bash -"
+          sh "apt install nodejs -y"
+          sh "apt update"
+          sh "apt-get install -y"
+          sh "apt-get install -y libgtk2.0-0"
+          sh "apt-get install -y libnotify-dev"
+          sh "apt-get install -y libgconf-2-4"
+          sh "apt-get install -y libnss3"
+          sh "apt-get install -y libxss1"
+          sh "apt-get install -y libasound2"
+          sh "apt-get install -y xvfb"
+          sh "cd foundations_ui_orbit && npm install"
+        }
+      }
+    }
+    stage('Install Orbit on remote environment') {
+      steps {
+        container("python3") {
+          sh "aws ec2 wait instance-status-ok --instance-ids $SCHEDULER_ID"
+          sh "scp -i /tmp/dessa_office.pem -o 'StrictHostKeyChecking no' ./devops/install_scripts/install_orbit_for_uat.sh ubuntu@${SCHEDULER_IP}:/home/ubuntu"
+          sh "scp -i /tmp/dessa_office.pem -o 'StrictHostKeyChecking no' ./devops/jenkins/scripts/wait_for_successful_monitor_creation.sh ubuntu@${SCHEDULER_IP}:/home/ubuntu"
+          sh "scp -i /tmp/dessa_office.pem -o 'StrictHostKeyChecking no' ./devops/jenkins/scripts/wait_for_port.sh ubuntu@${SCHEDULER_IP}:/home/ubuntu"
+          sh "sleep 1"
+          sh "ssh -i /tmp/dessa_office.pem -o 'StrictHostKeyChecking no' -l ubuntu ${SCHEDULER_IP} ./install_orbit_for_uat.sh $INSTALLER_URL"
+          sh "./devops/jenkins/scripts/wait_for_port.sh $SCHEDULER_IP 5000 30"
+          sh "./devops/jenkins/scripts/wait_for_port.sh $SCHEDULER_IP 5554 10"
+          sh "./devops/jenkins/scripts/wait_for_port.sh $SCHEDULER_IP 5558 5"
+        }
+      }
+    }
+    stage('Run cypress tests') {
+      steps {
+        container("python3") {
+          ws("${WORKSPACE}/foundations_ui_orbit/") {
+            sh "export CYPRESS_LOCAL_FOUNDATIONS_HOME=/home/jenkins/agent/workspace/cypress-test/foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations && export CYPRESS_SCHEDULER_IP=$SCHEDULER_IP && export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$REMOTE_FOUNDATIONS_HOME && export CYPRESS_SCHEDULER_REDIS_PORT=5556 && export CYPRESS_GUI_HOST=$SCHEDULER_IP && export CYPRESS_GUI_PORT=5554 && export CYPRESS_PROXY_PORT=5558 && npm run cy:run --"
+            sh "git checkout ."
+          }
+        }
+      }
+    }
+    stage('Pulling Orbit Versioned Repo'){
+      steps {
+        container("python3") {
+          sh "rm -rf orbit"
+          dir('orbit') {
+            sh "git clone git@github.com:DeepLearnI/orbit.git ."
+          }
+        }
+      }
+    }
+    stage('Update the component versions for Orbit'){
+      steps {
+        container("python3") {
+          sh "NEXUS_DOCKER_REGISTRY='us.gcr.io/dessa-orbit-dev' python devops/uat_helpers/orbit_version_updater.py"
+        }
+      }
+    }
+    stage('Upload Foundations wheels to Production'){
+      steps {
+        container("python3") {
+          sh "./devops/build_scripts/build_orbit_team_dist.sh"
+          sh "pip download -r ./devops/uat_helpers/requirements.txt  --no-deps -d `pwd`/dist"
+          sh "./devops/build_scripts/upload_modules_to_artifactory.sh $NEXUS_PYPI"
+        }
+      }
+    }
+    stage('Push updated versions to the repo') {
+      steps {
+        container("python3") {
+          dir('orbit') {
+            sh 'git config --global user.email "devops@dessa.com"'
+            sh 'git config --global user.name "dessa-devops"'
+            sh "git add ."
+            sh "git commit -m 'updated with f9s version ${params.f9s_commit_hash}' || true"
+            sh "git push"
+          }
+        }
+      }
+    }
+    stage('Build Production Installer') {
+      steps {
+        container("python3") {
+          dir('orbit') {
+            script {
+              version = sh(script: 'python get_version.py', returnStdout: true).trim()
+              build job: "build-installer-orbit-team", wait: false, parameters: [
+                [$class: 'StringParameterValue', name: 'ORBIT_TEAM_VERSION', value: version],
+                [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: params.f9s_commit_hash],
+                [$class: 'StringParameterValue', name: 'DEV_S3_FOLDER_URL', value: params.S3_FOLDER_URL],
+                [$class: 'BooleanParameterValue', name: 'is_production', value: true]
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+  post {
+    always {
+      script {
+        customMetricsMap["jenkins_data"] = customMetrics
+      }
+      influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
+
+    }
+    failure {
+      script {
+        def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
+        def attachments = [
+          [
+            pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+            text: output_logs,
+            fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+            color: '#FF0000'
+          ]
+        ]
+
+        slackSend(channel: '#f9s-builds', attachments: attachments)
+      }
+    }
+    success {
+      slackSend color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.'
+    }
+    cleanup {
+      container("python3") {
+        sh "aws ec2 terminate-instances --region us-east-1 --instance-ids $SCHEDULER_ID"
+      }
+    }
+  }
+}
