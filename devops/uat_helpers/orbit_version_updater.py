@@ -12,6 +12,10 @@ foundation_components = [
     'dessa_foundations',
     'foundations_core_rest_api_components',
     'foundations_rest_api',
+    'foundations_core_cli',
+    'foundations_orbit_cli',
+    'foundations_orbit',
+    'foundations_orbit_rest_api',
 ]
 
 def load_manifest():
