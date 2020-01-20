@@ -155,7 +155,7 @@ pipeline{
                             steps {
                                 container("python3-2") {
                                     ws("${WORKSPACE}/foundations_rest_api/src") {
-                                        // sh 'export FOUNDATIONS_HOME=`pwd`/acceptance/v2beta/fixtures/remote_foundations_home && python -Wi -m unittest -f -v acceptance'
+                                        sh 'export FOUNDATIONS_HOME=`pwd`/acceptance/v2beta/fixtures/remote_foundations_home && python -Wi -m unittest -f -v acceptance'
                                     }
                                 }
                             }
