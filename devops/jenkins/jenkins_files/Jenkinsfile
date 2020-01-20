@@ -112,7 +112,6 @@ pipeline{
             }
         }
         stage('Acceptance Tests'){
-            failFast true
             parallel{
                 stage('F9S Acceptance Tests') {
                     stages {
@@ -157,10 +156,13 @@ pipeline{
                             steps {
                                 container("python3-2") {
                                     ws("${WORKSPACE}/devops") {
-                                        sh 'export AUTH_SERVER_URL=http://keycloak-headless.ci-pipeline.svc.cluster.local:8080/auth && cd .. && sh ./foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh && cd -'
-                                        sh """export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
+                                        sh 'cp -r ../testing/* . || true'
+                                        sh 'cp -r ../devops/* . || true'
+                                        sh "export AUTH_SERVER_URL=http://keycloak-headless.ci-pipeline.svc.cluster.local:8080/auth && cd .. && sh ${WORKSPACE}/foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh && cd - "
+                                        sh """export AUTH_CLIENT_CONFIG_PATH=${WORKSPACE}/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
+                                              cat $AUTH_CLIENT_CONFIG_PATH && \
                                               export FOUNDATIONS_SCHEDULER_URL=localhost:5000 && \
-                                              export REDIS_HOST=localhost && \
+                                              export REDIS_HOST=redis && \
                                               export REDIS_PORT=6379 && \
                                               cd ../testing && \
                                               export FOUNDATIONS_HOME=`pwd`/auth_acceptance/foundations_home
@@ -183,7 +185,7 @@ pipeline{
                                 container("python3-3") {
                                     ws("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
-                                        sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && export LOCAL_DOCKER_SCHEDULER_HOST=$ORBIT_LOCAL_SCHEDULER && export REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && python -Wi -m unittest -f -v orbit_acceptance'
+                                        sh "export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && export LOCAL_DOCKER_SCHEDULER_HOST=$ORBIT_LOCAL_SCHEDULER && export REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && python -Wi -m unittest -f -v orbit_acceptance"
                                     }
                                 }
                             }
