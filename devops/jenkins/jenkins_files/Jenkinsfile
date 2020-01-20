@@ -228,7 +228,6 @@ pipeline{
             }
         }
         stage('UI Test for Atlas and Orbit'){
-            failFast true
             parallel{
                 stage('UI Test for Atlas') {
                     stages {
@@ -236,6 +235,7 @@ pipeline{
                             steps {
                                 container("python3") {
                                     ws("${WORKSPACE}/foundations_ui/") {
+                                        sh "npm cache clear --force"
                                         sh "yarn install"
                                     }
                                 }
@@ -258,6 +258,7 @@ pipeline{
                             steps {
                                 container("python3-1") {
                                     ws("${WORKSPACE}/foundations_ui_orbit/") {
+                                        sh "npm cache clear --force"
                                         sh "yarn install"
                                     }
                                 }
