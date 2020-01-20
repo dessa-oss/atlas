@@ -9,8 +9,6 @@ import os
 
 os.environ['TZ'] = 'EST'
 
-from test.test_global_state import TestGlobalState
 from test.utils import *
-from test.v1 import *
 from test.v2beta import *
 from test.filters import *
