@@ -101,18 +101,6 @@ class TestArgument(unittest.TestCase):
         argument = Argument.generate_from(self._make_stage(method), None)
         self.assertEqual(1233, argument.value({}))
 
-    def test_generate_argument_generates_stage_parameter_different_runtime_data(self):
-        from foundations.hyperparameter import Hyperparameter
-
-        def method(hello):
-            return hello
-
-        hyper_parameter = Hyperparameter('hello')
-        argument = Argument.generate_from(
-            self._make_stage(method, hyper_parameter), None)
-
-        self.assertEqual(77, argument.value({'hello': 77}))
-
     def test_generate_argument_returns_argument_when_argument_provided(self):
         argument = Argument.generate_from(42, None)
         argument2 = Argument.generate_from(argument, None)

@@ -36,11 +36,9 @@ class MiddlewareManager(object):
         self.stage_middleware().insert(previous_index, middleware)
 
     def _set_initial_middleware(self):
-        from foundations_contrib.middleware.argument_middleware import ArgumentMiddleware
         from foundations_contrib.middleware.argument_filling_middleware import ArgumentFillingMiddleware
 
         self._stage_middleware = []
-        self._append_middleware('Argument', ArgumentMiddleware)
         self._append_middleware(
             'NewCache', MiddlewareManager._create_new_cache_middleware)
         self._append_middleware('ArgumentFilling', ArgumentFillingMiddleware)

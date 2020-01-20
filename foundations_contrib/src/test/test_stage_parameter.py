@@ -45,15 +45,6 @@ class TestStageParameter(unittest.TestCase):
         parameter = self._make_parameter(method)
         self.assertEqual(17, parameter.compute_value({}))
 
-    def test_runs_stage_dynamic_parameters(self):
-        from foundations.hyperparameter import Hyperparameter
-
-        def method(some_number):
-            return 3 * some_number
-
-        parameter = self._make_parameter(method, Hyperparameter('some_number'))
-        self.assertEqual(15, parameter.compute_value({'some_number': 5}))
-
     def test_value_hash(self):
         def method():
             return 'potato'
@@ -69,26 +60,6 @@ class TestStageParameter(unittest.TestCase):
         parameter = self._make_parameter(method)
         self.assertEqual(
             '321e42b16eff1d6695a97ed82dc8b24f455db67d', parameter.hash({}))
-
-    def test_value_hash_dynamic_value(self):
-        from foundations.hyperparameter import Hyperparameter
-
-        def method(some_number):
-            return 'hello' * some_number
-
-        parameter = self._make_parameter(method, Hyperparameter('some_number'))
-        self.assertEqual('0b156215b189103c3d268f61299a854cd0b31e70',
-                         parameter.hash({'some_number': 2}))
-
-    def test_value_hash_dynamic_value_different_value(self):
-        from foundations.hyperparameter import Hyperparameter
-
-        def method(some_number):
-            return 'hello' * some_number
-
-        parameter = self._make_parameter(method, Hyperparameter('some_number'))
-        self.assertEqual('9bbc253eb8d8abfb4dd4a1726cc94892b930b188',
-                         parameter.hash({'some_number': 33}))
 
     def test_enable_caching_forwards_to_stage(self):
         stage = self.MockStage()
