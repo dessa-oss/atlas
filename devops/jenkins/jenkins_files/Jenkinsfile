@@ -163,22 +163,25 @@ pipeline{
                         stage('Atlas Auth Acceptance Tests'){
                             steps {
                                 container("python3-2") {
-                                    // ws("${WORKSPACE}/devops") {
-                                    //     sh "export AUTH_SERVER_URL=http://keycloak-headless.ci-pipeline.svc.cluster.local:8080/auth && cd .. && sh ${WORKSPACE}/foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh && cd - "
-                                    //     sh """export AUTH_CLIENT_CONFIG_PATH=${WORKSPACE}/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
-                                    //           cat $AUTH_CLIENT_CONFIG_PATH && \
-                                    //           export FOUNDATIONS_SCHEDULER_URL=localhost:5000 && \
-                                    //           export REDIS_HOST=redis && \
-                                    //           export REDIS_PORT=6379 && \
-                                    //           cd ../testing && \
-                                    //           export FOUNDATIONS_HOME=`pwd`/auth_acceptance/foundations_home
-                                    //           cd - && \
-                                    //           python startup_atlas_api.py 37722 &""".stripMargin()
-                                    // }
-                                    // ws("${WORKSPACE}/testing") {
-                                    //     sh 'cp -r ../testing/* . || true'
-                                    //     // sh 'python -Wi -m unittest -f -v auth_acceptance'
-                                    // }
+                                    ws("${WORKSPACE}/devops") {
+                                        sh "pgrep  python | xargs kill -9"
+                                        sh """export AUTH_SERVER_URL=http://keycloak-headless.ci-pipeline.svc.cluster.local:8080/auth && \
+                                                cd .. && sh /home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh && cd - """
+                                        sh """export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
+                                              cat $AUTH_CLIENT_CONFIG_PATH && \
+                                              export FOUNDATIONS_SCHEDULER_URL=localhost:5000 && \
+                                              export REDIS_HOST=localhost && \
+                                              export REDIS_PORT=6379 && \
+                                              cd ../testing && \
+                                              export FOUNDATIONS_HOME=`pwd`/auth_acceptance/foundations_home
+                                              cd - && \
+                                              python startup_atlas_api.py 37722 &"""
+                                    }
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'cp -r ../testing/* . || true'
+                                        sh 'python -Wi -m unittest -f -v auth_acceptance'
+                                        sh "pgrep  python | xargs kill -9"
+                                    }
 
                                 }
                             }
