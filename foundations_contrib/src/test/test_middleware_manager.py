@@ -38,13 +38,6 @@ class TestMiddlewareManager(unittest.TestCase):
 
         self._config_manager = ConfigManager()
 
-    def test_has_stage_output_middleware(self):
-        from foundations_contrib.middleware.stage_output_middleware import StageOutputMiddleware
-        self._test_has_middleware('StageOutput', StageOutputMiddleware)
-
-    def test_has_stage_output_middleware_configured(self):
-        self._test_constructor_attributes('StageOutput')
-
     def test_has_argument_middleware(self):
         from foundations_contrib.middleware.argument_middleware import ArgumentMiddleware
         self._test_has_middleware('Argument', ArgumentMiddleware)
