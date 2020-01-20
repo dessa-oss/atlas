@@ -228,38 +228,51 @@ pipeline{
                 }
             }
         }
-        stage('Install dependencies for Atlas UI') {
-            steps {
-                container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui/") {
-                        sh "yarn install"
+        stage('UI Test for Atlas and Orbit'){
+            failFast true
+            parallel{
+                stage('UI Test for Atlas') {
+                    stages {
+                        stage('Install dependencies for Atlas UI') {
+                            steps {
+                                container("yarn") {
+                                    ws("${WORKSPACE}/foundations_ui/") {
+                                        sh "yarn install"
+                                    }
+                                }
+                            }
+                        }
+                        stage('Check for Atlas linting ') {
+                            steps {
+                                container("yarn") {
+                                    ws("${WORKSPACE}/foundations_ui/") {
+                                        sh "node_modules/.bin/eslint ."
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-            }
-        }
-        stage('Check for Atlas linting ') {
-            steps {
-                container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui/") {
-                        sh "node_modules/.bin/eslint ."
-                    }
-                }
-            }
-        }
-        stage('Install dependencies for Orbit UI') {
-            steps {
-                container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui_orbit/") {
-                        sh "yarn install"
-                    }
-                }
-            }
-        }
-        stage('Check for linting (Orbit)') {
-            steps {
-                container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui_orbit/") {
-                        sh "node_modules/.bin/eslint ."
+                stage('UI Test for Orbit') {
+                    stages {
+                        stage('Install dependencies for Orbit UI') {
+                            steps {
+                                container("yarn") {
+                                    ws("${WORKSPACE}/foundations_ui_orbit/") {
+                                        sh "yarn install"
+                                    }
+                                }
+                            }
+                        }
+                        stage('Check for linting (Orbit)') {
+                            steps {
+                                container("yarn") {
+                                    ws("${WORKSPACE}/foundations_ui_orbit/") {
+                                        sh "node_modules/.bin/eslint ."
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
