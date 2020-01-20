@@ -6,6 +6,7 @@ Written by Susan Davis <s.davis@dessa.com>, 06 2018
 """
 import sys
 
+
 class CommandLineInterface(object):
 
     def __init__(self, args):
@@ -62,26 +63,9 @@ class CommandLineInterface(object):
         login_parser = self.add_sub_parser('login', help='Login to either an Atlas or Orbit cluster')
         login_parser.add_argument('host', help="The address of the instance to login to (e.g. http://0.0.0.0:3333)")
         login_parser.add_argument('-u', '--username', required=False, type=str, help='Username as plain text')
-        login_parser.add_argument('-p', '--password', type=str, required='--username' in sys.argv, help='Password in plain text')
+        login_parser.add_argument('-p', '--password', type=str, required='--username' in sys.argv,
+                                  help='Password in plain text')
         login_parser.set_defaults(function=self._login)
-
-    def _initialize_model_serve_parser(self):
-        serving_parser = self.add_sub_parser('serve', help='Used to serve models in Atlas')
-        serving_subparsers = serving_parser.add_subparsers()
-
-        serving_deploy_parser = serving_subparsers.add_parser('start')
-        serving_deploy_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
-        serving_deploy_parser.add_argument('job_id')
-        serving_deploy_parser.set_defaults(function=self._kubernetes_model_serving_deploy)
-
-        serving_destroy_parser = serving_subparsers.add_parser('stop')
-        serving_destroy_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
-        serving_destroy_parser.add_argument('model_name')
-        serving_destroy_parser.set_defaults(function=self._kubernetes_model_serving_destroy)
-
-    def _initialize_serving_stop_parser(self, serving_subparsers):
-        serving_deploy_parser = serving_subparsers.add_parser('stop', help='Stop foundations model package server')
-        serving_deploy_parser.set_defaults(function=self._model_serving_stop)
 
     def execute(self):
         self._arguments = self._argument_parser.parse_args(self._input_arguments)
@@ -138,7 +122,7 @@ class CommandLineInterface(object):
         from os.path import expanduser, join
         import yaml
         from foundations_contrib.utils import foundations_home
-        
+
         username = self._arguments.username
         password = self._arguments.password
 
@@ -190,6 +174,5 @@ class CommandLineInterface(object):
 
     def _fail_with_message(self, message):
         import sys
-
         print(message)
         sys.exit(1)
