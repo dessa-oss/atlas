@@ -8,7 +8,6 @@ Written by Katherine Bancroft <k.bancroft@dessa.com>, 11 2018
 from test.helpers import *
 from test.models import *
 from test.job_bundling import *
-from test.middleware import *
 from test.archiving import *
 from test.authentication import *
 
