@@ -110,7 +110,7 @@ pipeline{
                                         sh 'python -m pip install ../dist/*.whl'
                                     }
                                     dir("${WORKSPACE}/foundations_ui") {
-                                        sh "npm install"
+                                        sh "yarn install"
                                     }
                                 }
                             }
