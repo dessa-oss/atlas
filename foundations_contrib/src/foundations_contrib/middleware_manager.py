@@ -37,8 +37,6 @@ class MiddlewareManager(object):
 
     def _set_initial_middleware(self):
         self._stage_middleware = []
-        self._append_middleware(
-            'NewCache', MiddlewareManager._create_new_cache_middleware)
 
     def _append_middleware(self, name, callback):
         middleware = self._make_middleware(name, callback)
@@ -71,10 +69,3 @@ class MiddlewareManager(object):
     def _log(self):
         from foundations_contrib.global_state import log_manager
         return log_manager.get_logger(__name__)
-
-    @staticmethod
-    def _create_new_cache_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations_contrib.middleware.new_cache_middleware import NewCacheMiddleware
-        from foundations_internal.stage_cache import StageCache
-
-        return NewCacheMiddleware(StageCache, pipeline_context, stage_config, stage_context, stage)

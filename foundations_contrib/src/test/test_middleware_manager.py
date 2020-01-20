@@ -38,13 +38,6 @@ class TestMiddlewareManager(unittest.TestCase):
 
         self._config_manager = ConfigManager()
 
-    def test_has_new_cache_middleware(self):
-        from foundations_contrib.middleware.new_cache_middleware import NewCacheMiddleware
-        self._test_has_middleware('NewCache', NewCacheMiddleware)
-
-    def test_has_new_cache_middleware_configured(self):
-        self._test_constructor_attributes('NewCache')
-
     def test_has_configured_middleware(self):
         self._config_manager['stage_middleware'] = [
             {'name': 'Mock', 'constructor': self.MockMiddleware}
