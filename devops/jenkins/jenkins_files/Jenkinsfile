@@ -150,7 +150,7 @@ pipeline{
                             steps {
                                 container("python3-2") {
                                     ws("${WORKSPACE}/foundations_rest_api/src") {
-                                        sh 'export FOUNDATIONS_HOME=`pwd`/acceptance/v2beta/fixtures/remote_foundations_home && python -Wi -m unittest -f -v acceptance'
+                                        // sh 'export FOUNDATIONS_HOME=`pwd`/acceptance/v2beta/fixtures/remote_foundations_home && python -Wi -m unittest -f -v acceptance'
                                     }
                                 }
                             }
@@ -187,6 +187,7 @@ pipeline{
                                 container("python3-3") {
                                     ws("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
+                                        sh "echo 'Stopping atlas API' && kill -9 $(lsof -i:37222 -t) > /dev/null 2>&1 || true"
                                         sh """export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && \
                                                 export LOCAL_DOCKER_SCHEDULER_HOST=$ORBIT_LOCAL_SCHEDULER && \
                                                 export REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && \
