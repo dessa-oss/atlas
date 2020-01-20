@@ -22,9 +22,11 @@ class TestSchedulerMonitorPackageViaRESTAPI(Spec):
         import time
         from foundations_contrib.global_state import redis_connection
         redis_connection.flushall()
+        import os
+        api_port = os.environ.get('REST_API_PORT', 37222)
 
         # Clear any un-removed flask process to prevent conflicts
-        get_pid_for_any_flask_app = "kill -9 $(lsof -i:37222 -t)" # Command not found in Jenkins
+        get_pid_for_any_flask_app = f"kill -9 $(lsof -i:{api_port} -t)" # Command not found in Jenkins
         subprocess.run(get_pid_for_any_flask_app, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         klass._flask_process = subprocess.Popen(

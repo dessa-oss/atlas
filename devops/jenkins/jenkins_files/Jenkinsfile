@@ -163,23 +163,24 @@ pipeline{
                         stage('Atlas Auth Acceptance Tests'){
                             steps {
                                 container("python3-2") {
-                                    // ws("${WORKSPACE}/devops") {
-                                    //     sh "export AUTH_SERVER_URL=http://keycloak-headless.ci-pipeline.svc.cluster.local:8080/auth && cd .. && sh ${WORKSPACE}/foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh && cd - "
-                                    //     sh """export AUTH_CLIENT_CONFIG_PATH=${WORKSPACE}/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
-                                    //           cat $AUTH_CLIENT_CONFIG_PATH && \
-                                    //           export FOUNDATIONS_SCHEDULER_URL=localhost:5000 && \
-                                    //           export REDIS_HOST=redis && \
-                                    //           export REDIS_PORT=6379 && \
-                                    //           cd ../testing && \
-                                    //           export FOUNDATIONS_HOME=`pwd`/auth_acceptance/foundations_home
-                                    //           cd - && \
-                                    //           python startup_atlas_api.py 37722 &""".stripMargin()
-                                    // }
-                                    // ws("${WORKSPACE}/testing") {
-                                    //     sh 'cp -r ../testing/* . || true'
-                                    //     // sh 'python -Wi -m unittest -f -v auth_acceptance'
-                                    // }
-
+                                    ws("${WORKSPACE}/devops") {
+                                        sh "./teardown_frontend_dev_atlas.sh || true"
+                                        sh """export AUTH_SERVER_URL=http://keycloak-headless.ci-pipeline.svc.cluster.local:8080/auth && \
+                                                cd .. && sh /home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh && cd - && \
+                                                export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
+                                                export FOUNDATIONS_SCHEDULER_URL=localhost:5000 && \
+                                                export REDIS_HOST=localhost && \
+                                                export REDIS_PORT=6379 && \
+                                                cd ../testing && \
+                                                export FOUNDATIONS_HOME=`pwd`/auth_acceptance/foundations_home
+                                                cd - && \
+                                                python startup_atlas_api.py 37722 &"""
+                                    }
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'cp -r ../testing/* . || true'
+                                        sh 'python -Wi -m unittest -f -v auth_acceptance'
+                                        sh "../devops/teardown_frontend_dev_atlas.sh || true"
+                                    }
                                 }
                             }
                         }
@@ -218,7 +219,6 @@ pipeline{
                                         //         export CYPRESS_GUI_HOST=$ATLAS_LOCAL_SCHEDULER && \
                                         //         export CYPRESS_GUI_PORT=5555 && export CYPRESS_ATLAS_EDITION=CE && \
                                         //         npm run cy:run --"""
-                                        // sh "kill -9 $(lsof -i:8000 -t) > /dev/null 2>&1 || true"
                                     }
                                 }
                             }
@@ -227,41 +227,56 @@ pipeline{
                 }
             }
         }
-        stage('Install dependencies for Atlas UI') {
-            steps {
-                container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui/") {
-                        sh "yarn install"
+        stage('UI Test for Atlas and Orbit'){
+            parallel{
+                stage('UI Test for Atlas') {
+                    stages {
+                        stage('Install dependencies for Atlas UI') {
+                            steps {
+                                container("python3") {
+                                    ws("${WORKSPACE}/foundations_ui/") {
+                                        sh "npm cache clear --force"
+                                        sh "yarn install"
+                                    }
+                                }
+                            }
+                        }
+                        stage('Check for Atlas linting ') {
+                            steps {
+                                container("python3") {
+                                    ws("${WORKSPACE}/foundations_ui/") {
+                                        sh "node_modules/.bin/eslint ."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('UI Test for Orbit') {
+                    stages {
+                        stage('Install dependencies for Orbit UI') {
+                            steps {
+                                container("python3-1") {
+                                    ws("${WORKSPACE}/foundations_ui_orbit/") {
+                                        sh "npm cache clear --force"
+                                        sh "yarn install"
+                                    }
+                                }
+                            }
+                        }
+                        stage('Check for linting (Orbit)') {
+                            steps {
+                                container("python3-1") {
+                                    ws("${WORKSPACE}/foundations_ui_orbit/") {
+                                        sh "node_modules/.bin/eslint ."
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
-        }
-        stage('Check for Atlas linting ') {
-            steps {
-                container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui/") {
-                        sh "node_modules/.bin/eslint ."
-                    }
-                }
-            }
-        }
-        stage('Install dependencies for Orbit UI') {
-            steps {
-                container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui_orbit/") {
-                        sh "yarn install"
-                    }
-                }
-            }
-        }
-        stage('Check for linting (Orbit)') {
-            steps {
-                container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui_orbit/") {
-                        sh "node_modules/.bin/eslint ."
-                    }
-                }
-            }
+        
         }
         stage('Upload Coverage results to Jenkins') {
             steps {

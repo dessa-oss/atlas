@@ -8,7 +8,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from os.path import join
 
 def translate(config):
-    from foundations_contrib.helpers.shell import find_bash
     from foundations_contrib.config.mixin import ssh_configuration
     from jsonschema import validate
     import foundations_contrib

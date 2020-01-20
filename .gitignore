@@ -141,7 +141,8 @@ foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/job_data/*
 foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/credentials.yaml
 foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/logs/
 
-foundations_rest_api/src/acceptance/v2beta/fixtures/foundations_home/job_data/*
+foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_home/job_data/*
+foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_home/logs/system.log
 
 !foundations_ui/package.json
 !foundations_ui/cypress.json

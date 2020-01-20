@@ -45,13 +45,6 @@ class TestMiddlewareManager(unittest.TestCase):
     def test_has_redundant_middleware_configured(self):
         self._test_constructor_attributes('Redundant')
 
-    def test_has_error_middleware(self):
-        from foundations_contrib.middleware.error_middleware import ErrorMiddleware
-        self._test_has_middleware('Error', ErrorMiddleware)
-
-    def test_has_error_middleware_configured(self):
-        self._test_constructor_attributes('Error')
-
     def test_has_stage_output_middleware(self):
         from foundations_contrib.middleware.stage_output_middleware import StageOutputMiddleware
         self._test_has_middleware('StageOutput', StageOutputMiddleware)
@@ -77,26 +70,8 @@ class TestMiddlewareManager(unittest.TestCase):
         from foundations_contrib.middleware.argument_filling_middleware import ArgumentFillingMiddleware
         self._test_has_middleware('ArgumentFilling', ArgumentFillingMiddleware)
 
-    def test_has_metric_log_middleware(self):
-        from foundations_contrib.middleware.metric_log_middleware import MetricLogMiddleware
-        self._test_has_middleware('MetricLog', MetricLogMiddleware)
-
     def test_has_argument_filling_middleware_configured(self):
         self._test_constructor_attributes('ArgumentFilling')
-
-    def test_has_context_aware_middleware(self):
-        from foundations_contrib.middleware.context_aware_middleware import ContextAwareMiddleware
-        self._test_has_middleware('ContextAware', ContextAwareMiddleware)
-
-    def test_has_context_aware_middleware_configured(self):
-        self._test_constructor_attributes('ContextAware')
-
-    def test_has_stage_logging_middleware(self):
-        from foundations_contrib.middleware.stage_logging_middleware import StageLoggingMiddleware
-        self._test_has_middleware('StageLogging', StageLoggingMiddleware)
-
-    def test_has_stage_logging_middleware_configured(self):
-        self._test_constructor_attributes('StageLogging')
 
     def test_has_configured_middleware(self):
         self._config_manager['stage_middleware'] = [
