@@ -6,7 +6,6 @@ Written by Katherine Bancroft <k.bancroft@dessa.com>, 11 2018
 """
 from test.test_provenance import TestProvenance
 from test.test_argument import TestArgument
-from test.test_cache_name_generator import TestCacheNameGenerator
 from test.test_cache import TestCache
 from test.test_deployment_manager import TestDeploymentManager
 from test.test_foundations_context import TestFoundationsContext
@@ -15,7 +14,6 @@ from test.test_middleware_chain import TestMiddlewareChain
 from test.test_pipeline_context import TestPipelineContext
 from test.test_safe_inspect import TestSafeInspect
 from test.test_scheduler import TestScheduler
-from test.test_stage_cache import TestStageCache
 from test.test_stage_connector_wrapper_builder import TestStageConnectorWrapperBuilder
 from test.test_module_manager import TestModuleManager
 from test.test_foundations_serializer import TestFoundationsSerializer
