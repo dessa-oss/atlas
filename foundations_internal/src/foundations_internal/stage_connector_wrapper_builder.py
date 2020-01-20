@@ -49,7 +49,6 @@ class StageConnectorWrapperBuilder(object):
         self._stage_context.uuid = stage_uuid
         self._stage = Stage(self._middleware, stage_uuid,
                             function, function, *new_args)
-        self._append_stage_middleware()
         return self
 
     def _new_arguments(self, args):
@@ -67,13 +66,6 @@ class StageConnectorWrapperBuilder(object):
         new_kwargs = [(key, kwargs[key]) for key in kwarg_keys]
         return tuple(Argument.generate_from(argument, keyword)
                      for keyword, argument in new_kwargs)
-
-    def _append_stage_middleware(self):
-        from foundations.global_state import middleware_manager
-
-        for middleware in middleware_manager.stage_middleware():
-            self._middleware.append_middleware(middleware.callback(self._pipeline_context,
-                                                                   self._stage_config, self._stage_context, self._stage))
 
     def _uuid(self):
         return self._stage.uuid()
