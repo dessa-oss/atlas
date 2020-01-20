@@ -27,7 +27,6 @@ class TestJobListingParametrics(
     @classmethod
     def tearDownClass(klass):
         from foundations_contrib.global_state import redis_connection as redis
-
         redis.flushall()
 
     @set_up
