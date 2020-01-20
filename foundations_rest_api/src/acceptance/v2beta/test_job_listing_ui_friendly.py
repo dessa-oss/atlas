@@ -19,7 +19,6 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     def setUpClass(klass):
         JobsTestsHelperMixinV2.setUpClass()
         klass._set_project_name('lou')
-        # klass._make_completed_job_with_metrics('my job 3', 'bach', arg1='life', arg2=42, kwarg1='pi', kwarg2=3.14, tags=klass.tags)
 
     @classmethod
     def tearDownClass(klass):
