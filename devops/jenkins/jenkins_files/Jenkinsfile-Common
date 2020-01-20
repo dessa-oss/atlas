@@ -65,7 +65,7 @@ pipeline{
         }
       }
     }
-    stage('Trigger Atlas CE Build Pipeline') {
+    stage('Trigger Atlas Build Pipeline') {
       steps {
         script {
           f9s_commit_hash = sh(script: "echo \$(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
@@ -76,12 +76,12 @@ pipeline{
         }
       }
     }
-    stage('Trigger Orbit Team Build Pipeline') {
+    stage('Trigger Orbit Build Pipeline') {
       steps {
         script {
           f9s_commit_hash = sh(script: "echo \$(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
           echo "Attempting to trigger pipeline for building Orbit Team Artifacts with version of ${f9s_commit_hash}"
-          build job: "build-artifacts-orbit-team", wait: false, parameters: [
+          build job: "build-artifacts-orbit", wait: false, parameters: [
             [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: "${f9s_commit_hash}"]
           ]
         }
@@ -93,14 +93,14 @@ pipeline{
           def last_build = currentBuild.getPreviousBuild()
           def last_failed_build
           def current_time = System.currentTimeMillis()
-          
-          while(last_build != null && last_build.result == "FAILURE") {
+
+          while (last_build != null && last_build.result == "FAILURE") {
             last_failed_build = last_build
             last_build = last_build.getPreviousBuild()
           }
-          
-          if(last_failed_build != null) {
-            time_to_recovery = current_time - last_failed_build.getTimeInMillis() 
+
+          if (last_failed_build != null) {
+            time_to_recovery = current_time - last_failed_build.getTimeInMillis()
             customMetrics["time_to_recovery"] = time_to_recovery
           }
         }
@@ -118,12 +118,12 @@ pipeline{
       script {
         def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
         def attachments = [
-            [
-                pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
-                text: output_logs,
-                fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
-                color: '#FF0000'
-            ]
+          [
+            pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+            text: output_logs,
+            fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+            color: '#FF0000'
+          ]
         ]
 
         slackSend(channel: '#f9s-builds', attachments: attachments)
