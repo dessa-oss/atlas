@@ -151,7 +151,7 @@ pipeline{
           dir('orbit') {
             script {
               version = sh(script: 'python get_version.py', returnStdout: true).trim()
-              build job: "build-installer-orbit-team", wait: false, parameters: [
+              build job: "build-installer-orbit", wait: false, parameters: [
                 [$class: 'StringParameterValue', name: 'ORBIT_TEAM_VERSION', value: version],
                 [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: params.f9s_commit_hash],
                 [$class: 'StringParameterValue', name: 'DEV_S3_FOLDER_URL', value: params.S3_FOLDER_URL],
