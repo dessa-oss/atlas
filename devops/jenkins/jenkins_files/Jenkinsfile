@@ -235,7 +235,7 @@ pipeline{
                     stages {
                         stage('Install dependencies for Atlas UI') {
                             steps {
-                                container("yarn") {
+                                container("python3") {
                                     ws("${WORKSPACE}/foundations_ui/") {
                                         sh "yarn install"
                                     }
@@ -244,7 +244,7 @@ pipeline{
                         }
                         stage('Check for Atlas linting ') {
                             steps {
-                                container("yarn") {
+                                container("python3") {
                                     ws("${WORKSPACE}/foundations_ui/") {
                                         sh "node_modules/.bin/eslint ."
                                     }
@@ -257,7 +257,7 @@ pipeline{
                     stages {
                         stage('Install dependencies for Orbit UI') {
                             steps {
-                                container("yarn") {
+                                container("python3-1") {
                                     ws("${WORKSPACE}/foundations_ui_orbit/") {
                                         sh "yarn install"
                                     }
@@ -266,7 +266,7 @@ pipeline{
                         }
                         stage('Check for linting (Orbit)') {
                             steps {
-                                container("yarn") {
+                                container("python3-1") {
                                     ws("${WORKSPACE}/foundations_ui_orbit/") {
                                         sh "node_modules/.bin/eslint ."
                                     }
@@ -276,6 +276,7 @@ pipeline{
                     }
                 }
             }
+        
         }
         stage('Upload Coverage results to Jenkins') {
             steps {
