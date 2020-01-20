@@ -77,10 +77,6 @@ class JobInformation(object):
             return True
         return False
 
-    # necessary in python 2
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
     def __repr__(self):
         repr_dict = {
             "uuid": self.uuid(),
