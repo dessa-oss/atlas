@@ -187,7 +187,6 @@ pipeline{
                                 container("python3-3") {
                                     ws("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
-                                        sh "echo 'Stopping atlas API' && kill -9 $(lsof -i:37222 -t) > /dev/null 2>&1 || true"
                                         sh """export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && \
                                                 export LOCAL_DOCKER_SCHEDULER_HOST=$ORBIT_LOCAL_SCHEDULER && \
                                                 export REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && \
@@ -213,7 +212,7 @@ pipeline{
                                         //         export CYPRESS_GUI_HOST=$ATLAS_LOCAL_SCHEDULER && \
                                         //         export CYPRESS_GUI_PORT=5555 && export CYPRESS_ATLAS_EDITION=CE && \
                                         //         npm run cy:run --"""
-                                        // sh "echo 'Stopping atlas API' && kill -9 $(lsof -i:8000 -t) > /dev/null 2>&1 || true"
+                                        // sh "kill -9 $(lsof -i:8000 -t) > /dev/null 2>&1 || true"
                                     }
                                 }
                             }
