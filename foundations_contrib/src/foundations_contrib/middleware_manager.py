@@ -54,8 +54,6 @@ class MiddlewareManager(object):
         self._append_middleware('ArgumentFilling', ArgumentFillingMiddleware)
         self._append_middleware(
             'ContextAware', MiddlewareManager._create_context_aware_middleware)
-        self._append_middleware(
-            'StageLogging', MiddlewareManager._create_stage_logging_middleware)
 
     def _append_middleware(self, name, callback):
         middleware = self._make_middleware(name, callback)
@@ -115,11 +113,6 @@ class MiddlewareManager(object):
     def _create_context_aware_middleware(pipeline_context, stage_config, stage_context, stage):
         from foundations_contrib.middleware.context_aware_middleware import ContextAwareMiddleware
         return ContextAwareMiddleware(stage_context, stage)
-
-    @staticmethod
-    def _create_stage_logging_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations_contrib.middleware.stage_logging_middleware import StageLoggingMiddleware
-        return StageLoggingMiddleware(stage)
 
     @staticmethod
     def _create_exception_hook_middleware(pipeline_context, stage_config, stage_context, stage):

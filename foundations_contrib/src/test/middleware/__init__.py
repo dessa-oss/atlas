@@ -12,5 +12,4 @@ from test.middleware.test_new_cache_middleware import TestNewCacheMiddleware
 from test.middleware.test_argument_middleware import TestArgumentMiddleware
 from test.middleware.test_argument_filling_middleware import TestArgumentFillingMiddleware
 from test.middleware.test_context_aware_middleware import TestContextAwareMiddleware
-from test.middleware.test_stage_logging_middleware import TestStageLoggingMiddleware
 from test.middleware.test_basic_stage_middleware import TestBasicStageMiddleware
