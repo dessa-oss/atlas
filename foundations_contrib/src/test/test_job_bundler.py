@@ -9,7 +9,6 @@ import unittest
 from mock import Mock, call, patch
 
 from foundations_contrib.job_bundler import JobBundler
-from foundations_contrib.obfuscator import Obfuscator
 from foundations_spec import *
 
 
