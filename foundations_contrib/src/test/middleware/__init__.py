@@ -6,5 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from test.middleware.test_new_cache_middleware import TestNewCacheMiddleware
-from test.middleware.test_argument_filling_middleware import TestArgumentFillingMiddleware
 from test.middleware.test_basic_stage_middleware import TestBasicStageMiddleware

@@ -45,13 +45,6 @@ class TestMiddlewareManager(unittest.TestCase):
     def test_has_new_cache_middleware_configured(self):
         self._test_constructor_attributes('NewCache')
 
-    def test_has_argument_filling_middleware(self):
-        from foundations_contrib.middleware.argument_filling_middleware import ArgumentFillingMiddleware
-        self._test_has_middleware('ArgumentFilling', ArgumentFillingMiddleware)
-
-    def test_has_argument_filling_middleware_configured(self):
-        self._test_constructor_attributes('ArgumentFilling')
-
     def test_has_configured_middleware(self):
         self._config_manager['stage_middleware'] = [
             {'name': 'Mock', 'constructor': self.MockMiddleware}
