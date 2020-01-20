@@ -219,7 +219,6 @@ pipeline{
                                         //         export CYPRESS_GUI_HOST=$ATLAS_LOCAL_SCHEDULER && \
                                         //         export CYPRESS_GUI_PORT=5555 && export CYPRESS_ATLAS_EDITION=CE && \
                                         //         npm run cy:run --"""
-                                        // sh "kill -9 $(lsof -i:8000 -t) > /dev/null 2>&1 || true"
                                     }
                                 }
                             }
