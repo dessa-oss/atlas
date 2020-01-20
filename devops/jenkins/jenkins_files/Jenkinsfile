@@ -169,7 +169,7 @@ pipeline{
                                     }
                                     ws("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
-                                        sh 'python -Wi -m unittest -f -v auth_acceptance'
+                                        // sh 'python -Wi -m unittest -f -v auth_acceptance'
                                     }
                                 }
                             }
