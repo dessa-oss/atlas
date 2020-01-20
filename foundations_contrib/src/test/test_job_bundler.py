@@ -10,7 +10,6 @@ from mock import Mock, call, patch
 
 from foundations_contrib.job_bundler import JobBundler
 from foundations_contrib.obfuscator import Obfuscator
-from foundations_contrib.module_obfuscation_controller import ModuleObfuscationController
 from foundations_spec import *
 
 

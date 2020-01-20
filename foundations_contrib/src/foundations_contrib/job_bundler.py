@@ -120,13 +120,11 @@ class JobBundler(object):
         tarfile.add(".", arcname=self._job_name)
 
     def _tar_foundations_modules(self, tarfile):
-        import os
-        from foundations_contrib.module_obfuscation_controller import ModuleObfuscationController
+        from foundations_internal.global_state import module_manager
 
-        with ModuleObfuscationController(self._config) as module_obfuscation_controller:
-            for module_name, module_directory in module_obfuscation_controller.get_foundations_modules():
-                self._log().debug('Adding module {} at {}'.format(module_name, module_directory))
-                tarfile.add(module_directory, arcname=self._job_name + '/' + module_name)
+        for module_name, module_directory in module_manager.module_directories_and_names():
+            self._log().debug('Adding module {} at {}'.format(module_name, module_directory))
+            tarfile.add(module_directory, arcname=self._job_name + '/' + module_name)
 
     def _log(self):
         from foundations_contrib.global_state import log_manager
