@@ -146,7 +146,7 @@ pipeline{
                     stages{
                         stage('Atlas REST API Acceptance Tests') {
                             steps {
-                                container("python3-3") {
+                                container("python3-2") {
                                     ws("${WORKSPACE}/foundations_rest_api/src") {
                                         sh 'export FOUNDATIONS_HOME=`pwd`/acceptance/v2beta/fixtures/remote_foundations_home && python -Wi -m unittest -f -v acceptance'
                                     }
@@ -155,7 +155,7 @@ pipeline{
                         }
                         stage('Atlas Auth Acceptance Tests'){
                             steps {
-                                container("python3-3") {
+                                container("python3-2") {
                                     ws("${WORKSPACE}/devops") {
                                         sh 'export AUTH_SERVER_URL=http://keycloak-headless.ci-pipeline.svc.cluster.local:8080/auth && cd .. && sh ./foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh && cd -'
                                         sh """export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
@@ -180,7 +180,7 @@ pipeline{
                     stages{
                         stage('Orbit Acceptance Tests') {
                             steps {
-                                container("python3-4") {
+                                container("python3-3") {
                                     ws("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && export LOCAL_DOCKER_SCHEDULER_HOST=$ORBIT_LOCAL_SCHEDULER && export REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && python -Wi -m unittest -f -v orbit_acceptance'
@@ -197,8 +197,8 @@ pipeline{
                                 container("python3-4") {
                                     dir("${WORKSPACE}/foundations_ui") {
                                         sh "npm install"
-                                        sh "export FOUNDATIONS_SCHEDULER_URL=http://${ATLAS_LOCAL_SCHEDULER}:5000 && REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && REDIS_PORT=5556 && python startup_atlas_api.py 37722 &"
-                                        sh "export REACT_APP_API_URL=localhost:37722 && npm start &"
+                                        sh "export FOUNDATIONS_SCHEDULER_URL=http://${ATLAS_LOCAL_SCHEDULER}:5000 && REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && REDIS_PORT=5556 && python startup_atlas_api.py 8000 &"
+                                        sh "export REACT_APP_API_URL=localhost:8000 && npm start &"
                                         // sh "export CYPRESS_LOCAL_FOUNDATIONS_HOME=${WORKSPACE}/foundations_ui/cypress/fixtures/atlas_scheduler/.foundations && export CYPRESS_SCHEDULER_IP=$ATLAS_LOCAL_SCHEDULER && export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$REMOTE_FOUNDATIONS_HOME && export CYPRESS_SCHEDULER_REDIS_PORT=5556 && export CYPRESS_GUI_HOST=$ATLAS_LOCAL_SCHEDULER && export CYPRESS_GUI_PORT=5555 && export CYPRESS_ATLAS_EDITION=CE && npm run cy:run --"
                                     }
                                 }
