@@ -1,11 +1,33 @@
 #!/bin/bash
 
+# function get_coverage_report_for_module {
+#     module_directory_to_add="$1"
+#     module_directory="$2"
+#     if [ -d "${module_directory_to_add}/test" ]; then
+#         cd ${module_directory_to_add}
+#         coverage erase && coverage run --source=${module_directory} -m unittest test
+#     fi
+#     if [ -d "${module_directory_to_add}/integration" ]; then
+#         coverage run --source=${module_director} -m unittest integration
+#     fi
+#     if [ -d "${module_directory_to_add}/test" ] || [ -d "${module_directory_to_add}/inegration" ]; then
+#         coverage html -i && \
+#         mkdir -p ${cwd}/coverage_results && \
+#         cp .coverage ${cwd}/coverage_results/.coverage_${module_directory}
+#     fi
+# }
+
 function get_coverage_report_for_module {
     module_directory_to_add="$1"
     module_directory="$2"
     if [ -d "${module_directory_to_add}/test" ]; then
         cd ${module_directory_to_add}
-        coverage erase && coverage run --source=${module_directory} -m unittest test && \
+        coverage erase && coverage run --source=${module_directory} -m unittest test
+    fi
+    if [ -d "${module_directory_to_add}/integration" ]; then
+        coverage run --source=${module_director} -m unittest integration
+    fi
+    if [ -d "${module_directory_to_add}/test" ] || [ -d "${module_directory_to_add}/inegration" ]; then
         coverage html -i && \
         mkdir -p ${cwd}/coverage_results && \
         cp .coverage ${cwd}/coverage_results/.coverage_${module_directory}
@@ -19,27 +41,27 @@ export TZ=EST
 for module_directory in $(echo foundations_*) $(echo *_utils)
 do
     real_module_name=$module_directory
-
+    
     if [[ "$module_directory" == "foundations_sdk" ]]; then
         real_module_name="foundations"
     fi
-
+    
     if [[ "$module_directory" == "foundations_orbit_sdk" ]]; then
         real_module_name="foundations_orbit"
     fi
-
+    
     if [[ "$module_directory" == "ssh_utils" ]]; then
         real_module_name="foundations_ssh"
     fi
-
+    
     if [[ "$module_directory" == "gcp_utils" ]]; then
         real_module_name="foundations_gcp"
     fi
-
+    
     if [[ "$module_directory" == "aws_utils" ]]; then
         real_module_name="foundations_aws"
     fi
-
+    
     get_coverage_report_for_module "${cwd}/${module_directory}/src" ${real_module_name}
 done
 

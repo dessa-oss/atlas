@@ -11,6 +11,7 @@ from foundations.stage_connector_wrapper import StageConnectorWrapper
 from foundations_internal.deployment_manager import DeploymentManager
 from mock import patch, call
 
+@skip("Marked for death.")
 class TestStageConnectorWrapper(Spec):
 
     mock_foundations_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')

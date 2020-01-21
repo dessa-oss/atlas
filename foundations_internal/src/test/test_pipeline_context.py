@@ -9,6 +9,7 @@ from foundations_spec import *
 from foundations_internal.pipeline_context import PipelineContext
 
 
+@skip("marked for death")
 class TestPipelineContext(Spec):
 
     class MockStageContext(object):
