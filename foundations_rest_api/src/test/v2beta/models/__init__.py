@@ -9,3 +9,5 @@ from test.v2beta.models.test_project import TestProjectV2
 from test.v2beta.models.test_project_v1 import TestProject
 from test.v2beta.models.test_job_listing import TestJobListingV2
 from test.v2beta.models.test_job_artifact import TestJobArtifact
+from test.v2beta.models.test_running_job import TestRunningJob
+from test.v2beta.models.test_queued_job import TestQueuedJob
