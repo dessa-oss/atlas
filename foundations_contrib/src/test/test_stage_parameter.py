@@ -30,36 +30,6 @@ class TestStageParameter(unittest.TestCase):
         def function_name(self):
             return self._name
 
-    def test_runs_stage(self):
-        def method():
-            return 5
-
-        parameter = self._make_parameter(method)
-        self.assertEqual(5, parameter.compute_value({}))
-
-    def test_runs_stage_different_method(self):
-        def method():
-            return 17
-
-        parameter = self._make_parameter(method)
-        self.assertEqual(17, parameter.compute_value({}))
-
-    def test_value_hash(self):
-        def method():
-            return 'potato'
-
-        parameter = self._make_parameter(method)
-        self.assertEqual(
-            '3e2e95f5ad970eadfa7e17eaf73da97024aa5359', parameter.hash({}))
-
-    def test_value_hash_different_value(self):
-        def method():
-            return 'mashed potato'
-
-        parameter = self._make_parameter(method)
-        self.assertEqual(
-            '321e42b16eff1d6695a97ed82dc8b24f455db67d', parameter.hash({}))
-
     def test_enable_caching_forwards_to_stage(self):
         stage = self.MockStage()
         parameter = StageParameter(stage)

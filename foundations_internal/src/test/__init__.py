@@ -9,7 +9,6 @@ from test.test_argument import TestArgument
 from test.test_cache import TestCache
 from test.test_deployment_manager import TestDeploymentManager
 from test.test_foundations_context import TestFoundationsContext
-from test.test_middleware_chain import TestMiddlewareChain
 from test.test_pipeline_context import TestPipelineContext
 from test.test_safe_inspect import TestSafeInspect
 from test.test_scheduler import TestScheduler

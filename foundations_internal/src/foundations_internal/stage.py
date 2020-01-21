@@ -8,8 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class Stage(object):
 
-    def __init__(self, middleware, uuid, function, metadata_function, *args, **kwargs):
-        self._middleware = middleware
+    def __init__(self, uuid, function, metadata_function, *args, **kwargs):
         self._uuid = uuid
         self.function = function
         self.args = args
@@ -23,8 +22,7 @@ class Stage(object):
         def execute(args, kwargs):
             result = self.function(*args, **kwargs)
             return result
-        return self._middleware.call(upstream_result_callback, filler_builder, filler_kwargs, self.args, self.kwargs, execute)
-
+       
     def filler(self, filler_builder):
         return filler_builder(*self.args, **self.kwargs)
 

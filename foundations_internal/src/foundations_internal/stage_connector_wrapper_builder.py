@@ -11,14 +11,11 @@ class StageConnectorWrapperBuilder(object):
     def __init__(self, pipeline_context):
         from foundations_internal.stage_context import StageContext
         from foundations_internal.stage_config import StageConfig
-        from foundations_internal.middleware_chain import MiddlewareChain
 
         self._pipeline_context = pipeline_context
 
         self._stage_context = StageContext()
         self._stage_config = StageConfig()
-
-        self._middleware = MiddlewareChain()
 
         self._stage = None
         self._override_uuid = None
@@ -47,7 +44,7 @@ class StageConnectorWrapperBuilder(object):
 
         stage_uuid = self._override_uuid or self._make_uuid(current_uuid, function, new_args, {})
         self._stage_context.uuid = stage_uuid
-        self._stage = Stage(self._middleware, stage_uuid,
+        self._stage = Stage(stage_uuid,
                             function, function, *new_args)
         return self
 
