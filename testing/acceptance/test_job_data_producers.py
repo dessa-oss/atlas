@@ -30,7 +30,7 @@ class TestJobDataProducers(Spec, RunLocalJob):
         from foundations_contrib.job_data_redis import JobDataRedis
 
         self._deploy_job_file('acceptance/fixtures/job_data_production', entrypoint='success.py')
-        all_job_data = JobDataRedis.get_all_jobs_data('job_data_production', self._redis, True)
+        all_job_data = JobDataRedis.get_all_jobs_data('job_data_production', self._redis)
 
         job_data = [data for data in all_job_data if data['job_id'] == self.job_id][0]
         self.assertEqual('job_data_production', job_data['project_name'])
@@ -67,7 +67,7 @@ class TestJobDataProducers(Spec, RunLocalJob):
         metric_keys = self._redis.smembers(
             'project:job_data_production:metrics')
         metric_keys = set([data.decode() for data in metric_keys])
-        self.assertEqual(set(['hello', 'world']), metric_keys)
+        self.assertEqual({'hello', 'world'}, metric_keys)
 
         state = self._redis.get(f'jobs:{self.job_id}:state').decode()
         self.assertEqual('completed', state)

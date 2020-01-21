@@ -26,7 +26,6 @@ class TestProducerQueueJob(unittest.TestCase):
         self._router.push_message.side_effect = self._push_message
         self._producer = QueueJob(self._router, self._pipeline_context)
         self._faker = Faker()
-        self._stage_hierarchy = self._pipeline_context.provenance.stage_hierarchy
 
     def test_push_message_sends_queue_job_message_to_correct_channel(self):
         self._producer.push_message()
@@ -61,43 +60,6 @@ class TestProducerQueueJob(unittest.TestCase):
         self._pipeline_context.provenance.annotations = annotations
         self._producer.push_message()
         self.assertEqual(annotations, self.message['annotations'])
-
-    def test_push_message_send_queue_job_message_with_empty_stage_arg(self):
-        stage_id = self._make_string_uuid()
-
-        mock_entry = Mock()
-        self._stage_hierarchy.entries = {stage_id: mock_entry}
-        mock_entry.stage_args = []
-
-        self._producer.push_message()
-        self.assertEqual([], self.message['input_parameters'])
-
-    def test_push_message_send_queue_job_message_with_numeric_arg(self):
-        stage_id = self._make_string_uuid()
-        argument = self._make_random_arg()
-
-        mock_entry = Mock()
-        self._stage_hierarchy.entries = {stage_id: mock_entry}
-        mock_entry.stage_args = [argument]
-
-        self._producer.push_message()
-        expected_value = {'argument': argument, 'stage_uuid': stage_id}
-        self.assertEqual([expected_value], self.message['input_parameters'])
-
-    def test_push_message_send_queue_job_message_with_multiple_numeric_arg(self):
-        stage_id = self._make_string_uuid()
-
-        mock_entry = Mock()
-        self._stage_hierarchy.entries = {stage_id: mock_entry}
-        argument = self._make_random_arg()
-        argument2 = self._make_random_arg()
-        mock_entry.stage_args = [argument, argument2]
-
-        self._producer.push_message()
-        expected_value = {'argument': argument, 'stage_uuid': stage_id}
-        expected_value2 = {'argument': argument2, 'stage_uuid': stage_id}
-        self.assertEqual([expected_value, expected_value2],
-                         self.message['input_parameters'])
 
     def _make_random_arg(self):
         import random

@@ -24,7 +24,6 @@ class AttributeKeyList(object):
             timestamp {int} -- The time the event was created
             meta_data {dict} -- Additional data about the event
         """
-
         for key in self._get_attribute(message).keys():
             self._redis.sadd('projects:{}:{}'.format(message['project_name'], self._get_attribute_key()), key)
 

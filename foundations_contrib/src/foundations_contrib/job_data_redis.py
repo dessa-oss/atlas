@@ -20,7 +20,7 @@ class JobDataRedis(object):
         self._job_id = job_id
 
     @staticmethod
-    def get_all_jobs_data(project_name, redis_connection, include_input_params):
+    def get_all_jobs_data(project_name, redis_connection):
         """
         Gets all data related to jobs in a given project from Redis.
 
@@ -35,13 +35,13 @@ class JobDataRedis(object):
 
         job_ids = JobDataRedis._fetch_project_job_ids(
             project_name, redis_connection)
-        return JobDataRedis.all_jobs_by_list_of_job_ids(job_ids, redis_connection, include_input_params)
+        return JobDataRedis.all_jobs_by_list_of_job_ids(job_ids, redis_connection)
 
     @staticmethod
-    def all_jobs_by_list_of_job_ids(job_ids, redis_connection, include_input_params):
+    def all_jobs_by_list_of_job_ids(job_ids, redis_connection):
         pipe = JobDataRedis._create_redis_pipeline(redis_connection)
         futures = JobDataRedis._get_data_for_each_job(
-            job_ids, pipe, include_input_params)
+            job_ids, pipe)
         pipe.execute()
         return [future.get() for future in futures]
 
@@ -60,8 +60,8 @@ class JobDataRedis(object):
         return RedisPipelineWrapper(redis_connection.pipeline())
 
     @staticmethod
-    def _get_data_for_each_job(job_ids, pipe, include_input_params):
-        return [JobDataRedis(pipe, job_id).get_job_data(include_input_params)
+    def _get_data_for_each_job(job_ids, pipe):
+        return [JobDataRedis(pipe, job_id).get_job_data()
                 for job_id in job_ids]
 
     @staticmethod
@@ -70,7 +70,7 @@ class JobDataRedis(object):
             'project:{}:jobs:running'.format(project_name))
         return [job_id.decode() for job_id in job_ids]
 
-    def get_job_data(self, include_input_params):
+    def get_job_data(self):
         """
         Gets all data related to a given job from Redis.
 
@@ -83,12 +83,10 @@ class JobDataRedis(object):
         user = self._add_decoded_get_to_pipe('user')
         job_parameters = self._add_decoded_get_to_pipe(
             'parameters').then(self._deserialize_dict)
-        if include_input_params:
-            input_parameters = self._add_get_to_pipe(
-                'input_parameters').then(self._deserialize_list)
-        else:
-            input_parameters = Promise()
-            input_parameters.fulfill([])
+
+        input_parameters = Promise()
+        input_parameters.fulfill([])
+
         output_metrics = self._add_lrange_to_pipe_and_deserialize('metrics')
         status = self._add_decoded_get_to_pipe('state')
         start_time = self._add_decoded_get_to_pipe('start_time').then(self._make_float)
@@ -102,7 +100,6 @@ class JobDataRedis(object):
                 project_name,
                 user,
                 job_parameters,
-                input_parameters,
                 output_metrics,
                 status,
                 start_time,
@@ -115,7 +112,7 @@ class JobDataRedis(object):
         return list_of_properties.then(self._seperate_args)
 
     def get_formatted_job_data(self):
-        promise = self.get_job_data(False)
+        promise = self.get_job_data()
         self._pipe.execute()
         job_details = promise.get()
         self._format_job_details(job_details)
@@ -126,8 +123,6 @@ class JobDataRedis(object):
         from datetime import datetime
 
         if job_details:
-            if 'input_params' in job_details:
-                del job_details['input_params']
             if 'output_metrics' in job_details:
                 job_details['metrics'] = self._format_all_metrics(job_details.pop('output_metrics'))
             if 'job_parameters' in job_details:
@@ -173,7 +168,6 @@ class JobDataRedis(object):
         def seperate_args_inner(project_name,
                                 user,
                                 job_parameters,
-                                input_parameters,
                                 output_metrics,
                                 status,
                                 start_time,
@@ -185,7 +179,6 @@ class JobDataRedis(object):
                 'job_id': self._job_id,
                 'user': user,
                 'job_parameters': job_parameters,
-                'input_params': input_parameters,
                 'output_metrics': output_metrics,
                 'status': status,
                 'start_time': start_time,

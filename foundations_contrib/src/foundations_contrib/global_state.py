@@ -10,7 +10,6 @@ from foundations_contrib.helpers.lazy_redis import LazyRedis
 from foundations_events.message_router import MessageRouter
 from foundations_contrib.log_manager import LogManager
 from foundations_internal.deployment_manager import DeploymentManager
-from foundations_internal.cache_manager import CacheManager
 from foundations_contrib.config_manager import ConfigManager
 
 from foundations_internal.global_state import module_manager
@@ -22,28 +21,29 @@ import os
 
 
 config_manager = ConfigManager()
-cache_manager = CacheManager()
 deployment_manager = DeploymentManager(config_manager)
 log_manager = LogManager(config_manager)
 default_executor = concurrent.futures.ThreadPoolExecutor()
 message_router = MessageRouter()
-redis_connection = LazyRedis(RedisConnector(
-    config_manager, redis.Redis.from_url, os.environ))
-
+redis_connection = LazyRedis(
+    RedisConnector(config_manager, redis.Redis.from_url, os.environ)
+)
 
 
 def push_state():
     config_manager.push_config()
     _clear_state()
 
+
 def pop_state():
     config_manager.pop_config()
     _clear_state()
 
+
 def _clear_state():
-    cache_manager._cache = None
     log_manager._loggers = None
     redis_connection._redis_connection = None
+
 
 def _create_foundations_context():
     from foundations_internal.pipeline_context import PipelineContext
@@ -52,10 +52,12 @@ def _create_foundations_context():
 
     _pipeline_context = PipelineContext()
     _pipeline = Pipeline(_pipeline_context)
-    
+
     return FoundationsContext(_pipeline)
 
+
 foundations_context = _create_foundations_context()
+
 
 def current_foundations_context():
     return foundations_context

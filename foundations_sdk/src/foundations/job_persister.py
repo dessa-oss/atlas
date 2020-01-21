@@ -17,8 +17,7 @@ class JobPersister(object):
         from foundations_internal.pipeline_archiver import PipelineArchiver
 
         archive_listing = JobPersister._load_archive_listing('archive_listing')
-        with JobPersister._load_archive('stage_log_archive') as stage_log_archive, \
-                JobPersister._load_archive('persisted_data_archive') as persisted_data_archive, \
+        with JobPersister._load_archive('persisted_data_archive') as persisted_data_archive, \
                 JobPersister._load_archive('provenance_archive') as provenance_archive, \
                 JobPersister._load_archive('job_source_archive') as job_source_archive, \
                 JobPersister._load_archive('artifact_archive') as artifact_archive, \
@@ -26,12 +25,12 @@ class JobPersister(object):
 
             archiver = PipelineArchiver(self._pipeline_context.file_name,
                                         archive_listing,
-                                        stage_log_archive,
                                         persisted_data_archive,
                                         provenance_archive,
                                         job_source_archive,
                                         artifact_archive,
                                         miscellaneous_archive)
+
             self._pipeline_context.save_to_archive(archiver)
 
     @staticmethod

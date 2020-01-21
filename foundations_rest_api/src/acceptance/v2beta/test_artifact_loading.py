@@ -10,6 +10,7 @@ from foundations_spec import *
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 from acceptance.v2beta.jobs_tests_helper_mixin_v2 import JobsTestsHelperMixinV2
 
+
 class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
     url = '/api/v2beta/projects/{_project_name}/job_listing'
     sorting_columns = []
@@ -17,7 +18,6 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
 
     @classmethod
     def setUpClass(klass):
-        from uuid import uuid4
         from copy import deepcopy
         import shutil
         

@@ -34,13 +34,13 @@ def set_project_name(project_name="default"):
     from foundations.global_state import current_foundations_context
     current_foundations_context().set_project_name(project_name)
 
-def _get_metrics_for_all_jobs(project_name, include_input_params=False):
+
+def _get_metrics_for_all_jobs(project_name):
     """
     Returns metrics for all jobs for a given project.
 
     Arguments:
         project_name {string} -- Name of the project to filter by.
-        include_input_params {boolean} -- Optional way to specify if metrics should include all model input metrics
 
     Returns:
         metrics {DataFrame} -- A Pandas DataFrame containing all of the results.
@@ -70,15 +70,15 @@ def _get_metrics_for_all_jobs(project_name, include_input_params=False):
     if project_info is None:
         raise ValueError('Project `{}` does not exist!'.format(project_name))
 
-    return _flattened_job_metrics(project_name, include_input_params)
+    return _flattened_job_metrics(project_name)
 
-def get_metrics_for_all_jobs(project_name, include_input_params=False):
+
+def get_metrics_for_all_jobs(project_name):
     """
     Returns metrics and tags for all jobs for a given project. This function is an experimental feature, and is under the foundations.prototype package
 
     Arguments:
         project_name {string} -- Name of the project to filter by.
-        include_input_params {boolean} -- Optional way to specify if metrics should include all model input metrics
 
     Returns:
         metrics {DataFrame} -- A Pandas DataFrame containing all of the results.
@@ -103,7 +103,7 @@ def get_metrics_for_all_jobs(project_name, include_input_params=False):
     from foundations.helpers.annotate import annotations_for_multiple_jobs
     from pandas import DataFrame
 
-    metrics = _get_metrics_for_all_jobs(project_name, include_input_params)
+    metrics = _get_metrics_for_all_jobs(project_name)
 
     if 'job_id' not in metrics:
         return metrics
@@ -117,8 +117,9 @@ def get_metrics_for_all_jobs(project_name, include_input_params=False):
         for key, value in annotations.items():
             tag_key = 'tag_{}'.format(key)
             row[tag_key] = value
-    
+
     return DataFrame(metric_rows)
+
 
 def set_tag(key, value=''):
     """
@@ -152,6 +153,7 @@ def set_tag(key, value=''):
     from foundations.utils import log_warning_if_not_running_in_job
     log_warning_if_not_running_in_job(_set_tag_in_running_jobs, key, value)
 
+
 def _set_tag_in_running_jobs(key, value):
     from foundations_contrib.global_state import message_router, current_foundations_context
     from foundations_events.producers.tag_set import TagSet
@@ -161,24 +163,25 @@ def _set_tag_in_running_jobs(key, value):
     tag_set_producer = TagSet(message_router, job_id, key, value)
     tag_set_producer.push_message()
 
-def _flattened_job_metrics(project_name, include_input_params):
+
+def _flattened_job_metrics(project_name):
     from pandas import DataFrame, concat
 
     job_metadata_list = []
     input_params_list = []
     output_metrics_list = []
 
-    for job_data in _project_job_data(project_name, include_input_params):
+    for job_data in _project_job_data(project_name):
         _update_job_data(
             job_data,
             input_params_list,
-            output_metrics_list,
-            include_input_params
+            output_metrics_list
         )
         _update_datetime(job_data)
         job_metadata_list.append(job_data)
 
-    return concat([DataFrame(job_metadata_list), DataFrame(input_params_list), DataFrame(output_metrics_list)], axis=1, sort=False)
+    return concat([DataFrame(job_metadata_list), DataFrame(input_params_list), DataFrame(output_metrics_list)], axis=1,
+                  sort=False)
 
 
 def _update_datetime(job_data):
@@ -191,27 +194,21 @@ def _update_datetime(job_data):
             job_data['completed_time'])
 
 
-def _update_job_data(job_data, input_param_list, output_metrics_list, include_input_params):
+def _update_job_data(job_data, input_param_list, output_metrics_list):
     output_metrics_list.append(job_data['output_metrics'])
     del job_data['output_metrics']
-    _shape_input_parameters(job_data, input_param_list, include_input_params)
+    _shape_input_parameters(job_data, input_param_list)
 
 
-def _shape_input_parameters(job_data, input_param_list, include_input_params):
+def _shape_input_parameters(job_data, input_param_list):
     input_param_dict = {}
-
-    if include_input_params:
-        input_param = job_data['input_params']
-        for param in input_param:
-            input_param_dict[param['name']] = param['value']
 
     input_param_dict.update(job_data['job_parameters'])
     input_param_list.append(input_param_dict)
 
-    del job_data['input_params']
     del job_data['job_parameters']
 
 
-def _project_job_data(project_name, include_input_params):
+def _project_job_data(project_name):
     from foundations_contrib.models.completed_job_data_listing import CompletedJobDataListing
-    return CompletedJobDataListing.completed_job_data(project_name, include_input_params)
+    return CompletedJobDataListing.completed_job_data(project_name)

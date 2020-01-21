@@ -51,7 +51,6 @@ from foundations_internal.versioning import __version__
 from foundations.config import set_environment
 from foundations.job_parameters import *
 from foundations.job_metrics import *
-import foundations_internal.import_installer
 import foundations_events.consumers
 import foundations_events
 from foundations_contrib.set_job_resources import set_job_resources

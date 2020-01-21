@@ -32,7 +32,7 @@ class TestGetPipelineArchiverForJob(Spec):
     def pipeline_archiver(self):
         instance = Mock()
         klass = self.patch('foundations_internal.pipeline_archiver.PipelineArchiver', ConditionalReturn())
-        klass.return_when(instance, self.job_id, None, None, self.persisted_data_archive, None, self.job_source_archive, self.artifact_archive, self.miscellaneous_archive)
+        klass.return_when(instance, self.job_id, None, self.persisted_data_archive, None, self.job_source_archive, self.artifact_archive, self.miscellaneous_archive)
         return instance
 
     def test_get_pipeline_archive_for_job_returns_correct_pipeline_archiver_for_job_id(self):

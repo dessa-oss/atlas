@@ -9,7 +9,6 @@ from foundations_rest_api.v2beta.models.property_model import PropertyModel
 
 
 class Job(PropertyModel):
-
     job_id = PropertyModel.define_property()
     user = PropertyModel.define_property()
     project = PropertyModel.define_property()
@@ -39,16 +38,15 @@ class Job(PropertyModel):
     @staticmethod
     def _load_jobs(project_name, handle_duplicate_param_names):
         from foundations_contrib.job_data_redis import JobDataRedis
-        from foundations_contrib.input_parameter_indexer import InputParameterIndexer
         from foundations_contrib.global_state import redis_connection
 
         jobs = []
-        jobs_data = InputParameterIndexer.index_input_parameters(project_name, JobDataRedis.get_all_jobs_data(project_name, redis_connection, True), handle_duplicate_param_names=handle_duplicate_param_names)
+        jobs_data = JobDataRedis.get_all_jobs_data(project_name, redis_connection)
 
         for job_properties in list(jobs_data):
-            job_properties['input_params'] = list(Job._filter_out_non_hyper_parameter_inputs(job_properties['input_params']))
             job = Job._build_job_model(job_properties)
             jobs.append(job)
+
         Job._default_order(jobs)
         return jobs
 

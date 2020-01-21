@@ -7,9 +7,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
-@skip("marked for death")
-class TestPipelineContextWrapper(Spec):
 
+class TestPipelineContextWrapper(Spec):
     def test_pipeline_context_wrapper_returns_pipeline_context(self):
         from foundations_internal.pipeline_context import PipelineContext
         from foundations_internal.pipeline_context_wrapper import PipelineContextWrapper

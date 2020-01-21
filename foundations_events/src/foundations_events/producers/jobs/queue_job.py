@@ -26,7 +26,6 @@ class QueueJob(object):
         self._message_router.push_message('queue_job', message)
 
     def _message(self):
-        input_params = self._load_input_params()
         provenance = self._pipeline_context.provenance
 
         message = {
@@ -35,26 +34,6 @@ class QueueJob(object):
             'job_parameters': provenance.job_run_data,
             'user_name': provenance.user_name,
             'annotations': provenance.annotations,
-            'input_parameters': input_params,
-            'stage_uuids': provenance.stage_hierarchy.entries.keys()
         }
 
         return message
-
-    def _stage_hierarchy_entries(self):
-        return self._pipeline_context.provenance.stage_hierarchy.entries.items()
-
-    def _stage_arguments(self):
-        for stage_uuid, entry in self._stage_hierarchy_entries():
-            for argument in entry.stage_args:
-                yield stage_uuid, argument
-
-    def _load_input_params(self):
-        input_params = []
-        for stage_uuid, argument in self._stage_arguments():
-            parameter = self._job_parameter(stage_uuid, argument)
-            input_params.append(parameter)
-        return input_params
-
-    def _job_parameter(self, stage_uuid, argument):
-        return {'argument': argument, 'stage_uuid': stage_uuid}

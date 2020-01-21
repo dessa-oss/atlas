@@ -41,7 +41,7 @@ class TestJobListingParametrics(
         import os
 
         submit_result = subprocess.run(
-            "foundations submit --project-name hanna scheduler acceptance/v2beta/fixtures/log_metric_log_param_set_tag log_metric_log_param_set_tag.py",
+            "python -m foundations submit --project-name hanna scheduler acceptance/v2beta/fixtures/log_metric_log_param_set_tag log_metric_log_param_set_tag.py",
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -49,7 +49,8 @@ class TestJobListingParametrics(
         try:
             assert submit_result.returncode == 0
         except AssertionError:
-            self.fail(submit_result.stdout.decode())
+            output = submit_result.stdout.decode() or submit_result.stderr.decode()
+            self.fail(output)
 
     def test_get_route(self):
         data = super(TestJobListingParametrics, self).test_get_route()
@@ -57,15 +58,6 @@ class TestJobListingParametrics(
         job_data = data["jobs"][0]
 
         expected_output_metrics = [{"name": "key", "type": "string", "value": "value"}]
-
-        expected_input_params = [
-            {
-                "name": "param",
-                "source": "placeholder",
-                "type": "string",
-                "value": "param_value",
-            }
-        ]
 
         for key in [
             "artifacts",
@@ -82,7 +74,6 @@ class TestJobListingParametrics(
         self.assertEqual("hanna", job_data["project"])
         self.assertEqual("completed", job_data["status"])
         self.assertEqual({"key": "value"}, job_data["tags"])
-        self.assertEqual(expected_input_params, job_data["input_params"])
 
         self.assertEqual(
             [{"name": "key", "type": "string"}], data["output_metric_names"]

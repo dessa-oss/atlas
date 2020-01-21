@@ -23,7 +23,8 @@ class TestSubmitWithAuth(Spec):
     def test_submit_through_cli_fails_if_not_authenticated(self):
         import subprocess
 
-        result = subprocess.run('foundations submit scheduler auth_acceptance/fixtures foundations_job.py',\
+        result = subprocess.run('python -m foundations submit scheduler auth_acceptance/fixtures foundations_job.py',\
              shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    
-        self.assertIn('Token is not valid', result.stdout.decode().strip())
+
+        output = result.stdout.decode().strip() or result.stderr.decode().strip()
+        self.assertIn('Token is not valid', output)

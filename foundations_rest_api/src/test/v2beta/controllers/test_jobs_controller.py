@@ -17,18 +17,16 @@ class TestJobsControllerV2(Spec):
     class Mock(PropertyModel):
         name = PropertyModel.define_property()
         jobs = PropertyModel.define_property()
-        input_parameter_names = PropertyModel.define_property()
         output_metric_names = PropertyModel.define_property()
         garbage = PropertyModel.define_property()
 
-    def _make_lazy_result(self, name, jobs=[], input_parameter_names = [], output_metric_names = []):
+    def _make_lazy_result(self, name, jobs=[], output_metric_names = []):
         from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _callback():
             return self.Mock(name=name,
                              jobs=jobs,
-                             output_metric_names = output_metric_names,
-                             input_parameter_names = input_parameter_names)
+                             output_metric_names = output_metric_names)
         return LazyResult(_callback)
 
     @let
@@ -49,14 +47,13 @@ class TestJobsControllerV2(Spec):
         self._project_find_by.return_value = self._make_lazy_result(
             'some project',
             jobs = ['completed job 1', 'running job 2'],
-            input_parameter_names = 'param',
             output_metric_names = 'metrics'
         )
 
         self._controller.params = {'project_name': 'the great potato project'}
 
         expected_result = {
-            'jobs': ['completed job 1', 'running job 2'], 'name': 'some project', 'input_parameter_names': 'param', 'output_metric_names': 'metrics'}
+            'jobs': ['completed job 1', 'running job 2'], 'name': 'some project', 'output_metric_names': 'metrics'}
         self.assertEqual(expected_result, self._controller.index().as_json())
         self._project_find_by.assert_called_with(name='the great potato project')
 
@@ -68,7 +65,7 @@ class TestJobsControllerV2(Spec):
         self._controller.params = {'project_name': 'the not so great potato project'}
 
         expected_result = {
-            'jobs': ['completed job 1', 'running job 2'], 'name': 'some project', 'input_parameter_names': [], 'output_metric_names': []}
+            'jobs': ['completed job 1', 'running job 2'], 'name': 'some project', 'output_metric_names': []}
         self.assertEqual(expected_result, self._controller.index().as_json())
         self._project_find_by.assert_called_with(name='the not so great potato project')
 

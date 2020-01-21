@@ -18,7 +18,7 @@ class JobsSortController(object):
 
         project_name = self.params.pop('project_name')
         jobs_data_future = Project.find_by(name=project_name).only(
-                ['name', 'jobs', 'input_parameter_names', 'output_metric_names'])
+                ['name', 'jobs', 'output_metric_names'])
         jobs_data_future = jobs_data_future.apply_filters({}, fields=['jobs'])
         fallback = Response('Jobs', LazyResult(lambda: 'This project or sort detail was not found'), status=404)
 

@@ -35,7 +35,7 @@ class TestJobListingTrimCharacters(JobsTestsHelperMixinV2, APIAcceptanceTestCase
         import subprocess
 
         submit_result = subprocess.run(
-            "foundations submit --project-name hanna scheduler acceptance/v2beta/fixtures/log_int_metric log_int_metric.py",
+            "python -m foundations submit --project-name hanna scheduler acceptance/v2beta/fixtures/log_int_metric log_int_metric.py",
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -43,7 +43,8 @@ class TestJobListingTrimCharacters(JobsTestsHelperMixinV2, APIAcceptanceTestCase
         try:
             assert submit_result.returncode == 0
         except AssertionError:
-            self.fail(submit_result.stdout.decode())
+            output = submit_result.stdout.decode() or submit_result.stderr.decode()
+            self.fail(output)
 
     def test_get_route(self):
         self.submit_job()

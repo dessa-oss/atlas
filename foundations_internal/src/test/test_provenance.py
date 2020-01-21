@@ -8,8 +8,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_internal.provenance import Provenance
 from foundations_spec import *
 
-class TestProvenance(Spec):
 
+class TestProvenance(Spec):
     class MockArchive(object):
 
         def __init__(self):
@@ -20,7 +20,6 @@ class TestProvenance(Spec):
             self.random_state = None
             self.module_versions = {}
             self.pip_freeze = None
-            self.stage_hierarchy = None
             self.python_version = None
             self.job_archive_stuff = None
             self.other_stuff = None
@@ -169,7 +168,6 @@ class TestProvenance(Spec):
         self.assertEqual(provenance.module_versions, {})
         self.assertEqual(provenance.pip_freeze, None)
         self.assertEqual(provenance.python_version, None)
-        self.assertEqual(provenance.stage_hierarchy.entries, {})
         self.assertEqual(provenance.job_run_data, {})
         self.assertEqual(provenance.project_name, 'default')
         self.assertEqual(provenance.user_name, 'trial')
@@ -186,7 +184,6 @@ class TestProvenance(Spec):
         provenance.module_versions = {'pandas': 0.2}
         provenance.pip_freeze = 'pandas==0.2'
         provenance.python_version = {'major': 2}
-        provenance.stage_hierarchy.entries = {'fake_one': 'fake_data'}
         provenance.job_run_data = {'layers': 99, 'neurons_per_layer': 9999}
         provenance.project_name = 'my wonderful project'
         provenance.user_name = 'Alan Turing'
@@ -203,10 +200,8 @@ class TestProvenance(Spec):
         self.assertEqual(provenance_two.module_versions, {'pandas': 0.2})
         self.assertEqual(provenance_two.pip_freeze, 'pandas==0.2')
         self.assertEqual(provenance_two.python_version, {'major': 2})
-        self.assertEqual(provenance_two.stage_hierarchy.entries,
-                         {'fake_one': 'fake_data'})
         self.assertEqual(provenance_two.job_run_data, {
-                         'layers': 99, 'neurons_per_layer': 9999})
+            'layers': 99, 'neurons_per_layer': 9999})
         self.assertEqual(provenance_two.project_name, 'my wonderful project')
         self.assertEqual(provenance_two.user_name, 'Alan Turing')
         self.assertEqual(provenance_two.annotations, {'model': 'mlp', 'layer': 'all of them'})
@@ -228,8 +223,6 @@ class TestProvenance(Spec):
                                        'project_name': 'default',
                                        'user_name': 'trial',
                                        }, mock_archive.archive_provenance)
-        self.assertEqual(
-            {}, mock_archive.archive_provenance['stage_hierarchy'].entries)
 
     def test_save_to_archive_with_no_job_source_with_values(self):
         provenance = Provenance()
@@ -242,7 +235,6 @@ class TestProvenance(Spec):
         provenance.module_versions = {'pandas': 0.2}
         provenance.pip_freeze = 'pandas==0.2'
         provenance.python_version = {'major': 2}
-        provenance.stage_hierarchy.entries = {'fake_one': 'fake_data'}
         provenance.job_run_data = {'layers': 99, 'neurons_per_layer': 9999}
         provenance.project_name = 'a different project'
         provenance.user_name = 'Richard Hamming'
@@ -259,8 +251,6 @@ class TestProvenance(Spec):
                                        'project_name': 'a different project',
                                        'user_name': 'Richard Hamming'
                                        }, mock_archive.archive_provenance)
-        self.assertEqual({'fake_one': 'fake_data'},
-                         mock_archive.archive_provenance['stage_hierarchy'].entries)
 
     def test_save_to_archive_with_job_source(self):
         provenance = Provenance()
@@ -275,12 +265,6 @@ class TestProvenance(Spec):
         mock_archive = self.MockArchive()
 
         provenance.load_artifact_from_archive(mock_archive)
-
-    def test_load_miscellaneous_from_archive(self):
-        provenance = Provenance()
-        mock_archive = self.MockArchive()
-
-        provenance.load_miscellaneous_from_archive(mock_archive)
 
     def test_load_stage_log_from_archive(self):
         provenance = Provenance()

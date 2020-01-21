@@ -5,7 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_internal.stage_context import StageContext
 
 class Pipeline(object):
 
@@ -19,15 +18,6 @@ class Pipeline(object):
     def uuid(self):
         return self._uuid
 
-    def stage(self, function, *args, **kwargs):
-        from foundations_internal.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
-
-        builder = StageConnectorWrapperBuilder(self._pipeline_context)
-        builder = builder.stage(self.uuid(), function, args, kwargs)
-        builder = builder.hierarchy([self.uuid()])
-
-        return builder.build()
-
     def run(self, **filler_kwargs):
         return None
 
@@ -36,9 +26,3 @@ class Pipeline(object):
 
     def persist(self):
         pass
-
-    def require(self, *required_args):
-        def _require(*args):
-            pass
-
-        return self.stage(_require, *required_args)

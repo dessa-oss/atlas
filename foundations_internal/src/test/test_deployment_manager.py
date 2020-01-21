@@ -62,20 +62,23 @@ class TestDeploymentManager(unittest.TestCase):
         self._foundations_context = FoundationsContext(self._pipeline)
         self._stage = self._pipeline.stage(self._method)
 
+    @skip('Come back to this when removing scheduler reflection')
     @patch('foundations_internal.deployment.job_preparation.prepare_job')
     def test_deploy_persisted_project_name(self, _):
         self._foundations_context.set_project_name('my project')
-        self._deployment_manager.simple_deploy(self._stage, '', {})
+        self._deployment_manager.simple_deploy('', {})
 
         self.assertEqual('my project', self._listing.value)
 
+    @skip('Come back to this when removing scheduler reflection')
     @patch('foundations_internal.deployment.job_preparation.prepare_job')
     def test_deploy_persisted_project_name_different_name(self, _):
         self._foundations_context.set_project_name('project potato launcher')
-        self._deployment_manager.simple_deploy(self._stage, '', {})
+        self._deployment_manager.simple_deploy('', {})
 
         self.assertEqual('project potato launcher', self._listing.value)
 
+    @skip('Come back to this when removing scheduler reflection')
     @patch('foundations_internal.deployment.job_preparation.prepare_job')
     @patch('foundations_contrib.null_pipeline_archive_listing.NullPipelineArchiveListing')
     def test_deploy_persisted_project_name_supports_default_listing(self, mock, _):
@@ -84,7 +87,7 @@ class TestDeploymentManager(unittest.TestCase):
         del self._config.config()['project_listing_implementation']
 
         self._foundations_context.set_project_name('my project')
-        self._deployment_manager.simple_deploy(self._stage, '', {})
+        self._deployment_manager.simple_deploy('', {})
 
         self.assertEqual('my project', self._listing.value)
 
@@ -92,8 +95,7 @@ class TestDeploymentManager(unittest.TestCase):
     @patch('foundations_internal.deployment.job_preparation.prepare_job')
     @patch('logging.Logger.info')
     def test_deployment_manager_deploy_info_log(self, mock, _):
-        deployment = self._deployment_manager.simple_deploy(
-            self._stage, '', {})
+        deployment = self._deployment_manager.simple_deploy('', {})
         mock.assert_called_with(
             "Job '{}' deployed.".format(deployment.job_name()))
 
@@ -107,8 +109,7 @@ class TestDeploymentManager(unittest.TestCase):
         job.return_value = job_instance
         job_preparation.side_effect = self._job_preparation_checking_project_tracked
 
-        deployment = self._deployment_manager.simple_deploy(
-            self._stage, '', {})
+        deployment = self._deployment_manager.simple_deploy('', {})
         job_preparation.assert_called_with(
             message_router, job_instance, deployment.job_name())
 

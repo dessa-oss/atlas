@@ -12,7 +12,8 @@ from foundations_events.notifiers import JobNotifier
 _add_listener = message_router.add_listener
 _job_notifier = JobNotifier(config_manager, SlackNotifier())
 
-def _add_consumers_for_stage_log_middleware(redis):
+
+def _add_consumers_for_metrics(redis):
     from foundations_events.consumers.job_metric_consumer import JobMetricConsumer
     from foundations_events.consumers.job_metric_name_consumer import JobMetricNameConsumer
     from foundations_events.consumers.project_metrics import ProjectMetrics
@@ -23,16 +24,16 @@ def _add_consumers_for_stage_log_middleware(redis):
     _add_listener(ProjectMetrics(redis), 'job_metrics')
     _add_listener(SingleProjectMetric(redis), 'job_metrics')
 
+
 def _add_consumers_for_job_annotations(redis):
     from foundations_events.consumers.annotate import Annotate
 
     annotation_consumer = Annotate(redis)
     _add_listener(annotation_consumer, 'job_tag')
 
+
 def _add_consumers_for_queue_job(redis):
     from foundations_events.consumers.jobs.queued.creation_time import CreationTime
-    from foundations_events.consumers.jobs.queued.input_parameter_keys import InputParameterKeys
-    from foundations_events.consumers.jobs.queued.input_parameters import InputParameters
     from foundations_events.consumers.jobs.queued.job_state import JobState
     from foundations_events.consumers.jobs.queued.project_listing_for_queued_job import ProjectListingForQueuedJob
     from foundations_events.consumers.jobs.queued.global_listing import GlobalListing
@@ -41,17 +42,12 @@ def _add_consumers_for_queue_job(redis):
     from foundations_events.consumers.jobs.queued.run_data import RunData
     from foundations_events.consumers.jobs.queued.set_user import SetUser
     from foundations_events.consumers.jobs.queued.project_tracker import ProjectTracker
-    from foundations_events.consumers.jobs.queued.stage_time import StageTime
     from foundations_events.consumers.jobs.queued.job_notifier import JobNotifier
     from foundations_events.consumers.jobs.queued.project_listing import ProjectListing
-    import foundations_internal.foundations_serializer as serializer
 
     import json
 
     _add_listener(CreationTime(redis), 'queue_job')
-    _add_listener(InputParameterKeys(redis), 'queue_job')
-    _add_listener(StageTime(redis), 'queue_job')
-    _add_listener(InputParameters(redis, serializer), 'queue_job')
     _add_listener(JobState(redis), 'queue_job')
     _add_listener(ProjectListingForQueuedJob(redis), 'queue_job')
     _add_listener(GlobalListing(redis), 'queue_job')
@@ -62,6 +58,7 @@ def _add_consumers_for_queue_job(redis):
     _add_listener(ProjectTracker(redis), 'queue_job')
     _add_listener(JobNotifier(_job_notifier), 'queue_job')
     _add_listener(ProjectListing(redis), 'queue_job')
+
 
 def _add_consumers_for_run_job(redis):
     from foundations_events.consumers.jobs.running.job_state import JobState
@@ -76,6 +73,7 @@ def _add_consumers_for_run_job(redis):
     _add_listener(RemoveGlobalQueuedJob(redis), 'run_job')
     _add_listener(StartTime(redis), 'run_job')
     _add_listener(JobNotifier(_job_notifier), 'run_job')
+
 
 def _add_consumers_for_complete_job(redis):
     from foundations_events.consumers.jobs.completed.completed_time import CompletedTime
@@ -105,7 +103,7 @@ def _add_consumers_for_fail_job(redis):
 def _create_redis_instance_and_add_consumers():
     from foundations_contrib.global_state import redis_connection
 
-    _add_consumers_for_stage_log_middleware(redis_connection)
+    _add_consumers_for_metrics(redis_connection)
     _add_consumers_for_queue_job(redis_connection)
     _add_consumers_for_run_job(redis_connection)
     _add_consumers_for_complete_job(redis_connection)

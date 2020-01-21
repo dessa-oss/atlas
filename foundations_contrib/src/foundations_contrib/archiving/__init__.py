@@ -20,4 +20,4 @@ def get_pipeline_archiver_for_job(job_id):
     miscellaneous_archive = load_archive('miscellaneous_archive')
     persisted_data_archive = load_archive('persisted_data_archive')
 
-    return PipelineArchiver(job_id, None, None, persisted_data_archive, None, job_source_archive, artifact_archive, miscellaneous_archive)
+    return PipelineArchiver(job_id, None, persisted_data_archive, None, job_source_archive, artifact_archive, miscellaneous_archive)

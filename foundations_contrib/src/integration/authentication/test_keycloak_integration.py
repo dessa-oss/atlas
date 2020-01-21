@@ -23,8 +23,8 @@ class TestKeycloakIntegration(Spec):
     @set_up_class
     def set_up_class(cls):
         if not os.environ.get('RUNNING_ON_CI', False):
-            subprocess.run(f"{root()}/authentication/stop.sh", shell=True, check=True)
-            subprocess.run(f"{root()}/authentication/launch.sh", shell=True, check=True)
+            # subprocess.run(f"{root()}/authentication/stop.sh", shell=True, check=True)
+            # subprocess.run(f"{root()}/authentication/launch.sh", shell=True, check=True)
 
             def condition() -> bool:
                 try:

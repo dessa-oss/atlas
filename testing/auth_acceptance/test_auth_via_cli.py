@@ -109,7 +109,7 @@ class TestAuthViaClient(Spec):
 
         with self.assert_does_not_raise():
             result = subprocess.run(
-                "foundations login http://localhost:5558 -u test -p test",
+                "python -m foundations login http://localhost:5558 -u test -p test",
                 stdout=subprocess.PIPE,
                 shell=True,
                 check=True,

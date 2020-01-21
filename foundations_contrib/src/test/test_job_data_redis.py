@@ -57,7 +57,6 @@ class TestJobDataRedis(Spec):
             'project': 'banana',
             'user': 'potter',
             'parameters': json.dumps({'harry': 'potter'}),
-            'input_parameters': self._foundations_serialize([{'ron': 'weasley'}]),
             'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'dead',
             'start_time': '456',
@@ -71,14 +70,13 @@ class TestJobDataRedis(Spec):
         job_data = JobDataRedis(redis_pipe, job_id)
         self._load_data_new_job(job_id, data)
 
-        result = job_data.get_job_data(True)
+        result = job_data.get_job_data()
         redis_pipe.execute()
         expected_result = {
             'project_name': 'banana',
             'job_id': job_id,
             'user': 'potter',
             'job_parameters': {'harry': 'potter'},
-            'input_params': [{'ron': 'weasley'}],
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'dead',
             'start_time': float('456'),
@@ -93,7 +91,6 @@ class TestJobDataRedis(Spec):
             'project': 'banana',
             'user': 'potter',
             'parameters': json.dumps({'harry': 'potter'}),
-            'input_parameters': self._foundations_serialize([{'ron': 'weasley'}]),
             'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'dead',
             'start_time': '456',
@@ -110,14 +107,13 @@ class TestJobDataRedis(Spec):
         job_data = JobDataRedis(redis_pipe, job_id)
         self._load_data_new_job(job_id, data)
 
-        result = job_data.get_job_data(False)
+        result = job_data.get_job_data()
         redis_pipe.execute()
         expected_result = {
             'project_name': 'banana',
             'job_id': job_id,
             'user': 'potter',
             'job_parameters': {'harry': 'potter'},
-            'input_params': [],
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'dead',
             'start_time': float('456'),
@@ -138,14 +134,13 @@ class TestJobDataRedis(Spec):
         job_data = JobDataRedis(redis_pipe, job_id)
         self._load_data_new_job(job_id, data)
 
-        result = job_data.get_job_data(True)
+        result = job_data.get_job_data()
         redis_pipe.execute()
         expected_result = {
             'project_name': None,
             'job_id': job_id,
             'user': None,
             'job_parameters': {},
-            'input_params': [],
             'output_metrics': [],
             'status': None,
             'start_time': None,
@@ -160,7 +155,6 @@ class TestJobDataRedis(Spec):
             'project': 'apple',
             'user': 'potter',
             'parameters': json.dumps({'ron': 'potter'}),
-            'input_parameters': self._foundations_serialize([{'harry': 'weasley'}]),
             'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
@@ -176,7 +170,7 @@ class TestJobDataRedis(Spec):
         job_data = JobDataRedis(redis_pipe, job_id)
         self._load_data_new_job(job_id, data)
 
-        result = job_data.get_job_data(True)
+        result = job_data.get_job_data()
         redis_pipe.execute()
 
         expected_result = {
@@ -184,7 +178,6 @@ class TestJobDataRedis(Spec):
             'job_id': job_id,
             'user': 'potter',
             'job_parameters': {'ron': 'potter'},
-            'input_params': [{'harry': 'weasley'}],
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': float('1231003123'),
@@ -203,7 +196,6 @@ class TestJobDataRedis(Spec):
             'project': project_name,
             'user': 'potter',
             'parameters': json.dumps({'ron': 'potter'}),
-            'input_parameters': self._foundations_serialize([{'harry': 'weasley'}]),
             'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
@@ -223,7 +215,6 @@ class TestJobDataRedis(Spec):
             'job_id': job_id_1,
             'user': 'potter',
             'job_parameters': {'ron': 'potter'},
-            'input_params': [{'harry': 'weasley'}],
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': float('1231003123'),
@@ -235,7 +226,7 @@ class TestJobDataRedis(Spec):
         }
 
         results = JobDataRedis.get_all_jobs_data(
-            project_name, self._redis, True)
+            project_name, self._redis)
 
         self.assertDictEqual(results[0], expected_result_1)
 
@@ -245,7 +236,6 @@ class TestJobDataRedis(Spec):
             'project': project_name,
             'user': 'baker',
             'parameters': json.dumps({'ron': 'potter'}),
-            'input_parameters': self._foundations_serialize([{'harry': 'weasley'}]),
             'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
@@ -265,7 +255,6 @@ class TestJobDataRedis(Spec):
             'job_id': job_id_1,
             'user': 'baker',
             'job_parameters': {'ron': 'potter'},
-            'input_params': [{'harry': 'weasley'}],
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': float('1231003123'),
@@ -277,7 +266,7 @@ class TestJobDataRedis(Spec):
         }
 
         results = JobDataRedis.get_all_jobs_data(
-            project_name, self._redis, True)
+            project_name, self._redis)
 
         self.assertDictEqual(results[0], expected_result_1)
 
@@ -287,7 +276,6 @@ class TestJobDataRedis(Spec):
             'project': project_name,
             'user': 'potter',
             'parameters': json.dumps({'ron': 'potter'}),
-            'input_parameters': self._foundations_serialize([{'harry': 'weasley'}]),
             'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
@@ -310,7 +298,6 @@ class TestJobDataRedis(Spec):
             'job_id': job_id_1,
             'user': 'potter',
             'job_parameters': {'ron': 'potter'},
-            'input_params': [{'harry': 'weasley'}],
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': float('1231003123'),
@@ -326,7 +313,6 @@ class TestJobDataRedis(Spec):
             'job_id': job_id_2,
             'user': 'potter',
             'job_parameters': {'ron': 'potter'},
-            'input_params': [{'harry': 'weasley'}],
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': float('1231003123'),
@@ -338,7 +324,7 @@ class TestJobDataRedis(Spec):
         }
 
         results = JobDataRedis.get_all_jobs_data(
-            project_name, self._redis, True)
+            project_name, self._redis)
 
         six.assertCountEqual(self,
                              results, [expected_result_1, expected_result_2])
@@ -359,14 +345,13 @@ class TestJobDataRedis(Spec):
         job_data = JobDataRedis(redis_pipe, job_id)
         self._load_data_new_job(job_id, data)
 
-        result = job_data.get_job_data(True)
+        result = job_data.get_job_data()
         redis_pipe.execute()
         expected_result = {
             'project_name': 'banana',
             'job_id': job_id,
             'user': 'hi',
             'job_parameters': {'harry': 'potter'},
-            'input_params': [],
             'output_metrics': [],
             'status': 'dead',
             'start_time': float('456'),

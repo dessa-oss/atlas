@@ -209,7 +209,6 @@ class TestJobListingV2(Spec):
                 'job_id': 'my job x',
                 'user': 'some user',
                 'job_parameters': {},
-                'input_params': [],
                 'output_metrics': [],
                 'status': 'completed',
                 'start_time':  123456789,
@@ -222,7 +221,6 @@ class TestJobListingV2(Spec):
                 'job_id': '00000000-0000-0000-0000-000000000007',
                 'user': 'soju hero',
                 'job_parameters': {},
-                'input_params': [],
                 'output_metrics': [],
                 'status': 'running',
                 'start_time': 999999999,
@@ -242,7 +240,6 @@ class TestJobListingV2(Spec):
             job_id='00000000-0000-0000-0000-000000000007',
             project='random test project',
             user='soju hero',
-            input_params=[],
             output_metrics=[],
             status='running',
             start_time='2001-09-09T01:46:39',
@@ -262,7 +259,6 @@ class TestJobListingV2(Spec):
             job_id='my job x',
             project='random test project',
             user='some user',
-            input_params=[],
             output_metrics=[],
             status='completed',
             start_time='1973-11-29T21:33:09',
@@ -293,22 +289,6 @@ class TestJobListingV2(Spec):
                 'job_id': 'my job x',
                 'user': 'some user',
                 'job_parameters': {'hello': 'world'},
-                'input_params': [
-                    {
-                        'argument': {
-                            'name': 'hello',
-                            'value': {'name': 'hello', 'type': 'dynamic'}
-                        },
-                        'stage_uuid': '0'
-                    },
-                    {
-                        'argument': {
-                            'name': 'hello',
-                            'value': {'value': '33', 'type': 'constant'}
-                        },
-                        'stage_uuid': '0'
-                    },
-                ],
                 'output_metrics': [],
                 'status': 'completed',
                 'start_time':  123456789,
@@ -324,8 +304,6 @@ class TestJobListingV2(Spec):
             job_id='my job x',
             project='random test project',
             user='some user',
-            input_params=[
-                {'name': 'hello-1', 'value': 'world', 'type': 'string', 'source': 'placeholder'}],
             output_metrics=[],
             status='completed',
             start_time='1973-11-29T21:33:09',
@@ -358,22 +336,6 @@ class TestJobListingV2(Spec):
                 'job_id': 'my job x',
                 'user': 'some user',
                 'job_parameters': {'hello': 'world'},
-                'input_params': [
-                    {
-                        'argument': {
-                            'name': 'hello',
-                            'value': {'name': 'hello', 'type': 'dynamic'}
-                        },
-                        'stage_uuid': '0'
-                    },
-                    {
-                        'argument': {
-                            'name': 'hello',
-                            'value': {'value': '33', 'type': 'constant'}
-                        },
-                        'stage_uuid': '0'
-                    },
-                ],
                 'output_metrics': [],
                 'status': 'completed',
                 'start_time':  123456789,
@@ -389,8 +351,6 @@ class TestJobListingV2(Spec):
             job_id='my job x',
             project='random test project',
             user='some user',
-            input_params=[
-                {'name': 'hello', 'value': 'world', 'type': 'string', 'source': 'placeholder'}],
             output_metrics=[],
             status='completed',
             start_time='1973-11-29T21:33:09',
@@ -408,15 +368,6 @@ class TestJobListingV2(Spec):
 
         expected_jobs = [expected_job_1]
         self.assertEqual(expected_jobs, result)
-
-    def _make_stage(self, uuid, function, *args, **kwargs):
-        from foundations_internal.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
-
-        builder = StageConnectorWrapperBuilder(self._pipeline_context)
-        builder = builder.uuid(uuid)
-        builder = builder.stage(self._pipeline.uuid(), function, args, kwargs)
-        builder = builder.hierarchy([self._pipeline.uuid()])
-        return builder.build()
 
     def _make_job(self):
         from foundations_contrib.global_state import message_router

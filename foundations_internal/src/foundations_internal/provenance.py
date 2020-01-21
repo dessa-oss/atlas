@@ -8,9 +8,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import os
 import random
 
-from foundations_internal.stage_hierarchy import StageHierarchy
-
-
 class Provenance(object):
 
     def __init__(self):
@@ -23,7 +20,6 @@ class Provenance(object):
         self.random_state = None
         self.module_versions = {}
         self.pip_freeze = None
-        self.stage_hierarchy = StageHierarchy()
         self.python_version = None
         self.job_run_data = {}
         self.project_name = 'default'
@@ -75,9 +71,6 @@ class Provenance(object):
     def load_artifact_from_archive(self, archiver):
         pass
 
-    def load_miscellaneous_from_archive(self, archiver):
-        pass
-
     def fill_all(self, config_manager):
         self.fill_python_version()
         self.fill_config(config_manager)
@@ -116,7 +109,6 @@ class Provenance(object):
             "random_state": self.random_state,
             "module_versions": self.module_versions,
             "pip_freeze": self.pip_freeze,
-            "stage_hierarchy": self.stage_hierarchy,
             "python_version": self.python_version,
             "job_run_data": self.job_run_data,
             "project_name": self.project_name,
@@ -134,8 +126,6 @@ class Provenance(object):
         self.module_versions = archive_provenance.get(
             "module_versions", self.module_versions)
         self.pip_freeze = archive_provenance.get("pip_freeze", self.pip_freeze)
-        self.stage_hierarchy = archive_provenance.get(
-            "stage_hierarchy", self.stage_hierarchy)
         self.python_version = archive_provenance.get(
             "python_version", self.python_version)
         self.job_run_data = archive_provenance.get(
