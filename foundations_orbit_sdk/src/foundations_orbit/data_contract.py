@@ -65,15 +65,17 @@ class DataContract(object):
         )
 
     def _initialize_checkers(self):
+        from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
         from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
-        self._initialize_schema_checker()
+        from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
 
+        self.schema_test = SchemaChecker(self._column_names, self._column_types)
         self.special_value_test = SpecialValuesChecker(self._column_names, self._column_types, self._categorical_attributes)
         self.distribution_test = DistributionChecker(self._column_names, self._column_types, self._categorical_attributes)
-
         self.min_max_test = MinMaxChecker(self._column_types)
+        self.row_count_test = RowCountChecker(self._number_of_rows)
 
     def _categorize_attributes(self):
         for col_name, col_type in self._column_types.items():
@@ -93,10 +95,6 @@ class DataContract(object):
                 self._categorical_attributes[col_name] = False
             elif 'empty' in col_type:
                 self._categorical_attributes[col_name] = False
-
-    def _initialize_schema_checker(self):
-        from foundations_orbit.contract_validators.schema_checker import SchemaChecker
-        self.schema_test = SchemaChecker(self._column_names, self._column_types)
 
     def _check_if_attribute_is_categorical(self, column_name, threshold=0.1):
         column_values = self._dataframe[column_name]
@@ -246,8 +244,6 @@ class DataContract(object):
 
     def _run_checkers_and_get_validation_report(self, dataframe_to_validate, attributes_to_ignore, columns_to_validate,
                                                 types_to_validate):
-        from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
-
         validation_report = {
             'schema_check_results': self.schema_test.validate(columns_to_validate, types_to_validate)
         }
@@ -266,7 +262,7 @@ class DataContract(object):
         self._exclude_from_current_validation(attributes=columns_to_exclude_from_current_validation + attributes_to_ignore)
 
         if self.options.check_row_count:
-            validation_report['row_count'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
+            validation_report['row_count'] = self.row_count_test.validate(dataframe_to_validate)
 
         if self.options.check_distribution:
             validation_report['dist_check_results'] = self.distribution_test.validate(dataframe_to_validate)
