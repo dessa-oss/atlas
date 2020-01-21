@@ -47,27 +47,6 @@ class DeploymentManager(object):
 
         return deployment
 
-    def scheduler(self):
-        """Returns the scheduler associated with the configure job deployment implementation
-
-        Returns:
-            Scheduler -- The scheduler as above
-        """
-
-        from foundations_internal.scheduler import Scheduler
-
-        if self._scheduler is None:
-            deployment_constructor, _, _ = self._deployment_constructor_and_args_and_kwargs()
-
-            if hasattr(deployment_constructor, 'scheduler_backend'):
-                scheduler_backend_callback = deployment_constructor.scheduler_backend()
-            else:
-                scheduler_backend_callback = DeploymentManager._default_scheduler_backend()
-
-            self._scheduler = Scheduler(scheduler_backend_callback())
-
-        return self._scheduler
-
     def _record_project(self, stage):
         constructor, constructor_args, constructor_kwargs = self.project_listing_constructor_and_args_and_kwargs()
         listing = constructor(*constructor_args, **constructor_kwargs)
@@ -93,11 +72,6 @@ class DeploymentManager(object):
     def _create_default_project_listing():
         from foundations_contrib.null_pipeline_archive_listing import NullPipelineArchiveListing
         return NullPipelineArchiveListing()
-
-    @staticmethod
-    def _default_scheduler_backend():
-        from foundations_contrib.null_scheduler_backend import NullSchedulerBackend
-        return NullSchedulerBackend
 
     @staticmethod
     def _create_default_deployment(job_name, job, job_source_bundle):
