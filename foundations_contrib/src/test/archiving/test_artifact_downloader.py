@@ -60,12 +60,6 @@ class TestArtifactDownloader(Spec):
 
             'template/t',
             'template/u',
-            'foundations_scheduler/v',
-            'foundations_scheduler/w',
-            'foundations_scheduler_core/v',
-            'foundations_scheduler_core/w',
-            'foundations_scheduler_deployment/v',
-            'foundations_scheduler_deployment/w',
             'foundations_ssh/v',
             'foundations_ssh/w',
         ]

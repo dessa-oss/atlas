@@ -14,34 +14,13 @@ from foundations_rest_api.global_state import app_manager
 import subprocess
 import yaml
 
-if os.path.exists("/root/.kube"):
-    from foundations_scheduler_plugin.config.scheduler import translate
-
-    nodes_yaml = subprocess.check_output(["/bin/bash", "-c", "kubectl get node -o yaml -l node-role.kubernetes.io/master="""]).decode()
-    nodes = yaml.load(nodes_yaml)
-    master_ip = nodes['items'][0]['status']['addresses'][0]['address']
-
-    submission_config = {
-        'results_config': {
-            'redis_end_point': os.environ["REDIS_URL"]
-        },
-        'ssh_config': {
-            'host': master_ip,
-            'port': 31222,
-            'code_path': '/jobs',
-            'key_path': '~/.ssh/id_foundations_scheduler',
-            'user': 'job-uploader'
-        }
-    }
-    translated_submission_config = translate(submission_config)
-else:
-    from foundations_local_docker_scheduler_plugin.job_deployment import JobDeployment
-    translated_submission_config = {'redis_url': os.environ["REDIS_URL"],
-                                    'deployment_implementation': {
-                                        'deployment_type': JobDeployment,
-                                    },
-                                    'scheduler_url': os.environ["FOUNDATIONS_SCHEDULER_URL"],
-                                    }
+from foundations_local_docker_scheduler_plugin.job_deployment import JobDeployment
+translated_submission_config = {'redis_url': os.environ["REDIS_URL"],
+                                'deployment_implementation': {
+                                    'deployment_type': JobDeployment,
+                                },
+                                'scheduler_url': os.environ["FOUNDATIONS_SCHEDULER_URL"],
+                                }
 
 configuration = config_manager.config()
 configuration.update(translated_submission_config)
