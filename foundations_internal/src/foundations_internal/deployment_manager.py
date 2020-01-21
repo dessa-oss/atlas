@@ -9,7 +9,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class DeploymentManager(object):
 
     def __init__(self, config_manager):
-        self._scheduler = None
         self._config_manager = config_manager
 
     def simple_deploy(self, stage, job_name, job_params):
