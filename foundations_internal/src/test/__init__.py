@@ -11,7 +11,6 @@ from test.test_deployment_manager import TestDeploymentManager
 from test.test_foundations_context import TestFoundationsContext
 from test.test_pipeline_context import TestPipelineContext
 from test.test_safe_inspect import TestSafeInspect
-from test.test_scheduler import TestScheduler
 from test.test_module_manager import TestModuleManager
 from test.test_foundations_serializer import TestFoundationsSerializer
 from test.test_job_resources import TestJobResources

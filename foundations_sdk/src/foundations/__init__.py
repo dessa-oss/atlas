@@ -47,7 +47,6 @@ from foundations_contrib.bucket_job_deployment import BucketJobDeployment
 from foundations_contrib.archiving.save_artifact import save_artifact
 from foundations_contrib.deployment_wrapper import DeploymentWrapper
 from foundations.projects import set_project_name, set_tag, get_metrics_for_all_jobs
-from foundations_internal.scheduler import Scheduler
 from foundations_internal.versioning import __version__
 from foundations.config import set_environment
 from foundations.job_parameters import *
