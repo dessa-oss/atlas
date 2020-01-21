@@ -9,6 +9,8 @@ add_path "$cwd/foundations_spec/src" && \
     add_path "$cwd/foundations_events/src" && \
     add_path "$cwd/foundations_internal/src" && \
     add_path "$cwd/foundations_core_cli/src" && \
+    add_path "$cwd/foundations_atlas_cli/src" && \
+    add_path "$cwd/foundations_orbit_cli/src" && \
     add_path "$cwd/foundations_contrib/src" && \
     add_path "$cwd/foundations_sdk/src" && \
     add_path "$cwd/ssh_utils/src" && \
