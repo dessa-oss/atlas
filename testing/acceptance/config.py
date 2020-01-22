@@ -25,7 +25,6 @@ def set_foundations_home():
 
 def config():
     from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, LocalFileSystemCacheBackend
-    from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
     from foundations_contrib.global_state import module_manager
     import foundations_spec
     import sys

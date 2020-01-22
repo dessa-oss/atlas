@@ -26,7 +26,6 @@ class DeploymentManager(object):
 
     def deploy(self, deployment_config, job_name, job):
         from foundations import log_manager
-        from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
         from foundations.global_state import message_router, current_foundations_context
         from foundations_internal.deployment.job_preparation import prepare_job
 
@@ -36,13 +35,8 @@ class DeploymentManager(object):
         deployment.config().update(deployment_config)
         project_name = current_foundations_context().project_name()
 
-        # TODO: Make this not stupid
-        if isinstance(deployment, LocalShellJobDeployment):
-            deployment.deploy()
-            logger.info("Job submitted with ID '{}' in project '{}'.".format(job_name, project_name))
-        else:
-            deployment.deploy()
-            logger.info("Job submitted with ID '{}' in project '{}'.".format(job_name, project_name))
+        deployment.deploy()
+        logger.info("Job submitted with ID '{}' in project '{}'.".format(job_name, project_name))
 
         return deployment
 
@@ -74,5 +68,5 @@ class DeploymentManager(object):
 
     @staticmethod
     def _create_default_deployment(job_name, job, job_source_bundle):
-        from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
-        return LocalShellJobDeployment(job_name, job, job_source_bundle)
+        from foundations_local_docker_scheduler_plugin.job_deployment import JobDeployment
+        return JobDeployment(job_name, job, job_source_bundle)

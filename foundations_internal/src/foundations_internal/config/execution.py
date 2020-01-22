@@ -80,9 +80,9 @@ def _project_listing_implementation(result_end_point):
     return project_listing_implementation(result_end_point, LocalFileSystemBucket)
 
 def _deployment_implementation():
-    from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
+    from foundations_local_docker_scheduler_plugin.job_deployment import JobDeployment
     return {
-        'deployment_type': LocalShellJobDeployment
+        'deployment_type': JobDeployment
     }
 
 def _archive_listing_implementation(result_end_point):
