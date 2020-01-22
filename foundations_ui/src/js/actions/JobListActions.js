@@ -18,15 +18,15 @@ class JobListActions {
     if (sortedColumn && sortedColumn.column) {
       let translatedColumnName = sortedColumn.column;
 
-      if (!sortedColumn.column.startsWith('input_params') && !sortedColumn.column.startsWith('output_metrics')) {
-        const columNameTranslator = {
+      if (!sortedColumn.column.startsWith('job_parameters') && !sortedColumn.column.startsWith('output_metrics')) {
+        const columnNameTranslator = {
           Status: 'status',
           Launched: 'start_time',
           Duration: 'duration',
           User: 'user',
         };
 
-        translatedColumnName = columNameTranslator[translatedColumnName];
+        translatedColumnName = columnNameTranslator[translatedColumnName];
       }
 
       const isAscending = sortedColumn.isAscending ? 'asc' : 'desc';

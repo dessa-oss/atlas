@@ -20,6 +20,7 @@ class Project(PropertyModel):
     owner = PropertyModel.define_property()
     jobs = PropertyModel.define_property()
     output_metric_names = PropertyModel.define_property()
+    job_parameters = PropertyModel.define_property()
 
     @staticmethod
     def new(name):
@@ -63,7 +64,7 @@ class Project(PropertyModel):
 
         def callback():
             listing = Project._construct_project_listing()
-            project_names = [project['name'] for project in listing]
+            project_names = [project["name"] for project in listing]
             return [Project.find_by(project_name) for project_name in project_names]
 
         return LazyResult(callback)
@@ -88,7 +89,7 @@ class Project(PropertyModel):
         project = Project(name=name)
         project.created_at = None
         project.owner = None
-        project.jobs = Job.all(project_name=name, handle_duplicate_param_names=False)
+        project.jobs = Job.all(project_name=name)
 
         def _get_names_and_types(key):
             def _metric_filler_callback(jobs):
@@ -96,11 +97,21 @@ class Project(PropertyModel):
                 names_and_types = {}
                 for job_metrics in jobs_metrics:
                     for metric in job_metrics:
-                        names_and_types[metric['name']] = metric['type']
-                names_and_types = [{'name': name, 'type': key_type} for name, key_type in names_and_types.items()]
+                        names_and_types[metric["name"]] = metric["type"]
+
+                names_and_types = [
+                    {"name": name, "type": key_type}
+                    for name, key_type in names_and_types.items()
+                ]
                 return names_and_types
+
             return _metric_filler_callback
 
-        project.output_metric_names = project.jobs.map(_get_names_and_types('output_metrics'))
+        project.output_metric_names = project.jobs.map(
+            _get_names_and_types("output_metrics")
+        )
+        project.job_parameters = project.jobs.map(
+            _get_names_and_types("job_parameters")
+        )
 
         return project

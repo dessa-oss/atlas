@@ -149,7 +149,7 @@ JobTableButtons.propTypes = {
   updateHiddenColumns: PropTypes.func,
   selectedJobs: PropTypes.array,
   projectName: PropTypes.string,
-  getJobs: PropTypes.array,
+  getJobs: PropTypes.func,
   selectNoJobs: PropTypes.func,
   reload: PropTypes.func,
   buttonTensorboardEnabled: PropTypes.bool,

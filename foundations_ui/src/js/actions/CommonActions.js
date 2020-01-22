@@ -37,8 +37,8 @@ class CommonActions {
         const isFiltered = JobListActions.isColumnFiltered(filteredArray, key);
 
         let { column } = sortedColumn;
-        if (column.startsWith('input_params')) {
-          column = column.substring('input_params:'.length);
+        if (column.startsWith('job_parameters')) {
+          column = column.substring('job_parameters:'.length);
         }
         if (column.startsWith('output_metrics')) {
           column = column.substring('output_metrics:'.length);
@@ -70,11 +70,11 @@ class CommonActions {
   static formatAMPM(date) {
     let hours = date.getHours();
     let minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const amOrPm = hours >= 12 ? 'PM' : 'AM';
     hours %= 12;
     hours = hours || 12;
     minutes = minutes < 10 ? `0${minutes}` : minutes;
-    const strTime = `${hours}:${minutes} ${ampm}`;
+    const strTime = `${hours}:${minutes} ${amOrPm}`;
     return strTime;
   }
 
@@ -85,7 +85,7 @@ class CommonActions {
         rowNumber, onClickOpenModalJobDetails, isSelected);
     }
 
-    if (!isMetric && job.input_params) {
+    if (!isMetric && job.job_parameters) {
       return this.getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams,
         rowNumber, onClickOpenModalJobDetails);
     }
@@ -98,7 +98,7 @@ class CommonActions {
     cells = [];
     columns.forEach(col => {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
-        const input = this.getInputMetricInput(job.input_params, col, isMetric);
+        const input = this.getInputMetricInput(job.job_parameters, col, isMetric);
         const key = this.getInputMetricKey(input, col, isMetric);
         let inputValue = JobListActions.getInputMetricValue(input, isMetric, columns);
         const cellType = this.getInputMetricCellType(input);
@@ -218,7 +218,7 @@ class CommonActions {
   }
 
   static formatColumns(columns, hiddenInputParams, searchText = '') {
-    const formatedColumns = [];
+    const formattedColumns = [];
     if (columns !== null) {
       columns.forEach(col => {
         if (col.name.toLowerCase().includes(searchText.toLowerCase())) {
@@ -226,11 +226,11 @@ class CommonActions {
           if (hiddenInputParams.includes(col.name)) {
             isHidden = true;
           }
-          formatedColumns.push({ name: col.name, hidden: isHidden });
+          formattedColumns.push({ name: col.name, hidden: isHidden });
         }
       });
     }
-    return formatedColumns;
+    return formattedColumns;
   }
 
   static getChangedCheckboxes(changedParams, colName) {

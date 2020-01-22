@@ -12,7 +12,7 @@ class Job(PropertyModel):
     job_id = PropertyModel.define_property()
     user = PropertyModel.define_property()
     project = PropertyModel.define_property()
-    input_params = PropertyModel.define_property()
+    job_parameters = PropertyModel.define_property()
     output_metrics = PropertyModel.define_property()
     status = PropertyModel.define_property()
     start_time = PropertyModel.define_property()
@@ -23,20 +23,20 @@ class Job(PropertyModel):
     artifacts = PropertyModel.define_property()
 
     @staticmethod
-    def all(project_name=None, handle_duplicate_param_names=True):
+    def all(project_name=None):
         from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _all():
-            return Job._all_internal(project_name, handle_duplicate_param_names)
+            return Job._all_internal(project_name)
 
         return LazyResult(_all)
 
     @staticmethod
-    def _all_internal(project_name, handle_duplicate_param_names):
-        return list(Job._load_jobs(project_name, handle_duplicate_param_names))
+    def _all_internal(project_name):
+        return list(Job._load_jobs(project_name))
 
     @staticmethod
-    def _load_jobs(project_name, handle_duplicate_param_names):
+    def _load_jobs(project_name):
         from foundations_contrib.job_data_redis import JobDataRedis
         from foundations_contrib.global_state import redis_connection
 
@@ -58,7 +58,7 @@ class Job(PropertyModel):
 
     @staticmethod
     def _build_job_model(job_data):
-        Job._extract_job_parameters(job_data)
+        job_data['job_parameters'] = Job._reshape_job_parameters(job_data)
         Job._reshape_output_metrics(job_data)
         Job._update_job_time_properties(job_data)
         Job._trim_metric_values(job_data)
@@ -80,10 +80,21 @@ class Job(PropertyModel):
         jobs.sort(key=get_sort_key, reverse=True)
 
     @staticmethod
-    def _extract_job_parameters(job_data):
-        run_data = job_data['job_parameters']
-        del job_data['job_parameters']
-        return run_data
+    def _reshape_job_parameters(job_data):
+        from foundations_rest_api.v2beta.models.extract_type import extract_type
+
+        job_parameters = job_data['job_parameters']
+        reshaped_job_parameters = []
+
+        for parameter, value in job_parameters.items():
+            reshaped_job_parameters.append(
+                {
+                    'name': parameter,
+                    'value': value,
+                    'type': extract_type(value)
+                }
+            )
+        return reshaped_job_parameters
 
     @staticmethod
     def _extract_output_metrics(job_data):

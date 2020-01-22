@@ -72,7 +72,7 @@ class ParCoordsGraph extends React.Component {
 
     jobs.forEach(job => {
       paramTraceDimensions.forEach(traceDimension => {
-        const foundJobParam = job.input_params.filter(jobParam => {
+        const foundJobParam = job.job_parameters.filter(jobParam => {
           return jobParam.name === traceDimension.label;
         });
 

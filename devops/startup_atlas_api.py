@@ -37,7 +37,7 @@ try:
     print(f'Running Atlas API with Redis at: {config_manager.config()["redis_url"]}')
 
     app = app_manager.app()
-    app.run(host='127.0.0.1', port=sys.argv[1])
+    app.run(host='127.0.0.1', port=sys.argv[1], debug=True)
 
 except Exception as e:
     print(e)

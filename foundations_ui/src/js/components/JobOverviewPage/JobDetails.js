@@ -265,18 +265,25 @@ class JobDetails extends React.Component {
   }
 
   saveAPIJobs(apiJobs) {
-    const getAllInputParams = apiJobs.input_parameter_names;
+    console.dir(apiJobs);
+
+    const getAllInputParams = apiJobs.job_parameters || [];
     const getAllMetrics = apiJobs.output_metric_names;
 
-    getAllInputParams.forEach(ip => {
-      ip.header = 'parameter';
+    getAllInputParams.forEach(jobParameter => {
+      jobParameter.header = 'parameter';
     });
     getAllMetrics.forEach(metric => {
       metric.header = 'metric';
     });
 
+    console.dir(getAllInputParams);
+
     this.setState({
-      jobs: apiJobs.jobs, isLoaded: true, allInputParams: getAllInputParams, allMetrics: getAllMetrics,
+      jobs: apiJobs.jobs,
+      isLoaded: true,
+      allInputParams: getAllInputParams,
+      allMetrics: getAllMetrics,
     });
   }
 

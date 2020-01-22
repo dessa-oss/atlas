@@ -17,7 +17,7 @@ class JobsController(object):
 
         project_name = self.params.pop("project_name")
         jobs_data_future = Project.find_by(name=project_name).only(
-            ["name", "jobs", "output_metric_names"]
+            ["name", "jobs", "output_metric_names", "job_parameters"]
         )
         jobs_data_future = jobs_data_future.apply_filters(self.params, fields=["jobs"])
         fallback = Response(
