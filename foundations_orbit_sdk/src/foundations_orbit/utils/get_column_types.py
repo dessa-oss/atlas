@@ -27,6 +27,6 @@ def get_column_types(dataframe):
                                               object_type_column]
                         if all(string_column_mask):
                             column_types[col_name] = 'str'
-                
+
 
         return column_names, column_types

@@ -8,21 +8,37 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 from foundations_orbit.contract_validators.domain_checker import DomainChecker
 
-from hypothesis import given
-import hypothesis.strategies as st
-from hypothesis.extra.pandas import column, columns, data_frames
 import numpy as np
 import pandas as pd
 
-@skip('Not Implemented')
 class TestDomainChecker(Spec):
     def test_validate_with_no_columns_configured_returns_empty_results(self):
-        expected_result = {
-            'summary': {
-                'healthy': 0,
-                'critical': 0,
-                'warning': 0
-            },
-            'details_by_attribute': []
-        }
-        self.assertEqual(expected_result, DomainChecker().validate())
+        import pandas
+
+        empty_dataframe = pandas.DataFrame({})
+        expected_result = {}
+        self.assertEqual(expected_result, DomainChecker().validate(empty_dataframe))
+
+    def test_domain_checker_passes_when_configured_and_reference_dataframe_used_when_validating(self):
+        domain_checker = DomainChecker()
+        column_name = self.faker.word()
+        domain_checker.configure(attributes=[column_name])
+
+        df = self._generate_dataframe([column_name], int, 100)
+
+        domain_checker.calculate_stats_from_dataframe(df)
+
+        expected_result = {column_name: {'status': 'passed'}}
+
+        self.assertEqual(expected_result, domain_checker.validate(df))
+
+    def _generate_dataframe(self, column_names, dtype, length):
+        import pandas, numpy
+        data = {}
+        # numpy.random.seed = 6379
+
+        if dtype == int:
+            for column in column_names:
+                data[column] = np.random.randint(-100, 100, length)
+
+        return pandas.DataFrame(data)

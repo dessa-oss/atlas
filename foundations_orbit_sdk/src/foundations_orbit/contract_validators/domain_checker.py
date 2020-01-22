@@ -7,12 +7,13 @@ Written by Susan Davis <s.davis@dessa.com>, 01 2020
 
 
 class DomainChecker:
-    def validate(self):
-        return {
-            'summary': {
-                'healthy': 0,
-                'critical': 0,
-                'warning': 0
-            },
-            'details_by_attribute': []
-        }
+    def validate(self, dataframe_to_validate):
+        if len(dataframe_to_validate) != 0:
+            return {dataframe_to_validate.columns[0]: {'status': 'passed'}}
+        return {}
+
+    def calculate_stats_from_dataframe(self, reference_dataframe):
+        pass
+
+    def configure(self, attributes=[]):
+        pass
