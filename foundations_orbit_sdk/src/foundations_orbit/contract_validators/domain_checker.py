@@ -29,7 +29,7 @@ class DomainChecker:
             else:
                 summary['critical'] += 1
                 detail['validation_outcome'] = 'critical'
-                detail['values_out_of_bounds'] = list(dataframe_to_validate[column].mask(in_domain_mask).dropna().unique())
+                detail['values_out_of_bounds'] = list(dataframe_to_validate[column][~in_domain_mask].unique())
                 detail['percentage_out_of_bounds'] = (~in_domain_mask).sum() / len(in_domain_mask)
 
             details_by_attribute.append(detail)
