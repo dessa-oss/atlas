@@ -21,17 +21,6 @@ class LocalShellJobDeployment(object):
             self._job_name, self._config, self._job, job_source_bundle)
         self._results = {}
 
-    @staticmethod
-    def scheduler_backend():
-        """Returns the local shell deployment scheduler backend implementation
-
-        Returns:
-            LegacyScheduler -- As above
-        """
-
-        from foundations_contrib.scheduler_local_backend import LocalBackend
-        return LocalBackend
-
     def config(self):
         return self._config
 
