@@ -267,7 +267,7 @@ class JobDetails extends React.Component {
   saveAPIJobs(apiJobs) {
     console.dir(apiJobs);
 
-    const getAllInputParams = apiJobs.job_parameters || [];
+    const getAllInputParams = apiJobs.parameters || [];
     const getAllMetrics = apiJobs.output_metric_names;
 
     getAllInputParams.forEach(jobParameter => {

@@ -51,14 +51,14 @@ class TestJobListingV2(Spec):
         job = Job(user='Lenny')
         self.assertEqual('Lenny', job.user)
 
-    def test_has_input_params(self):
-        job = Job(input_params=['some list of parameters'])
-        self.assertEqual(['some list of parameters'], job.input_params)
+    def test_has_job_parameters(self):
+        job = Job(job_parameters=['some list of parameters'])
+        self.assertEqual(['some list of parameters'], job.job_parameters)
 
-    def test_has_input_params_different_params(self):
-        job = Job(input_params=['some different list of parameters'])
+    def test_has_job_parameters_different_params(self):
+        job = Job(job_parameters=['some different list of parameters'])
         self.assertEqual(
-            ['some different list of parameters'], job.input_params)
+            ['some different list of parameters'], job.job_parameters)
 
     def test_has_output_metrics(self):
         job = Job(output_metrics={'a': 5})
@@ -124,7 +124,6 @@ class TestJobListingV2(Spec):
                 'job_id': 'my job x',
                 'user': 'some user',
                 'job_parameters': {},
-                'input_params': [],
                 'output_metrics': [],
                 'status': 'completed',
                 'start_time':  123456789,
@@ -137,7 +136,6 @@ class TestJobListingV2(Spec):
                 'job_id': '00000000-0000-0000-0000-000000000007',
                 'user': 'soju hero',
                 'job_parameters': {},
-                'input_params': [],
                 'output_metrics': [],
                 'status': 'running',
                 'start_time': 999999999,
@@ -154,7 +152,7 @@ class TestJobListingV2(Spec):
             job_id='00000000-0000-0000-0000-000000000007',
             project='random test project',
             user='soju hero',
-            input_params=[],
+            job_parameters=[],
             output_metrics=[],
             status='running',
             start_time='2001-09-09T01:46:39',
@@ -171,7 +169,7 @@ class TestJobListingV2(Spec):
             job_id='my job x',
             project='random test project',
             user='some user',
-            input_params=[],
+            job_parameters=[],
             output_metrics=[],
             status='completed',
             start_time='1973-11-29T21:33:09',
@@ -241,6 +239,7 @@ class TestJobListingV2(Spec):
             project='random test project',
             user='soju hero',
             output_metrics=[],
+            job_parameters=[],
             status='running',
             start_time='2001-09-09T01:46:39',
             completed_time=None,
@@ -260,6 +259,7 @@ class TestJobListingV2(Spec):
             project='random test project',
             user='some user',
             output_metrics=[],
+            job_parameters=[],
             status='completed',
             start_time='1973-11-29T21:33:09',
             completed_time='2040-06-02T03:57:02',
@@ -305,6 +305,7 @@ class TestJobListingV2(Spec):
             project='random test project',
             user='some user',
             output_metrics=[],
+            job_parameters=[{'name': 'hello', 'value': 'world', 'type': 'string'}],
             status='completed',
             start_time='1973-11-29T21:33:09',
             completed_time='2040-06-02T03:57:02',
@@ -352,6 +353,7 @@ class TestJobListingV2(Spec):
             project='random test project',
             user='some user',
             output_metrics=[],
+            job_parameters=[{'name': 'hello', 'value': 'world', 'type': 'string'}],
             status='completed',
             start_time='1973-11-29T21:33:09',
             completed_time='2040-06-02T03:57:02',
@@ -362,7 +364,7 @@ class TestJobListingV2(Spec):
             artifacts=[]
         )
 
-        result = Job.all(project_name='random test project', handle_duplicate_param_names=False).evaluate()
+        result = Job.all(project_name='random test project').evaluate()
 
         restore_real_current_datetime()
 

@@ -212,12 +212,13 @@ pipeline{
                                     dir("${WORKSPACE}/foundations_ui") {
                                         // sh "export FOUNDATIONS_SCHEDULER_URL=http://${ATLAS_LOCAL_SCHEDULER}:5000 && REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && REDIS_PORT=5556 && python startup_atlas_api.py 8000 &"
                                         // sh "export REACT_APP_API_URL=localhost:8000 && npm start &"
+                                        // sh "../devops/jenkins/scripts/wait_for_port" localhost 8080
                                         // sh """export CYPRESS_LOCAL_FOUNDATIONS_HOME=${WORKSPACE}/foundations_ui/cypress/fixtures/atlas_scheduler/.foundations && \
                                         //         export CYPRESS_SCHEDULER_IP=$ATLAS_LOCAL_SCHEDULER && \
                                         //         export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$REMOTE_FOUNDATIONS_HOME && \
                                         //         export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
-                                        //         export CYPRESS_GUI_HOST=$ATLAS_LOCAL_SCHEDULER && \
-                                        //         export CYPRESS_GUI_PORT=5555 && export CYPRESS_ATLAS_EDITION=CE && \
+                                        //         export CYPRESS_GUI_HOST=localhost && \
+                                        //         export CYPRESS_GUI_PORT=8000 && export CYPRESS_ATLAS_EDITION=CE && \
                                         //         npm run cy:run --"""
                                     }
                                 }

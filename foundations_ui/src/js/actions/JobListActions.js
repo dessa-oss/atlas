@@ -18,7 +18,7 @@ class JobListActions {
     if (sortedColumn && sortedColumn.column) {
       let translatedColumnName = sortedColumn.column;
 
-      if (!sortedColumn.column.startsWith('job_parameters') && !sortedColumn.column.startsWith('output_metrics')) {
+      if (!sortedColumn.column.startsWith('parameters') && !sortedColumn.column.startsWith('output_metrics')) {
         const columnNameTranslator = {
           Status: 'status',
           Launched: 'start_time',

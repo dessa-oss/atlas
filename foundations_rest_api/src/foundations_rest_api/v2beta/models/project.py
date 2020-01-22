@@ -20,7 +20,7 @@ class Project(PropertyModel):
     owner = PropertyModel.define_property()
     jobs = PropertyModel.define_property()
     output_metric_names = PropertyModel.define_property()
-    job_parameters = PropertyModel.define_property()
+    parameters = PropertyModel.define_property()
 
     @staticmethod
     def new(name):
@@ -110,7 +110,7 @@ class Project(PropertyModel):
         project.output_metric_names = project.jobs.map(
             _get_names_and_types("output_metrics")
         )
-        project.job_parameters = project.jobs.map(
+        project.parameters = project.jobs.map(
             _get_names_and_types("job_parameters")
         )
 

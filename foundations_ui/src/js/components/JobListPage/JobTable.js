@@ -126,7 +126,7 @@ class JobTable extends Component {
     let isAscending = true;
 
     if (mainHeader === 'Parameters') {
-      clickedColumnWithMainHeader = `job_parameters:${clickedColumn}`;
+      clickedColumnWithMainHeader = `parameters:${clickedColumn}`;
     }
     if (mainHeader === 'Metrics') {
       clickedColumnWithMainHeader = `output_metrics:${clickedColumn}`;
