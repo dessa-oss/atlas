@@ -5,5 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.config.test_local_config_translate import TestLocalConfigTranslate
 from test.config.test_bucket_type_fetcher import TestBucketTypeFetcher

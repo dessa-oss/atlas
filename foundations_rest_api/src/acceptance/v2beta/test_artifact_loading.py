@@ -40,7 +40,6 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         klass._old_context = global_state.foundations_context
 
         global_state.config_manager.reset()
-        global_state.config_manager.add_simple_config_path('acceptance/v2beta/fixtures/stageless_local.config.yaml')
 
         global_state.foundations_context = FoundationsContext(klass._pipeline)        
 
