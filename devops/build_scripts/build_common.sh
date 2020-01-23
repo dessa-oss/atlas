@@ -17,9 +17,10 @@ build_module () {
     wheel_path=${directory}/dist/${module_name}-${wheel_name_tail}
     cli=$4
 
-    unset BUILD_FOUNDATIONS_OBFUSCATED
+    cd "${directory}" && \
 
-    cd ${directory} && \
+    rm -rf "./build" || true && \
+    rm -rf "./dist" || true && \
 
     python setup.py sdist bdist_wheel && \
     cd .. && \
