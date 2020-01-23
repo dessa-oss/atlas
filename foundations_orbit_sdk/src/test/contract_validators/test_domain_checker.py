@@ -156,6 +156,9 @@ class TestDomainChecker(Spec):
 
     def test_domain_checker_works_with_datetime_data_type_when_validating_against_itself(self):
         self._test_healthy_result_when_validating_dataframe_against_itself(dtype='datetime')
+    
+    def test_domain_checker_works_with_category_data_type_when_validating_against_itself(self):
+        self._test_healthy_result_when_validating_dataframe_against_itself(dtype='category')
 
     def _test_healthy_result_when_validating_dataframe_against_itself(self, dtype):
         self.domain_checker.configure(attributes=self.column_name)
@@ -185,6 +188,8 @@ class TestDomainChecker(Spec):
                 data[column] = [self.faker.word() for _ in range(100)]
             elif dtype == 'datetime':
                 data[column] = [self.faker.datetime() for _ in range(100)]
+            elif dtype == 'category':
+                return self._generate_dataframe([self.column_name], dtype=str).astype('category')
 
         return pd.DataFrame(data)
 
