@@ -33,7 +33,7 @@ class DomainChecker:
                 summary['critical'] += 1
                 detail['validation_outcome'] = 'critical'
                 detail['values_out_of_bounds'] = list(dataframe_to_validate[column][~in_domain_mask].unique())
-                detail['percentage_out_of_bounds'] = (~in_domain_mask).sum() / len(in_domain_mask)
+                detail['percentage_out_of_bounds'] = (~in_domain_mask).sum() / in_domain_mask.size
 
             details_by_attribute.append(detail)
 
@@ -46,12 +46,18 @@ class DomainChecker:
         import pandas as pd
         self._unique_values = reference_dataframe.apply(pd.unique)
 
-    def configure(self, attributes):
-        if type(attributes) is str:
-            self.configured_attributes.add(attributes)
+    def configure(self, attributes=[], configuration={}):
+        if attributes == [] and configuration == {} or attributes != [] and configuration != {}:
+            raise ValueError('Please provide only one of attributes or configuration as an argument to configure')
+        
+        if attributes != []:
+            if type(attributes) is str:
+                self.configured_attributes.add(attributes)
+            else:
+                for attribute in attributes:
+                    self.configured_attributes.add(attribute)
         else:
-            for attribute in attributes:
-                self.configured_attributes.add(attribute)
+            pass # Parse configuration here and setup things
     
     def exclude(self, attributes):
         self.configured_attributes.discard(attributes)
