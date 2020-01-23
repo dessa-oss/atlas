@@ -148,15 +148,33 @@ class TestDomainChecker(Spec):
         }
         self.assertEqual(expected_result, self.domain_checker.validate(df))
 
+    def test_domain_checker_works_with_boolean_data_type_when_validating_against_itself(self):
+        self._test_healthy_result_when_validating_dataframe_against_itself(dtype=bool)
+
+    def _test_healthy_result_when_validating_dataframe_against_itself(self, dtype):
+        self.domain_checker.configure(attributes=self.column_name)
+        df = self._generate_dataframe([self.column_name], bool)
+        self.domain_checker.calculate_stats_from_dataframe(df)
+
+        expected_result = {
+            'summary': self._generate_summary_dictionary(healthy=1),
+            'details_by_attribute': [{
+                'attribute_name': self.column_name,
+                'validation_outcome': 'healthy'
+            }]
+        }
+        self.assertEqual(expected_result, self.domain_checker.validate(df))
+
     def _generate_dataframe(self, column_names, dtype, min=-10, max=10):
         data = {}
 
-        if dtype == 'int_with_nan':
-            for column in column_names:
+        for column in column_names:
+            if dtype == 'int_with_nan':
                 data[column] = list(range(min, max)) + [np.nan]
-        elif dtype == int:
-            for column in column_names:
+            elif dtype == int:
                 data[column] = list(range(min, max))
+            elif dtype == bool:
+                data[column] = [True]*50 + [False]*50
 
         return pd.DataFrame(data)
 

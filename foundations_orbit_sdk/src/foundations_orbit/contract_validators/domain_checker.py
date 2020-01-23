@@ -44,7 +44,6 @@ class DomainChecker:
 
     def calculate_stats_from_dataframe(self, reference_dataframe):
         import pandas as pd
-
         self._unique_values = reference_dataframe.apply(pd.unique)
 
     def configure(self, attributes):
