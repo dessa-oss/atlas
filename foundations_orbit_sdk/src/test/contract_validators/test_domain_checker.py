@@ -27,21 +27,6 @@ class TestDomainChecker(Spec):
         }
         self.assertEqual(expected_result, self.domain_checker.validate(empty_dataframe))
 
-    def test_domain_checker_passes_when_configured_and_reference_dataframe_used_when_validating(self):
-        self.domain_checker.configure(attributes=self.column_name)
-
-        df = self._generate_dataframe([self.column_name], int)
-        self.domain_checker.calculate_stats_from_dataframe(df)
-
-        expected_result = {
-            'summary': self._generate_summary_dictionary(healthy=1),
-            'details_by_attribute': [{
-                'attribute_name': self.column_name,
-                'validation_outcome': 'healthy'
-            }]
-        }
-        self.assertEqual(expected_result, self.domain_checker.validate(df))
-
     def test_domain_checker_passes_when_configured_and_reference_dataframe_with_nans_used_when_validating(self):
         self.domain_checker.configure(attributes=self.column_name)
 
@@ -147,6 +132,9 @@ class TestDomainChecker(Spec):
             }]
         }
         self.assertEqual(expected_result, self.domain_checker.validate(df))
+
+    def test_domain_checker_works_with_int_data_type_when_validating_against_itself(self):
+        self._test_healthy_result_when_validating_dataframe_against_itself(dtype=int)
 
     def test_domain_checker_works_with_boolean_data_type_when_validating_against_itself(self):
         self._test_healthy_result_when_validating_dataframe_against_itself(dtype=bool)
