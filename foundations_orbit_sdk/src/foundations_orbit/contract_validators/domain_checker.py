@@ -47,6 +47,12 @@ class DomainChecker:
 
         self._unique_values = reference_dataframe.apply(pd.unique)
 
-    def configure(self, attributes=[]):
-        for attribute in attributes:
-            self.configured_attributes.add(attribute)
+    def configure(self, attributes):
+        if type(attributes) is str:
+            self.configured_attributes.add(attributes)
+        else:
+            for attribute in attributes:
+                self.configured_attributes.add(attribute)
+    
+    def exclude(self, attributes):
+        self.configured_attributes.discard(attributes)
