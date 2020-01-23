@@ -5,23 +5,18 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-class ScriptEnvironment(object):
 
+class ScriptEnvironment(object):
     def __init__(self, config):
         self._config = config
 
     def write_environment(self, file):
         from pipes import quote
-        import os
 
         for name, value in self._run_script_environment().items():
-            file.write('export {}={}\n'.format(quote(name), quote(str(value))))
+            file.write("export {}={}\n".format(quote(name), quote(str(value))))
         file.flush()
         file.seek(0)
 
     def _run_script_environment(self):
-        return self._config.get('run_script_environment', {})
-
-    def _enable_stages(self):
-        run_script_environment = self._run_script_environment()
-        return run_script_environment.get('enable_stages', False)
+        return self._config.get("run_script_environment", {})
