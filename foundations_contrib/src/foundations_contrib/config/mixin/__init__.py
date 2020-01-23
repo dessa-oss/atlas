@@ -7,50 +7,81 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 def ssh_configuration(config):
-    ssh_config = config['ssh_config']
+    ssh_config = config["ssh_config"]
     result = {
-        'remote_user': ssh_config.get('user', 'job-uploader'),
-        'port': ssh_config.get('port', 31222),
-        'key_path': ssh_config.get('key_path', '~/.ssh/id_foundations_scheduler'),
-        'remote_host': ssh_config['host'],
+        "remote_user": ssh_config.get("user", "job-uploader"),
+        "port": ssh_config.get("port", 31222),
+        "key_path": ssh_config.get("key_path", "~/.ssh/id_foundations_scheduler"),
+        "remote_host": ssh_config["host"],
+        "code_path": ssh_config.get("code_path", "/jobs"),
     }
 
-    result['code_path'] = ssh_config.get('code_path', '/jobs')
-    if 'result_path' in ssh_config:
-        result['result_path'] = ssh_config['result_path']
+    if "result_path" in ssh_config:
+        result["result_path"] = ssh_config["result_path"]
     return result
+
 
 def archive_implementation(result_end_point, default_bucket_type):
     from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
-    return _storage_implementation('archive_type', BucketPipelineArchive, 'archive', result_end_point, default_bucket_type)
+
+    return _storage_implementation(
+        "archive_type",
+        BucketPipelineArchive,
+        "archive",
+        result_end_point,
+        default_bucket_type,
+    )
+
 
 def archive_listing_implementation(result_end_point, default_bucket_type):
     from foundations_contrib.bucket_pipeline_listing import BucketPipelineListing
-    return _storage_implementation('archive_listing_type', BucketPipelineListing, 'archive', result_end_point, default_bucket_type)
+
+    return _storage_implementation(
+        "archive_listing_type",
+        BucketPipelineListing,
+        "archive",
+        result_end_point,
+        default_bucket_type,
+    )
 
 
 def project_listing_implementation(result_end_point, default_bucket_type):
     from foundations_contrib.bucket_pipeline_listing import BucketPipelineListing
-    return _storage_implementation('project_listing_type', BucketPipelineListing, 'projects', result_end_point, default_bucket_type)
+
+    return _storage_implementation(
+        "project_listing_type",
+        BucketPipelineListing,
+        "projects",
+        result_end_point,
+        default_bucket_type,
+    )
 
 
 def cache_implementation(cache_end_point, default_bucket_type):
     from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
-    from foundations_contrib.bucket_cache_backend_for_config import BucketCacheBackendForConfig
+    from foundations_contrib.bucket_cache_backend_for_config import (
+        BucketCacheBackendForConfig,
+    )
 
-    return _storage_implementation('cache_type', BucketCacheBackendForConfig, 'cache', cache_end_point, default_bucket_type)
+    return _storage_implementation(
+        "cache_type",
+        BucketCacheBackendForConfig,
+        "cache",
+        cache_end_point,
+        default_bucket_type,
+    )
 
 
-def _storage_implementation(type_key, type_value, type_name, result_end_point, default_bucket_type):
+def _storage_implementation(
+    type_key, type_value, type_name, result_end_point, default_bucket_type
+):
     bucket_type, uri = _parse_bucket_type_and_uri(
-        type_name,
-        result_end_point,
-        default_bucket_type
+        type_name, result_end_point, default_bucket_type
     )
 
     return {
         type_key: type_value,
-        'constructor_arguments': [bucket_type, uri.netloc + uri.path]
+        "constructor_arguments": [bucket_type, uri.netloc + uri.path],
     }
 
 
@@ -63,9 +94,9 @@ def _parse_bucket_type_and_uri(type_name, result_end_point, default_bucket_type)
     archive_path = join(result_end_point, type_name)
     uri = urlparse(archive_path)
     scheme = uri.scheme
-    if scheme == '':
+    if scheme == "":
         scheme = None
-    elif uri.path[:1] == '\\':
-        scheme = 'local'
+    elif uri.path[:1] == "\\":
+        scheme = "local"
     bucket_type = for_scheme(scheme, default_bucket_type)
     return bucket_type, uri

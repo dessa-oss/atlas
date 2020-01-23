@@ -20,13 +20,6 @@ class TestExecution(Spec):
         return {
             'results_config': {
                 'archive_end_point': '',
-            },
-            'cache_config': {
-                'end_point': '',
-            },
-            'ssh_config': {
-                'host': '',
-                'key_path': '',
             }
         }
 
@@ -38,7 +31,6 @@ class TestExecution(Spec):
             'miscellaneous_archive_implementation',
             'persisted_data_archive_implementation',
             'provenance_archive_implementation',
-            'stage_log_archive_implementation',
         ]
     
     @let
@@ -70,14 +62,6 @@ class TestExecution(Spec):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['redis_url'], 'redis://11.22.33.44:9738')
 
-    def test_returns_enable_stages_false_if_not_set(self):
-        result_config = self.translator.translate(self._configuration)
-        self.assertFalse(result_config['enable_stages'])
-    
-    def test_returns_run_script_environment_with_enable_stages_false_if_not_set(self):
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['run_script_environment']['enable_stages'], False)
-
     def test_returns_run_script_environment_with_log_level_same_as_local_log_level(self):
         self._configuration['log_level'] = 'DEBUG'
         result_config = self.translator.translate(self._configuration)
@@ -87,34 +71,6 @@ class TestExecution(Spec):
         self._configuration['log_level'] = 'INFO'
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['run_script_environment']['log_level'], 'INFO')
-
-    def test_returns_ssh_user_default_user(self):
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['remote_user'], 'job-uploader')
-
-    def test_returns_ssh_user(self):
-        self._configuration['ssh_config']['user'] = self.fake_user
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['remote_user'], self.fake_user)
-    
-    def test_returns_host(self):
-        self._configuration['ssh_config']['host'] = self.fake_ip
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['remote_host'], self.fake_ip)
-    
-    def test_returns_port_default_port(self):
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['port'], 31222)
-    
-    def test_returns_port(self):
-        self._configuration['ssh_config']['port'] = self.fake_port
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['port'], self.fake_port)
-    
-    def test_returns_key_path(self):
-        self._configuration['ssh_config']['key_path'] = self.fake_key_path
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['key_path'], self.fake_key_path)
 
     def test_returns_log_level_configured_to_default(self):
         result_config = self.translator.translate(self._configuration)
@@ -126,15 +82,6 @@ class TestExecution(Spec):
         self.assertEqual(result_config['log_level'], 'DEBUG')
 
     def test_no_result_artifact_returns_constructor_arguments_with_default_artifact_path(self):
-        from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
-
-        self._configuration['artifact_path'] = self.fake_artifact_path
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(self.fake_artifact_path, result_config['artifact_path'])
-
-    def test_no_result_artifact_returns_constructor_arguments_with_default_artifact_path(self):
-        from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
-
         result_config = self.translator.translate(self._configuration)
         self.assertEqual('.', result_config['artifact_path'])
 
