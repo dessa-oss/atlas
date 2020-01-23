@@ -9,7 +9,10 @@ Written by Susan Davis <s.davis@dessa.com>, 01 2020
 class DomainChecker:
     def __init__(self):
         self._unique_values = None
+        self.configured_attributes = set()
 
+    # Validate for DomainChecker returns a data in a different format than the other checkers
+    # It is done to reduce complexities in using ReportFormatter and DataContractSummary i.e single source of information
     def validate(self, dataframe_to_validate):
         summary = {
             'healthy': 0,
@@ -18,7 +21,7 @@ class DomainChecker:
         }
         details_by_attribute = []
 
-        for column in dataframe_to_validate.columns:
+        for column in self.configured_attributes:
             detail = { 'attribute_name': column }
             in_domain_mask = dataframe_to_validate[column].isin(self._unique_values[column])
             column_test_passed = in_domain_mask.all()
@@ -45,4 +48,5 @@ class DomainChecker:
         self._unique_values = reference_dataframe.apply(pd.unique)
 
     def configure(self, attributes=[]):
-        pass
+        for attribute in attributes:
+            self.configured_attributes.add(attribute)
