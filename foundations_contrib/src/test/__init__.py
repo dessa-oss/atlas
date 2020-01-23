@@ -13,11 +13,8 @@ from test.authentication import *
 
 from test.test_config_manager import TestConfigManager
 from test.test_bucket_pipeline_listing import TestBucketPipelineListing
-from test.test_bucket_cache_backend import TestBucketCacheBackend
-from test.test_bucket_cache_backend_for_config import TestBucketCacheBackendForConfig
 from test.test_local_file_system_bucket import TestLocalFileSystemBucket
 from test.test_local_file_system_pipeline_listing import TestLocalFileSystemPipelineListing
-from test.test_null_cache_backend import TestNullCacheBackend
 from test.test_null_pipeline_archive_listing import TestNullPipelineArchiveListing
 from test.test_prefixed_bucket import TestPrefixedBucket
 from test.test_redis_pipeline_wrapper import TestRedisPipelineWrapper

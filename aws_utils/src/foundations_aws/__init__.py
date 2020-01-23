@@ -7,7 +7,6 @@ Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 
 from foundations_aws.aws_pipeline_archive import AWSPipelineArchive
 from foundations_aws.aws_pipeline_archive_listing import AWSPipelineArchiveListing
-from foundations_aws.aws_cache_backend import AWSCacheBackend
 from foundations_aws.aws_bucket import AWSBucket
 from foundations_aws.global_state import *
 
