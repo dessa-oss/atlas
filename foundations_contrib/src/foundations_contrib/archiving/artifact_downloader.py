@@ -35,7 +35,6 @@ class ArtifactDownloader(object):
             'foundations_gui.sh',
             'foundations_package_manifest.yaml',
             'foundations_requirements.txt',
-            'get_version.sh',
             'job.tgz',
             'run.env',
             'run.sh',
