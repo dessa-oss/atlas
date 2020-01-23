@@ -26,8 +26,7 @@ class DeploymentManager(object):
 
     def deploy(self, deployment_config, job_name, job):
         from foundations import log_manager
-        from foundations.global_state import message_router, current_foundations_context
-        from foundations_internal.deployment.job_preparation import prepare_job
+        from foundations.global_state import current_foundations_context
 
         logger = log_manager.get_logger(__name__)
 

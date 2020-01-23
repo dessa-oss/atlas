@@ -9,9 +9,11 @@ F9S_ENV_TYPE=$1
 if [[ $F9S_ENV_TYPE == "atlas" ]]; then
     UI_FOLDER="foundations_ui"
     FIXTURE_FOLDER="atlas_scheduler"
+    $cwd/devops/startup_frontend_dev_atlas.sh
 else
     UI_FOLDER="foundations_ui_orbit"
     FIXTURE_FOLDER="orbit_acceptance"
+    $cwd/devops/startup_frontend_dev_orbit.sh
 fi
 cd $UI_FOLDER \
     && yarn install --silent \

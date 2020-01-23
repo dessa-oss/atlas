@@ -12,10 +12,6 @@ class Job(object):
         self.kwargs = kwargs
         self._pipeline_connector = pipeline_connector
 
-    def run(self):
-        self._pipeline_connector.pipeline_context().provenance.job_run_data = self.kwargs
-        return self._pipeline_connector.run_same_process(**self.kwargs)
-
     def pipeline_context(self):
         return self._pipeline_connector.pipeline_context()
 
