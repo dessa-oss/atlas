@@ -6,21 +6,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
-def ssh_configuration(config):
-    ssh_config = config["ssh_config"]
-    result = {
-        "remote_user": ssh_config.get("user", "job-uploader"),
-        "port": ssh_config.get("port", 31222),
-        "key_path": ssh_config.get("key_path", "~/.ssh/id_foundations_scheduler"),
-        "remote_host": ssh_config["host"],
-        "code_path": ssh_config.get("code_path", "/jobs"),
-    }
-
-    if "result_path" in ssh_config:
-        result["result_path"] = ssh_config["result_path"]
-    return result
-
-
 def archive_implementation(result_end_point, default_bucket_type):
     from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
 
@@ -53,21 +38,6 @@ def project_listing_implementation(result_end_point, default_bucket_type):
         BucketPipelineListing,
         "projects",
         result_end_point,
-        default_bucket_type,
-    )
-
-
-def cache_implementation(cache_end_point, default_bucket_type):
-    from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
-    from foundations_contrib.bucket_cache_backend_for_config import (
-        BucketCacheBackendForConfig,
-    )
-
-    return _storage_implementation(
-        "cache_type",
-        BucketCacheBackendForConfig,
-        "cache",
-        cache_end_point,
         default_bucket_type,
     )
 
