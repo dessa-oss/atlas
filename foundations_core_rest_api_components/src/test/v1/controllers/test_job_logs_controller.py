@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
-from foundations_rest_api.v2beta.controllers.job_logs_controller import JobLogsController
+from foundations_core_rest_api_components.v1.controllers.job_logs_controller import JobLogsController
 
 class TestJobLogsController(Spec):
     
@@ -31,6 +31,6 @@ class TestJobLogsController(Spec):
         self.mock_get_job_logs.return_when(self.job_logs, self.job_id)
         self.controller.params = { 'job_id': self.job_id }
 
-    @quarantine
+    # @quarantine
     def test_index_returns_logs_for_job(self):
-        self.assertEqual(self.job_logs, self.controller.index().as_json())
+        self.assertEqual({'log': self.job_logs}, self.controller.index().as_json())
