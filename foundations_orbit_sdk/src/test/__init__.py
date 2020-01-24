@@ -13,3 +13,4 @@ from .test_data_contract_options import TestDataContractOptions
 from .test_report_formatter import TestReportFormatter
 from .test_data_contract_summary import TestDataContractSummary
 from .test_data_contract_categorizer import TestDataContractCategorizer
+from .test_data_contract_two import TestDataContractTwo

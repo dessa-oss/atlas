@@ -62,6 +62,7 @@ class DataContract(object):
             check_distribution=True,
             check_special_values=True,
             check_min_max=True,
+            check_domain=True
         )
 
     def _initialize_checkers(self):
