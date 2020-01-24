@@ -11,6 +11,15 @@ class DomainChecker:
         self._unique_values = None
         self._configured_attributes = {}
 
+    def __str__(self):
+        return str(self.info())
+
+    def info(self):
+        return {
+            'reference_dataframe_unique': self._unique_values,
+            'configured_attributes': self._configured_attributes
+        }
+
     # Validate for DomainChecker returns a data in a different format than the other checkers
     # It is done to reduce complexities in using ReportFormatter and DataContractSummary i.e single source of information
     def validate(self, dataframe_to_validate):

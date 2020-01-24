@@ -205,33 +205,64 @@ class TestDomainChecker(Spec):
         }
         self.assertEqual(expected_result, self.domain_checker.validate(df))
 
-    def _test_value_error_when_configuring_with_no_parameters(self, dtype):
+    def test_value_error_when_configuring_with_no_parameters(self):
         with self.assertRaises(ValueError):
             self.domain_checker.configure()
 
-    def _test_value_error_when_configuring_with_both_parameters(self, dtype):
+    def test_value_error_when_configuring_with_both_parameters(self):
         with self.assertRaises(ValueError):
             self.domain_checker.configure(['some_string'], {'some_string_2': ['some_string_3']})
 
-    def _test_value_error_when_configuring_with_none_string_or_list_attributes(self, dtype):
+    def test_value_error_when_configuring_with_none_string_or_list_attributes(self):
         with self.assertRaises(ValueError):
             self.domain_checker.configure(3)
 
-    def _test_value_error_when_configuring_with_none_string_or_list_configuration(self, dtype):
+    def test_value_error_when_configuring_with_none_string_or_list_configuration(self):
         with self.assertRaises(ValueError):
             self.domain_checker.configure(configuration=3)
 
-    def _test_value_error_when_configuring_with_configuration_of_non_string_key(self, dtype):
+    def test_value_error_when_configuring_with_configuration_of_non_string_key(self):
         with self.assertRaises(ValueError):
             self.domain_checker.configure(configuration={
                 3: ['some_string']
             })
 
-    def _test_value_error_when_configuring_with_configuration_of_non_list_key(self, dtype):
+    def test_value_error_when_configuring_with_configuration_of_non_list_key(self):
         with self.assertRaises(ValueError):
             self.domain_checker.configure(configuration={
                 'some_string': 3
             })
+
+    def test_info_method_returns_info_about_domain_checker(self):
+        df = self._generate_dataframe([self.column_name], int)
+        self.domain_checker.calculate_stats_from_dataframe(df)
+        self.domain_checker.configure(attributes=self.column_name)
+
+        expected_result = {
+            'configured_attributes': {
+                self.column_name: ALL_CATEGORIES
+            }
+        }
+
+        actual_result = self.domain_checker.info()
+
+        self.assertTrue(df.equals(self.domain_checker.info()['reference_dataframe_unique']))
+        del actual_result['reference_dataframe_unique']
+        self.assertEqual(expected_result, actual_result)
+
+    def test_str_method_returns_info_about_domain_checker(self):
+        df = self._generate_dataframe([self.column_name], int)
+        self.domain_checker.calculate_stats_from_dataframe(df)
+        self.domain_checker.configure(attributes=self.column_name)
+
+        expected_result = str({
+            'reference_dataframe_unique': df,
+            'configured_attributes': {
+                self.column_name: ALL_CATEGORIES
+            }
+        })
+
+        self.assertEqual(expected_result, str(self.domain_checker))
 
     def _generate_dataframe(self, column_names, dtype, min=-10, max=10):
         data = {}
