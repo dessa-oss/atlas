@@ -442,7 +442,7 @@ class TestDataValidation(Spec):
                     'critical': 1, 'healthy': 1, 'warning': 0
                 }
             },
-            'domain_test_results': {
+            'domain': {
                 'details_by_attribute': [],
                 'summary': {
                     'critical': 0,
