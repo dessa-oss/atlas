@@ -80,6 +80,8 @@ class TestReportFormatter(Spec):
         self.data_contract_options.check_distribution = True
         self.data_contract_options.check_special_values = True
         self.data_contract_options.check_min_max = True
+        self.data_contract_options.check_domain = True
+
 
     @let
     def validation_report(self):
@@ -101,6 +103,14 @@ class TestReportFormatter(Spec):
             'dist_check_results': self.distribution_checks,
             'special_values_check_results': self.special_values_check,
             'min_max_test_results': self.min_max_test,
+            'domain_test_results': {
+                'details_by_attribute': [],
+                'summary': {
+                    'critical': 0,
+                    'healthy': 0,
+                    'warning': 0
+                }
+            }
         }
 
     @let

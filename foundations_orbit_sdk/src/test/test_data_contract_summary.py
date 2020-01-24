@@ -231,27 +231,32 @@ class TestDataContractSummary(Spec):
             'attribute_names': list(reference_dataframe.columns),
             'schema': {
                 'summary': {
-                    'critical': 0
+                    'critical': 1
                 }
             },
             'data_quality': {
                 'summary': {
-                    'critical': 0
+                    'critical': 1
                 }
             },
             'population_shift': {
                 'summary': {
-                    'critical': 0
+                    'critical': 1
                 }
             },
             'min': {
                 'summary': {
-                    'critical': 0
+                    'critical': 1
                 }
             },
             'max': {
                 'summary': {
-                    'critical': 0
+                    'critical': 1
+                }
+            },
+            'domain': {
+                'summary': {
+                    'critical': 1
                 }
             }
         }
@@ -522,7 +527,7 @@ class TestDataContractSummary(Spec):
                     }
                 }
             },
-            'num_critical_tests': 0
+            'num_critical_tests': 6
         }
 
         self.assertEqual(expected_data, pickle.loads(data_contract_summary.serialized_output()))

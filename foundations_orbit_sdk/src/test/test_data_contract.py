@@ -566,6 +566,10 @@ class TestDataContract(Spec):
                     'warning': 0
                 }
             },
+            'domain': {
+                'details_by_attribute': [],
+                'summary': {'critical': 0, 'healthy': 0, 'warning': 0}
+            },
             'min': {
                 'details_by_attribute': [{
                     'attribute_name': f'{self.column_name}',
@@ -638,6 +642,14 @@ class TestDataContract(Spec):
             'date': f'{inference_period}',
             'data_quality': {},
             'monitor_package': f'{self.model_name}',
+            'domain': {
+                'details_by_attribute': [],
+                'summary': {
+                    'critical': 0,
+                    'healthy': 0,
+                    'warning': 0
+                }
+            },
             'min': {
                 'details_by_attribute': [{
                     'attribute_name': f'{self.column_name}',

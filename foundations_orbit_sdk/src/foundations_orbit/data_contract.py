@@ -205,6 +205,7 @@ class DataContract(object):
         attributes_to_ignore = []
         validation_report = self._run_checkers_and_get_validation_report(dataframe_to_validate, attributes_to_ignore,
                                                                          columns_to_validate, types_to_validate)
+
         self._add_metadata_to_validation_report(validation_report, columns_to_validate, types_to_validate)
 
         report_formatter = ReportFormatter(inference_period=inference_period,

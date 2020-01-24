@@ -13,7 +13,7 @@ class DataContractSummary(object):
         self._report = None
         self._bins_were_cut_off = False
         self._current_column_types = None
-        self._tests_to_summarize = ['schema', 'data_quality', 'population_shift', 'min', 'max']
+        self._tests_to_summarize = ['schema', 'data_quality', 'population_shift', 'min', 'max', 'domain']
         self._attributes = column_names
         self._column_types = column_types
         self._categorical_columns = categorical_columns
