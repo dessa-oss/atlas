@@ -77,7 +77,7 @@ class DomainChecker:
                     if not isinstance(key, str):
                         raise ValueError('The column must be of type str')
                     if not (isinstance(value, list) or isinstance(value, str) or value == ALL_CATEGORIES):
-                        raise ValueError('The categories must be of type list, str, or AllCategories')
+                        raise ValueError('The categories must be of type list, str, or ALL_CATEGORIES')
                 self._configured_attributes = {**self._configured_attributes, **configuration}
             else:
                 raise ValueError('configuration must be of type dict')
