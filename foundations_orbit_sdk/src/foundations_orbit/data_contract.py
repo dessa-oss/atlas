@@ -71,12 +71,14 @@ class DataContract(object):
         from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
         from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
+        from foundations_orbit.contract_validators.domain_checker import DomainChecker
 
         self.schema_test = SchemaChecker(self._column_names, self._column_types)
         self.special_value_test = SpecialValuesChecker(self._column_names, self._column_types, self._categorical_attributes)
         self.distribution_test = DistributionChecker(self._column_names, self._column_types, self._categorical_attributes)
         self.min_max_test = MinMaxChecker(self._column_types)
         self.row_count_test = RowCountChecker(self._number_of_rows)
+        self.domain_test = DomainChecker()
 
     def _categorize_attributes(self):
         for col_name, col_type in self._column_types.items():
@@ -274,6 +276,9 @@ class DataContract(object):
         if self.options.check_min_max:
             validation_report['min_max_test_results'] = self.min_max_test.validate(dataframe_to_validate)
 
+        if self.options.check_domain:
+            validation_report['domain_test_results'] = self.domain_test.validate(dataframe_to_validate)
+
         return validation_report
 
     def _add_metadata_to_validation_report(self, validation_report, columns_to_validate, types_to_validate):
@@ -312,6 +317,7 @@ class DataContract(object):
         if not self.bin_stats_calculated:
             self.special_value_test.create_and_set_special_value_percentages(self._dataframe)
             self.distribution_test.create_and_set_bin_stats(self._dataframe)
+            self.domain_test.calculate_stats_from_dataframe(self._dataframe)
             self.bin_stats_calculated = True
 
     def _modify_validation_report_with_schema_failures(self, validation_report, attributes_to_ignore):
