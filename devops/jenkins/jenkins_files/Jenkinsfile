@@ -257,7 +257,7 @@ pipeline{
                             steps {
                                 container("python3") {
                                     ws("${WORKSPACE}/foundations_ui/") {
-                                        sh "npm cache clear --force"
+                                        sh "yarn cache clean"
                                         sh "yarn install"
                                     }
                                 }
@@ -280,7 +280,7 @@ pipeline{
                             steps {
                                 container("python3-1") {
                                     ws("${WORKSPACE}/foundations_ui_orbit/") {
-                                        sh "npm cache clear --force"
+                                        sh "yarn cache clean"
                                         sh "yarn install"
                                     }
                                 }
