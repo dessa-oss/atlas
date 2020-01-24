@@ -415,6 +415,7 @@ class TestDataContract(Spec):
         del validation_report['min_max_test_results']
         del validation_report['row_count']
         del validation_report['schema_check_results']
+        del validation_report['domain_test_results']
 
         for test_dict in validation_report.values():
             cols_to_ignore = {self.column_name_2, self.column_name_3, self.column_name_4}

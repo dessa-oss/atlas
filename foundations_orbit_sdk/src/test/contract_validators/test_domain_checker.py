@@ -239,6 +239,7 @@ class TestDomainChecker(Spec):
         self.domain_checker.configure(attributes=self.column_name)
 
         expected_result = {
+            'reference_dataframe_unique': {col: list(df[col]) for col in df.columns},
             'configured_attributes': {
                 self.column_name: ALL_CATEGORIES
             }
@@ -246,8 +247,6 @@ class TestDomainChecker(Spec):
 
         actual_result = self.domain_checker.info()
 
-        self.assertTrue(df.equals(self.domain_checker.info()['reference_dataframe_unique']))
-        del actual_result['reference_dataframe_unique']
         self.assertEqual(expected_result, actual_result)
 
     def test_str_method_returns_info_about_domain_checker(self):
@@ -256,7 +255,7 @@ class TestDomainChecker(Spec):
         self.domain_checker.configure(attributes=self.column_name)
 
         expected_result = str({
-            'reference_dataframe_unique': df,
+            'reference_dataframe_unique': {col: list(df[col]) for col in df.columns},
             'configured_attributes': {
                 self.column_name: ALL_CATEGORIES
             }

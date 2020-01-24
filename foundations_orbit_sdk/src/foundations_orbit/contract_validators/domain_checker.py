@@ -8,7 +8,7 @@ Written by Susan Davis <s.davis@dessa.com>, 01 2020
 
 class DomainChecker:
     def __init__(self):
-        self._unique_values = None
+        self._unique_values = {}
         self._configured_attributes = {}
 
     def __str__(self):
@@ -56,7 +56,8 @@ class DomainChecker:
 
     def calculate_stats_from_dataframe(self, reference_dataframe):
         import pandas as pd
-        self._unique_values = reference_dataframe.apply(pd.unique)
+        for column in reference_dataframe.columns:
+            self._unique_values[column] = list(reference_dataframe[column].unique())
 
     def configure(self, attributes=[], configuration={}):
         if attributes == [] and configuration == {} or attributes != [] and configuration != {}:
