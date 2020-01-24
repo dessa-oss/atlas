@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations_orbit.contract_validators.domain_checker import DomainChecker
+from foundations_orbit.contract_validators.domain_checker import DomainChecker, ALL_CATEGORIES
 
 import numpy as np
 import pandas as pd
@@ -148,8 +148,7 @@ class TestDomainChecker(Spec):
             }]
         }
         self.assertEqual(expected_result, self.domain_checker.validate(df))
-    
-    @skip('Not implemented yet')
+
     def test_domain_checker_uses_manually_configured_domain(self):
         self.maxDiff = None
         df = self._generate_dataframe([self.column_name], int)
@@ -172,6 +171,25 @@ class TestDomainChecker(Spec):
         }
         self.assertEqual(expected_result, self.domain_checker.validate(df))
 
+    def test_domain_checker_uses_manually_configured_domain_with_all_categories_constant(self):
+        self.maxDiff = None
+        df = self._generate_dataframe([self.column_name], int)
+
+        config = {
+            self.column_name: ALL_CATEGORIES
+        }
+
+        self.domain_checker.configure(configuration=config)
+        self.domain_checker.calculate_stats_from_dataframe(df)
+
+        expected_result = {
+            'summary': self._generate_summary_dictionary(healthy=1),
+            'details_by_attribute': [{
+                'attribute_name': self.column_name,
+                'validation_outcome': 'healthy'
+            }]
+        }
+        self.assertEqual(expected_result, self.domain_checker.validate(df))
 
     def _test_healthy_result_when_validating_dataframe_against_itself(self, dtype):
         self.domain_checker.configure(attributes=self.column_name)
@@ -186,6 +204,34 @@ class TestDomainChecker(Spec):
             }]
         }
         self.assertEqual(expected_result, self.domain_checker.validate(df))
+
+    def _test_value_error_when_configuring_with_no_parameters(self, dtype):
+        with self.assertRaises(ValueError):
+            self.domain_checker.configure()
+
+    def _test_value_error_when_configuring_with_both_parameters(self, dtype):
+        with self.assertRaises(ValueError):
+            self.domain_checker.configure(['some_string'], {'some_string_2': ['some_string_3']})
+
+    def _test_value_error_when_configuring_with_none_string_or_list_attributes(self, dtype):
+        with self.assertRaises(ValueError):
+            self.domain_checker.configure(3)
+
+    def _test_value_error_when_configuring_with_none_string_or_list_configuration(self, dtype):
+        with self.assertRaises(ValueError):
+            self.domain_checker.configure(configuration=3)
+
+    def _test_value_error_when_configuring_with_configuration_of_non_string_key(self, dtype):
+        with self.assertRaises(ValueError):
+            self.domain_checker.configure(configuration={
+                3: ['some_string']
+            })
+
+    def _test_value_error_when_configuring_with_configuration_of_non_list_key(self, dtype):
+        with self.assertRaises(ValueError):
+            self.domain_checker.configure(configuration={
+                'some_string': 3
+            })
 
     def _generate_dataframe(self, column_names, dtype, min=-10, max=10):
         data = {}

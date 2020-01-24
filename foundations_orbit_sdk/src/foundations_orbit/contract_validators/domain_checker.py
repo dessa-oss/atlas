@@ -9,7 +9,7 @@ Written by Susan Davis <s.davis@dessa.com>, 01 2020
 class DomainChecker:
     def __init__(self):
         self._unique_values = None
-        self.configured_attributes = set()
+        self._configured_attributes = {}
 
     # Validate for DomainChecker returns a data in a different format than the other checkers
     # It is done to reduce complexities in using ReportFormatter and DataContractSummary i.e single source of information
@@ -21,9 +21,12 @@ class DomainChecker:
         }
         details_by_attribute = []
 
-        for column in self.configured_attributes:
+        for column, categories in self._configured_attributes.items():
+            if categories == ALL_CATEGORIES:
+                categories = self._unique_values[column]
+
             detail = { 'attribute_name': column }
-            in_domain_mask = dataframe_to_validate[column].isin(self._unique_values[column])
+            in_domain_mask = dataframe_to_validate[column].isin(categories)
             column_test_passed = in_domain_mask.all()
 
             if column_test_passed:
@@ -49,15 +52,28 @@ class DomainChecker:
     def configure(self, attributes=[], configuration={}):
         if attributes == [] and configuration == {} or attributes != [] and configuration != {}:
             raise ValueError('Please provide only one of attributes or configuration as an argument to configure')
-        
+
         if attributes != []:
             if type(attributes) is str:
-                self.configured_attributes.add(attributes)
-            else:
+                self._configured_attributes[attributes] = ALL_CATEGORIES
+            elif isinstance(attributes, list):
                 for attribute in attributes:
-                    self.configured_attributes.add(attribute)
+                    self._configured_attributes[attribute] = ALL_CATEGORIES
+            else:
+                raise ValueError('attributes must be of type list or string')
         else:
-            pass # Parse configuration here and setup things
-    
+            if isinstance(configuration, dict):
+                for key, value in configuration.items():
+                    if not isinstance(key, str):
+                        raise ValueError('The column must be of type str')
+                    if not (isinstance(value, list) or isinstance(value, str) or value == ALL_CATEGORIES):
+                        raise ValueError('The categories must be of type list, str, or AllCategories')
+                self._configured_attributes = {**self._configured_attributes, **configuration}
+            else:
+                raise ValueError('configuration must be of type dict')
+
     def exclude(self, attributes):
-        self.configured_attributes.discard(attributes)
+        self._configured_attributes.pop(attributes, None)
+
+
+ALL_CATEGORIES = 'USE_ALL_CATEGORIES'
