@@ -19,14 +19,14 @@ class TestAuthenticationController(Spec):
 
     @let
     def auth_controller(self):
-        from foundations_rest_api.v2beta.controllers.authentication_controller import (
+        from foundations_core_rest_api_components.v1.controllers.authentication_controller import (
             AuthenticationController,
         )
 
         return AuthenticationController()
 
     def test_login_without_code_redirects_to_login_page(self):
-        from foundations_rest_api.v2beta.controllers.authentication_controller import (
+        from foundations_core_rest_api_components.v1.controllers.authentication_controller import (
             AuthenticationController,
         )
         from foundations_rest_api.global_state import app_manager
@@ -78,7 +78,7 @@ class TestAuthenticationController(Spec):
             self.auth_client.logout.assert_called_once_with("token")
 
     @patch(
-        "foundations_rest_api.v2beta.controllers.authentication_controller.verify_token"
+        "foundations_core_rest_api_components.v1.controllers.authentication_controller.verify_token"
     )
     def test_verify_calls_verify_token_with_token_and_client_jwks_issuer(self, verify):
 

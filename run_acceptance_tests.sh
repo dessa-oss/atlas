@@ -2,7 +2,7 @@
 
 CWD=$(pwd)
 
-source ./devops/set_environment_for_docker_scheduler.bash
+source ./devops/set_environment_for_docker_scheduler.sh
 ./devops/startup_frontend_dev_atlas.sh
 
 echo "Waiting for Atlas GUI to start at http://localhost:3000"

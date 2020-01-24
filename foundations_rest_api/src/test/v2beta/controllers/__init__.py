@@ -12,4 +12,3 @@ from test.v2beta.controllers.test_project_metrics_controller import TestProjectM
 from test.v2beta.controllers.test_project_note_listing_controller import TestProjectNoteListingController
 from test.v2beta.controllers.test_projects_controller import TestProjectsController
 from test.v2beta.controllers.test_tensorboard_controller import TestTensorboardController
-from test.v2beta.controllers.test_authentication_controller import TestAuthenticationController
