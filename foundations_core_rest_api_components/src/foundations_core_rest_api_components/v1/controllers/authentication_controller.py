@@ -18,9 +18,6 @@ from foundations_contrib.authentication.utils import (
     verify_token,
     get_creds_from_header,
 )
-from foundations_core_rest_api_components.global_state import app_manager
-
-API = app_manager.api()
 
 
 class AuthenticationController(Resource):
