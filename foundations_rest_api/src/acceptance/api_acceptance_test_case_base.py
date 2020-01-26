@@ -18,6 +18,7 @@ class APIAcceptanceTestCaseBase(
     with_metaclass(APIAcceptanceTestCaseMeta, unittest.TestCase)
 ):
     client = app_manager.app().test_client()
+    url = None
 
     @classmethod
     def _setup(klass):

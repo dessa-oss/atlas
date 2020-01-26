@@ -17,6 +17,10 @@ export REDIS_HOST=${REDIS_HOST:-localhost}
 export REDIS_PORT=${REDIS_PORT:-6379}
 export REDIS_URL="redis://$REDIS_HOST:$REDIS_PORT"
 
+export TRACKER_NAME=${TRACKER_NAME:-"foundations-tracker"}
+export TRACKER_URI="redis://$TRACKER_NAME:$REDIS_PORT"
+
+
 export AUTH_PROXY_PORT=${AUTH_PROXY_PORT:-5558}
 export AUTH_PROXY_HOST=${AUTH_PROXY_HOST:-localhost}
 export AUTH_PROXY_URL=http://${AUTH_PROXY_HOST}:${AUTH_PROXY_PORT}

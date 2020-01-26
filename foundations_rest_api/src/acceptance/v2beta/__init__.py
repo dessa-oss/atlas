@@ -11,4 +11,4 @@ from acceptance.v2beta.test_job_listing_trim_characters import TestJobListingTri
 from acceptance.v2beta.test_job_listing_parametrics import TestJobListingParametrics
 from acceptance.v2beta.test_artifact_loading import TestArtifactLoading
 from acceptance.v2beta.test_projects_listing_endpoint import TestProjectsListingEndpoint
-# from acceptance.v2beta.test_authentication_endpoints import TestAuthenticationEndpoints
+from acceptance.v2beta.test_authentication_endpoints import TestAuthenticationEndpoints

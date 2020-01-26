@@ -78,7 +78,7 @@ check_status_of_process "Auth Server" $? $SCRIPT_PID
 
 cd foundations_ui && \
   echo "Install UIs dependencies" && \
-  yarn install --silent && \
+  yarn install --silent 2> >(grep -v warning 1>&2) && \
   echo "Starting the UI in development mode with yarn" && \
   yarn start > $FOUNDATIONS_HOME/logs/yarn.log 2>&1 &
 
