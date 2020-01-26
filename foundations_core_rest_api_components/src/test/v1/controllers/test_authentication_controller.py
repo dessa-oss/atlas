@@ -23,7 +23,7 @@ class TestAuthenticationController(Spec):
             AuthenticationController,
         )
 
-        return AuthenticationController()
+        return AuthenticationController(redirect_url="/api/v2beta/auth/login")
 
     def test_login_without_code_redirects_to_login_page(self):
         from foundations_core_rest_api_components.v1.controllers.authentication_controller import (

@@ -5,13 +5,10 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 11 2019
 """
 
-from foundations_spec import Spec, let, set_up
+from foundations_spec import Spec
 
-from unittest import skip
 
 class TestAuthenticationEndpoints(Spec):
-
-
     URL = '/api/v2beta/auth/{action}'
 
     def client(self):

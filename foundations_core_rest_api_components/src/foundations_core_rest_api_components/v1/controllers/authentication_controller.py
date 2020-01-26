@@ -9,15 +9,8 @@ import base64
 
 from flask import abort, redirect, request
 from flask_restful import Resource
-
-from werkzeug.wrappers import Response
-
 from foundations_core_rest_api_components.config.configs import ATLAS
-from foundations_contrib.authentication.utils import (
-    get_token_from_header,
-    verify_token,
-    get_creds_from_header,
-)
+from werkzeug.wrappers import Response
 
 
 class AuthenticationController(Resource):
@@ -35,6 +28,7 @@ class AuthenticationController(Resource):
         from foundations_contrib.authentication.authentication_client import (
             AuthenticationClient,
         )
+
         self.client = AuthenticationClient(ATLAS, redirect_url="/api/v2beta/auth/login")
 
     def get(self, action: str) -> Response:
@@ -66,9 +60,11 @@ class AuthenticationController(Resource):
 
     def _cli_login(self) -> Response:
         from foundations_core_rest_api_components.exceptions import AuthError
-        creds = get_creds_from_header()
-        username, password = base64.b64decode(creds.encode()).decode().split(":")
+        from foundations_contrib.authentication.utils import get_creds_from_header
+
         try:
+            creds = get_creds_from_header()
+            username, password = base64.b64decode(creds.encode()).decode().split(":")
             return self.client.token_using_username_password(username, password)
         except Exception as error:
             raise AuthError(str(error), 401)
@@ -80,6 +76,8 @@ class AuthenticationController(Resource):
         :rtype: Response
 
         """
+        from foundations_contrib.authentication.utils import get_token_from_header
+
         self.client.logout(get_token_from_header())
         return Response(status=200)
 
@@ -92,6 +90,9 @@ class AuthenticationController(Resource):
         :rtype: dict
 
         """
+        from foundations_contrib.authentication.utils import get_token_from_header
+        from foundations_contrib.authentication.utils import verify_token
+
         token = get_token_from_header()
         jwks = self.client.json_web_key_set
         issuer = self.client.issuer

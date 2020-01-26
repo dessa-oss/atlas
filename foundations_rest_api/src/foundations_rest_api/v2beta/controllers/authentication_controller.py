@@ -4,8 +4,8 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
-from foundations_rest_api.utils.api_resource import api_resource
 
 from foundations_core_rest_api_components.v1.controllers.authentication_controller import AuthenticationController
 
-AuthenticationController = api_resource('/api/v2beta/auth/<string:action>')(AuthenticationController)
+from foundations_core_rest_api_components.global_state import app_manager
+app_manager.api().add_resource(AuthenticationController, "/api/v2beta/auth/<string:action>")

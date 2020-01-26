@@ -5,8 +5,8 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 11 2019
 """
 
-from auth_acceptance.config import setup_auth_home_config
+from .config import setup_auth_home_config
 setup_auth_home_config()
 
-from auth_acceptance.test_auth_via_cli import TestAuthViaClient
-from auth_acceptance.test_submit_with_auth import TestSubmitWithAuth
+from .test_auth_via_cli import TestAuthViaClient
+from .test_submit_with_auth import TestSubmitWithAuth

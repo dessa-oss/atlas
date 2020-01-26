@@ -4,31 +4,35 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 12 2018
 """
-import numpy as np
+
 import foundations
-from foundations import set_project_name
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 from acceptance.v2beta.jobs_tests_helper_mixin_v2 import JobsTestsHelperMixinV2
 from foundations_spec import *
 
-class TestJobListingTrimCharacters(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase, Spec):
-    url = '/api/v2beta/projects/{_project_name}/job_listing'
+
+class TestJobListingTrimCharacters(
+    JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase, Spec
+):
+    url = "/api/v2beta/projects/{_project_name}/job_listing"
     sorting_columns = []
     filtering_columns = []
 
     @classmethod
     def setUpClass(klass):
         JobsTestsHelperMixinV2.setUpClass()
-        klass._set_project_name('hanna')
+        klass._set_project_name("hanna")
 
     @classmethod
     def tearDownClass(klass):
         from foundations_contrib.global_state import redis_connection as redis
+
         redis.flushall()
 
     @set_up
     def set_up(self):
         from foundations_contrib.global_state import redis_connection
+
         redis_connection.flushall()
 
     def submit_job(self):
@@ -50,4 +54,4 @@ class TestJobListingTrimCharacters(JobsTestsHelperMixinV2, APIAcceptanceTestCase
         self.submit_job()
 
         data = super(TestJobListingTrimCharacters, self).test_get_route()
-        self.assertEqual(data['jobs'][0]['output_metrics'][0]['value'], '5' * 100)
+        self.assertEqual(data["jobs"][0]["output_metrics"][0]["value"], "5" * 100)
