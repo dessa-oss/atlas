@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cwd=`pwd`
+CWD=`pwd`
 
 export FOUNDATIONS_HOME=${FOUNDATIONS_HOME:-~/.foundations}
 export F9S_ENV_TYPE=${F9S_ENV_TYPE:-atlas}
@@ -17,7 +17,9 @@ export REDIS_HOST=${REDIS_HOST:-localhost}
 export REDIS_PORT=${REDIS_PORT:-6379}
 export REDIS_URL="redis://$REDIS_HOST:$REDIS_PORT"
 
-export AUTH_PROXY_PORT=5558
+export AUTH_PROXY_PORT=${AUTH_PROXY_PORT:-5558}
+export AUTH_PROXY_HOST=${AUTH_PROXY_HOST:-localhost}
+export AUTH_PROXY_URL=http://${AUTH_PROXY_HOST}:${AUTH_PROXY_PORT}
 
 export F9S_LOG_DIR=$FOUNDATIONS_HOME/logs
 mkdir -p $F9S_LOG_DIR
@@ -49,7 +51,7 @@ else
     FIXTURE_FOLDER="orbit_acceptance"
 fi
 
-export CYPRESS_LOCAL_FOUNDATIONS_HOME="${cwd}/${UI_FOLDER}/cypress/fixtures/${FIXTURE_FOLDER}/.foundations" \
+export CYPRESS_LOCAL_FOUNDATIONS_HOME="${CWD}/${UI_FOLDER}/cypress/fixtures/${FIXTURE_FOLDER}/.foundations" \
 export CYPRESS_SCHEDULER_IP="localhost"
 export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$FOUNDATIONS_HOME 
 export CYPRESS_SCHEDULER_REDIS_PORT=$REDIS_PORT 
@@ -122,5 +124,38 @@ function check_status_of_process() {
     if [ $RESULT -ne 0  ]; then
         echo "Failed to connect to ${process_name}"
         kill -s TERM $script_pid
+    fi
+}
+
+function check_for_config_and_create_if_does_not_exists() {
+    FILE_TYPE=$1
+    if [ $FILE_TYPE == "execution" ]; then
+        CONFIG_PATH="${FOUNDATIONS_HOME}/config/execution"
+        FILE_PATH="${CONFIG_PATH}/default.config.yaml"
+        ENVSUBST_FILE="${CWD}/devops/envsubsts/default.config.envsubst.yaml"
+    elif [ $FILE_TYPE == "submission" ]; then
+        CONFIG_PATH="${FOUNDATIONS_HOME}/config/submission"
+        FILE_PATH="${CONFIG_PATH}/scheduler.config.yaml"
+        ENVSUBST_FILE="${CWD}/devops/envsubsts/scheduler.config.envsubst.yaml"
+    elif [ $FILE_TYPE == "worker_execution" ]; then
+        CONFIG_PATH="${FOUNDATIONS_HOME}/config/local_docker_scheduler/worker_config/execution"
+        FILE_PATH="${CONFIG_PATH}/default.config.yaml"
+        ENVSUBST_FILE="${CWD}/devops/envsubsts/worker.default.config.envsubst.yaml"
+    elif [ $FILE_TYPE == "worker_submission" ]; then
+        CONFIG_PATH="${FOUNDATIONS_HOME}/config/local_docker_scheduler/worker_config/submission"
+        FILE_PATH="${CONFIG_PATH}/scheduler.config.yaml"
+        ENVSUBST_FILE="${CWD}/devops/envsubsts/worker.scheduler.config.envsubst.yaml"
+    else
+        echo "${FILE_TYPE} is an unsupported config file type. Choose between execution, submission, worker_execution and worker_submission"
+        exit 1
+    fi
+
+    if [ ! -f "$FILE_PATH" ]; then
+        mkdir -p $CONFIG_PATH   || true 
+        envsubst < $ENVSUBST_FILE > $FILE_PATH
+        echo "genertated:"
+        cat $FILE_PATH
+    else
+        echo "${FILE_TYPE} configuration found"  
     fi
 }

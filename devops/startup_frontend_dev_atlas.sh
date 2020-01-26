@@ -12,6 +12,10 @@ export REACT_APP_API_STAGING_URL="http://localhost:${AUTH_PROXY_PORT}/api/v2beta
 
 # ***************************************************************************************************************
 
+check_for_config_and_create_if_does_not_exists "execution"
+check_for_config_and_create_if_does_not_exists "submission"
+check_for_config_and_create_if_does_not_exists "worker_execution"
+check_for_config_and_create_if_does_not_exists "worker_submission"
 
 # ***************************************************************************************************************
 

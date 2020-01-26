@@ -15,6 +15,13 @@ pip install -r requirements_test.txt > $F9S_LOG_DIR/install.log 2>&1
 
 # ***************************************************************************************************************
 
+check_for_config_and_create_if_does_not_exists "execution"
+check_for_config_and_create_if_does_not_exists "submission"
+check_for_config_and_create_if_does_not_exists "worker_execution"
+check_for_config_and_create_if_does_not_exists "worker_submission"
+
+# ***************************************************************************************************************
+
 echo "Ensuring that orbit is not also running"
 ./devops/teardown_frontend_dev_orbit.sh
 
