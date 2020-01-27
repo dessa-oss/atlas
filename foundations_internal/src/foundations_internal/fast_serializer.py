@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 def _pick_module():
     try:
         import cPickle as pickle
@@ -12,10 +13,13 @@ def _pick_module():
         import pickle
     return pickle
 
+
 pickle = _pick_module()
+
 
 def serialize(item):
     return pickle.dumps(item, protocol=4)
+
 
 def deserialize(serialized_item):
     try:

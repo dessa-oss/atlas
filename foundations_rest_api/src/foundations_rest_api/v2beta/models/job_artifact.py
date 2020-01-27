@@ -34,7 +34,7 @@ class JobArtifact(PropertyModel):
     @staticmethod
     def _build_artifact_model(job_id, artifact_properities):
         import os.path as path
-        from foundations_contrib.global_state import config_manager
+        from foundations_rest_api.global_state import config_manager
 
         archive_host = config_manager['ARCHIVE_HOST']
         key, file_path, metadata = artifact_properities['artifact']

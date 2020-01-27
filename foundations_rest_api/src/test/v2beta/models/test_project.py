@@ -34,12 +34,12 @@ class TestProjectV2(Spec):
             "foundations_contrib.models.project_listing.ProjectListing.find_project"
         )
         self._redis = self.patch(
-            "foundations_contrib.global_state.redis_connection", fakeredis.FakeRedis()
+            "foundations_rest_api.global_state.redis_connection", fakeredis.FakeRedis()
         )
 
     @tear_down
     def project_tear_down(self):
-        from foundations_contrib.global_state import config_manager
+        from foundations_rest_api.global_state import config_manager
 
         keys = list(config_manager.config().keys())
         for key in keys:
@@ -221,7 +221,7 @@ class TestProjectV2(Spec):
             expected_project.output_metric_names, project.output_metric_names
         )
 
-    @patch("foundations_contrib.global_state.redis_connection")
+    @patch("foundations_rest_api.global_state.redis_connection")
     @patch("foundations_contrib.models.project_listing.ProjectListing")
     def test_all_returns_all_projects_using_correct_redis(
         self, mock_projects, mock_redis

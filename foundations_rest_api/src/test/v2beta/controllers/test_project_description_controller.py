@@ -29,7 +29,7 @@ class TestProjectDescriptionController(Spec):
 
     @set_up
     def set_up(self):
-        self.patch('foundations_contrib.global_state.redis_connection', self.mock_redis)
+        self.patch('foundations_rest_api.global_state.redis_connection', self.mock_redis)
         self.controller.params = {'project_name': self.project_name, 'project_description': self.description}
 
     def test_get_returns_empty_project_description_when_none_specified(self):

@@ -18,7 +18,7 @@ class TestJobTagsController(Spec):
     @let_now
     def redis(self):
         import fakeredis
-        return self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+        return self.patch('foundations_rest_api.global_state.redis_connection', fakeredis.FakeRedis())
 
     @let
     def job_id(self):
@@ -46,7 +46,7 @@ class TestJobTagsController(Spec):
     @set_up
     def set_up(self):
         import fakeredis
-        self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+        self.patch('foundations_rest_api.global_state.redis_connection', fakeredis.FakeRedis())
         self.controller.params = {'job_id': self.job_id, 'tag': {'key': self.key, 'value': self.value}}
         self.mock_tag_set_klass.return_when(self.mock_tag_set, self.mock_message_router, self.job_id, self.key, self.value)
 

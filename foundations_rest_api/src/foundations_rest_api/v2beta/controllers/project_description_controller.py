@@ -25,7 +25,7 @@ class ProjectDescriptionController(object):
         return f'Updated description for {self.params["project_name"]}'
 
     def _redis(self):
-        from foundations_contrib.global_state import redis_connection
+        from foundations_rest_api.global_state import redis_connection
         return redis_connection
 
     def _project_description(self):

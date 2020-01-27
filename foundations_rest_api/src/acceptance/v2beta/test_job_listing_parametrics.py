@@ -4,7 +4,8 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 12 2018
 """
-import numpy as np
+
+
 import foundations
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 from acceptance.v2beta.jobs_tests_helper_mixin_v2 import JobsTestsHelperMixinV2
@@ -37,7 +38,6 @@ class TestJobListingParametrics(
 
     def submit_job(self):
         import subprocess
-        import os
 
         submit_result = subprocess.run(
             "python -m foundations submit --project-name hanna scheduler acceptance/v2beta/fixtures/log_metric_log_param_set_tag log_metric_log_param_set_tag.py",

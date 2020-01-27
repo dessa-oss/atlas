@@ -23,7 +23,7 @@ class TestAuthenticationController(Spec):
             AuthenticationController,
         )
 
-        return AuthenticationController(redirect_url="/api/v2beta/auth/login")
+        return AuthenticationController()
 
     def test_login_without_code_redirects_to_login_page(self):
         from foundations_core_rest_api_components.v1.controllers.authentication_controller import (
@@ -78,7 +78,7 @@ class TestAuthenticationController(Spec):
             self.auth_client.logout.assert_called_once_with("token")
 
     @patch(
-        "foundations_core_rest_api_components.v1.controllers.authentication_controller.verify_token"
+        "foundations_contrib.authentication.utils.verify_token"
     )
     def test_verify_calls_verify_token_with_token_and_client_jwks_issuer(self, verify):
 

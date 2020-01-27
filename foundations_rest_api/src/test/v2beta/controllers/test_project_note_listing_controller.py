@@ -9,10 +9,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec.extensions import let_fake_redis
 from foundations_spec import *
 
-from foundations_rest_api.v2beta.controllers.project_note_listing_controller import (
-    ProjectNoteListingController,
-)
-
 
 class TestProjectNoteListingController(Spec):
 
@@ -40,6 +36,9 @@ class TestProjectNoteListingController(Spec):
 
     @let
     def controller(self):
+        from foundations_rest_api.v2beta.controllers.project_note_listing_controller import (
+            ProjectNoteListingController,
+        )
         return ProjectNoteListingController()
 
     @let
@@ -48,6 +47,8 @@ class TestProjectNoteListingController(Spec):
 
     @set_up
     def set_up(self):
+        self.patch("foundations_rest_api.global_state.redis_connection", self.mock_redis)
+        # mock the redis used by authentication
         self.patch("foundations_contrib.global_state.redis_connection", self.mock_redis)
         self.controller.params = {
             "author": self.userid,

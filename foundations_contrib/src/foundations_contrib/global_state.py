@@ -12,7 +12,9 @@ from foundations_contrib.log_manager import LogManager
 from foundations_internal.deployment_manager import DeploymentManager
 from foundations_contrib.config_manager import ConfigManager
 
+# noinspection PyUnresolvedReferences
 from foundations_internal.global_state import module_manager
+# noinspection PyUnresolvedReferences
 from foundations_contrib.authentication.user_token import user_token
 
 import concurrent.futures

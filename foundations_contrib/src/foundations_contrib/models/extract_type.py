@@ -6,19 +6,19 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_contrib.utils import is_string, is_number
-import numbers
+
 
 def extract_type(value):
     if isinstance(value, bool):
-        return 'bool'
+        return "bool"
 
     if is_number(value):
-        return 'number'
+        return "number"
 
     if is_string(value):
-        return 'string'
+        return "string"
 
     if isinstance(value, list):
-        return 'array ' + extract_type(value[0])
+        return "array " + extract_type(value[0])
 
-    return 'unknown'
+    return "unknown"

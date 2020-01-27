@@ -3,7 +3,7 @@ def cleanup():
     from os import getcwd, remove
     from os.path import isdir
     from glob import glob
-    from foundations_contrib.global_state import redis_connection
+    from foundations_rest_api.global_state import redis_connection
     from foundations_contrib.global_state import foundations_context
     from foundations_internal.pipeline_context import PipelineContext
     from foundations_internal.pipeline import Pipeline

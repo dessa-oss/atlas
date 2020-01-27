@@ -42,7 +42,7 @@ class TestJobTagController(Spec):
 
     @set_up
     def set_up(self):
-        self.patch('foundations_contrib.global_state.redis_connection', self.mock_redis)
+        self.patch('foundations_rest_api.global_state.redis_connection', self.mock_redis)
         self.controller.params = {'job_id': self.job_id, 'key': self.key}
         self.mock_tag_set_klass.return_when(self.mock_tag_set, self.mock_message_router, self.job_id, self.key, self.value)
 

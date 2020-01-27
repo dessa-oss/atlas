@@ -6,8 +6,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from flask import request, make_response, Response
-class APIResourceBuilder(object):
 
+
+class APIResourceBuilder(object):
     def __init__(self, app_manager, klass, base_path):
         self._app_manager = app_manager
         self._klass = klass
@@ -15,23 +16,23 @@ class APIResourceBuilder(object):
         self._api_actions = {}
 
     def _load_get_route(self):
-        if hasattr(self._klass, 'index'):
-            self._api_actions['get'] = self._api_get('index')
-        if hasattr(self._klass, 'show'):
-            self._api_actions['get'] = self._api_get('show')
-    
+        if hasattr(self._klass, "index"):
+            self._api_actions["get"] = self._api_get("index")
+        if hasattr(self._klass, "show"):
+            self._api_actions["get"] = self._api_get("show")
+
     def _load_post_route(self):
-        if hasattr(self._klass, 'post'):
-            self._api_actions['post'] = self._create_or_update_api('post')
-    
+        if hasattr(self._klass, "post"):
+            self._api_actions["post"] = self._create_or_update_api("post")
+
     def _load_put_route(self):
-        if hasattr(self._klass, 'update'):
-            self._api_actions['put'] = self._create_or_update_api('update')
-    
+        if hasattr(self._klass, "update"):
+            self._api_actions["put"] = self._create_or_update_api("update")
+
     def _load_delete_route(self):
-        if hasattr(self._klass, 'delete'):
-            self._api_actions['delete'] = self._delete_api_create()
-    
+        if hasattr(self._klass, "delete"):
+            self._api_actions["delete"] = self._delete_api_create()
+
     def _create_action(self):
         self._load_get_route()
         self._load_post_route()
@@ -47,7 +48,7 @@ class APIResourceBuilder(object):
         from flask_restful import Resource
         import random
 
-        class_name = '_%08x' % random.getrandbits(32)
+        class_name = "_%08x" % random.getrandbits(32)
         return type(class_name, (Resource,), self._api_actions)
 
     def _api_get(self, method_name):
@@ -58,9 +59,9 @@ class APIResourceBuilder(object):
 
             response = method()
             return response.as_json(), response.status()
-            
+
         return _get
-    
+
     def _create_or_update_api(self, method_name):
         def _post(resource_self, **kwargs):
             instance = self._klass()
@@ -74,8 +75,9 @@ class APIResourceBuilder(object):
             cookie = None
             if response.cookie():
                 cookie_key, cookie_value = list(response.cookie().items())[0]
-                cookie = '{}={};path=/'.format(cookie_key, cookie_value)
-            return response.as_json(), response.status(), {'Set-Cookie': cookie }
+                cookie = "{}={};path=/".format(cookie_key, cookie_value)
+            return response.as_json(), response.status(), {"Set-Cookie": cookie}
+
         return _post
 
     def _delete_api_create(self):
@@ -85,6 +87,7 @@ class APIResourceBuilder(object):
 
             response = instance.delete()
             return response.as_json(), response.status()
+
         return _delete
 
     def _api_params(self, kwargs):
@@ -96,6 +99,7 @@ class APIResourceBuilder(object):
             params[key] = value if len(value) > 1 else value[0]
         params.update(request.form)
         return params
+
 
 def api_resource(base_path):
     def _make_api_resource(klass):

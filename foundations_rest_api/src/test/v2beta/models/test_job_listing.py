@@ -33,7 +33,7 @@ class TestJobListingV2(Spec):
 
         self._pipeline_context = PipelineContext()
         self._pipeline = Pipeline(self._pipeline_context)
-        self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+        self.patch('foundations_rest_api.global_state.redis_connection', fakeredis.FakeRedis())
 
     def test_has_job_id(self):
         from uuid import uuid4

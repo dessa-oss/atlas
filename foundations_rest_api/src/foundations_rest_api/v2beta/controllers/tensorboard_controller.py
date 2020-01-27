@@ -39,10 +39,10 @@ class TensorboardController:
 
     @staticmethod
     def _tensorboard_api_host():
-        from foundations_contrib.global_state import config_manager
+        from foundations_rest_api.global_state import config_manager
         return config_manager['TENSORBOARD_API_HOST']
 
     @staticmethod
     def _tensorboard_host():
-        from foundations_contrib.global_state import config_manager
+        from foundations_rest_api.global_state import config_manager
         return config_manager['TENSORBOARD_HOST']
