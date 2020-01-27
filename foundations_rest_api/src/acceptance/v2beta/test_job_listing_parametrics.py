@@ -27,6 +27,7 @@ class TestJobListingParametrics(
     @classmethod
     def tearDownClass(klass):
         from foundations_contrib.global_state import redis_connection as redis
+
         redis.flushall()
 
     @set_up
@@ -40,7 +41,12 @@ class TestJobListingParametrics(
         import subprocess
 
         submit_result = subprocess.run(
-            "python -m foundations submit --project-name hanna scheduler acceptance/v2beta/fixtures/log_metric_log_param_set_tag log_metric_log_param_set_tag.py",
+            "python -m foundations submit --project-name {0} {1} {2} {3}".format(
+                "hanna",
+                "scheduler",
+                "acceptance/v2beta/fixtures/log_metric_log_param_set_tag",
+                "log_metric_log_param_set_tag.py"
+            ),
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
