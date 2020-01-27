@@ -77,6 +77,7 @@ const ValidationResultsActions = {
     );
     ValidationResultsActions.createTestRowIfExists('min', 'Min', validationResult, allRows, onSelectRow);
     ValidationResultsActions.createTestRowIfExists('max', 'Max', validationResult, allRows, onSelectRow);
+    ValidationResultsActions.createTestRowIfExists('domain', 'Domain', validationResult, allRows, onSelectRow);
     return allRows;
   },
 
@@ -239,6 +240,38 @@ const ValidationResultsActions = {
     return header.concat(rows);
   },
 
+  getDomainRows: validationTestResult => {
+    const header = [
+      <tr key="header" className="validation-results-test-pane-table-header validation-results-test-pane-table-row">
+        <th>Attribute Name</th>
+        <th>Values out of Bounds</th>
+        <th>Percentage out of Bounds</th>
+        <th>Validation Outcome</th>
+      </tr>,
+    ];
+
+    const rows = validationTestResult.domain.details_by_attribute.map((test, ind) => {
+      const valuesOutOfBounds = 'values_out_of_bounds' in test ? test.values_out_of_bounds : 'N/A';
+      const percentageOutOfBounds = (
+        'percentage_out_of_bounds' in test
+          ? CommonActions.decimalToPercentage(test.percentage_out_of_bounds)
+          : 'N/A'
+      );
+      return (
+        // eslint-disable-next-line react/no-array-index-key
+        <tr key={ind} className="validation-results-test-pane-table-row">
+          <th><OverflowTooltip text={test.attribute_name} /></th>
+          <th><OverflowTooltip text={valuesOutOfBounds} /></th>
+          <th><OverflowTooltip text={percentageOutOfBounds} /></th>
+          <th className={`validation-outcome-${test.validation_outcome}`}>
+            <OverflowTooltip text={test.validation_outcome} />
+          </th>
+        </tr>
+      );
+    });
+    return header.concat(rows);
+  },
+
   getTestTableRows: validationTestResult => {
     const testType = Object.keys(validationTestResult)[0];
 
@@ -256,6 +289,9 @@ const ValidationResultsActions = {
     }
     if (testType === 'max') {
       return ValidationResultsActions.getMaxRows(validationTestResult);
+    }
+    if (testType === 'domain') {
+      return ValidationResultsActions.getDomainRows(validationTestResult);
     }
     return [];
   },
