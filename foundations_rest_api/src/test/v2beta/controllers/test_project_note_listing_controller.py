@@ -17,7 +17,7 @@ class TestProjectNoteListingController(Spec):
     @let_now
     def auth_client(self):
         constructor = self.patch(
-            "foundations_contrib.authentication.authentication_client.AuthenticationClient",
+            "foundations_rest_api.utils.AuthenticationClient",
             autospec=True,
         )
         return constructor("conf", "redirect")
