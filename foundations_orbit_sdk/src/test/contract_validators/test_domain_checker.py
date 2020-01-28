@@ -276,50 +276,18 @@ class TestDomainChecker(Spec):
 
 
     @given(dataframes(st.booleans()))
-    @settings(deadline=None)
     def test_domain_checker_using_hypothesis_bools(self, df):
-        assume(not df.empty)
-
-        domain_checker = DomainChecker()
-        with self.assert_does_not_raise():
-            domain_checker.calculate_stats_from_dataframe(df)
-            domain_checker.configure(attributes=list(df.columns))
-            actual_result = domain_checker.validate(df)
-
-            expected_result = {
-                'summary': self._generate_summary_dictionary(healthy=len(df.columns)),
-                'details_by_attribute': [{
-                    'attribute_name': column_name,
-                    'validation_outcome': 'healthy'
-                } for column_name in df.columns]
-            }
-
-            self.assertEqual(expected_result, actual_result)
+        self._hypothesis_run_validation_against_same_dataframe(df)
 
     @given(dataframes(st.text(alphabet=string.ascii_lowercase)))
-    @settings(deadline=None)
     def test_domain_checker_using_hypothesis_strings(self, df):
-        assume(not df.empty)
-
-        domain_checker = DomainChecker()
-        with self.assert_does_not_raise():
-            domain_checker.calculate_stats_from_dataframe(df)
-            domain_checker.configure(attributes=list(df.columns))
-            actual_result = domain_checker.validate(df)
-
-            expected_result = {
-                'summary': self._generate_summary_dictionary(healthy=len(df.columns)),
-                'details_by_attribute': [{
-                    'attribute_name': column_name,
-                    'validation_outcome': 'healthy'
-                } for column_name in df.columns]
-            }
-
-            self.assertEqual(expected_result, actual_result)
+        self._hypothesis_run_validation_against_same_dataframe(df)
 
     @given(dataframes(st.integers()))
-    @settings(deadline=None)
     def test_domain_checker_using_hypothesis_numbers(self, df):
+        self._hypothesis_run_validation_against_same_dataframe(df)
+
+    def _hypothesis_run_validation_against_same_dataframe(self, df):
         assume(not df.empty)
 
         domain_checker = DomainChecker()
