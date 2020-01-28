@@ -168,7 +168,8 @@ pipeline{
                                     }
                                     ws("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
-                                        sh 'python -Wi -m unittest -f -v auth_acceptance'
+                                        sh """export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
+                                                python -Wi -m unittest -f -v auth_acceptance"""
                                         sh "../devops/teardown_frontend_dev_atlas.sh || true"
                                     }
                                 }
@@ -208,6 +209,7 @@ pipeline{
                                         export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
                                         export CYPRESS_GUI_HOST=localhost && \
                                         export CYPRESS_GUI_PORT=8000 && export CYPRESS_ATLAS_EDITION=CE && \
+                                        export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
                                         cd foundations_ui && \
                                         npm run cy:run --"""
                                 sh "`pwd`/devops/teardown_frontend_dev_atlas.sh"
@@ -232,6 +234,7 @@ pipeline{
                                         export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
                                         export CYPRESS_GUI_HOST=localhost && \
                                         export CYPRESS_GUI_PORT=8001 && \
+                                        export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
                                         cd foundations_ui_orbit && \
                                         npm run cy:run --"""
                                 sh "`pwd`/devops/teardown_frontend_dev_orbit.sh"
