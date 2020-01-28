@@ -42,7 +42,7 @@ pipeline{
                 stage('Run Coverage Tests') {
                     steps {
                         container("python3") {
-                            sh "./run_coverage_tests.sh"
+                            sh "./run_coverage_tests.sh unittest"
                         }
                     }
                 }
@@ -50,10 +50,21 @@ pipeline{
         }
         stage('Run Integration Tests and Prepare for Acceptance Tests'){
             parallel{
-                stage('Run Integration Tests') {
-                    steps {
-                        container("python3") {
-                            sh './run_integration_tests.sh'
+                stage("Integration Tests") {{
+                    stages{
+                        stage('Run Integration Tests') {
+                            steps {
+                                container("python3") {
+                                    sh './run_integration_tests.sh'
+                                }
+                            }
+                        }
+                        stage('Run Coverage Tests') {
+                            steps {
+                                container("python3") {
+                                    sh "./run_coverage_tests.sh integration"
+                                }
+                            }
                         }
                     }
                 }
@@ -181,7 +192,7 @@ pipeline{
                 }
                 stage('Run Atlas Cypress Tests') {
                     steps {
-                        container("python3-4") {
+                        container("python3-1") {
                             dir("${WORKSPACE}") {
                                 sh """export FOUNDATIONS_SCHEDULER_URL=http://${ATLAS_LOCAL_SCHEDULER}:5000 && \
                                         REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && \
@@ -197,7 +208,7 @@ pipeline{
                                         export CYPRESS_GUI_HOST=localhost && \
                                         export CYPRESS_GUI_PORT=8000 && export CYPRESS_ATLAS_EDITION=CE && \
                                         cd foundations_ui && \
-                                        npm run cy:run -- --headless"""
+                                        npm run cy:run --"""
                                 sh "`pwd`/devops/teardown_frontend_dev_atlas.sh"
                             }
                         }
@@ -205,7 +216,7 @@ pipeline{
                 }
                 stage('Run Orbit Cypress Tests') {
                     steps {
-                        container("python3-1") {
+                        container("python3-4") {
                             dir("${WORKSPACE}") {
                                 sh """export FOUNDATIONS_SCHEDULER_URL=http://${ORBIT_LOCAL_SCHEDULER}:5000 && \
                                         REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && \
@@ -221,7 +232,7 @@ pipeline{
                                         export CYPRESS_GUI_HOST=localhost && \
                                         export CYPRESS_GUI_PORT=8001 && \
                                         cd foundations_ui_orbit && \
-                                        npm run cy:run -- --headless"""
+                                        npm run cy:run --"""
                                 sh "`pwd`/devops/teardown_frontend_dev_orbit.sh"
                             }
                         }
