@@ -10,6 +10,17 @@ from foundations_orbit.contract_validators.domain_checker import DomainChecker, 
 
 import numpy as np
 import pandas as pd
+import string
+
+from hypothesis import given, assume, example, settings
+import hypothesis.strategies as st
+from hypothesis.extra.pandas import column, data_frames
+
+@st.composite
+def dataframes(draw, *strategies: st.SearchStrategy) -> st.SearchStrategy:
+    names = draw(st.lists(st.text(min_size=1), unique=True, min_size=1))
+    cols = [column(name, elements=draw(st.sampled_from(strategies))) for name in names]
+    return draw(data_frames(cols))
 
 class TestDomainChecker(Spec):
 
@@ -262,6 +273,70 @@ class TestDomainChecker(Spec):
         })
 
         self.assertEqual(expected_result, str(self.domain_checker))
+
+
+    @given(dataframes(st.booleans()))
+    @settings(deadline=None)
+    def test_domain_checker_using_hypothesis_bools(self, df):
+        assume(not df.empty)
+
+        domain_checker = DomainChecker()
+        with self.assert_does_not_raise():
+            domain_checker.calculate_stats_from_dataframe(df)
+            domain_checker.configure(attributes=list(df.columns))
+            actual_result = domain_checker.validate(df)
+
+            expected_result = {
+                'summary': self._generate_summary_dictionary(healthy=len(df.columns)),
+                'details_by_attribute': [{
+                    'attribute_name': column_name,
+                    'validation_outcome': 'healthy'
+                } for column_name in df.columns]
+            }
+
+            self.assertEqual(expected_result, actual_result)
+
+    @given(dataframes(st.text(alphabet=string.ascii_lowercase)))
+    @settings(deadline=None)
+    def test_domain_checker_using_hypothesis_strings(self, df):
+        assume(not df.empty)
+
+        domain_checker = DomainChecker()
+        with self.assert_does_not_raise():
+            domain_checker.calculate_stats_from_dataframe(df)
+            domain_checker.configure(attributes=list(df.columns))
+            actual_result = domain_checker.validate(df)
+
+            expected_result = {
+                'summary': self._generate_summary_dictionary(healthy=len(df.columns)),
+                'details_by_attribute': [{
+                    'attribute_name': column_name,
+                    'validation_outcome': 'healthy'
+                } for column_name in df.columns]
+            }
+
+            self.assertEqual(expected_result, actual_result)
+
+    @given(dataframes(st.integers()))
+    @settings(deadline=None)
+    def test_domain_checker_using_hypothesis_numbers(self, df):
+        assume(not df.empty)
+
+        domain_checker = DomainChecker()
+        with self.assert_does_not_raise():
+            domain_checker.calculate_stats_from_dataframe(df)
+            domain_checker.configure(attributes=list(df.columns))
+            actual_result = domain_checker.validate(df)
+
+            expected_result = {
+                'summary': self._generate_summary_dictionary(healthy=len(df.columns)),
+                'details_by_attribute': [{
+                    'attribute_name': column_name,
+                    'validation_outcome': 'healthy'
+                } for column_name in df.columns]
+            }
+
+            self.assertEqual(expected_result, actual_result)
 
     def _generate_dataframe(self, column_names, dtype, min=-10, max=10):
         data = {}
