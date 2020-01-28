@@ -3,15 +3,15 @@ before(() => {
 });
 
 beforeEach(() => {
-  const schedulerIP = Cypress.env('SCHEDULER_IP');
   const guiHost = Cypress.env('GUI_HOST');
-  const guiPort = Cypress.env('GUI_PORT');
+  const proxyPort = Cypress.env('PROXY_PORT');
 
-  cy.visit(`http://${guiHost}:${guiPort}`);
-  cy.get('input[name=username]').type('test', { force: true });
-  cy.get('input[name=password]').type('test', { force: true });
-  cy.get('.login-submit').click({ force: true });
-  cy.wait(200);
-
-  // cy.exec(`foundations login http://${schedulerIP}:5558 -u test -p test`);
+  cy.request({
+    url: `http://${guiHost}:${proxyPort}/api/v2beta/auth/cli_login`,
+    headers: { Authorization: 'Basic dGVzdDp0ZXN0' },
+  })
+    .then(response => {
+      cy.setCookie('atlas_access_token', response.body.access_token);
+      cy.setCookie('atlas_refresh_token', response.body.refresh_token);
+    });
 });
