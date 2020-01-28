@@ -215,8 +215,8 @@ pipeline{
                                         cd foundations_ui && \
                                         npm run cy:run --"""
                                 sh "`pwd`/devops/teardown_frontend_dev_atlas.sh"
-                                sh "kill -9 $(lsof -i:8000 -t) || true"
-                                sh "kill -9 $(lsof -i:8081 -t) || true"
+                                sh "kill -9 `lsof -i:8000 -t` || true"
+                                sh "kill -9 `lsof -i:8081 -t` || true"
                             }
                         }
                     }
@@ -244,8 +244,8 @@ pipeline{
                                         cd foundations_ui_orbit && \
                                         npm run cy:run --"""
                                 sh "`pwd`/devops/teardown_frontend_dev_orbit.sh"
-                                sh "kill -9 $(lsof -i:8001 -t) || true"
-                                sh "kill -9 $(lsof -i:8082 -t) || true"
+                                sh "kill -9 `lsof -i:8001 -t` || true"
+                                sh "kill -9 `lsof -i:8082 -t` || true"
                             }
                         }
                     }
