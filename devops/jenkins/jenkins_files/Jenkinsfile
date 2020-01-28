@@ -56,7 +56,7 @@ pipeline{
                         stage('Run Integration Tests') {
                             steps {
                                 container("python3") {
-                                    sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && ./run_integration_tests.sh'
+                                    sh './run_integration_tests.sh'
                                 }
                             }
                         }
@@ -131,7 +131,9 @@ pipeline{
                                 container("python3") {
                                     ws("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
-                                        sh 'export LOCAL_DOCKER_SCHEDULER_HOST=$ATLAS_LOCAL_SCHEDULER && export REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && python -Wi -m unittest -f -v acceptance'
+                                        sh """export LOCAL_DOCKER_SCHEDULER_HOST=$ATLAS_LOCAL_SCHEDULER && \
+                                                export REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && \
+                                                python -Wi -m unittest -f -v acceptance"""
                                     }
                                 }
                             }
@@ -158,7 +160,9 @@ pipeline{
                             steps {
                                 container("python3-2") {
                                     ws("${WORKSPACE}/foundations_rest_api/src") {
-                                        sh 'export FOUNDATIONS_HOME=`pwd`/acceptance/v2beta/fixtures/remote_foundations_home && python -Wi -m unittest -f -v acceptance'
+                                        sh "./foundations_rest_api/config/envsubst_local.sh"
+                                        sh """export FOUNDATIONS_HOME=`pwd`/acceptance/v2beta/fixtures/remote_foundations_home && \
+                                                python -Wi -m unittest -f -v acceptance"""
                                     }
                                 }
                             }
@@ -166,17 +170,13 @@ pipeline{
                         stage('Atlas Auth Acceptance Tests'){
                             steps {
                                 container("python3-2") {
-                                    ws("${WORKSPACE}/devops") {
-                                        sh "./teardown_frontend_dev_atlas.sh || true"
-                                        sh """export AUTH_SERVER_URL=http://keycloak-headless.ci-pipeline.svc.cluster.local:8080/auth && \
-                                                cd .. && sh /home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh && cd - && \
-                                                export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
-                                                export FOUNDATIONS_SCHEDULER_URL=localhost:5000 && \
-                                                export REDIS_HOST=localhost && \
+                                    dir("${WORKSPACE}") {
+                                        sh "./devops/teardown_frontend_dev_atlas.sh || true"
+                                        sh "./foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh"
+                                        sh """export AUTH_CLIENT_CONFIG_PATH=`pwd`/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
                                                 export REDIS_PORT=6379 && \
-                                                cd ../testing && \
-                                                export FOUNDATIONS_HOME=`pwd`/auth_acceptance/foundations_home
-                                                cd - && \
+                                                export FOUNDATIONS_SCHEDULER_URL=http://$ATLAS_LOCAL_SCHEDULER:5000 && \
+                                                export FOUNDATIONS_HOME=`pwd`/testing/auth_acceptance/foundations_home && \
                                                 python startup_atlas_api.py 37722 &"""
                                     }
                                     ws("${WORKSPACE}/testing") {
@@ -211,18 +211,21 @@ pipeline{
                     steps {
                         container("python3-4") {
                             dir("${WORKSPACE}") {
-                                // sh "export FOUNDATIONS_SCHEDULER_URL=http://${ATLAS_LOCAL_SCHEDULER}:5000 && REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && REDIS_PORT=5556 && python `pwd`/devops/startup_atlas_api.py 8000 &"
-                                // sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8000/api/v2beta/projects' 10"
-                                // sh "export REACT_APP_API_URL=localhost:8000 && cd foundations_ui && npm start &"
-                                // sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8080' 10"
-                                // sh """export CYPRESS_LOCAL_FOUNDATIONS_HOME=`pwd`/foundations_ui/cypress/fixtures/atlas_scheduler/.foundations && \
-                                //         export CYPRESS_SCHEDULER_IP=$ATLAS_LOCAL_SCHEDULER && \
-                                //         export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$REMOTE_FOUNDATIONS_HOME && \
-                                //         export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
-                                //         export CYPRESS_GUI_HOST=localhost && \
-                                //         export CYPRESS_GUI_PORT=8000 && export CYPRESS_ATLAS_EDITION=CE && \
-                                //         npm run cy:run --"""
-                                // sh "`pwd`/devops/teardown_frontend_dev_atlas.sh"
+                                sh """export FOUNDATIONS_SCHEDULER_URL=http://${ATLAS_LOCAL_SCHEDULER}:5000 && \
+                                        REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && \
+                                        REDIS_PORT=5556 && \
+                                        python `pwd`/devops/startup_atlas_api.py 8000 &"""
+                                sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8000/api/v2beta/projects' 10 || true"
+                                sh "export REACT_APP_API_URL=localhost:8000 && cd foundations_ui && npm start &"
+                                sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8080' 10 || true"
+                                sh """export CYPRESS_LOCAL_FOUNDATIONS_HOME=`pwd`/foundations_ui/cypress/fixtures/atlas_scheduler/.foundations && \
+                                        export CYPRESS_SCHEDULER_IP=$ATLAS_LOCAL_SCHEDULER && \
+                                        export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$REMOTE_FOUNDATIONS_HOME && \
+                                        export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
+                                        export CYPRESS_GUI_HOST=localhost && \
+                                        export CYPRESS_GUI_PORT=8000 && export CYPRESS_ATLAS_EDITION=CE && \
+                                        npm run cy:run --"""
+                                sh "`pwd`/devops/teardown_frontend_dev_atlas.sh"
                             }
                         }
                     }
@@ -231,18 +234,21 @@ pipeline{
                     steps {
                         container("python3-1") {
                             dir("${WORKSPACE}") {
-                                // sh "export FOUNDATIONS_SCHEDULER_URL=http://${ORBIT_LOCAL_SCHEDULER}:5000 && REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && REDIS_PORT=5556 && python `pwd`/devops/startup_orbit_api.py 8001 &"
-                                // sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8001/api/v2beta/projects' 10"
-                                // sh "export REACT_APP_API_URL=localhost:8001 && cd foundations_ui_orbit && npm start &"
-                                // sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8081' 10"
-                                // sh """export CYPRESS_LOCAL_FOUNDATIONS_HOME=`pwd`/foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations && \
-                                //         export CYPRESS_SCHEDULER_IP=$ORBIT_LOCAL_SCHEDULER && \
-                                //         export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$REMOTE_FOUNDATIONS_HOME && \
-                                //         export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
-                                //         export CYPRESS_GUI_HOST=localhost && \
-                                //         export CYPRESS_GUI_PORT=8001 && \
-                                //         npm run cy:run --"""
-                                // sh "`pwd`/devops/teardown_frontend_dev_orbit.sh"
+                                sh """export FOUNDATIONS_SCHEDULER_URL=http://${ORBIT_LOCAL_SCHEDULER}:5000 && \
+                                        REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && \
+                                        REDIS_PORT=5556 && \
+                                        python `pwd`/devops/startup_orbit_api.py 8001 &"""
+                                sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8001/api/v2beta/projects' 10 || true"
+                                sh "export REACT_APP_API_URL=localhost:8001 && cd foundations_ui_orbit && npm start &"
+                                sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8081' 10 || true"
+                                sh """export CYPRESS_LOCAL_FOUNDATIONS_HOME=`pwd`/foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations && \
+                                        export CYPRESS_SCHEDULER_IP=$ORBIT_LOCAL_SCHEDULER && \
+                                        export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$REMOTE_FOUNDATIONS_HOME && \
+                                        export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
+                                        export CYPRESS_GUI_HOST=localhost && \
+                                        export CYPRESS_GUI_PORT=8001 && \
+                                        npm run cy:run --"""
+                                sh "`pwd`/devops/teardown_frontend_dev_orbit.sh"
                             }
                         }
                     }
@@ -361,7 +367,7 @@ pipeline{
                     ]
                 ]
 
-                slackSend(channel: '#f9s-builds', attachments: attachments)
+                //slackSend(channel: '#f9s-builds', attachments: attachments)
             }
         }
         success {
