@@ -196,58 +196,58 @@ pipeline{
                 stage('Run Atlas Cypress Tests') {
                     steps {
                         container("python3-1") {
-                            dir("${WORKSPACE}") {
-                                sh """export FOUNDATIONS_SCHEDULER_URL=http://${ATLAS_LOCAL_SCHEDULER}:5000 && \
-                                        REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && \
-                                        REDIS_PORT=5556 && \
-                                        python `pwd`/devops/startup_atlas_api.py 8000 &"""
-                                sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8000/api/v2beta/projects' 10 || true"
-                                sh """export REACT_APP_API_URL=localhost:8000 && \
-                                        cd foundations_ui && \
-                                        PORT=8082 npm start &"""
-                                sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8082' 10 || true"
-                                sh """export CYPRESS_LOCAL_FOUNDATIONS_HOME=`pwd`/foundations_ui/cypress/fixtures/atlas_scheduler/.foundations && \
-                                        export CYPRESS_SCHEDULER_IP=$ATLAS_LOCAL_SCHEDULER && \
-                                        export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$REMOTE_FOUNDATIONS_HOME && \
-                                        export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
-                                        export CYPRESS_GUI_HOST=localhost && \
-                                        export CYPRESS_GUI_PORT=8082 && export CYPRESS_ATLAS_EDITION=CE && \
-                                        export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
-                                        cd foundations_ui && \
-                                        npm run cy:run --"""
-                                sh "`pwd`/devops/teardown_frontend_dev_atlas.sh"
-                                sh "kill -9 `lsof -i:8000 -t` || true"
-                                sh "kill -9 `lsof -i:8082 -t` || true"
-                            }
+                            // dir("${WORKSPACE}") {
+                            //     sh """export FOUNDATIONS_SCHEDULER_URL=http://${ATLAS_LOCAL_SCHEDULER}:5000 && \
+                            //             REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && \
+                            //             REDIS_PORT=5556 && \
+                            //             python `pwd`/devops/startup_atlas_api.py 8000 &"""
+                            //     sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8000/api/v2beta/projects' 10 || true"
+                            //     sh """export REACT_APP_API_URL=localhost:8000 && \
+                            //             cd foundations_ui && \
+                            //             PORT=8082 npm start &"""
+                            //     sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8082' 10 || true"
+                            //     sh """export CYPRESS_LOCAL_FOUNDATIONS_HOME=`pwd`/foundations_ui/cypress/fixtures/atlas_scheduler/.foundations && \
+                            //             export CYPRESS_SCHEDULER_IP=$ATLAS_LOCAL_SCHEDULER && \
+                            //             export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$REMOTE_FOUNDATIONS_HOME && \
+                            //             export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
+                            //             export CYPRESS_GUI_HOST=localhost && \
+                            //             export CYPRESS_GUI_PORT=8082 && export CYPRESS_ATLAS_EDITION=CE && \
+                            //             export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
+                            //             cd foundations_ui && \
+                            //             npm run cy:run --"""
+                            //     sh "`pwd`/devops/teardown_frontend_dev_atlas.sh"
+                            //     sh "kill -9 `lsof -i:8000 -t` || true"
+                            //     sh "kill -9 `lsof -i:8082 -t` || true"
+                            // }
                         }
                     }
                 }
                 stage('Run Orbit Cypress Tests') {
                     steps {
                         container("python3-4") {
-                            dir("${WORKSPACE}") {
-                                sh """export FOUNDATIONS_SCHEDULER_URL=http://${ORBIT_LOCAL_SCHEDULER}:5000 && \
-                                        REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && \
-                                        REDIS_PORT=5556 && \
-                                        python `pwd`/devops/startup_orbit_api.py 8001 &"""
-                                sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8001/api/v2beta/projects' 10 || true"
-                                sh """export REACT_APP_API_URL=localhost:8001 && \
-                                        cd foundations_ui_orbit && \
-                                        PORT=8083 npm start &"""
-                                sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8083' 10 || true"
-                                sh """export CYPRESS_LOCAL_FOUNDATIONS_HOME=`pwd`/foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations && \
-                                        export CYPRESS_SCHEDULER_IP=$ORBIT_LOCAL_SCHEDULER && \
-                                        export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$REMOTE_FOUNDATIONS_HOME && \
-                                        export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
-                                        export CYPRESS_GUI_HOST=localhost && \
-                                        export CYPRESS_GUI_PORT=8083 && \
-                                        export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
-                                        cd foundations_ui_orbit && \
-                                        npm run cy:run --"""
-                                sh "`pwd`/devops/teardown_frontend_dev_orbit.sh"
-                                sh "kill -9 `lsof -i:8001 -t` || true"
-                                sh "kill -9 `lsof -i:8083 -t` || true"
-                            }
+                            // dir("${WORKSPACE}") {
+                            //     sh """export FOUNDATIONS_SCHEDULER_URL=http://${ORBIT_LOCAL_SCHEDULER}:5000 && \
+                            //             REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && \
+                            //             REDIS_PORT=5556 && \
+                            //             python `pwd`/devops/startup_orbit_api.py 8001 &"""
+                            //     sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8001/api/v2beta/projects' 10 || true"
+                            //     sh """export REACT_APP_API_URL=localhost:8001 && \
+                            //             cd foundations_ui_orbit && \
+                            //             PORT=8083 npm start &"""
+                            //     sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8083' 10 || true"
+                            //     sh """export CYPRESS_LOCAL_FOUNDATIONS_HOME=`pwd`/foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations && \
+                            //             export CYPRESS_SCHEDULER_IP=$ORBIT_LOCAL_SCHEDULER && \
+                            //             export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$REMOTE_FOUNDATIONS_HOME && \
+                            //             export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
+                            //             export CYPRESS_GUI_HOST=localhost && \
+                            //             export CYPRESS_GUI_PORT=8083 && \
+                            //             export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
+                            //             cd foundations_ui_orbit && \
+                            //             npm run cy:run --"""
+                            //     sh "`pwd`/devops/teardown_frontend_dev_orbit.sh"
+                            //     sh "kill -9 `lsof -i:8001 -t` || true"
+                            //     sh "kill -9 `lsof -i:8083 -t` || true"
+                            // }
                         }
                     }
                 }
