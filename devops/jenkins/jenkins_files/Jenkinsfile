@@ -164,7 +164,7 @@ pipeline{
                                                 export REDIS_PORT=6379 && \
                                                 export FOUNDATIONS_SCHEDULER_URL=http://$ATLAS_LOCAL_SCHEDULER:5000 && \
                                                 export FOUNDATIONS_HOME=`pwd`/testing/auth_acceptance/foundations_home && \
-                                                python startup_atlas_api.py 37722 &"""
+                                                python ./devops/startup_atlas_api.py 37722 &"""
                                     }
                                     ws("${WORKSPACE}/testing") {
                                         sh 'cp -r ../testing/* . || true'
