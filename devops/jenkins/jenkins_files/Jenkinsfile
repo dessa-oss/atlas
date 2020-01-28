@@ -50,7 +50,7 @@ pipeline{
         }
         stage('Run Integration Tests and Prepare for Acceptance Tests'){
             parallel{
-                stage("Integration Tests") {{
+                stage("Integration Tests") {
                     stages{
                         stage('Run Integration Tests') {
                             steps {
