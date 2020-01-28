@@ -104,7 +104,7 @@ pipeline{
                             ws("${WORKSPACE}/testing") {
                                 sh 'python -m pip install ../dist/*.whl'
                             }
-                            dir("${WORKSPACE}/foundations_ui") {
+                            dir("${WORKSPACE}/foundations_ui_orbit") {
                                 sh "yarn install"
                             }
                         }
