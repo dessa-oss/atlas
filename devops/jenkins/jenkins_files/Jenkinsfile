@@ -35,14 +35,18 @@ pipeline{
                 stage('Run Unit Tests') {
                     steps {
                         container("python3") {
-                            sh "./run_unit_tests.sh"
+                            dir("${WORKSPACE}"){
+                                sh "./run_unit_tests.sh"
+                            }
                         }
                     }
                 }
                 stage('Run Coverage Tests') {
                     steps {
                         container("python3") {
-                            sh "./run_coverage_tests.sh unittest"
+                            dir("${WORKSPACE}"){
+                                sh "./run_coverage_tests.sh unittest"
+                            }
                         }
                     }
                 }
@@ -51,19 +55,10 @@ pipeline{
         stage('Run Integration Tests and Prepare for Acceptance Tests'){
             parallel{
                 stage("Integration Tests") {
-                    stages{
-                        stage('Run Integration Tests') {
-                            steps {
-                                container("python3") {
-                                    sh './run_integration_tests.sh'
-                                }
-                            }
-                        }
-                        stage('Run Coverage Tests') {
-                            steps {
-                                container("python3") {
-                                    sh "./run_coverage_tests.sh integration"
-                                }
+                    steps {
+                        container("python3") {
+                            dir("${WORKSPACE}"){
+                                sh './run_integration_tests.sh'
                             }
                         }
                     }
@@ -81,10 +76,23 @@ pipeline{
                     }
                 }
                 stage('Install Foundations (container 2)') {
-                    steps {
-                        container("python3-2") {
-                            ws("${WORKSPACE}/testing") {
-                                sh 'python -m pip install ../dist/*.whl'
+                    stages {
+                        stage("Install Foundations (Container 2"){
+                            steps {
+                                container("python3-2") {
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'python -m pip install ../dist/*.whl'
+                                    }
+                                }
+                            }
+                        }
+                        stage('Run Coverage on Integration Tests') {
+                            steps {
+                                container("python3-2") {
+                                    dir("${WORKSPACE}"){
+                                        sh "./run_coverage_tests.sh integration"
+                                    }
+                                }
                             }
                         }
                     }
