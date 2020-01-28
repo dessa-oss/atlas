@@ -26,7 +26,7 @@ class App extends Component {
             <Route exact path="/login" component={LoginPage} />
             <Route exact path="/projects" component={ProjectPage} />
             <Route exact path="/contact" component={ContactPage} />
-            <Redirect exact from="/" to="/login" />
+            <Redirect exact from="/" to="/projects" />
             <Route
               path="/projects/:projectName/job_listing"
               component={JobDetails}
