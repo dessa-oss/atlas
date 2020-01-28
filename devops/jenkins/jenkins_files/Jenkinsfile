@@ -147,6 +147,7 @@ pipeline{
                                     }
                                     dir("${WORKSPACE}/foundations_rest_api/src") {
                                         sh """export FOUNDATIONS_HOME=`pwd`/acceptance/v2beta/fixtures/remote_foundations_home && \
+                                                export AUTH_CLIENT_CONFIG_PATH=`pwd`/foundations_rest_api/config/auth_client_config.yaml && \
                                                 python -Wi -m unittest -f -v acceptance"""
                                         sh "../../devops/teardown_frontend_dev_atlas.sh || true"
                                     }
