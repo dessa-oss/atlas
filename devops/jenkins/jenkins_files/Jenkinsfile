@@ -130,10 +130,14 @@ pipeline{
                         stage('Atlas REST API Acceptance Tests') {
                             steps {
                                 container("python3-2") {
-                                    ws("${WORKSPACE}/foundations_rest_api/src") {
-                                        sh "./foundations_rest_api/config/envsubst_local.sh"
+                                    dir("${WORKSPACE}"){
+                                        sh "./devops/teardown_frontend_dev_atlas.sh || true"
+                                        sh "./foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh"
+                                    }
+                                    dir("${WORKSPACE}/foundations_rest_api/src") {
                                         sh """export FOUNDATIONS_HOME=`pwd`/acceptance/v2beta/fixtures/remote_foundations_home && \
                                                 python -Wi -m unittest -f -v acceptance"""
+                                        sh "../../devops/teardown_frontend_dev_atlas.sh || true"
                                     }
                                 }
                             }
@@ -165,9 +169,10 @@ pipeline{
                         container("python3-3") {
                             ws("${WORKSPACE}/testing") {
                                 sh 'cp -r ../testing/* . || true'
-                                sh """export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && \
+                                sh """export FOUNDATIONS_SCHEDULER_HOST=$ORBIT_LOCAL_SCHEDULER && \
                                         export LOCAL_DOCKER_SCHEDULER_HOST=$ORBIT_LOCAL_SCHEDULER && \
                                         export REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && \
+                                        REDIS_PORT=5556 && \
                                         export REST_API_PORT=8081 && \
                                         python -Wi -m unittest -f -v orbit_acceptance"""
                             }
@@ -191,7 +196,8 @@ pipeline{
                                         export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
                                         export CYPRESS_GUI_HOST=localhost && \
                                         export CYPRESS_GUI_PORT=8000 && export CYPRESS_ATLAS_EDITION=CE && \
-                                        npm run cy:run --"""
+                                        cd foundations_ui && \
+                                        npm run cy:run -- --headless"""
                                 sh "`pwd`/devops/teardown_frontend_dev_atlas.sh"
                             }
                         }
@@ -214,7 +220,8 @@ pipeline{
                                         export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
                                         export CYPRESS_GUI_HOST=localhost && \
                                         export CYPRESS_GUI_PORT=8001 && \
-                                        npm run cy:run --"""
+                                        cd foundations_ui_orbit && \
+                                        npm run cy:run -- --headless"""
                                 sh "`pwd`/devops/teardown_frontend_dev_orbit.sh"
                             }
                         }
