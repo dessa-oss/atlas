@@ -49,73 +49,52 @@ pipeline{
             }
         }
         stage('Run Integration Tests and Prepare for Acceptance Tests'){
-            failFast true
             parallel{
                 stage('Run Integration Tests') {
-                    stages {
-                        stage('Run Integration Tests') {
-                            steps {
-                                container("python3") {
-                                    sh './run_integration_tests.sh'
-                                }
-                            }
+                    steps {
+                        container("python3") {
+                            sh './run_integration_tests.sh'
                         }
                     }
                 }
                 stage('Install Foundations (container 1)') {
-                    stages{
-                        stage('Install Foundations (container 1)'){
-                            steps {
-                                container("python3-1") {
-                                    ws("${WORKSPACE}/testing") {
-                                        sh 'python -m pip install ../dist/*.whl'
-                                    }
-                                    dir("${WORKSPACE}/foundations_ui") {
-                                        sh "yarn install"
-                                    }
-                                }
+                    steps {
+                        container("python3-1") {
+                            ws("${WORKSPACE}/testing") {
+                                sh 'python -m pip install ../dist/*.whl'
+                            }
+                            dir("${WORKSPACE}/foundations_ui") {
+                                sh "yarn install"
                             }
                         }
                     }
                 }
                 stage('Install Foundations (container 2)') {
-                    stages{
-                        stage('Install Foundations (container 2)'){
-                            steps {
-                                container("python3-2") {
-                                    ws("${WORKSPACE}/testing") {
-                                        sh 'python -m pip install ../dist/*.whl'
-                                    }
-                                }
+                    steps {
+                        container("python3-2") {
+                            ws("${WORKSPACE}/testing") {
+                                sh 'python -m pip install ../dist/*.whl'
                             }
                         }
                     }
                 }
                 stage('Install Foundations (container 3)') {
-                    stages{
-                        stage('Install Foundations (container 3)'){
-                            steps {
-                                container("python3-3") {
-                                    ws("${WORKSPACE}/testing") {
-                                        sh 'python -m pip install ../dist/*.whl'
-                                    }
-                                }
+                    steps {
+                        container("python3-3") {
+                            ws("${WORKSPACE}/testing") {
+                                sh 'python -m pip install ../dist/*.whl'
                             }
                         }
                     }
                 }
                 stage('Install Foundations (container 4)') {
-                    stages{
-                        stage('Install Foundations (container 4)'){
-                            steps {
-                                container("python3-4") {
-                                    ws("${WORKSPACE}/testing") {
-                                        sh 'python -m pip install ../dist/*.whl'
-                                    }
-                                    dir("${WORKSPACE}/foundations_ui") {
-                                        sh "yarn install"
-                                    }
-                                }
+                    steps {
+                        container("python3-4") {
+                            ws("${WORKSPACE}/testing") {
+                                sh 'python -m pip install ../dist/*.whl'
+                            }
+                            dir("${WORKSPACE}/foundations_ui") {
+                                sh "yarn install"
                             }
                         }
                     }
@@ -125,31 +104,23 @@ pipeline{
         stage('Acceptance Tests'){
             parallel{
                 stage('F9S Acceptance Tests') {
-                    stages {
-                        stage('F9S Acceptance Tests'){
-                            steps{
-                                container("python3") {
-                                    ws("${WORKSPACE}/testing") {
-                                        sh 'cp -r ../testing/* . || true'
-                                        sh """export LOCAL_DOCKER_SCHEDULER_HOST=$ATLAS_LOCAL_SCHEDULER && \
-                                                export REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && \
-                                                python -Wi -m unittest -f -v acceptance"""
-                                    }
-                                }
+                    steps{
+                        container("python3") {
+                            ws("${WORKSPACE}/testing") {
+                                sh 'cp -r ../testing/* . || true'
+                                sh """export LOCAL_DOCKER_SCHEDULER_HOST=$ATLAS_LOCAL_SCHEDULER && \
+                                        export REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && \
+                                        python -Wi -m unittest -f -v acceptance"""
                             }
                         }
                     }
                 }
                 stage('Acceptance Tests for Stageless Deploys') {
-                    stages{
-                        stage('Acceptance Tests for Stageless Deploys'){
-                            steps {
-                                container("python3-1") {
-                                    ws("${WORKSPACE}/testing") {
-                                        sh 'cp -r ../testing/* . || true'
-                                        sh 'python -Wi -m unittest -f -v stageless_acceptance'
-                                    }
-                                }
+                    steps {
+                        container("python3-1") {
+                            ws("${WORKSPACE}/testing") {
+                                sh 'cp -r ../testing/* . || true'
+                                sh 'python -Wi -m unittest -f -v stageless_acceptance'
                             }
                         }
                     }
@@ -190,19 +161,15 @@ pipeline{
                     }
                 }
                 stage('Orbit Acceptance Tests') {
-                    stages{
-                        stage('Orbit Acceptance Tests') {
-                            steps {
-                                container("python3-3") {
-                                    ws("${WORKSPACE}/testing") {
-                                        sh 'cp -r ../testing/* . || true'
-                                        sh """export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && \
-                                                export LOCAL_DOCKER_SCHEDULER_HOST=$ORBIT_LOCAL_SCHEDULER && \
-                                                export REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && \
-                                                export REST_API_PORT=8081 && \
-                                                python -Wi -m unittest -f -v orbit_acceptance"""
-                                    }
-                                }
+                    steps {
+                        container("python3-3") {
+                            ws("${WORKSPACE}/testing") {
+                                sh 'cp -r ../testing/* . || true'
+                                sh """export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && \
+                                        export LOCAL_DOCKER_SCHEDULER_HOST=$ORBIT_LOCAL_SCHEDULER && \
+                                        export REDIS_HOST=$ORBIT_LOCAL_SCHEDULER && \
+                                        export REST_API_PORT=8081 && \
+                                        python -Wi -m unittest -f -v orbit_acceptance"""
                             }
                         }
                     }
