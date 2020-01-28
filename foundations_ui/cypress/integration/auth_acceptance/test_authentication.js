@@ -1,7 +1,7 @@
 describe('Test Authentication', () => {
   const guiHost = Cypress.env('GUI_HOST');
   const guiPort = Cypress.env('GUI_PORT');
-  const page = `http://${guiHost}:${guiPort}`;
+  const page = `http://${guiHost}:${guiPort}/login`;
 
   it('test unsuccessful login does not have tokens', () => {
     cy.visit(page);
