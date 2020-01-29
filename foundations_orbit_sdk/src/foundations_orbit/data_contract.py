@@ -62,7 +62,8 @@ class DataContract(object):
             check_distribution=True,
             check_special_values=True,
             check_min_max=True,
-            check_domain=True
+            check_domain=True,
+            check_uniqueness=True
         )
 
     def _initialize_checkers(self):
@@ -72,6 +73,7 @@ class DataContract(object):
         from foundations_orbit.contract_validators.min_max_checker import MinMaxChecker
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
         from foundations_orbit.contract_validators.domain_checker import DomainChecker
+        from foundations_orbit.contract_validators.uniqueness_checker import UniquenessChecker
 
         self.schema_test = SchemaChecker(self._column_names, self._column_types)
         self.special_value_test = SpecialValuesChecker(self._column_names, self._column_types, self._categorical_attributes)
@@ -79,6 +81,7 @@ class DataContract(object):
         self.min_max_test = MinMaxChecker(self._column_types)
         self.row_count_test = RowCountChecker(self._number_of_rows)
         self.domain_test = DomainChecker()
+        self.uniqueness_test = UniquenessChecker()
 
     def _categorize_attributes(self):
         for col_name, col_type in self._column_types.items():
@@ -279,6 +282,9 @@ class DataContract(object):
 
         if self.options.check_domain:
             validation_report['domain_test_results'] = self.domain_test.validate(dataframe_to_validate)
+
+        if self.options.check_uniqueness:
+            validation_report['uniqueness_test_results'] = self.uniqueness_test.validate(dataframe_to_validate)
 
         return validation_report
 

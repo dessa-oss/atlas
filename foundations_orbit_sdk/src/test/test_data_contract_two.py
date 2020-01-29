@@ -40,23 +40,41 @@ class TestDataContractTwo(Spec):
     def tear_down(self):
         self._redis.flushall()
 
-    def test_data_contract_has_options_with_default_check_distribution_True(self):
+    def test_data_contract_has_options_with_default_check_domain_True(self):
         self._test_data_contract_has_default_option('check_domain', True)
 
     def test_data_contract_has_domain_checker(self):
         self._test_data_contract_has_test_as_attribute('domain_test')
 
+    def test_data_contract_has_options_with_default_check_uniqueness_True(self):
+        self._test_data_contract_has_default_option('check_uniqueness', True)
+
+    def test_data_contract_has_uniqueness_checker(self):
+        self._test_data_contract_has_test_as_attribute('uniqueness_test')
+
     def test_data_contract_has_domain_checker_configured(self):
         from foundations_orbit.contract_validators.domain_checker import DomainChecker
         self._test_data_contract_has_test_which_is_an_instance_of_expected_class('domain_test', DomainChecker)
 
-    def test_data_contract_min_max_check_produces_correct_output_for_two_column_df(self):
+    def test_data_contract_has_uniqueness_checker_configured(self):
+        from foundations_orbit.contract_validators.uniqueness_checker import UniquenessChecker
+        self._test_data_contract_has_test_which_is_an_instance_of_expected_class('uniqueness_test', UniquenessChecker)
+
+    def test_data_contract_domain_check_produces_correct_output_for_two_column_df(self):
         inference_period=self.inference_period
         contract = DataContract(self.contract_name, df=self._two_column_dataframe())
         contract.domain_test.configure(attributes=[self.column_name])
         report = contract.validate(self._two_column_dataframe(), inference_period=inference_period)
 
         self.assertIn('domain_test_results', report)
+    
+    def test_data_contract_uniqueness_check_produces_correct_output_for_two_column_df(self):
+        inference_period=self.inference_period
+        contract = DataContract(self.contract_name, df=self._two_column_dataframe())
+        contract.uniqueness_test.configure(attributes=[self.column_name])
+        report = contract.validate(self._two_column_dataframe(), inference_period=inference_period)
+
+        self.assertIn('uniqueness_test_results', report)
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name, df=self.empty_dataframe)

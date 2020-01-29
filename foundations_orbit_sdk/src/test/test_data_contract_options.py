@@ -40,6 +40,9 @@ class TestDataContractOptions(Spec):
     def test_data_contract_options_has_domain_check(self):
         self._test_data_contract_options_has_attribute('check_domain')
 
+    def test_data_contract_options_has_uniqueness_check(self):
+        self._test_data_contract_options_has_attribute('check_uniqueness')
+
     def test_data_contract_options_equal_by_default(self):
         self.assertEqual(DataContractOptions(), DataContractOptions())
 
