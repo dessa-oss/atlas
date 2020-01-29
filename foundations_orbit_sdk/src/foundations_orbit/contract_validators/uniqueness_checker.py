@@ -34,5 +34,10 @@ class UniquenessChecker:
             'details_by_attribute': details_by_attribute
         }
     
-    def configure(self, attributes=[]):
-        self._configured_attributes.update(attributes)
+    def configure(self, attributes):
+        if type(attributes) == str:
+            self._configured_attributes.add(attributes)
+        elif type(attributes) == list:
+            self._configured_attributes.update(attributes)
+        else:
+            raise ValueError('Please provide only one of attributes or configuration as an argument to configure')

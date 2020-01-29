@@ -68,6 +68,15 @@ class TestUniquenessChecker(Spec):
 
         self.assertEqual(expected_result, self.uniqueness_checker.validate(dataframe_to_validate))
 
+    def test_uniqueness_checker_configure_works_only_with_string_and_list_types(self):
+        with self.assert_does_not_raise():
+            self.uniqueness_checker.configure(attributes=self.faker.word())
+            self.uniqueness_checker.configure(attributes=[self.faker.word()])
+
+        with self.assertRaises(ValueError):
+            self.uniqueness_checker.configure(attributes=True)
+
+
     @given(dataframes(st.booleans()))
     def test_uniqueness_checker_using_hypothesis_bools(self, df):
         self._hypothesis_run_validation_against_same_dataframe(df)
