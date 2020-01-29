@@ -31,7 +31,7 @@ ReactDOM.render(
         <Route path="/projects/:name/schedules" component={MonitorSchedules} />
         <Route path="/projects" component={ProjectPage} />
         <Route path="/login" component={LoginPage} />
-        <Redirect from="/" to="/login" />
+        <Redirect from="/" to="/projects" />
       </Switch>
     </Router>
   </div>,

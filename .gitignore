@@ -137,6 +137,12 @@ foundations_ui_orbit/cypress/fixtures/orbit_acceptance/.foundations/logs/
 
 foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_home/job_data/*
 foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_home/logs/system.log
+foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_home/config/submission/scheduler.config.yaml
+foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_home/config/execution/default.config.yaml
+foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_home/config/local_docker_scheduler/worker_config/execution/default.config.yaml
+foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_home/config/local_docker_scheduler/worker_config/submission/scheduler.config.yaml
+foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_home/config/local_docker_scheduler/tracker_client_plugins.yaml
+foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_home/config/local_docker_scheduler/database.config.yaml
 
 !foundations_ui/package.json
 !foundations_ui/cypress.json

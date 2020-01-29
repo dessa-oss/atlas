@@ -1,17 +1,39 @@
-before(() => {
+before(function() {
   cy.exec('python cypress/fixtures/atlas_scheduler/envsubst.py');
+
+  if (Cypress.env('FAIL_FAST')) {
+    cy.task('shouldSkip').then(value => {
+      if (value) {
+        this.skip();
+      }
+    });
+  }
 });
 
-beforeEach(() => {
-  const schedulerIP = Cypress.env('SCHEDULER_IP');
+beforeEach(function() {
+  if (Cypress.env('FAIL_FAST')) {
+    cy.task('shouldSkip').then(value => {
+      if (value) {
+        this.skip();
+      }
+    });
+  }
+
   const guiHost = Cypress.env('GUI_HOST');
-  const guiPort = Cypress.env('GUI_PORT');
+  const proxyPort = Cypress.env('PROXY_PORT');
 
-  cy.visit(`http://${guiHost}:${guiPort}`);
-  cy.get('input[name=username]').type('test', { force: true });
-  cy.get('input[name=password]').type('test', { force: true });
-  cy.get('.login-submit').click({ force: true });
-  cy.wait(200);
+  cy.request({
+    url: `http://${guiHost}:${proxyPort}/api/v2beta/auth/cli_login`,
+    headers: { Authorization: 'Basic dGVzdDp0ZXN0' },
+  })
+    .then(response => {
+      cy.setCookie('atlas_access_token', response.body.access_token);
+      cy.setCookie('atlas_refresh_token', response.body.refresh_token);
+    });
+});
 
-  // cy.exec(`foundations login http://${schedulerIP}:5558 -u test -p test`);
+afterEach(function() {
+  if (this.currentTest.state === 'failed') {
+    return cy.task('shouldSkip', true);
+  }
 });
