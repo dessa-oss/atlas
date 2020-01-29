@@ -16,3 +16,4 @@ from .test_bin_values import TestBinValues
 from .test_min_max_checker import TestMinMaxChecker
 from .test_checker import TestChecker
 from .test_domain_checker import TestDomainChecker
+from .test_uniqueness_checker import TestUniquenessChecker
