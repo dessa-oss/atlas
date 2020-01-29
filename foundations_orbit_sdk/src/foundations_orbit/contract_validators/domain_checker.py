@@ -44,7 +44,7 @@ class DomainChecker:
             else:
                 summary['critical'] += 1
                 detail['validation_outcome'] = 'critical'
-                detail['values_out_of_bounds'] = self._cast_list_to_native_types(list(dataframe_to_validate[column][~in_domain_mask].unique()))
+                detail['values_out_of_bounds'] = dataframe_to_validate[column][~in_domain_mask].unique().tolist()
                 detail['percentage_out_of_bounds'] = (~in_domain_mask).sum() / in_domain_mask.size
 
             details_by_attribute.append(detail)
@@ -53,15 +53,6 @@ class DomainChecker:
             'summary': summary,
             'details_by_attribute': details_by_attribute
         }
-
-    def _cast_list_to_native_types(self, lst):
-        casted_lst = []
-        try:
-            for val in lst:
-                casted_lst.append(val.item())
-        except AttributeError:
-            casted_lst.append(val)
-        return casted_lst
 
     def calculate_stats_from_dataframe(self, reference_dataframe):
         import pandas as pd
