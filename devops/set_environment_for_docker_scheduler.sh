@@ -112,7 +112,8 @@ function start_auth_proxy () {
 }
 
 function start_auth_server() {
-    network_name=foundations-atlas
+    TYPE=$1
+    network_name=foundations-$TYPE
     export AUTH_SERVER_NAME=foundations-authentication-server \
         && echo "Attempting to start the auth server as ${AUTH_SERVER_NAME}" \
         && ./foundations_contrib/src/foundations_contrib/authentication/launch.sh \

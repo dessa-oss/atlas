@@ -57,7 +57,7 @@ check_status_of_process "Scheduler" $? $SCRIPT_PID
 # ***************************************************************************************************************
 
 echo "Starting Auth Proxy ....."
-start_auth_proxy atlas
+start_auth_proxy $F9S_ENV_TYPE
 
 echo "Waiting for Auth Proxy to start at http://localhost:${AUTH_PROXY_PORT}"
 ./devops/build_scripts/helpers/wait_for_url.sh "http://localhost:${AUTH_PROXY_PORT}" 10
@@ -67,7 +67,7 @@ check_status_of_process "Auth Proxy" $? $SCRIPT_PID
 # ***************************************************************************************************************
 
 echo "Starting the Auth Server (keycloak) ....." 
-start_auth_server
+start_auth_server $F9S_ENV_TYPE
 
 echo "Waiting for Auth Server to start at http://localhost:8080"
 ./devops/build_scripts/helpers/wait_for_url.sh "http://localhost:8080" 80

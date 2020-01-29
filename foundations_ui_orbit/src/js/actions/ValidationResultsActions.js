@@ -251,7 +251,7 @@ const ValidationResultsActions = {
     ];
 
     const rows = validationTestResult.domain.details_by_attribute.map((test, ind) => {
-      const valuesOutOfBounds = 'values_out_of_bounds' in test ? test.values_out_of_bounds : 'N/A';
+      const valuesOutOfBounds = 'values_out_of_bounds' in test ? test.values_out_of_bounds.join(', ') : 'N/A';
       const percentageOutOfBounds = (
         'percentage_out_of_bounds' in test
           ? CommonActions.decimalToPercentage(test.percentage_out_of_bounds)
