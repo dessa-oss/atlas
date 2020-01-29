@@ -6,6 +6,9 @@ Written by Calvin Choi <c.choi@dessa.com>, 01 2020
 """
 
 class UniquenessChecker:
+
+    def __init__(self):
+        self._configured_attributes = set()
     
     def validate(self, dataframe_to_validate):
         summary = {
@@ -15,7 +18,7 @@ class UniquenessChecker:
         }
         details_by_attribute = []
 
-        for column in dataframe_to_validate.columns:
+        for column in self._configured_attributes:
             is_unique = len(dataframe_to_validate[column].unique()) == len(dataframe_to_validate[column])
             column_test_passed = is_unique
 
@@ -30,3 +33,6 @@ class UniquenessChecker:
             'summary': summary,
             'details_by_attribute': details_by_attribute
         }
+    
+    def configure(self, attributes=[]):
+        self._configured_attributes.update(attributes)

@@ -20,7 +20,6 @@ def dataframes(draw, *strategies: st.SearchStrategy) -> st.SearchStrategy:
     cols = [column(name, elements=draw(st.sampled_from(strategies)), unique=True) for name in names]
     return draw(data_frames(cols))
 
-
 class TestUniquenessChecker(Spec):
 
     # All of this run before each test, trying to avoid using bulky let_now syntax for initialization
@@ -51,7 +50,23 @@ class TestUniquenessChecker(Spec):
             }]
         }
 
+        self.uniqueness_checker.configure(attributes=[self.column_name])
         self.assertEqual(expected_result, self.uniqueness_checker.validate(self._generate_unique_dataframe([self.column_name], int)))
+
+    def test_uniqueness_checker_validate_only_runs_test_on_configured_columns(self):
+        dataframe_to_validate = self._generate_unique_dataframe([self.column_name, self.column_name_two], int)
+
+        self.uniqueness_checker.configure(attributes=[self.column_name_two])
+
+        expected_result = {
+            'summary': self._generate_summary_dictionary(healthy=1),
+            'details_by_attribute': [{
+                'attribute_name': self.column_name_two,
+                'validation_outcome': 'healthy'
+            }]
+        }
+
+        self.assertEqual(expected_result, self.uniqueness_checker.validate(dataframe_to_validate))
 
     @given(dataframes(st.booleans()))
     def test_uniqueness_checker_using_hypothesis_bools(self, df):
@@ -70,7 +85,7 @@ class TestUniquenessChecker(Spec):
 
         uniqueness_checker = UniquenessChecker()
         with self.assert_does_not_raise():
-            # uniqueness_checker.configure(attributes=list(df.columns))
+            uniqueness_checker.configure(attributes=list(df.columns))
             actual_result = uniqueness_checker.validate(df)
 
             expected_result = {
@@ -81,7 +96,7 @@ class TestUniquenessChecker(Spec):
                 } for column_name in df.columns]
             }
 
-            self.assertEqual(expected_result, actual_result)
+            self.assertCountEqual(expected_result['details_by_attribute'], actual_result['details_by_attribute'])
 
     def _generate_unique_dataframe(self, column_names, dtype, min=-10, max=10):
         data = {}
