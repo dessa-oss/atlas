@@ -68,6 +68,24 @@ class TestUniquenessChecker(Spec):
 
         self.assertEqual(expected_result, self.uniqueness_checker.validate(dataframe_to_validate))
 
+    def test_uniqueness_checker_validate_only_runs_test_on_configured_columns_when_exclude_used(self):
+        dataframe_to_validate = self._generate_unique_dataframe([self.column_name, self.column_name_two], int)
+
+        self.uniqueness_checker.configure(attributes=[self.column_name, self.column_name_two])
+        self.uniqueness_checker.exclude(attributes=[self.column_name, self.column_name_two])
+        self.uniqueness_checker.configure(attributes=[self.column_name, self.column_name_two])
+        self.uniqueness_checker.exclude(attributes=self.column_name) # At this point only column_name_two should be configured
+
+        expected_result = {
+            'summary': self._generate_summary_dictionary(healthy=1),
+            'details_by_attribute': [{
+                'attribute_name': self.column_name_two,
+                'validation_outcome': 'healthy'
+            }]
+        }
+
+        self.assertEqual(expected_result, self.uniqueness_checker.validate(dataframe_to_validate))
+
     def test_uniqueness_checker_configure_works_only_with_string_and_list_types(self):
         with self.assert_does_not_raise():
             self.uniqueness_checker.configure(attributes=self.faker.word())
