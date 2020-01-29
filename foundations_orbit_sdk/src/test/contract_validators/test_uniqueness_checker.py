@@ -94,10 +94,25 @@ class TestUniquenessChecker(Spec):
         with self.assertRaises(ValueError):
             self.uniqueness_checker.configure(attributes=True)
 
+    def test_uniqueness_checker_validate_fails_when_columns_not_unique(self):
 
-    @given(dataframes(st.booleans()))
-    def test_uniqueness_checker_using_hypothesis_bools(self, df):
-        self._hypothesis_run_validation_against_same_dataframe(df)
+        self.maxDiff = None
+
+        dataframe_to_validate = self._generate_dataframe([self.column_name], int)
+        self.uniqueness_checker.configure(attributes=self.column_name)
+
+        expected_result = {
+            'summary': self._generate_summary_dictionary(critical=1),
+            'details_by_attribute': [{
+                'attribute_name': self.column_name,
+                'percentage_of_duplicates': 1.0,
+                'duplicate_values': dataframe_to_validate[self.column_name].unique().tolist(),
+                'validation_outcome': 'critical'
+            }]
+        }
+
+        actual_result = self.uniqueness_checker.validate(dataframe_to_validate)
+        self.assertEqual(expected_result, actual_result)
 
     @given(dataframes(st.text(alphabet=string.ascii_lowercase)))
     def test_uniqueness_checker_using_hypothesis_strings(self, df):
@@ -130,6 +145,15 @@ class TestUniquenessChecker(Spec):
         for column in column_names:
             if dtype == int:
                 data[column] = list(range(min, max))
+
+        return pd.DataFrame(data)
+
+    def _generate_dataframe(self, column_names, dtype, min=-10, max=10):
+        import random
+        data = {}
+        for column in column_names:
+            if dtype == int:
+                data[column] = list(range(min, max)) * 2
 
         return pd.DataFrame(data)
     
