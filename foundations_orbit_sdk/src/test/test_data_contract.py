@@ -572,6 +572,10 @@ class TestDataContract(Spec):
                 'details_by_attribute': [],
                 'summary': {'critical': 0, 'healthy': 0, 'warning': 0}
             },
+            'uniqueness': {
+                'details_by_attribute': [],
+                'summary': {'critical': 0, 'healthy': 0, 'warning': 0}
+            },
             'min': {
                 'details_by_attribute': [{
                     'attribute_name': f'{self.column_name}',
@@ -645,6 +649,14 @@ class TestDataContract(Spec):
             'data_quality': {},
             'monitor_package': f'{self.model_name}',
             'domain': {
+                'details_by_attribute': [],
+                'summary': {
+                    'critical': 0,
+                    'healthy': 0,
+                    'warning': 0
+                }
+            },
+            'uniqueness': {
                 'details_by_attribute': [],
                 'summary': {
                     'critical': 0,

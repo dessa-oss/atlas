@@ -110,6 +110,14 @@ class TestReportFormatter(Spec):
                     'healthy': 0,
                     'warning': 0
                 }
+            },
+            'uniqueness_test_results': {
+                'details_by_attribute': [],
+                'summary': {
+                    'critical': 0,
+                    'healthy': 0,
+                    'warning': 0
+                }
             }
         }
 

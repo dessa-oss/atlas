@@ -450,6 +450,14 @@ class TestDataValidation(Spec):
                     'warning': 0
                 }
             },
+            'uniqueness': {
+                'details_by_attribute': [],
+                'summary': {
+                    'critical': 0,
+                    'healthy': 0,
+                    'warning': 0
+                }
+            },
             'max': {
                 'details_by_attribute': [],
                 'summary': {

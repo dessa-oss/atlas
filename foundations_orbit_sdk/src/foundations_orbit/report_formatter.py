@@ -32,7 +32,8 @@ class ReportFormatter(object):
             'min': formatted_min_max_report['min_report'] or {},
             'max': formatted_min_max_report['max_report'] or {},
             'attribute_names': self._validation_report['metadata']['reference_metadata']['column_names'],
-            'domain': self._validation_report['domain_test_results']
+            'domain': self._validation_report['domain_test_results'],
+            'uniqueness': self._validation_report['uniqueness_test_results']
         }
 
     def serialized_output(self):
