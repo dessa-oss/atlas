@@ -114,6 +114,16 @@ class TestUniquenessChecker(Spec):
         actual_result = self.uniqueness_checker.validate(dataframe_to_validate)
         self.assertEqual(expected_result, actual_result)
 
+    def test_uniqueness_checker_prints_expected_output_str_method(self):
+        self.uniqueness_checker.configure(attributes=[self.column_name, self.column_name_two])
+
+        expected_result = {
+            'configured_attributes': [self.column_name, self.column_name_two]
+        }
+
+        self.assertIn(self.column_name, str(self.uniqueness_checker))
+        self.assertIn(self.column_name_two, str(self.uniqueness_checker))
+
     @given(dataframes(st.text(alphabet=string.ascii_lowercase)))
     def test_uniqueness_checker_using_hypothesis_strings(self, df):
         self._hypothesis_run_validation_against_same_dataframe(df)

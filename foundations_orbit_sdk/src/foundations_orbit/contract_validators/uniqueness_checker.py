@@ -11,6 +11,14 @@ class UniquenessChecker:
 
     def __init__(self):
         self._configured_attributes = set()
+
+    def __str__(self):
+        return str(self.info())
+
+    def info(self):
+        return {
+            'configured_attributes': self._configured_attributes
+        }
     
     def validate(self, dataframe_to_validate):
 
