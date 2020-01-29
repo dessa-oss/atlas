@@ -12,7 +12,13 @@ def _config():
     import sys
     import subprocess
 
-    for required_env in ['CYPRESS_LOCAL_FOUNDATIONS_HOME', 'CYPRESS_SCHEDULER_IP', 'CYPRESS_SCHEDULER_FOUNDATIONS_HOME', 'CYPRESS_SCHEDULER_REDIS_PORT', 'CYPRESS_GUI_HOST', 'CYPRESS_GUI_PORT']:
+    for required_env in [
+        'CYPRESS_LOCAL_FOUNDATIONS_HOME',
+        'CYPRESS_SCHEDULER_IP',
+        'CYPRESS_SCHEDULER_FOUNDATIONS_HOME',
+        'CYPRESS_SCHEDULER_REDIS_PORT',
+        'CYPRESS_GUI_HOST',
+        'CYPRESS_GUI_PORT']:
       if not os.environ.get(required_env, None):
         print(f'Environment variable {required_env} is not set.')
         sys.exit(1)
