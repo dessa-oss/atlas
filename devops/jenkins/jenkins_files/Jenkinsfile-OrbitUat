@@ -154,7 +154,6 @@ pipeline{
               build job: "build-installer-orbit", wait: false, parameters: [
                 [$class: 'StringParameterValue', name: 'orbit_version', value: version],
                 [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: params.f9s_commit_hash],
-                [$class: 'StringParameterValue', name: 'DEV_S3_FOLDER_URL', value: params.S3_FOLDER_URL],
                 [$class: 'BooleanParameterValue', name: 'is_production', value: true]
               ]
             }
@@ -169,7 +168,6 @@ pipeline{
         customMetricsMap["jenkins_data"] = customMetrics
       }
       influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
-
     }
     failure {
       script {
@@ -182,7 +180,6 @@ pipeline{
             color: '#FF0000'
           ]
         ]
-
         slackSend(channel: '#f9s-builds', attachments: attachments)
       }
     }
@@ -192,6 +189,7 @@ pipeline{
     cleanup {
       container("python3") {
         sh "aws ec2 terminate-instances --region us-east-1 --instance-ids $SCHEDULER_ID"
+        sh "aws s3 rm $S3_FOLDER_URL --recursive"
       }
     }
   }
