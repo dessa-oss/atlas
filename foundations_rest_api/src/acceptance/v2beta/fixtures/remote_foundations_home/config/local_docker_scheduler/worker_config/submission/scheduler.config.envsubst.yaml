@@ -3,5 +3,5 @@ cache_config:
 container_config_root: /home/ubuntu/.foundations/config/local_docker_scheduler/worker_config
 job_deployment_env: local_docker_scheduler_plugin
 job_results_root: /home/ubuntu/.foundations/job_data
-scheduler_url: http://54.158.42.161:5000
+scheduler_url: http://${FOUNDATIONS_SCHEDULER_HOST}:5000
 working_dir_root: /home/ubuntu/.foundations/local_docker_scheduler/work_dir

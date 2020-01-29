@@ -144,6 +144,9 @@ pipeline{
                                     dir("${WORKSPACE}"){
                                         sh "./devops/teardown_frontend_dev_atlas.sh || true"
                                         sh "./foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh"
+                                        sh """export FOUNDATIONS_SCHEDULER_HOST=$ATLAS_LOCAL_SCHEDULER && \
+                                            cd foundations_rest_api/src && \
+                                            ./foundations_rest_api/config/job_submission_envsubst.sh"""
                                     }
                                     dir("${WORKSPACE}/foundations_rest_api/src") {
                                         sh """export FOUNDATIONS_HOME=`pwd`/acceptance/v2beta/fixtures/remote_foundations_home && \
