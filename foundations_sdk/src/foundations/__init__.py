@@ -26,7 +26,6 @@ def _check_if_in_cli():
 _check_if_in_cli()
 
 from foundations.job import Job
-from foundations_internal.pipeline_archiver import PipelineArchiver
 from foundations.global_state import *
 from foundations_contrib.null_archive import NullArchive
 from foundations_contrib.null_pipeline_archive_listing import NullArchiveListing
