@@ -3,6 +3,8 @@ describe('Test Job Submission', () => {
   const schedulerRedisPort = Cypress.env('SCHEDULER_REDIS_PORT');
   const guiHost = Cypress.env('GUI_HOST');
   const guiPort = Cypress.env('GUI_PORT');
+  const restApiHost = Cypress.env('REST_API_HOST') || Cypress.env('GUI_HOST');
+  const restApiPort = Cypress.env('REST_API_PORT') || Cypress.env('GUI_PORT');
 
   const projectNames = ['job_submission_project', 'job_submission_project_with_foundations'];
 
@@ -75,7 +77,7 @@ describe('Test Job Submission', () => {
     describe(state.testName, () => {
       before(() => {
         cy.exec(`redis-cli -h ${schedulerIP} -p ${schedulerRedisPort} flushall`);
-        cy.request('GET', `http://${guiHost}:${guiPort}/api/v2beta/cli_login`, {
+        cy.request('GET', `http://${restApiHost}:${restApiPort}/api/v2beta/cli_login`, {
           headers: { Authorization: 'Basic dGVzdDp0ZXN0Cg==' },
         });
         cy.exec(state.command);

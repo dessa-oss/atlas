@@ -1,4 +1,4 @@
-before(function() {
+before(() => {
   cy.exec('python cypress/fixtures/atlas_scheduler/envsubst.py');
 
   if (Cypress.env('FAIL_FAST')) {
@@ -10,7 +10,7 @@ before(function() {
   }
 });
 
-beforeEach(function() {
+beforeEach(() => {
   if (Cypress.env('FAIL_FAST')) {
     cy.task('shouldSkip').then(value => {
       if (value) {
@@ -19,11 +19,13 @@ beforeEach(function() {
     });
   }
 
-  const guiHost = Cypress.env('GUI_HOST');
-  const proxyPort = Cypress.env('PROXY_PORT');
+  // const guiHost = Cypress.env('GUI_HOST');
+  const restApiHost = Cypress.env('REST_API_HOST') || Cypress.env('GUI_HOST');
+  // const proxyPort = Cypress.env('PROXY_PORT');
+  const restApiPort = Cypress.env('REST_API_PORT') || Cypress.env('PROXY_PORT');
 
   cy.request({
-    url: `http://${guiHost}:${proxyPort}/api/v2beta/auth/cli_login`,
+    url: `http://${restApiHost}:${restApiPort}/api/v2beta/auth/cli_login`,
     headers: { Authorization: 'Basic dGVzdDp0ZXN0' },
   })
     .then(response => {
@@ -32,7 +34,7 @@ beforeEach(function() {
     });
 });
 
-afterEach(function() {
+afterEach(() => {
   if (this.currentTest.state === 'failed') {
     return cy.task('shouldSkip', true);
   }
