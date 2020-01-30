@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import string
 
-from hypothesis import given, assume, example, settings
+from hypothesis import given, assume, example, settings, HealthCheck
 import hypothesis.strategies as st
 from hypothesis.extra.pandas import column, data_frames
 
@@ -276,6 +276,7 @@ class TestDomainChecker(Spec):
 
 
     @given(dataframes(st.booleans()))
+    @settings(suppress_health_check=[HealthCheck.too_slow])
     def test_domain_checker_using_hypothesis_bools(self, df):
         self._hypothesis_run_validation_against_same_dataframe(df)
 
