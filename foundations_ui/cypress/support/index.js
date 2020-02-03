@@ -1,23 +1,23 @@
 before(() => {
   cy.exec('python cypress/fixtures/atlas_scheduler/envsubst.py');
 
-  if (Cypress.env('FAIL_FAST')) {
-    cy.task('shouldSkip').then(value => {
-      if (value) {
-        this.skip();
-      }
-    });
-  }
+  // if (Cypress.env('FAIL_FAST')) {
+  //   cy.task('shouldSkip').then(value => {
+  //     if (value) {
+  //       this.skip();
+  //     }
+  //   });
+  // }
 });
 
 beforeEach(() => {
-  if (Cypress.env('FAIL_FAST')) {
-    cy.task('shouldSkip').then(value => {
-      if (value) {
-        this.skip();
-      }
-    });
-  }
+  // if (Cypress.env('FAIL_FAST')) {
+  //   cy.task('shouldSkip').then(value => {
+  //     if (value) {
+  //       this.skip();
+  //     }
+  //   });
+  // }
 
   // const guiHost = Cypress.env('GUI_HOST');
   const restApiHost = Cypress.env('REST_API_HOST') || Cypress.env('GUI_HOST');
@@ -34,8 +34,8 @@ beforeEach(() => {
     });
 });
 
-afterEach(() => {
-  if (this.currentTest.state === 'failed') {
-    return cy.task('shouldSkip', true);
-  }
-});
+// afterEach(() => {
+//   if (this.currentTest.state === 'failed') {
+//     return cy.task('shouldSkip', true);
+//   }
+// });
