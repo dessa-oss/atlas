@@ -13,10 +13,9 @@ def _config():
         config_manager,
         current_foundations_context,
     )
-    from foundations import (
-        LocalFileSystemPipelineArchive,
-        LocalFileSystemPipelineListing,
-    )
+    from foundations_contrib.global_state import config_manager
+    from foundations_contrib.local_file_system_pipeline_archive import LocalFileSystemPipelineArchive
+    from foundations_contrib.local_file_system_pipeline_listing import LocalFileSystemPipelineListing
 
     # ensure a job uuid is set
     current_foundations_context().pipeline_context().file_name = "integration-test-job"
