@@ -67,7 +67,7 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
-    "build": "node scripts/build.js --max_old_space_size=4096",
+    "build": "node scripts/build.js",
     "prune": "node scripts/yarn-prune.js",
     "testLint": "node node_modules/.bin/eslint .",
     "cy:run": "cypress run"
