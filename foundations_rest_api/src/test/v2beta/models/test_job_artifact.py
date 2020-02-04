@@ -32,7 +32,7 @@ class TestJobArtifact(Spec):
     def archive_host_with_trailing_slash(self):
         return self.archive_host + '/'
 
-    mock_artifact_listing_for_job = let_patch_mock_with_conditional_return('foundations_contrib.models.artifact_listing.artifact_listing_for_job')
+    mock_artifact_listing_for_job = let_patch_mock_with_conditional_return('foundations_rest_api.v2beta.models.artifact_listing.artifact_listing_for_job')
 
     @set_up
     def set_up(self):

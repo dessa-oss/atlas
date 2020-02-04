@@ -8,7 +8,7 @@ Written by Kyle De Freitas <k.defreitas@dessa.com>, 08 2019
 from foundations_spec import *
 
 import json
-from foundations_contrib.models.artifact_listing import artifact_listing_for_job
+from foundations_rest_api.v2beta.models.artifact_listing import artifact_listing_for_job
 
 class TestArtifactListing(Spec):
 

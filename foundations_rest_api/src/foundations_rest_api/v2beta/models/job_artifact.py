@@ -24,7 +24,7 @@ class JobArtifact(PropertyModel):
 
     @staticmethod
     def _all_artifacts(job_id):
-        from foundations_contrib.models.artifact_listing import artifact_listing_for_job
+        from foundations_rest_api.v2beta.models.artifact_listing import artifact_listing_for_job
         artifact_listing = artifact_listing_for_job(job_id)
         
         for artifact in artifact_listing:
