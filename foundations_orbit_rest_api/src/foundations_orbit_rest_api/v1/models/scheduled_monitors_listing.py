@@ -16,7 +16,6 @@ class ScheduledMonitorsListing(object):
     @staticmethod
     def _get_internal(project_name):
         import os
-        from foundations_contrib.global_state import config_manager
         from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler
 
         scheduler_url = os.environ.get('FOUNDATIONS_SCHEDULER_URL', 'http://localhost:5000')

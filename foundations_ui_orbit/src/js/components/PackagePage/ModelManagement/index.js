@@ -138,8 +138,8 @@ class ModelManagement extends React.Component {
             <div className="container-management-empty">
               <p>You have not loaded any reports</p>
               <p>
-                  Adding a model package can only be done using the command line
-                  interface
+                Adding a model package can only be done using the command line
+                interface
               </p>
             </div>
           )}
