@@ -37,14 +37,6 @@ class TestProjectV2(Spec):
             "foundations_rest_api.global_state.redis_connection", fakeredis.FakeRedis()
         )
 
-    @tear_down
-    def project_tear_down(self):
-        from foundations_rest_api.global_state import config_manager
-
-        keys = list(config_manager.config().keys())
-        for key in keys:
-            del config_manager.config()[key]
-
     def test_new_project_is_response(self):
         from foundations_core_rest_api_components.lazy_result import LazyResult
 

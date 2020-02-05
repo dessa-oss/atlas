@@ -14,17 +14,7 @@ from foundations_spec import *
 class TestTensorboardController(Spec):
 
     mock_request_post = let_patch_mock("requests.post")
-
-    @let_now
-    def config_manager(self):
-        from foundations_contrib.config_manager import ConfigManager
-
-        config_manager = ConfigManager()
-        config_manager["TENSORBOARD_API_HOST"] = self.api_host_name
-        config_manager["TENSORBOARD_HOST"] = self.host_name
-        return self.patch(
-            "foundations_rest_api.global_state.config_manager", config_manager
-        )
+    mock_environ = let_patch_mock('os.environ', {})
 
     @let
     def api_host_name(self):
@@ -60,6 +50,8 @@ class TestTensorboardController(Spec):
     @set_up
     def set_up(self):
         self.controller.params = self.params
+        self.mock_environ["TENSORBOARD_API_HOST"] = self.api_host_name
+        self.mock_environ["TENSORBOARD_HOST"] = self.host_name
 
     def test_tensorboard_controller_post_posts_to_the_tensorboard_api_server_with_transformed_params(
         self,

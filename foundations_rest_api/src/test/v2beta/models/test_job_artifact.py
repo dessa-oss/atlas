@@ -33,14 +33,11 @@ class TestJobArtifact(Spec):
         return self.archive_host + '/'
 
     mock_artifact_listing_for_job = let_patch_mock_with_conditional_return('foundations_rest_api.v2beta.models.artifact_listing.artifact_listing_for_job')
+    mock_environ = let_patch_mock('os.environ', {})
 
     @set_up
     def set_up(self):
-        from foundations_contrib.config_manager import ConfigManager
-
-        self.config_manager = ConfigManager()
-        self.config_manager['ARCHIVE_HOST'] = self.archive_host
-        self.patch('foundations_rest_api.global_state.config_manager', self.config_manager)
+        self.mock_environ['ARCHIVE_HOST'] = self.archive_host
 
     def test_artifact_has_filename(self):
         job_artifact = JobArtifact(filename=self.filename)
@@ -136,7 +133,7 @@ class TestJobArtifact(Spec):
         self.assertEqual(expected_job_artifacts, result)
 
     def test_retrieve_artifacts_by_job_id_with_artifacts_containing_subdirectories_when_archive_host_has_trailing_slash(self):
-        self.config_manager['ARCHIVE_HOST'] = self.archive_host_with_trailing_slash
+        self.mock_environ['ARCHIVE_HOST'] = self.archive_host_with_trailing_slash
 
         self.mock_artifact_listing_for_job.return_when([
             ('key_0', 'intermediaries/output/realtalk-output21980-artifact.mp3', {})

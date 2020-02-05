@@ -39,10 +39,10 @@ class TensorboardController:
 
     @staticmethod
     def _tensorboard_api_host():
-        from foundations_rest_api.global_state import config_manager
-        return config_manager['TENSORBOARD_API_HOST']
+        import os
+        return os.getenv('TENSORBOARD_API_HOST', 'localhost:5000')
 
     @staticmethod
     def _tensorboard_host():
-        from foundations_rest_api.global_state import config_manager
-        return config_manager['TENSORBOARD_HOST']
+        import os
+        return os.getenv('TENSORBOARD_HOST', 'localhost:5959')
