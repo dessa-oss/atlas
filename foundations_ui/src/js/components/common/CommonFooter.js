@@ -19,15 +19,16 @@ class CommonFooter extends React.Component {
         <p onKeyPress={this.onClickPolicies} onClick={this.onClickPolicies} className="dessa-policies">
           © 2019 DESSA | POLICIES
         </p>
-        <p>TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc.
+        <p>
+          TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc.
           RAPIDS, the RAPIDS logo and any related marks are trademarks and/or registered trademarks of NVIDIA
-           Corporation.
+          Corporation.
         </p>
         <p>
           Microsoft Azure, the Microsoft Azure logo and any related marks are trademarks and/or registered trademarks
-           of Microsoft Corporation.
+          of Microsoft Corporation.
           Google Cloud Platform, the Google Cloud Platform logo and any related marks are trademarks and/or registered
-           trademarks of Google Inc.
+          trademarks of Google Inc.
         </p>
       </div>
     );

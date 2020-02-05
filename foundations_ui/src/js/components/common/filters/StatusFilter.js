@@ -82,7 +82,7 @@ class StatusFilter extends Component {
             onClick={this.onClearFilters}
             className="b--mat b--affirmative text-upper float-right"
           >
-          Clear Filters
+            Clear Filters
           </button>
         </div>
         <div className="column-filter-list">

@@ -69,7 +69,7 @@ const ProjectSummary = props => {
               onClick={onClickShowTags}
               onKeyDown={() => {}}
             >
-                ...
+              ...
             </span>
           )
         }

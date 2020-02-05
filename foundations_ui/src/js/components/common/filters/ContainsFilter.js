@@ -76,7 +76,7 @@ class ContainsFilter extends Component {
             onClick={this.onClearFilters}
             className="b--mat b--affirmative text-upper float-right"
           >
-          Clear Filters
+            Clear Filters
           </button>
         </div>
         <input type="text" onChange={e => { this.changeLocalParams(e); }} value={filterString} />

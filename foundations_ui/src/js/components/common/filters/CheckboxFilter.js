@@ -46,14 +46,14 @@ class CheckboxFilter extends Component {
               onClick={onHideAll}
               className="b--mat b--negation text-upper"
             >
-            SELECT NONE
+              SELECT NONE
             </button>
             <button
               type="button"
               onClick={onClearFilters}
               className="b--mat b--negation-grey grey text-upper"
             >
-            SELECT ALL
+              SELECT ALL
             </button>
           </div>
         </div>
