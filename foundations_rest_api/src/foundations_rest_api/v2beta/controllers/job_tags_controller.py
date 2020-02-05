@@ -22,11 +22,6 @@ class JobTagsController(object):
     def post(self):
         job_annotations_key = "jobs:{}:annotations".format(self._job_id())
 
-        if self._is_tag_set(job_annotations_key, self._tag):
-            self._logger().warning(
-                "Tag `{}` updated to `{}`".format(self._tag, self._value)
-            )
-
         self._redis.hmset(job_annotations_key, {self._key(): self._value()})
 
         return Response(
@@ -55,8 +50,3 @@ class JobTagsController(object):
 
     def _tag(self):
         return self.params["tag"]
-
-    def _logger(self):
-        from foundations_rest_api.global_state import log_manager
-
-        return log_manager.get_logger(__name__)
