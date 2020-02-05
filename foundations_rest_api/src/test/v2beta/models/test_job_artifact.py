@@ -37,7 +37,7 @@ class TestJobArtifact(Spec):
 
     @set_up
     def set_up(self):
-        self.mock_environ['ARCHIVE_HOST'] = self.archive_host
+        self.mock_environ['FOUNDATIONS_ARCHIVE_HOST'] = self.archive_host
 
     def test_artifact_has_filename(self):
         job_artifact = JobArtifact(filename=self.filename)
@@ -133,7 +133,7 @@ class TestJobArtifact(Spec):
         self.assertEqual(expected_job_artifacts, result)
 
     def test_retrieve_artifacts_by_job_id_with_artifacts_containing_subdirectories_when_archive_host_has_trailing_slash(self):
-        self.mock_environ['ARCHIVE_HOST'] = self.archive_host_with_trailing_slash
+        self.mock_environ['FOUNDATIONS_ARCHIVE_HOST'] = self.archive_host_with_trailing_slash
 
         self.mock_artifact_listing_for_job.return_when([
             ('key_0', 'intermediaries/output/realtalk-output21980-artifact.mp3', {})

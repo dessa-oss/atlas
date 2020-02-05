@@ -36,7 +36,7 @@ class JobArtifact(PropertyModel):
         import os.path as path
         import os
 
-        archive_host = os.getenv('ARCHIVE_HOST', 'localhost')
+        archive_host = os.getenv('FOUNDATIONS_ARCHIVE_HOST', 'localhost')
         key, file_path, metadata = artifact_properities['artifact']
         file_extension = JobArtifact._file_extension(file_path)
 

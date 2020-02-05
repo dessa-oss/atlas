@@ -41,7 +41,7 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
 
         global_state.config_manager.reset()
 
-        global_state.foundations_context = FoundationsContext(klass._pipeline)        
+        global_state.foundations_context = FoundationsContext(klass._pipeline)
 
         klass._save_artifacts()
 
