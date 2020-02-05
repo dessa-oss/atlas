@@ -113,6 +113,7 @@ pipeline{
             }
         }
         stage('Acceptance Tests'){
+            failFast true
             parallel{
                 stage('F9S Acceptance Tests') {
                     steps{
