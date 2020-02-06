@@ -20,7 +20,7 @@ class TestArtifactListing(Spec):
     def set_up(self):
         from fakeredis import FakeRedis
 
-        self._redis = self.patch('foundations_contrib.global_state.redis_connection', FakeRedis())
+        self._redis = self.patch('foundations_rest_api.global_state.redis_connection', FakeRedis())
 
     @tear_down
     def tear_down(self):
