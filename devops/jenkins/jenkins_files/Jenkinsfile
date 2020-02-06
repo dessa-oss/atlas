@@ -200,34 +200,34 @@ pipeline{
                 stage('Run Atlas Cypress Tests') {
                     steps {
                         container("python3-1") {
-                            dir("${WORKSPACE}") {
-                                sh "mkdir -p ~/.foundations/logs"
-                                sh "./foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh"
-                                sh """export FOUNDATIONS_SCHEDULER_URL=http://${ATLAS_LOCAL_SCHEDULER}:5000 && \
-                                        REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && \
-                                        REDIS_PORT=5556 && \
-                                        export AUTH_CLIENT_CONFIG_PATH=`pwd`/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
-                                        python `pwd`/devops/startup_atlas_api.py 8000 &"""
-                                sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8000/api/v2beta/projects' 30"
-                                sh """export REACT_APP_API_STAGING_URL='http://localhost:8000/api/v2beta/' && \
-                                        cd foundations_ui && \
-                                        BROWSER=none PORT=8082 npm start &"""
-                                sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8082' 30"
-                                sh "sleep 60"
-                                sh """export CYPRESS_LOCAL_FOUNDATIONS_HOME=`pwd`/foundations_ui/cypress/fixtures/atlas_scheduler/.foundations && \
-                                        export CYPRESS_SCHEDULER_IP=$ATLAS_LOCAL_SCHEDULER && \
-                                        export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$REMOTE_FOUNDATIONS_HOME && \
-                                        export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
-                                        export CYPRESS_GUI_HOST=localhost && \
-                                        export CYPRESS_GUI_PORT=8082 && export CYPRESS_ATLAS_EDITION=CE && \
-                                        export CYPRESS_PROXY_PORT=5558 && \
-                                        export CYPRESS_REST_API_HOST=localhost && \
-                                        export CYPRESS_REST_API_PORT=8000 && \
-                                        export CYPRESS_FAIL_FAST=true && \
-                                        export AUTH_CLIENT_CONFIG_PATH=`pwd`/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
-                                        cd foundations_ui && \
-                                        npm run cy:run --"""
-                            }
+                            // dir("${WORKSPACE}") {
+                            //     sh "mkdir -p ~/.foundations/logs"
+                            //     sh "./foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh"
+                            //     sh """export FOUNDATIONS_SCHEDULER_URL=http://${ATLAS_LOCAL_SCHEDULER}:5000 && \
+                            //             REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && \
+                            //             REDIS_PORT=5556 && \
+                            //             export AUTH_CLIENT_CONFIG_PATH=`pwd`/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
+                            //             python `pwd`/devops/startup_atlas_api.py 8000 &"""
+                            //     sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8000/api/v2beta/projects' 30"
+                            //     sh """export REACT_APP_API_STAGING_URL='http://localhost:8000/api/v2beta/' && \
+                            //             cd foundations_ui && \
+                            //             BROWSER=none PORT=8082 npm start &"""
+                            //     sh "`pwd`/devops/build_scripts/helpers/wait_for_url.sh 'http://localhost:8082' 30"
+                            //     sh "sleep 60"
+                            //     sh """export CYPRESS_LOCAL_FOUNDATIONS_HOME=`pwd`/foundations_ui/cypress/fixtures/atlas_scheduler/.foundations && \
+                            //             export CYPRESS_SCHEDULER_IP=$ATLAS_LOCAL_SCHEDULER && \
+                            //             export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$REMOTE_FOUNDATIONS_HOME && \
+                            //             export CYPRESS_SCHEDULER_REDIS_PORT=5556 && \
+                            //             export CYPRESS_GUI_HOST=localhost && \
+                            //             export CYPRESS_GUI_PORT=8082 && export CYPRESS_ATLAS_EDITION=CE && \
+                            //             export CYPRESS_PROXY_PORT=5558 && \
+                            //             export CYPRESS_REST_API_HOST=localhost && \
+                            //             export CYPRESS_REST_API_PORT=8000 && \
+                            //             export CYPRESS_FAIL_FAST=true && \
+                            //             export AUTH_CLIENT_CONFIG_PATH=`pwd`/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
+                            //             cd foundations_ui && \
+                            //             npm run cy:run --"""
+                            // }
                         }
                     }
                 }
