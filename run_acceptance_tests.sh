@@ -25,7 +25,7 @@ done
 cd "$CWD/foundations_rest_api/src" || exit
 python -Wi -m unittest -f -v acceptance || exit 1
 
-cd ../..
+cd $CWD
 
 echo "Running Orbit Acceptance test"
 ./devops/startup_frontend_dev_orbit.sh
@@ -36,7 +36,8 @@ echo "Waiting for Atlas Orbit to start at http://localhost:3000"
 cd "$CWD/testing" || exit
 python -Wi -m unittest -f -v orbit_acceptance || exit 1
 
-cd ..
+cd $CWD
+
 ./devops/teardown_frontend_dev_atlas.sh
 ./devops/teardown_frontend_dev_orbit.sh
 
