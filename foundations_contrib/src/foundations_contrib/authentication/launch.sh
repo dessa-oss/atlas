@@ -11,4 +11,4 @@ docker run -d --rm --name $AUTH_SERVER_NAME \
     -e KEYCLOAK_LOGLEVEL=DEBUG \
     -v $DIR/keycloak:/keycloak \
     -p 8080:8080 \
-    jboss/keycloak
+    jboss/keycloak:8.0.1
