@@ -30,7 +30,7 @@ from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
 from foundations_contrib.bucket_pipeline_listing import BucketPipelineListing
 from foundations_contrib.prefixed_bucket import PrefixedBucket
 from foundations_internal.serializer import *
-from foundations_contrib.change_directory import ChangeDirectory
+from foundations_internal.change_directory import ChangeDirectory
 from foundations_contrib.bucket_job_deployment import BucketJobDeployment
 from foundations_contrib.archiving.save_artifact import save_artifact
 from foundations_contrib.deployment_wrapper import DeploymentWrapper

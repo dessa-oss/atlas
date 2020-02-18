@@ -16,7 +16,7 @@ def submit(arguments):
     from foundations_core_cli.job_submission.config import load
     from foundations_core_cli.job_submission.deployment import deploy
     from foundations_core_cli.job_submission.logs import stream_job_logs
-    from foundations_contrib.change_directory import ChangeDirectory
+    from foundations_internal.change_directory import ChangeDirectory
     from foundations_contrib.global_state import config_manager, log_manager
     from foundations_contrib.set_job_resources import set_job_resources
     from jsonschema import validate

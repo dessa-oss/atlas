@@ -17,7 +17,7 @@ class TestJobSourceBundle(Spec):
     mock_os_remove = let_patch_mock('os.remove')
     mock_os_exists = let_patch_mock('os.path.exists')
     mock_tarfile_open = let_patch_mock('tarfile.open')
-    mock_change_directory = let_patch_mock('foundations_contrib.change_directory.ChangeDirectory')
+    mock_change_directory = let_patch_mock('foundations_internal.change_directory.ChangeDirectory')
     mock_mkpath = let_patch_mock('distutils.dir_util.mkpath')
     mock_mkdtemp = let_patch_mock('tempfile.mkdtemp')
 

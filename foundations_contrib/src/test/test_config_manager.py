@@ -132,7 +132,7 @@ class TestConfigManager(Spec):
         self._assert_is_subset({'foo': 'bar'}, config_manager.config())
 
     def test_load_config_from_yaml(self):
-        from foundations_contrib.change_directory import ChangeDirectory
+        from foundations_internal.change_directory import ChangeDirectory
 
         with ChangeDirectory('test/fixtures/single_config'):
             config = ConfigManager().config()
@@ -140,7 +140,7 @@ class TestConfigManager(Spec):
                 {'title': 'test config', 'value': 'this exists as a test'}, config)
 
     def test_load_multiple_config_from_yaml(self):
-        from foundations_contrib.change_directory import ChangeDirectory
+        from foundations_internal.change_directory import ChangeDirectory
 
         with ChangeDirectory('test/fixtures/multiple_configs'):
             config = ConfigManager().config()
@@ -384,7 +384,7 @@ class TestConfigManager(Spec):
         self.assertIsNone(config_manager.config().get('FOUNDATIONS_TEST'))
 
     def test_reset_clears_config_paths(self):
-        from foundations_contrib.change_directory import ChangeDirectory
+        from foundations_internal.change_directory import ChangeDirectory
 
         config_manager = ConfigManager()
 

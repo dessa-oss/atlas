@@ -46,7 +46,7 @@ class JobSourceBundle(object):
     def unbundle(self, path_to_save):
         import tarfile
         from distutils.dir_util import mkpath
-        from foundations_contrib.change_directory import ChangeDirectory
+        from foundations_internal.change_directory import ChangeDirectory
 
         with tarfile.open(self.job_archive(), "r:gz") as tar:
             mkpath(path_to_save)
