@@ -24,7 +24,7 @@ class TestAuthViaClient(Spec):
     def resolve_f9s_auth():
         import os.path as path
 
-        return path.realpath("../foundations_contrib/src/")
+        return path.realpath("../foundations_authentication/src/")
 
     def keycloak_is_available(self) -> bool:
         try:
@@ -53,7 +53,7 @@ class TestAuthViaClient(Spec):
 
     def start_and_wait_for_keycloak(self) -> None:
         full_path = os.path.join(
-            self.resolve_f9s_auth(), "foundations_contrib/authentication"
+            self.resolve_f9s_auth(), "foundations_authentication"
         )
         subprocess.run(["bash", "launch.sh"], cwd=full_path, stdout=subprocess.PIPE)
 

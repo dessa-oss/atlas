@@ -13,6 +13,7 @@ add_path "$cwd/foundations_spec/src" && \
     add_path "$cwd/foundations_orbit_cli/src" && \
     add_path "$cwd/foundations_contrib/src" && \
     add_path "$cwd/foundations_sdk/src" && \
+    add_path "$cwd/foundations_authentication/src" && \
     add_path "$cwd/ssh_utils/src" && \
     add_path "$cwd/gcp_utils/src" && \
     add_path "$cwd/aws_utils/src" && \

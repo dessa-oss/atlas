@@ -25,7 +25,7 @@ class AuthenticationController(Resource):
     client = None
 
     def __init__(self):
-        from foundations_contrib.authentication.authentication_client import (
+        from foundations_authentication.authentication_client import (
             AuthenticationClient,
         )
 
@@ -60,7 +60,7 @@ class AuthenticationController(Resource):
 
     def _cli_login(self) -> Response:
         from foundations_core_rest_api_components.exceptions import AuthError
-        from foundations_contrib.authentication.utils import get_creds_from_header
+        from foundations_authentication.utils import get_creds_from_header
 
         try:
             creds = get_creds_from_header()
@@ -76,7 +76,7 @@ class AuthenticationController(Resource):
         :rtype: Response
 
         """
-        from foundations_contrib.authentication.utils import get_token_from_header
+        from foundations_authentication.utils import get_token_from_header
 
         self.client.logout(get_token_from_header())
         return Response(status=200)
@@ -90,8 +90,8 @@ class AuthenticationController(Resource):
         :rtype: dict
 
         """
-        from foundations_contrib.authentication.utils import get_token_from_header
-        from foundations_contrib.authentication.utils import verify_token
+        from foundations_authentication.utils import get_token_from_header
+        from foundations_authentication.utils import verify_token
 
         token = get_token_from_header()
         jwks = self.client.json_web_key_set

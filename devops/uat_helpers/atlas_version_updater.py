@@ -127,7 +127,7 @@ if __name__ == "__main__":
         "atlas_installer": {
             "repo": "git@github.com:DeepLearnI/foundations.git",
             "checkout": "master",
-            "source": "foundations_contrib/src/foundations_contrib/authentication/keycloak/atlas.json"
+            "source": "foundations_authentication/src/foundations_authentication/keycloak/atlas.json"
         }
     }
 

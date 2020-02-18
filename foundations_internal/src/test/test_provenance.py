@@ -55,7 +55,7 @@ class TestProvenance(Spec):
     @let_now
     def auth_client(self):
         constructor = self.patch(
-            "foundations_contrib.authentication.authentication_client.AuthenticationClient",
+            "foundations_authentication.authentication_client.AuthenticationClient",
             autospec=True,
         )
         return constructor("conf", "redirect")

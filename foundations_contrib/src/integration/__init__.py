@@ -10,4 +10,3 @@ import integration.config
 
 import foundations
 
-from integration.authentication import TestKeycloakIntegration

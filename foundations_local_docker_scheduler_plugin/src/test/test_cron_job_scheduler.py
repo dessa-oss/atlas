@@ -16,7 +16,7 @@ class TestCronJobScheduler(Spec):
     mock_patch = let_patch_mock('requests.patch')
     mock_put = let_patch_mock('requests.put')
 
-    mock_user_token = let_patch_mock('foundations_contrib.global_state.user_token')
+    mock_user_token = let_patch_mock('foundations_authentication.user_token.user_token')
 
     mock_successful_response_body = let_mock()
     mock_cron_schedule = let_mock()

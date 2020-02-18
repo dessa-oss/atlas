@@ -1,12 +1,11 @@
 import json
 from foundations_spec import Spec, set_up, ConditionalReturn, let_now, set_up_class
 
-from foundations_contrib.authentication.authentication_client import (
+from foundations_authentication.authentication_client import (
     AuthenticationClient,
     keycloak_client,
 )
 import subprocess
-from foundations_contrib import root
 from foundations_contrib.utils import wait_for_condition
 
 import requests
@@ -16,16 +15,12 @@ import os
 class TestKeycloakIntegration(Spec):
 
     redirect_url = "some_redirect"
-    conf_file = "integration/authentication/fixtures/atlas.json"
+    conf_file = "integration/fixtures/atlas.json"
     user = "test"
     auth_server_host = 'keycloak-headless.ci-pipeline.svc.cluster.local' if os.environ.get('RUNNING_ON_CI', False) == 'TRUE' else 'localhost'
 
     @set_up_class
     def set_up_class(cls):
-        if not os.environ.get('RUNNING_ON_CI', False):
-            # subprocess.run(f"{root()}/authentication/stop.sh", shell=True, check=True)
-            # subprocess.run(f"{root()}/authentication/launch.sh", shell=True, check=True)
-
             def condition() -> bool:
                 try:
                     res = requests.get(f"http://localhost:8080/auth/")

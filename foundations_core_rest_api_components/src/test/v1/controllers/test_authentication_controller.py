@@ -12,7 +12,7 @@ class TestAuthenticationController(Spec):
     @let_now
     def auth_client(self):
         constructor = self.patch(
-            "foundations_contrib.authentication.authentication_client.AuthenticationClient",
+            "foundations_authentication.authentication_client.AuthenticationClient",
             autospec=True,
         )
         return constructor('conf', 'redirect')
@@ -78,7 +78,7 @@ class TestAuthenticationController(Spec):
             self.auth_client.logout.assert_called_once_with("token")
 
     @patch(
-        "foundations_contrib.authentication.utils.verify_token"
+        "foundations_authentication.utils.verify_token"
     )
     def test_verify_calls_verify_token_with_token_and_client_jwks_issuer(self, verify):
 

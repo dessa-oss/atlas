@@ -24,7 +24,7 @@ def submit_job_bundle(bundle):
     return _post_job_archive(bundle, scheduler_url)
 
 def _post_job_archive(bundle, scheduler_url):
-    from foundations_contrib.global_state import user_token
+    from foundations_authentication.user_token import user_token
     import requests
 
     with _request_payload(bundle) as request_payload:

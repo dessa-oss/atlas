@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_contrib.global_state import user_token
+from foundations_authentication.user_token import user_token
 
 
 class JobDeployment(object):

@@ -1,7 +1,7 @@
 import json
 from foundations_spec import Spec, set_up, ConditionalReturn, let_now
 
-from foundations_contrib.authentication.authentication_client import (
+from foundations_authentication.authentication_client import (
     AuthenticationClient,
     keycloak_client,
 )
@@ -12,7 +12,7 @@ from mock import mock_open, patch, Mock
 class TestAuthenticationClient(Spec):
 
     redirect_url = "http://some_outher_url:0000"
-    conf_file = "test/authentication/fixtures/auth_config.json"
+    conf_file = "test/fixtures/auth_config.json"
 
     @let_now
     def requests_get(self):
@@ -21,7 +21,7 @@ class TestAuthenticationClient(Spec):
     @set_up
     def set_up(self):
         self.patch(
-            "foundations_contrib.authentication.authentication_client.KeycloakOpenID",
+            "foundations_authentication.authentication_client.KeycloakOpenID",
             autospec=True,
             spec_set=True,
         )
@@ -31,7 +31,7 @@ class TestAuthenticationClient(Spec):
 
     def test_keycloak_client_uses_a_dict_to_create_a_keycloak_open_id_instance(self):
         self.mock_auth_backend_class = self.patch(
-            "foundations_contrib.authentication.authentication_client.KeycloakOpenID",
+            "foundations_authentication.authentication_client.KeycloakOpenID",
             ConditionalReturn(),
         )
         # These values should match the auth_config in the fixtures
@@ -113,7 +113,7 @@ class TestAuthenticationClient(Spec):
         expected = {"some_id": "some_username", "another_id": "another_username"}
         self.assertEqual(expected, users)
 
-    @patch('foundations_contrib.authentication.authentication_client.jwt')
+    @patch('foundations_authentication.authentication_client.jwt')
     def test_decode_jwt(self, jwt):
         auth_token = self.faker.word()
         issuer = self.faker.word()

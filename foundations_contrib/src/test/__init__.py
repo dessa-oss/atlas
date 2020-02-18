@@ -9,7 +9,6 @@ from test.helpers import *
 from test.models import *
 from test.job_bundling import *
 from test.archiving import *
-from test.authentication import *
 
 from test.test_config_manager import TestConfigManager
 from test.test_bucket_pipeline_listing import TestBucketPipelineListing

@@ -45,7 +45,7 @@ def deploy(project_name, entrypoint, params):
 def _get_user_name_from_token() -> str:
     import requests
     from foundations_contrib.global_state import config_manager
-    from foundations_contrib.global_state import user_token
+    from foundations_authentication.user_token import user_token
 
     token = user_token()
     scheduler_url = config_manager.config().get("scheduler_url")

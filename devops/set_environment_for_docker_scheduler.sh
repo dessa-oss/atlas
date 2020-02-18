@@ -119,7 +119,7 @@ function start_auth_server() {
     network_name=foundations-$TYPE
     export AUTH_SERVER_NAME=foundations-authentication-server \
         && echo "Attempting to start the auth server as ${AUTH_SERVER_NAME}" \
-        && ./foundations_contrib/src/foundations_contrib/authentication/launch.sh \
+        && ./foundations_authentication/src/foundations_authentication/launch.sh \
         && echo "Connecting the auth server ${AUTH_SERVER_NAME} to network ${network_name}" \
         && docker network connect $network_name $AUTH_SERVER_NAME
 }

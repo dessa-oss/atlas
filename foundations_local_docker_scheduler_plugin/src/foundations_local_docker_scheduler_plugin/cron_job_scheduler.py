@@ -20,7 +20,7 @@ def _expect_code(status_code):
 class CronJobScheduler(object):
     def __init__(self, scheduler_url=None):
         import requests
-        from foundations_contrib.global_state import user_token
+        from foundations_authentication.user_token import user_token
 
         if scheduler_url is None:
             scheduler_url = "http://localhost:5000"

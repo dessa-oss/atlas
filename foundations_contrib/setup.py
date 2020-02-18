@@ -53,7 +53,6 @@ setup(
         'slackclient==1.3.0',
         'psutil==5.6.2',
         'jsonschema==3.0.2',
-        'python-keycloak==0.17.6',
         'foundations-internal=={}'.format(build_version),
         'foundations-events=={}'.format(build_version)
     ],

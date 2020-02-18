@@ -9,8 +9,8 @@ from functools import wraps
 
 from jose import jwt
 
-from foundations_contrib.authentication.authentication_client import AuthenticationClient
-from foundations_contrib.authentication.utils import get_token_from_header, verify_token
+from foundations_authentication.authentication_client import AuthenticationClient
+from foundations_authentication.utils import get_token_from_header, verify_token
 
 
 def requires_auth(auth_client: AuthenticationClient):

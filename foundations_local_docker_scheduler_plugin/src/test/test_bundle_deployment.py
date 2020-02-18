@@ -16,7 +16,7 @@ class TestBundleDeployment(Spec):
 
     @let
     def user_token(self):
-        return self.patch('foundations_contrib.global_state.user_token')
+        return self.patch('foundations_authentication.user_token.user_token')
 
     @let_now
     def config_manager(self):
