@@ -21,6 +21,7 @@ class TestKeycloakIntegration(Spec):
 
     @set_up_class
     def set_up_class(cls):
+        if not os.environ.get('RUNNING_ON_CI', False):
             def condition() -> bool:
                 try:
                     res = requests.get(f"http://localhost:8080/auth/")
