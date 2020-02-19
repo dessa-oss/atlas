@@ -2,7 +2,7 @@
 name: Incident report
 about: Incident report + RCA regarding any disruptions for Atlas / Orbit
 title: "[Incident] Title describing this incident"
-labels: incident
+labels: ''
 assignees: ''
 
 ---
