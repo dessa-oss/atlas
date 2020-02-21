@@ -1,6 +1,7 @@
 **/*bell*
 .DS_Store
 *.json
+!atlas.json
 .ipynb_checkpoints
 **/*.pyc
 venv*
