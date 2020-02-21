@@ -91,7 +91,7 @@ dist
 !**/fixtures/**/*.config.yaml
 !**/fixtures/**/*.json
 !**/authentication/*.json
-!**/authentication/keycloak/*.json
+!**/foundations_authentication/keycloak/*.json
 testing/test-cli-init
 test_pod.yaml
 
