@@ -15,7 +15,7 @@ import os
 class TestKeycloakIntegration(Spec):
 
     redirect_url = "some_redirect"
-    conf_file = "integration/fixtures/atlas.json"
+    conf_file = "integration/fixtures/atlas_client.json"
     user = "test"
     auth_server_host = 'keycloak-headless.ci-pipeline.svc.cluster.local' if os.environ.get('RUNNING_ON_CI', False) == 'TRUE' else 'localhost'
 
