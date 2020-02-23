@@ -1,9 +1,3 @@
-"""
-Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
-Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
-Proprietary and confidential
-Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
-"""
 
 class SFTPBucketStatScanner(object):
     """This class, given a directory path, will use a configuration defined in a yaml file to return stat information for each file in the directory on a remote machine.

@@ -1,10 +1,4 @@
 
-"""
-Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
-Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
-Proprietary and confidential
-Written by Dariem Perez <d.perez@dessa.com>, 11 2018
-"""
 from acceptance.v2beta.jobs_tests_helper_mixin_v2 import JobsTestsHelperMixinV2
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 from foundations_spec import *

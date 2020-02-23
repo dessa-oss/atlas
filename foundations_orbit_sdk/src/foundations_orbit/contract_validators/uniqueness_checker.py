@@ -1,9 +1,3 @@
-"""
-Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
-Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
-Proprietary and confidential
-Written by Calvin Choi <c.choi@dessa.com>, 01 2020
-"""
 
 import pandas as pd
 import numpy as np

@@ -1,9 +1,3 @@
-"""
-Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
-Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
-Proprietary and confidential
-Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
-"""
 
 from foundations_spec.helpers.spec import Spec
 from foundations_spec.helpers import let, let_mock, let_now, set_up
