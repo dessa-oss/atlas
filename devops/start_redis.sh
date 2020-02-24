@@ -26,7 +26,7 @@ if [ -z "$redis_container_id" ]; then
         && docker run \
             --rm \
             --name $TRACKER_NAME \
-            -p 6379:$REDIS_PORT \
+            -p $REDIS_PORT:6379 \
             --network=$network_name \
             --volume $FOUNDATIONS_HOME/database:/data \
             -d redis redis-server --appendonly yes
