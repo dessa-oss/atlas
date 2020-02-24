@@ -1,24 +1,16 @@
-.highcharts-credits {
-  display: none;
-}
-
 .chart {
   min-height: 475px;
   overflow-y: hidden;
 
-  .highchart-chart {
+  .plotly-chart {
     position: relative;
-    top: 50px;
+    .js-plotly-plot {
+      width: 100%;
+    }
   }
 
   select {
     cursor: pointer;
-  }
-}
-
-.highchart-chart {
-  div {
-    overflow: visible !important; // to override the highcharts library
   }
 }
 
