@@ -1,12 +1,8 @@
-.highcharts-credits {
-  display: none;
-}
-
 .chart {
   min-height: 475px;
   overflow-y: hidden;
 
-  .highchart-chart {
+  .plotly-chart {
     position: relative;
     .js-plotly-plot {
       width: 100%;

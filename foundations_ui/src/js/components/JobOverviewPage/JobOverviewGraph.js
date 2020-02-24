@@ -88,7 +88,7 @@ class JobOverviewGraph extends Component {
             className="react-select"
             isMulti
           />
-          <div className="highchart-chart">
+          <div className="plotly-chart">
             {chart}
           </div>
         </div>
