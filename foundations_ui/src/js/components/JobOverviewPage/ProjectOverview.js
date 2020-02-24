@@ -37,7 +37,7 @@ class ProjectOverview extends React.Component {
           if (result && result.jobs) {
             this.setState({
               tags: CommonActions.getTagsFromJob(result.jobs),
-              jobIDs: result.jobs.map(job => job.job_id),
+              jobIDs: result.jobs.map(job => job.job_id).reverse(),
             });
           }
         });

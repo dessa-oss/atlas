@@ -2,8 +2,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
-import Highcharts from 'highcharts';
-import HighchartsReact from 'highcharts-react-official';
+import Plot from 'react-plotly.js';
 import EmptyGraphImage from '../../../assets/svgs/empty-graph.svg';
 
 class JobOverviewGraph extends Component {
@@ -86,8 +85,26 @@ class JobOverviewGraph extends Component {
 
   render() {
     const {
-      formattedGraphData, allMetrics, failedToConvert, jobIDs,
+      formattedGraphData, allMetrics, failedToConvert, jobIDs, graphData,
     } = this.state;
+
+    const data = graphData.map(metric => {
+      const x = [];
+      const y = [];
+      metric.values.forEach(job => {
+        x.push(job[0]);
+        y.push(job[1]);
+      });
+      return { x: x, y: y };
+    });
+
+    const layout = {
+      xaxis: {
+        tickvals: jobIDs,
+      },
+    };
+
+    console.log(layout);
 
     const options = {
       chart: {
@@ -136,7 +153,8 @@ class JobOverviewGraph extends Component {
           </div>
         );
       } else {
-        chart = <HighchartsReact highcharts={Highcharts} options={options} />;
+        // chart = <HighchartsReact highcharts={Highcharts} options={options} />;
+        chart = <Plot data={data} layout={layout} />;
       }
     }
 
