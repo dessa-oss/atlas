@@ -1,9 +1,3 @@
-"""
-Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
-Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
-Proprietary and confidential
-Written by Eric Kin Ho Lee <e.lee@dessa.com>, 08 2019
-"""
 
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages

@@ -1,9 +1,3 @@
-"""
-Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
-Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
-Proprietary and confidential
-Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
-"""
 
 import numpy as np
 from foundations_orbit.contract_validators.prototype.utils import spread_counts_over_identical_edges
