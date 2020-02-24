@@ -8,17 +8,13 @@
 
   .highchart-chart {
     position: relative;
-    top: 50px;
+    .js-plotly-plot {
+      width: 100%;
+    }
   }
 
   select {
     cursor: pointer;
-  }
-}
-
-.highchart-chart {
-  div {
-    overflow: visible !important; // to override the highcharts library
   }
 }
 

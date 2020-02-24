@@ -148,7 +148,7 @@ class ParCoordsGraph extends React.Component {
             />
           </div>
         </div>
-        <Plot data={data} layout={{ autosize: true }} useResizeHandler />
+        <Plot data={data} layout={{ autosize: true }} useResizeHandler config={{ displayModeBar: false }} />
       </div>
     );
   }
