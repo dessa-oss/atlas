@@ -13,15 +13,10 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-if [[ $F9S_ENV_TYPE == "atlas" ]]; then
-    UI_FOLDER="foundations_ui"
-    FIXTURE_FOLDER="atlas_scheduler"
-    $cwd/devops/startup_frontend_dev_atlas.sh
-else
-    UI_FOLDER="foundations_ui_orbit"
-    FIXTURE_FOLDER="orbit_acceptance"
-    $cwd/devops/startup_frontend_dev_orbit.sh
-fi
+UI_FOLDER="foundations_ui"
+FIXTURE_FOLDER="atlas_scheduler"
+$cwd/devops/startup_frontend_dev_atlas.sh
+
 cd $UI_FOLDER \
     && yarn install --silent \
     && export CYPRESS_LOCAL_FOUNDATIONS_HOME="${cwd}/${UI_FOLDER}/cypress/fixtures/${FIXTURE_FOLDER}/.foundations" \

@@ -6,7 +6,6 @@ export FOUNDATIONS_HOME=${FOUNDATIONS_HOME:-~/.foundations}
 export F9S_ENV_TYPE=${F9S_ENV_TYPE:-atlas}
 
 export ATLAS_PORT=${ATLAS_PORT:-37722}
-export ORBIT_PORT=${ORBIT_PORT:-37222}
 export GUI_PORT=3000
 
 export SCHEDULER_PORT=${SCHEDULER_PORT:-5000}
@@ -50,13 +49,8 @@ export REMOTE_FOUNDATIONS_HOME=${REMOTE_FOUNDATIONS_HOME:-$FOUNDATIONS_HOME}
 
 # CYPRESS Environment Variables
 
-if [[ $F9S_ENV_TYPE == "atlas" ]]; then
-    UI_FOLDER="foundations_ui"
-    FIXTURE_FOLDER="atlas_scheduler"
-else
-    UI_FOLDER="foundations_ui_orbit"
-    FIXTURE_FOLDER="orbit_acceptance"
-fi
+UI_FOLDER="foundations_ui"
+FIXTURE_FOLDER="atlas_scheduler"
 
 export CYPRESS_LOCAL_FOUNDATIONS_HOME="${CWD}/${UI_FOLDER}/cypress/fixtures/${FIXTURE_FOLDER}/.foundations" \
 export CYPRESS_SCHEDULER_IP="localhost"

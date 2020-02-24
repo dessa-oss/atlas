@@ -39,9 +39,7 @@ do
     if [[ "$module_directory" == "foundations_sdk" ]]; then
         real_module_name="foundations"
     fi
-    
-    if [[ "$module_directory" == "foundations_orbit_sdk" ]]; then
-        real_module_name="foundations_orbit"
+
     fi
     
     if [[ "$module_directory" == "ssh_utils" ]]; then

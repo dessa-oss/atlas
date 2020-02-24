@@ -29,7 +29,7 @@ class AuthenticationController(Resource):
         return getattr(self, "_" + action, lambda: abort(404))()
 
     def _login(self) -> Response:
-        """Login to Atlas/Orbit.
+        """Login to Atlas.
 
         This endpoint works by checking for an authorization code that comes from
         the authentication server. If that code is not present, then we redirect
@@ -64,7 +64,7 @@ class AuthenticationController(Resource):
             raise AuthError(str(error), 401)
 
     def _logout(self) -> Response:
-        """Logout of Atlas/Orbit.
+        """Logout of Atlas.
 
         :return: Just a successful response, no content.
         :rtype: Response

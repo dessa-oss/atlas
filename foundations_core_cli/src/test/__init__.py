@@ -5,7 +5,6 @@ from test.test_project import TestProject
 from test.test_scaffold import TestScaffold
 from test.test_command_line_interface import TestCommandLineInterface
 from test.test_environment_fetcher import TestEnvironmentFetcher
-from test.test_orbit_monitor_package_server import TestOrbitMonitorPackageServer
 from test.test_config_listing import TestConfigListing
 
 from test.job_submission import *

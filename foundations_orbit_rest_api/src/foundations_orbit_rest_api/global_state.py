@@ -1,2 +1,0 @@
-
-from foundations_core_rest_api_components.global_state import app_manager

@@ -14,8 +14,6 @@ rm -rf dist/* && \
     build_module foundations_contrib foundations_contrib $cwd && \
     build_module foundations_core_cli foundations_core_cli $cwd && \
     build_module foundations_atlas_cli foundations_atlas_cli $cwd && \
-    build_module foundations_orbit_cli foundations_orbit_cli $cwd && \
-    build_module foundations_orbit_sdk foundations_orbit $cwd && \
     build_module foundations_authentication foundations_authentication $cwd && \
     build_module gcp_utils foundations_gcp $cwd && \
     build_module ssh_utils foundations_ssh $cwd && \
@@ -24,4 +22,3 @@ rm -rf dist/* && \
     build_module foundations_sdk dessa_foundations $cwd && \
     build_module foundations_core_rest_api_components foundations_core_rest_api_components $cwd && \
     build_module foundations_rest_api foundations_rest_api $cwd && \
-    build_module foundations_orbit_rest_api foundations_orbit_rest_api $cwd

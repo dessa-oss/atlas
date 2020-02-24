@@ -108,7 +108,7 @@ elif [ "${action}" = "stop" ]
 then
     stop_ui
 else
-    echo "USAGE: $0 <start|stop> ui <foundations|foundations-orbit> [image_tag]"
+    echo "USAGE: $0 <start|stop> ui <foundations> [image_tag]"
     echo "image_tag is optional; omit to use 'latest'"
     exit 1
 fi

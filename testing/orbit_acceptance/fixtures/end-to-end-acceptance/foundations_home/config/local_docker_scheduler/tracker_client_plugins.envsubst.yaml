@@ -1,3 +1,0 @@
-redis_tracker_client:
-  host: ${LOCAL_DOCKER_SCHEDULER_HOST}
-  port: 6379

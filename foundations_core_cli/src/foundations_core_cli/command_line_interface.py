@@ -9,15 +9,6 @@ class CommandLineInterface(object):
         self._subparsers = self._argument_parser.add_subparsers()
 
         try:
-            from foundations_orbit_cli.sub_parsers.monitor.monitor_parser import (
-                MonitorParser,
-            )
-
-            MonitorParser(self).add_sub_parser()
-        except ModuleNotFoundError:
-            pass
-
-        try:
             from foundations_atlas_cli.sub_parsers.atlas.atlas_parser import AtlasParser
 
             AtlasParser(self).add_sub_parser()
@@ -74,7 +65,7 @@ class CommandLineInterface(object):
         import sys
 
         login_parser = self.add_sub_parser(
-            "login", help="Login to either an Atlas or Orbit cluster"
+            "login", help="Login to an Atlas cluster"
         )
         login_parser.add_argument(
             "host",

@@ -19,9 +19,6 @@ check_for_config_and_create_if_does_not_exists "worker_submission"
 
 # ***************************************************************************************************************
 
-echo "Ensuring that orbit is not also running"
-./devops/teardown_frontend_dev_orbit.sh
-
 echo " Ensuring stoping previous running altas"
 ./devops/teardown_frontend_dev_atlas.sh
 

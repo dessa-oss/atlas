@@ -10,7 +10,6 @@ from test.test_projects import TestProjects
 from test.test_config import TestConfig
 from test.test_set_job_resources import TestSetJobResources
 from test.test_save_artifact import TestSaveArtifact
-from test.test_track_production_metrics import TestTrackProductionMetrics
 from test.artifacts import *
 from test.local_run import *
 from test.submission import *

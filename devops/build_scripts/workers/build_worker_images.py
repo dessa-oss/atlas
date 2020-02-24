@@ -11,7 +11,7 @@ to_be_released = os.environ.get('RELEASED', False)
 
 
 def build_worker_tags_for_local_development():
-    return ['orbit/worker', 'orbit-team/worker', 'atlas-common/worker', 'atlas-common/worker-gpu']
+    return ['atlas-common/worker', 'atlas-common/worker-gpu']
 
 
 def build_worker_tags_for_release():
@@ -26,7 +26,7 @@ def build_worker_images():
     
     worker_tags = build_worker_tags_for_release() if to_be_released else build_worker_tags_for_local_development()
     worker_file_path = './docker/worker_images/'
-    non_gpu_dockerfile = 'worker_Dockerfile'
+    non_gpu_dockerfile = 'worker_tensorflow_Dockerfile'
     gpu_dockerfile = 'worker_tensorflow_gpu_Dockerfile'
 
     for worker_tag in worker_tags:

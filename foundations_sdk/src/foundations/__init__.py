@@ -42,11 +42,6 @@ import foundations_core_cli
 from foundations.artifacts import *
 from foundations.local_run import set_up_default_environment_if_present
 
-try:
-    from foundations_orbit import *
-except ModuleNotFoundError:
-    pass
-
 
 def _append_module():
     import sys
