@@ -274,6 +274,9 @@ pipeline{
             }
         }
         stage('Trigger Build Artifacts for Foundations Pipeline') {
+            when{
+                branch 'master'
+            }
             steps {
                 container("python3") {
                     script {
