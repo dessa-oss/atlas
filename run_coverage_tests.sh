@@ -40,8 +40,6 @@ do
         real_module_name="foundations"
     fi
 
-    fi
-    
     if [[ "$module_directory" == "ssh_utils" ]]; then
         real_module_name="foundations_ssh"
     fi
