@@ -1,7 +1,3 @@
-# Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
-# Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
-# Proprietary and confidential
-# Written by Austin Mackillop <a.mackillop@dessa.com>, 08 2019
 
 FROM python:3.6.8-alpine as base
 
