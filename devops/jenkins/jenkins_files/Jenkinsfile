@@ -40,31 +40,35 @@ pipeline{
         stage('Build Wheels') {
             steps {
                 container("python3") {
-                    dir('atlas'){
+                    dir('atlas') {
                         sh "../ci/build_scripts/build_all_dist.sh"
                     }
                 }
             }
         }
-        // stage('Run Unit test and coverage'){
-        //     failFast true
-        //     parallel{
-        //         stage('Run Unit Tests') {
-        //             steps {
-        //                 container("python3") {
-        //                     sh "./run_unit_tests.sh"
-        //                 }
-        //             }
-        //         }
-        //         stage('Run Coverage Tests') {
-        //             steps {
-        //                 container("python3") {
-        //                     sh "./run_coverage_tests.sh unittest"
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Run Unit test and coverage'){
+            failFast true
+            parallel{
+                stage('Run Unit Tests') {
+                    steps {
+                        container("python3") {
+                            dir('atlas') {
+                                sh "./run_unit_tests.sh"
+                            }
+                        }
+                    }
+                }
+                stage('Run Coverage Tests') {
+                    steps {
+                        container("python3") {
+                            dir('atlas') {
+                                sh "./run_coverage_tests.sh unittest"
+                            }
+                        }
+                    }
+                }
+            }
+        }
         // stage('Run Integration Tests and Prepare for Acceptance Tests'){
         //     parallel{
         //         stage("Integration Tests") {
