@@ -69,67 +69,71 @@ pipeline{
                 }
             }
         }
-        // stage('Run Integration Tests and Prepare for Acceptance Tests'){
-        //     parallel{
-        //         stage("Integration Tests") {
-        //             stages{
-        //                 stage('Run Integration Tests') {
-        //                     steps {
-        //                         container("python3") {
-        //                             sh './run_integration_tests.sh'
-        //                         }
-        //                     }
-        //                 }
-        //                 stage('Run Coverage Tests') {
-        //                     steps {
-        //                         container("python3") {
-        //                             sh "./run_coverage_tests.sh integration"
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //         stage('Install Foundations (container 1)') {
-        //             steps {
-        //                 container("python3-1") {
-        //                     ws("${WORKSPACE}/testing") {
-        //                         sh 'python -m pip install ../dist/*.whl'
-        //                     }
-        //                     dir("${WORKSPACE}/foundations_ui") {
-        //                         sh "yarn install"
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //         stage('Install Foundations (container 2)') {
-        //             steps {
-        //                 container("python3-2") {
-        //                     ws("${WORKSPACE}/testing") {
-        //                         sh 'python -m pip install ../dist/*.whl'
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //         stage('Install Foundations (container 3)') {
-        //             steps {
-        //                 container("python3-3") {
-        //                     ws("${WORKSPACE}/testing") {
-        //                         sh 'python -m pip install ../dist/*.whl'
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //         stage('Install Foundations (container 4)') {
-        //             steps {
-        //                 container("python3-4") {
-        //                     ws("${WORKSPACE}/testing") {
-        //                         sh 'python -m pip install ../dist/*.whl'
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Run Integration Tests and Prepare for Acceptance Tests'){
+            parallel{
+                stage("Integration Tests") {
+                    stages{
+                        stage('Run Integration Tests') {
+                            steps {
+                                container("python3") {
+                                    dir('atlas') {
+                                        sh './run_integration_tests.sh'
+                                    }
+                                }
+                            }
+                        }
+                        stage('Run Coverage Tests') {
+                            steps {
+                                container("python3") {
+                                    dir('atlas') {
+                                        sh "./run_coverage_tests.sh integration"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                // stage('Install Foundations (container 1)') {
+                //     steps {
+                //         container("python3-1") {
+                //             ws("${WORKSPACE}/atlas/testing") {
+                //                 sh 'python -m pip install ../dist/*.whl'
+                //             }
+                //             dir("${WORKSPACE}/atlas/foundations_ui") {
+                //                 sh "yarn install"
+                //             }
+                //         }
+                //     }
+                // }
+                // stage('Install Foundations (container 2)') {
+                //     steps {
+                //         container("python3-2") {
+                //             ws("${WORKSPACE}/atlas/testing") {
+                //                 sh 'python -m pip install ../dist/*.whl'
+                //             }
+                //         }
+                //     }
+                // }
+                // stage('Install Foundations (container 3)') {
+                //     steps {
+                //         container("python3-3") {
+                //             ws("${WORKSPACE}/atlas/testing") {
+                //                 sh 'python -m pip install ../dist/*.whl'
+                //             }
+                //         }
+                //     }
+                // }
+                // stage('Install Foundations (container 4)') {
+                //     steps {
+                //         container("python3-4") {
+                //             ws("${WORKSPACE}/atlas/testing") {
+                //                 sh 'python -m pip install ../dist/*.whl'
+                //             }
+                //         }
+                //     }
+                // }
+            }
+        }
         // stage('Acceptance Tests'){
         //     failFast true
         //     parallel{
