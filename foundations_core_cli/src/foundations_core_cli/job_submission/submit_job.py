@@ -1,10 +1,10 @@
 
 
-import foundations_contrib
+# import foundations_contrib
 import yaml
 
-with open(f'{foundations_contrib.root()}/resources/config_validation/job.yaml') as file:
-    _job_schema = yaml.load(file.read(), Loader=yaml.FullLoader)
+# with open(f'{foundations_contrib.root()}/resources/config_validation/job.yaml') as file:
+#     _job_schema = yaml.load(file.read(), Loader=yaml.FullLoader)
 
 def submit(arguments):
     from foundations_core_cli.job_submission.config import load
