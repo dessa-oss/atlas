@@ -47,6 +47,3 @@ There is a new release on every second Friday. Old releases can be found by navi
 
 
 ## License
-
-Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
-Unauthorized copying, distribution, reproduction, publication, use of this library, via any medium is strictly prohibited. Proprietary and confidential.
