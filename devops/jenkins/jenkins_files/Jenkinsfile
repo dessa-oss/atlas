@@ -10,6 +10,7 @@ pipeline{
         stage('Preparation') {
             steps {
                 container('python3') {
+                    sh 'rm -rf atlas'
                     script {
                         customMetricsMap["jenkins_data"] = customMetrics
                         checkout scm
