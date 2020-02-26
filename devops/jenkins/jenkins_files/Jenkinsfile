@@ -10,6 +10,7 @@ pipeline{
         stage('Preparation') {
             steps {
                 container('python3') {
+                    sh 'rm -rf atlas'
                     dir('atlas') {
                         script {
                             customMetricsMap["jenkins_data"] = customMetrics
@@ -22,6 +23,7 @@ pipeline{
         stage('Clone CI Repo') {
             steps {
                 container('python3') {
+                    sh 'rm -rf ci'
                     dir('ci') {
                         git branch: 'master', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations-ci.git'
                     }
