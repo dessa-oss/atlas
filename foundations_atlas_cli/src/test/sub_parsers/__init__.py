@@ -1,1 +1,2 @@
 
+from test.sub_parsers.test_atlas_parser import TestAtlasParser
