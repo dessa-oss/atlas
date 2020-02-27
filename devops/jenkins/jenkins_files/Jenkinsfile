@@ -342,6 +342,7 @@ pipeline{
             }
             container('python3') {
                 sh 'rm -rf ci'
+                sh 'git clean -fdx'
             }
         }
     }
