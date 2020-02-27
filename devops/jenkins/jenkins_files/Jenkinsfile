@@ -9,10 +9,6 @@ pipeline{
     stages {
         stage('Preparation') {
             steps {
-                sh 'echo ---------------'
-                sh 'ls'
-                sh 'pwd'
-                sh 'echo ---------------'
                 container('python3') {
                     script {
                         customMetricsMap["jenkins_data"] = customMetrics
@@ -343,6 +339,9 @@ pipeline{
             }
             container("python3-3") {
                 sh "kill -9 `lsof -i:8081 -t` || true"
+            }
+            container('python3') {
+                sh 'rm -rf ci'
             }
         }
     }
