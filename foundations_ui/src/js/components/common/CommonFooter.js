@@ -16,9 +16,6 @@ class CommonFooter extends React.Component {
   render() {
     return (
       <div className="common-footer">
-        <p onKeyPress={this.onClickPolicies} onClick={this.onClickPolicies} className="dessa-policies">
-          © 2019 DESSA | POLICIES
-        </p>
         <p>
           TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc.
           RAPIDS, the RAPIDS logo and any related marks are trademarks and/or registered trademarks of NVIDIA
