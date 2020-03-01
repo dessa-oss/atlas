@@ -26,8 +26,8 @@ RUN find -iname "foundations_internal-*.whl" | xargs pip install \
     && echo "Completed foundations package installation"
 
 WORKDIR /app/
-COPY docker/${main_file} /app/main.py
-COPY docker/uwsgi.ini /app/uwsgi.ini
+COPY foundations_rest_api/${main_file} /app/main.py
+COPY foundations_rest_api/uwsgi.ini /app/uwsgi.ini
 
 RUN mkdir /configs
 COPY foundations_rest_api/src/foundations_rest_api/config/ /configs/
