@@ -3,7 +3,7 @@
 action="$1"
 
 if [ "$4" = "" ]; then
-    image_tag=`./docker_image_version.sh`
+    image_tag=`python get_version.py`
 else
     image_tag="$4"
 fi
