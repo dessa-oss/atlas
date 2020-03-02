@@ -37,7 +37,7 @@ pipeline{
         stage('Build Wheels') {
             steps {
                 container("python3") {
-                    sh "ci/build_scripts/build_all_dist.sh"
+                    sh "ci/build_scripts/build_all_dist.sh ci/build_scripts"
                 }
             }
         }
