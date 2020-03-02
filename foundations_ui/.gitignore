@@ -10,8 +10,6 @@
 
 # production
 /build
-gui_Dockerfile
-gui_ce_Dockerfile
 
 # misc
 .DS_Store
