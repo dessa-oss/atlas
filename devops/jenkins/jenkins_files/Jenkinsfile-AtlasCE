@@ -10,7 +10,7 @@ pipeline{
     stage('Preparation') {
       steps {
         container("python3") {
-          dir('atlas-ce') {
+          dir('atlas') {
             git branch: 'master', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations.git'
             sh "git checkout ${params.f9s_commit_hash}"
           }
@@ -20,7 +20,7 @@ pipeline{
     stage('Foundations Install Requirements') {
       steps {
         container("python3") {
-          dir('atlas-ce') {
+          dir('atlas') {
             sh "./ci_install_requirements.sh"
           }
         }
@@ -29,7 +29,7 @@ pipeline{
     stage('Build Atlas CE Wheels') {
       steps {
         container("python3") {
-          dir('atlas-ce') {
+          dir('atlas') {
             sh "./devops/build_scripts/build_atlas_dist.sh"
           }
         }
@@ -38,7 +38,7 @@ pipeline{
     stage('Upload Altas Wheels to Staging PyPi') {
       steps {
         container("python3") {
-            dir('atlas-ce') {
+            dir('atlas') {
                 sh "./devops/build_scripts/upload_modules_to_artifactory.sh $NEXUS_PYPI_STAGING"
             }
         }
@@ -47,7 +47,7 @@ pipeline{
     stage('Build Atlas GUI and Rest API Images'){
       steps {
         container("python3"){
-          dir('atlas-ce') {
+          dir('atlas') {
             sh 'docker login $NEXUS_DOCKER_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD'
             sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-ce ./devops/build_scripts/gui_and_rest_apis/build_gui_ce.sh"
           }
@@ -57,7 +57,7 @@ pipeline{
     stage('Push Atlas GUI and Rest API Images'){
       steps {
         container("python3"){
-          dir('atlas-ce') {
+          dir('atlas') {
             sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-ce ./devops/build_scripts/gui_and_rest_apis/push_gui_atlas_ce_images.sh"
           }
         }
@@ -66,7 +66,7 @@ pipeline{
     stage('Build Atlas Tensorboard Server and Rest API Images'){
       steps {
         container("python3"){
-          dir('atlas-ce') {
+          dir('atlas') {
             sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-common ./tensorboard/docker/tensorboard_rest_api/build_image.sh"
             sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-common ./tensorboard/docker/tensorboard_server/build_image.sh"
           }
@@ -76,7 +76,7 @@ pipeline{
     stage('Push Atlas Tensorboard Server and Rest API Images'){
       steps {
         container("python3"){
-          dir('atlas-ce') {
+          dir('atlas') {
             sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-common ./tensorboard/docker/tensorboard_rest_api/push_image.sh"
             sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-common ./tensorboard/docker/tensorboard_server/push_image.sh"
           }
@@ -86,7 +86,7 @@ pipeline{
     stage('Trigger Atlas CE Build Pipeline') {
       steps {
         container("python3"){
-          dir('atlas-ce') {
+          dir('atlas') {
             script {
               echo "Triggering job for building Atlas CE Artifacts"
               version = sh(script: 'python get_version.py', returnStdout: true).trim()
