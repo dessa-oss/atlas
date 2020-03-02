@@ -7,7 +7,7 @@ script_location="$(pwd)/devops/build_scripts"
 $script_location/build_all_dist.sh && \
 
     echo "Building Atlas REST API and GUI Image" && \
-    NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-ce $script_location/gui_and_rest_apis/build_gui_ce.sh && \
+    NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas $script_location/gui_and_rest_apis/build_gui_ce.sh && \
 
     echo "Successfully built images" || echo "Failed to build images"
 

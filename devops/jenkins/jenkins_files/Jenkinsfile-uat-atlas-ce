@@ -127,7 +127,7 @@ pipeline{
             steps {
                 container("python3") {
                     dir('f9s') {
-                        sh "./devops/build_scripts/build_ce_dist.sh"
+                        sh "./devops/build_scripts/build_atlas_dist.sh"
                         sh "pip download -r ./devops/uat_helpers/requirements.txt  --no-deps -d `pwd`/dist"
                         sh "./devops/build_scripts/upload_modules_to_artifactory.sh $NEXUS_PYPI"
                     }

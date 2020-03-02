@@ -30,7 +30,7 @@ pipeline{
       steps {
         container("python3") {
           dir('atlas-ce') {
-            sh "./devops/build_scripts/build_ce_dist.sh"
+            sh "./devops/build_scripts/build_atlas_dist.sh"
           }
         }
       }

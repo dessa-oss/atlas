@@ -16,4 +16,4 @@ rm -rf dist/* && \
     build_module foundations_sdk dessa_foundations $cwd atlas && \
     build_module foundations_core_rest_api_components foundations_core_rest_api_components $cwd atlas && \
     build_module foundations_rest_api foundations_rest_api $cwd atlas && \
-    echo "Successfully build atlas-ce wheels"
+    echo "Successfully build atlas wheels"
