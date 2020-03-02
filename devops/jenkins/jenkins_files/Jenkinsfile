@@ -275,8 +275,7 @@ pipeline{
         }
         stage('Trigger Build Artifacts for Foundations Pipeline') {
             when{
-                branch 'master'
-                branch 'remove_references_of_team_and_ce'
+                anyOf { branch 'remove_references_of_team_and_ce'; branch 'master' }
             }
             steps {
                 container("python3") {
