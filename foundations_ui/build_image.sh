@@ -1,7 +1,7 @@
 #!/bin/bash
 
 gui_docker_image="foundations-gui"
-docker_registry="docker.shehanigans.net"
+docker_registry=${DOCKER_REGISTRY:-docker.shehanigans.net}
 pip_build_version=`python get_version.py`
 docker_build_version=$(echo $pip_build_version | sed 's/+/_/g')
 
