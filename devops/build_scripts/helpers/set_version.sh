@@ -1,3 +1,0 @@
-#!/bin/bash
-
-export SETUPTOOLS_SCM_PRETEND_VERSION=$1
