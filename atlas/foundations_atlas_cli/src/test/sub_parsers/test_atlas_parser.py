@@ -1,4 +1,3 @@
-
 import faker
 from unittest import mock
 from unittest.mock import patch
@@ -218,18 +217,6 @@ class TestAtlasParser(Spec):
             ],
             any_order=True
         )
-
-    @quarantine
-    def test_retrieve_artifacts_calls_environment_fetcher(self):
-        CommandLineInterface(['get', 'job', self.fake_env, self.mock_job_id]).execute()
-        self.find_environment_mock.assert_called_with(self.fake_env)
-
-    @quarantine
-    def test_retrieve_artifacts_loads_environment(self):
-        fake_env_path = os.path.join(self.faker.uri_path(), self.fake_env)
-        self.find_environment_mock.return_value = [fake_env_path]
-        CommandLineInterface(['get', 'job', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.config_manager_mock.add_simple_config_path.assert_called_with(fake_env_path)
 
     def test_retrieve_artifacts_fails_if_missing_environment(self):
         self.find_environment_mock.return_value = []
