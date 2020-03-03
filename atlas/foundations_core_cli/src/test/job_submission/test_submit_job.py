@@ -195,18 +195,6 @@ class TestJobSubmissionSubmit(Spec):
         submit(self.mock_arguments)
         self.mock_set_resources.assert_called_with(num_gpus=self.job_config['num_gpus'], ram=self.job_config['ram'])
 
-    @quarantine
-    def test_validates_job_schema(self):
-        import jsonschema
-
-        self.job_config.clear()
-        self.job_config.update(self.faker.pydict())
-        self._set_up_deploy_config()
-        self._load_job_config_file()
- 
-        with self.assertRaises(jsonschema.ValidationError) as error_context:
-            submit(self.mock_arguments)
-
     def _set_up_deploy_config(self):
         self.mock_arguments.project_name = self.project_name
         self.mock_arguments.entrypoint = self.entrypoint
