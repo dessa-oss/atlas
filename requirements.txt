@@ -21,5 +21,4 @@ boto3==1.9.86
 boto==2.49.0
 python-jose==3.0.1
 python-keycloak==0.17.6
-Jinja2
 tabulate==0.8.3
