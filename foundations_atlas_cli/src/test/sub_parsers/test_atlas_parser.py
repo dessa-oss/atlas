@@ -1,4 +1,5 @@
 
+import faker
 from unittest import mock
 from unittest.mock import patch
 from foundations_spec import *

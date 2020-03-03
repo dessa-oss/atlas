@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cli=$1
-
 script_location="$(pwd)/devops/build_scripts"
 source "$script_location/build_common.sh"
 

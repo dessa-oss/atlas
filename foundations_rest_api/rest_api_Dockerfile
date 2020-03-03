@@ -1,0 +1,32 @@
+
+
+FROM tiangolo/uwsgi-nginx-flask:python3.6
+
+ARG main_file
+
+RUN python -m pip install --upgrade pip==19.3 && \
+        python -m pip install setuptools wheel && \
+        curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.10.3/bin/linux/amd64/kubectl && \
+        chmod +x kubectl && \
+        mv kubectl /usr/bin/ && \
+        mkdir -p /var/foundations ~/.ssh
+
+ENV SERVER_NAME=localhost
+
+COPY ./tmp/pip_wheels /var/foundations/
+WORKDIR /var/foundations
+
+RUN ls -lR /var/foundations
+
+RUN find -iname "foundations_internal-*.whl" | xargs pip install && \
+    find -iname "foundations_events-*.whl" | xargs pip install && \
+    find -iname "foundations_contrib-*.whl" | xargs pip install && \
+    find -iname "foundations_core_cli-*.whl" | xargs pip install && \
+    find -iname "foundations_authentication-*.whl" | xargs pip install && \
+    find -iname "dessa_foundations-*.whl" | xargs pip install && \
+    find -iname "foundations_local_docker_scheduler_plugin-*.whl" | xargs pip install && \
+    find -iname "foundations_core_rest_api_components-*.whl" | xargs pip install && \
+
+WORKDIR /app/
+COPY docker/uwsgi.ini /app/uwsgi.ini
+COPY docker/${main_file} /app/main.py
