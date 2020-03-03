@@ -160,11 +160,11 @@ class TestJobSubmissionSubmit(Spec):
         submit(self.mock_arguments)
         self.assertEqual(self.job_config['worker'], self.config_manager['worker_container_overrides'])
 
-    @quarantine
     def test_sets_override_worker_container_config_with_docker_command_provided(self):
         self._set_up_deploy_config()
         command = self.faker.words()
-        self.mock_arguments.command = ' '.join(command)
+        self.mock_arguments.command = command
+        self.mock_os_path_exists.return_when(True, command[0])
         submit(self.mock_arguments)
         self.assertEqual({'args': command}, self.config_manager['worker_container_overrides'])
 
