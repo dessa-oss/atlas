@@ -49,7 +49,7 @@ pipeline{
         container("python3"){
           dir('atlas') {
             sh 'docker login $NEXUS_DOCKER_STAGING -u $NEXUS_USER -p $NEXUS_PASSWORD'
-            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-ce ./devops/build_scripts/gui_and_rest_apis/build_gui_ce.sh"
+            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas ./devops/build_scripts/gui_and_rest_apis/build_gui_ce.sh"
           }
         }
       }
@@ -58,7 +58,7 @@ pipeline{
       steps {
         container("python3"){
           dir('atlas') {
-            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas-ce ./devops/build_scripts/gui_and_rest_apis/push_gui_atlas_ce_images.sh"
+            sh "NEXUS_DOCKER_REGISTRY=$NEXUS_DOCKER_STAGING/atlas ./devops/build_scripts/gui_and_rest_apis/push_gui_atlas_ce_images.sh"
           }
         }
       }
@@ -92,8 +92,8 @@ pipeline{
               version = sh(script: 'python get_version.py', returnStdout: true).trim()
               println("Attempting to trigger pipeline with version of ${version}")
               build job: "build-installer-atlas-ce", wait: false, parameters: [
-                [$class: 'StringParameterValue', name: 'rest_api', value: "docker-staging.shehanigans.net/atlas-ce/foundations-rest-api:${version}"],
-                [$class: 'StringParameterValue', name: 'gui', value: "docker-staging.shehanigans.net/atlas-ce/foundations-gui:${version}"],
+                [$class: 'StringParameterValue', name: 'rest_api', value: "docker-staging.shehanigans.net/atlas/foundations-rest-api:${version}"],
+                [$class: 'StringParameterValue', name: 'gui', value: "docker-staging.shehanigans.net/atlas/foundations-gui:${version}"],
                 [$class: 'StringParameterValue', name: 'worker', value: "docker-staging.shehanigans.net/atlas-common/worker:${version}"],
                 [$class: 'StringParameterValue', name: 'tensorboard_server', value: "docker-staging.shehanigans.net/atlas-common/tensorboard-server:${version}"],
                 [$class: 'StringParameterValue', name: 'tensorboard_rest_api', value: "docker-staging.shehanigans.net/atlas-common/tensorboard-rest-api:${version}"],
