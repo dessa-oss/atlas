@@ -232,16 +232,16 @@ class TestAtlasParser(Spec):
         self.patch('foundations_core_cli.job_submission.submit_job.submit', MockCommandLineJobDeployer)
 
         expected_arguments = Mock()
-        expected_arguments.scheduler_config = None
-        expected_arguments.job_directory = None
+        expected_arguments.scheduler_config = self.fake_env
+        expected_arguments.job_directory = self.fake_directory
         expected_arguments.entrypoint = None
         expected_arguments.project_name = None
         expected_arguments.ram = None
         expected_arguments.num_gpus = None
         expected_arguments.stream_job_logs = True
-        expected_arguments.command = None
+        expected_arguments.command = [self.command]
 
-        CommandLineInterface(['submit']).execute()
+        CommandLineInterface(['submit', self.fake_env, self.fake_directory, self.command]).execute()
         arguments = MockCommandLineJobDeployer.arguments
 
         self._assert_submit_arguments_equal(expected_arguments, arguments)
@@ -363,12 +363,14 @@ class TestAtlasParser(Spec):
         CommandLineInterface(['get', 'logs', self.fake_env, self.mock_job_id]).execute()
         self.print_mock.assert_called_with(self.fake_job_logs)
 
-    @quarantine
     def test_get_job_logs_for_job_that_exists_and_is_not_queued_does_not_call_exit(self):
         self._set_job_status(self.fake_job_status)
         self.mock_job_deployment.get_job_logs.return_value = self.fake_job_logs
-        self.load_mock = let_patch_mock('foundations_core_cli.job_submission.config.load')
-        self.load_mock.return_value = None
+
+        load_mock = Mock()
+        self.patch('foundations_core_cli.job_submission.config.load', load_mock)
+        load_mock.return_value = None
+
         CommandLineInterface(['get', 'logs', self.fake_env, self.mock_job_id]).execute()
         self.exit_mock.assert_not_called()
 
