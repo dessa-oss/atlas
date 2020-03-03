@@ -9,23 +9,25 @@ class TestEnvironmentFetcher(Spec):
 
     mock_glob = let_patch_mock('glob.glob')
     mock_list = let_patch_mock('os.listdir')
-    
-    @quarantine
-    def test_environment_fetcher_checks_local_config_wrong_directory(self):
-        self.assertEqual(EnvironmentFetcher()._get_local_environments(), None)
 
     def test_environment_fetcher_checks_local_config_empty(self):
         self.mock_list.return_value = ['config']
         self.mock_glob.return_value = []
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), [])
-    
-    @quarantine
-    @patch('os.getcwd', lambda: 'home/some/project')
+
     def test_environment_fetcher_checks_local_config_one_yaml(self):
-        self.mock_glob.return_value = ['home/some/project/config/local.config.yaml']
-        self.mock_list.return_value = ['config']
-        self.assertEqual(EnvironmentFetcher()._get_local_environments(), ['home/some/project/config/local.config.yaml'])
-        self.mock_glob.assert_called_with('home/some/project/config/*.config.yaml')
+        import os
+
+        try:
+            original_foundations_home = os.environ.get('FOUNDATIONS_HOME', '')
+            os.environ['FOUNDATIONS_HOME'] = 'home/some/project'
+
+            config_path = 'home/some/project/config/execution/default.config.yaml'
+            self.mock_glob.return_value = [config_path]
+
+            self.assertEqual(EnvironmentFetcher()._get_local_environments(), [config_path])
+        finally:
+            os.environ['FOUNDATIONS_HOME'] = original_foundations_home
 
     @patch('os.getcwd', lambda: 'home/some/project')
     def test_environment_fetcher_checks_local_config_multiple_yaml(self):
