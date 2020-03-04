@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source activate_dev_env.sh
-source ./devops/set_environment_for_docker_scheduler.sh
+source ./devops/set_environment_for_dev.sh
 
 cwd=`pwd`
 F9S_ENV_TYPE=$1

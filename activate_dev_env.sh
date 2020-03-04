@@ -20,9 +20,4 @@ add_path "$cwd/foundations_spec/src" && \
     add_path "$cwd/foundations_rest_api/src" && \
     add_path "$cwd/foundations_core_rest_api_components/src" && \
 
-export CYPRESS_GUI_HOST=localhost
-export CYPRESS_SCHEDULER_IP=localhost
-export CYPRESS_GUI_PORT=3000
-export CYPRESS_SCHEDULER_REDIS_PORT=6379
-export CYPRESS_LOCAL_FOUNDATIONS_HOME=$FOUNDATIONS_HOME
-export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$FOUNDATIONS_HOME
+source "${cwd}/devops/set_environment_for_dev.sh"

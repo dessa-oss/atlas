@@ -9,39 +9,27 @@ pipeline{
     stages {
         stage('Preparation') {
             steps {
-                container('python3') {
-                    script {
-                        customMetricsMap["jenkins_data"] = customMetrics
-                        checkout scm
-                    }
-                }
-            }
-        }
-        stage('Clone CI Repo') {
-            steps {
-                container('python3') {
-                    sh 'rm -rf ci'
-                    dir('ci') {
-                        git branch: 'master', credentialsId: 'dessa-devops-trail-rsa', url: 'git@github.com:DeepLearnI/foundations-ci.git'
-                    }
+                script {
+                    customMetricsMap["jenkins_data"] = customMetrics
+                    checkout scm
                 }
             }
         }
         stage('Install Test Requirements') {
             steps {
                 container("python3") {
-                    sh "ci/ci_install_requirements.sh"
+                    sh "pip install -r requirements_test.txt"
                 }
             }
         }
-        stage('Build Wheels') {
+        stage('Build Atlas Wheels') {
             steps {
                 container("python3") {
-                    sh "ci/build_scripts/build_all_dist.sh ci/build_scripts"
+                    sh "./devops/build_scripts/build_all_dev.sh"
                 }
             }
         }
-        stage('Run Unit test and coverage'){
+        stage('Run Atlas Unit test and coverage'){
             failFast true
             parallel{
                 stage('Run Unit Tests') {
@@ -60,7 +48,7 @@ pipeline{
                 }
             }
         }
-        stage('Run Integration Tests and Prepare for Acceptance Tests'){
+        stage('Run Atlas Integration Tests and Prepare for Acceptance Tests'){
             parallel{
                 stage("Integration Tests") {
                     stages{
@@ -124,7 +112,7 @@ pipeline{
         stage('Acceptance Tests'){
             failFast true
             parallel{
-                stage('F9S Acceptance Tests') {
+                stage('Atlas Acceptance Tests') {
                     steps{
                         container("python3") {
                             ws("${WORKSPACE}/testing") {
@@ -136,7 +124,7 @@ pipeline{
                         }
                     }
                 }
-                stage('Acceptance Tests for Stageless Deploys') {
+                stage('Atlas Acceptance Tests for Stageless Deploys') {
                     steps {
                         container("python3-1") {
                             ws("${WORKSPACE}/testing") {
@@ -146,7 +134,7 @@ pipeline{
                         }
                     }
                 }
-                stage('REST API Acceptance Tests') {
+                stage('Atlas REST API Acceptance Tests') {
                     stages{
                         stage('Atlas REST API Acceptance Tests') {
                             steps {
