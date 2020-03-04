@@ -14,8 +14,8 @@ docker build \
     foundations_ui &&
 
 docker tag \
-    image_tag \
-    image_tag_latest &&
+    ${image_tag} \
+    ${image_tag_latest} &&
 
 echo "Successfully built image tagged to ${docker_build_version} and latest" ||
-    echo "Failed to build image"
+    echo "Failed to build image" && exit 1
