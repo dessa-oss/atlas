@@ -98,6 +98,7 @@ yarn.lock
 .env
 .venv/
 Pipfile*
+**/*.whl
 
 reference_data.pkl
 test_data_contract_with_monitor.pkl
