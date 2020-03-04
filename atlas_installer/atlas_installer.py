@@ -255,7 +255,7 @@ def dump_all_config_files(advanced, use_specified_version):
         images = yaml.load(f)
     GUI_IMAGE_NAME = images['gui']['name']
     GUI_IMAGE_TAG = images['gui']['tag'] if use_specified_version else "latest"
-    GUI_CONTAINER_NAME = str(ask_if_advanced(advanced, "The name of the GUI container", "atlas-ce-gui"))
+    GUI_CONTAINER_NAME = str(ask_if_advanced(advanced, "The name of the GUI container", "atlas-gui"))
     REDIS_IMAGE_NAME = images['tracker']['name']
     REDIS_IMAGE_TAG = images['tracker']['tag'] if use_specified_version else "latest"
     REDIS_CONTAINER_NAME = str(ask_if_advanced(advanced, "The name of the Tracker container", "foundations-tracker"))
@@ -264,22 +264,22 @@ def dump_all_config_files(advanced, use_specified_version):
     ARCHIVE_CONTAINER_NAME = str(ask_if_advanced(advanced, "The name of the archive server container", "foundations-archive-server"))
     REST_IMAGE_NAME = images['rest_api']['name']
     REST_IMAGE_TAG = images['rest_api']['tag'] if use_specified_version else "latest"
-    REST_CONTAINER_NAME = str(ask_if_advanced(advanced, "The name of the REST API container", "atlas-ce-rest-api"))
+    REST_CONTAINER_NAME = str(ask_if_advanced(advanced, "The name of the REST API container", "atlas-rest-api"))
     SCHEDULER_IMAGE_NAME = images['scheduler']['name']
     SCHEDULER_IMAGE_TAG = images['scheduler']['tag'] if use_specified_version else "latest"
     SCHEDULER_CONTAINER_NAME = str(ask_if_advanced(advanced, "The name of the scheduler container", "foundations-scheduler"))
     TENSORBOARD_REST_IMAGE_NAME = images['tensorboard_rest_api']['name']
     TENSORBOARD_REST_IMAGE_TAG = images['tensorboard_rest_api']['tag'] if use_specified_version else "latest"
-    TENSORBOARD_REST_CONTAINER_NAME = str(ask_if_advanced(advanced, "The name of the Tensorboard REST API container", "atlas-ce-tensorboard-rest-api"))
+    TENSORBOARD_REST_CONTAINER_NAME = str(ask_if_advanced(advanced, "The name of the Tensorboard REST API container", "atlas-tensorboard-rest-api"))
     TENSORBOARD_SERVER_IMAGE_NAME = images['tensorboard_server']['name']
     TENSORBOARD_SERVER_IMAGE_TAG = images['tensorboard_server']['tag'] if use_specified_version else "latest"
-    TENSORBOARD_SERVER_CONTAINER_NAME = str(ask_if_advanced(advanced, "The name of the Tensorboard server container", "atlas-ce-tensorboard-server"))
+    TENSORBOARD_SERVER_CONTAINER_NAME = str(ask_if_advanced(advanced, "The name of the Tensorboard server container", "atlas-tensorboard-server"))
     AUTHENTICATION_SERVER_IMAGE_NAME = images['auth_server']['name']
     AUTHENTICATION_SERVER_IMAGE_TAG = images['auth_server']['tag'] if use_specified_version else "latest"
     AUTHENTICATION_SERVER_CONTAINER_NAME = str(ask_if_advanced(advanced, "The name of the authentication server container", "foundations-authentication-server"))
     AUTHENTICATION_PROXY_IMAGE_NAME = images['auth_proxy']['name']
     AUTHENTICATION_PROXY_IMAGE_TAG = images['auth_proxy']['tag'] if use_specified_version else "latest"
-    AUTHENTICATION_PROXY_CONTAINER_NAME = str(ask_if_advanced(advanced, "The name of the authentication proxy container", "atlas-ce-authentication-proxy"))
+    AUTHENTICATION_PROXY_CONTAINER_NAME = str(ask_if_advanced(advanced, "The name of the authentication proxy container", "atlas-authentication-proxy"))
 
     # === Default configuration paths
     SCHEDULER_SUBMISSION_CONFIG_PATH = CONTAINER_CONFIG_ROOT / 'submission' / 'scheduler.config.yaml'
