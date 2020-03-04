@@ -118,7 +118,7 @@ pipeline{
             steps {
                 container("python3") {
                     dir('f9s') {
-                        sh "NEXUS_DOCKER_REGISTRY='us.gcr.io/atlas-ce-dev' python devops/uat_helpers/atlas_version_updater.py"
+                        sh "NEXUS_DOCKER_REGISTRY='us.gcr.io/atlas-dev' python devops/uat_helpers/atlas_version_updater.py"
                     }
                 }
             }

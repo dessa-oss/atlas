@@ -300,11 +300,11 @@ class JobDeployment(object):
 
         if (current_foundations_context().job_resources().num_gpus is not None
                 and current_foundations_context().job_resources().num_gpus > 0):
-            worker_container['image'] = 'us.gcr.io/atlas-ce/worker-gpu:latest'
+            worker_container['image'] = 'us.gcr.io/atlas/worker-gpu:latest'
             worker_container['runtime'] = 'nvidia'
 
         else:
-            worker_container['image'] = 'us.gcr.io/atlas-ce/worker:latest'
+            worker_container['image'] = 'us.gcr.io/atlas/worker:latest'
             worker_container['runtime'] = 'runc'
 
         for override_key in ['command', 'image', 'working_dir', 'entrypoint']:
