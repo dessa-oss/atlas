@@ -1,0 +1,183 @@
+version: "3.7"
+services:
+#   app:
+#     image: amackillop/aio-app
+#     expose: 
+#       - 8000
+#     environment: 
+#       - HOST=0.0.0.0
+#       - PORT=8000
+#       - REDIS_HOST=redis
+#       - REDIS_PORT=6379
+#     build: .
+#     deploy:
+#       replicas: 10
+  tracker:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    deploy:
+      resources:
+        limits:
+          memory: 300m
+    volumes:
+      - type: bind
+        source: .foundations/database
+        target: /data
+  scheduler:
+    image: us.gcr.io/atlas-ce/scheduler:latest
+    ports:
+      - "5000:5000"
+    volumes:
+      - type: bind
+        source: ~/.docker
+        target: /root/.docker
+      - type: bind
+        source: .foundations/job_data
+        target: /archives
+      - type: bind
+        source: .foundations/local_docker_scheduler/work_dir
+        target: /working_dir
+      - type: bind
+        source: .foundations/config/local_docker_scheduler/tracker_client_plugins.yaml
+        target: /app/local-docker-scheduler/tracker_client_plugins.yaml
+      - type: bind
+        source: .foundations/config/local_docker_scheduler/database.config.yaml
+        target: /app/local-docker-scheduler/database.config.yaml
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    environment:
+      CUDA_VISIBLE_DEVICES: None
+      NUM_WORKERS: 1
+      REDIS_HOST: tracker
+      REDIS_PORT: 6379
+    deploy:
+        resources:
+          limits:
+            memory: 300m
+  auth_server:
+    image: jboss/keycloak:8.0.1
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: ../foundations_authentication/src/foundations_authentication/keycloak
+        target: /keycloak
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_IMPORT: /keycloak/atlas.json
+      KEYCLOAK_LOGLEVEL: INFO
+    deploy:
+        resources:
+          limits:
+            memory: 300m
+  tb_server:
+    image: us.gcr.io/atlas-ce/tensorboard-server:latest
+    entrypoint: tensorboard --logdir /logs
+    ports:
+      - "5959:6006"
+    volumes:
+      - type: bind
+        source: .foundations/job_data
+        target: /archive
+      - type: bind
+        source: .foundations/tensorboard/work_dir
+        target: /logs
+  tb_api:
+    image: us.gcr.io/atlas-ce/tensorboard-rest-api:latest
+    volumes:
+      - type: bind
+        source: .foundations/job_data
+        target: /archive
+      - type: bind
+        source: .foundations/tensorboard/work_dir
+        target: /logs
+    deploy:
+      resources:
+        limits:
+          memory: 300m
+
+ #  {'command': ['--logdir', '/logs'],
+#   'entrypoint': ['tensorboard'],
+#   'image': 'us.gcr.io/atlas-ce/tensorboard-server:latest',
+#   'name': 'atlas-ce-tensorboard-server',
+#   'ports': {6006: 5959},
+#   'volumes': {'/Users/amackillop/.foundations/job_data': {'bind': '/archive',
+#                                                           'mode': 'rw'},
+#               '/Users/amackillop/.foundations/tensorboard/work_dir': {'bind': '/logs',
+#                                                                       'mode': 'rw'}}},
+#  {'image': 'us.gcr.io/atlas-ce/tensorboard-rest-api:latest',
+#   'mem_limit': '300m',
+#   'name': 'atlas-ce-tensorboard-rest-api',
+#   'volumes': {'/Users/amackillop/.foundations/job_data': {'bind': '/archive',
+#                                                           'mode': 'rw'},
+#               '/Users/amackillop/.foundations/tensorboard/work_dir': {'bind': '/logs',
+#                                                                       'mode': 'rw'}}}]       
+        
+#  {'environment': {'CUDA_VISIBLE_DEVICES': None, 'NUM_WORKERS': 1},
+#   'image': 'us.gcr.io/atlas-ce/scheduler:latest',
+#   'mem_limit': '300m',
+#   'name': 'atlas-ce-local-scheduler',
+#   'ports': {5000: '5000'},
+#   'volumes': {PosixPath('/Users/amackillop/.foundations/config/local_docker_scheduler/database.config.yaml'): {'bind': '/app/local-docker-scheduler/database.config.yaml',
+#                                                                                                                'mode': 'rw'},
+#               PosixPath('/Users/amackillop/.foundations/config/local_docker_scheduler/tracker_client_plugins.yaml'): {'bind': '/app/local-docker-scheduler/tracker_client_plugins.yaml',
+#                                                                                                                       'mode': 'rw'},
+#               '/Users/amackillop/.docker': {'bind': '/root/.docker',
+#                                             'mode': 'rw'},
+#               '/Users/amackillop/.foundations/job_data': {'bind': '/archives',
+#                                                           'mode': 'rw'},
+#               '/Users/amackillop/.foundations/local_docker_scheduler/work_dir': {'bind': '/working_dir',
+#                                                                                  'mode': 'rw'},
+#               '/var/run/docker.sock': {'bind': '/var/run/docker.sock',
+#                                        'mode': 'rw'}}},
+
+#   nginx:
+#     image: nginx:latest
+#     volumes:
+#       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+#     depends_on:
+#       - app
+#     ports:
+#       - "8080:80"
+
+# docker run \
+# --rm \
+# --name $TRACKER_NAME \
+# -p $REDIS_PORT:6379 \
+# --network=$network_name \
+# --volume $FOUNDATIONS_HOME/database:/data \
+# -d redis redis-server --appendonly yes
+
+# [{'image': 'us.gcr.io/atlas-ce/tracker:latest',
+#   'mem_limit': '300m',
+#   'name': 'atlas-ce-tracker',
+#   'ports': {6379: '5556'},
+#   'volumes': {'/Users/amackillop/.foundations/database': {'bind': '/data',
+#                                                           'mode': 'rw'}}},
+#  {'image': 'us.gcr.io/atlas-ce/archive_server:latest',
+#   'mem_limit': '100m',
+#   'name': 'atlas-ce-archive-server',
+#   'ports': {8080: 5557},
+#   'volumes': {'/Users/amackillop/.foundations/job_data': {'bind': '/opt/www',
+#                                                           'mode': 'rw'}}},
+#  {'environment': ['REDIS_URL=redis://atlas-ce-tracker:6379',
+#                   'FOUNDATIONS_ARCHIVE_HOST=http://localhost:5557',
+#                   'FOUNDATIONS_TENSORBOARD_API_HOST=http://atlas-ce-tensorboard-rest-api:5000',
+#                   'FOUNDATIONS_TENSORBOARD_HOST=http://localhost:5959',
+#                   'FOUNDATIONS_DEPLOYMENT_ENV=local_docker_scheduler_plugin',
+#                   'FOUNDATIONS_SCHEDULER_URL=http://atlas-ce-local-scheduler:5000'],
+#   'image': 'us.gcr.io/atlas-ce/rest-api:latest',
+#   'mem_limit': '300m',
+#   'name': 'atlas-ce-rest-api'},
+#  {'environment': ['FOUNDATIONS_REST_API=atlas-ce-rest-api'],
+#   'image': 'us.gcr.io/atlas-ce/gui:latest',
+#   'mem_limit': '300m',
+#   'name': 'atlas-ce-gui',
+#   'ports': {8089: 5555}},
+
+
+
+
