@@ -15,7 +15,7 @@ and Keycloak.
 
 The file LICENSE-BSD.txt contains the BSD license, which applies to
 the following software packages: bzip2, Click, Flask, itsdangerous,
-Jinja2, Pandas, psutil, pysftp, python-dotenv, scipy,
+Pandas, psutil, pysftp, python-dotenv, scipy,
 websocket-client, Werkzeug, yarn, nginx, dill, mkdocks, mock,
 MarkupSafe, browser-process-hrtime, css-select, css-what,
 damereau-levenshtein, domelementtype, domhandler, domutils, entities,
