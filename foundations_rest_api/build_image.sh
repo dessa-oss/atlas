@@ -24,4 +24,4 @@ rm -rf tmp/pip_wheels && \
         ${image_tag_latest} &&
 
 echo "Successfully built image tagged to ${docker_build_version} and latest" ||
-    echo "Failed to built image" && exit 1
+    echo "Failed to built image"
