@@ -17,7 +17,11 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="foundations-atlas",
-    use_scm_version = { 'local_scheme': 'dirty-tag' },
+    use_scm_version = { 
+        "root": "..",
+        "relative_to": __file__,
+        'local_scheme': 'dirty-tag' 
+    },
     description='A tool for machine learning development',
     long_description=long_description,
     classifiers=[
