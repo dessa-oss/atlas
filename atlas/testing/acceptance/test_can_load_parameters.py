@@ -41,21 +41,23 @@ class TestCanLoadParameters(Spec, RunLocalJob):
     def set_up_class(klass):
         pass
 
+    @set_up
+    def set_up(self):
+        import subprocess
+        subprocess.run('python -m foundations login http://localhost:5558 -u test -p test'.split(' '))
+
     def test_can_load_parameters_within_python(self):
         self._test_can_load_parameters_within_python(self.script_directory, self.job_parameters, check_for_warning=True)
 
-    @quarantine
     def test_can_load_parameters_within_foundations_submit(self):
         self._test_can_load_parameters_within_foundations_submit(self.deployable_script_directory, self.job_parameters)
 
     def test_can_load_parameters_as_empty_dict_within_python_empty_params(self):
         self._test_can_load_parameters_within_python(self.script_directory_empty_params, {})
 
-    @quarantine
     def test_can_load_parameters_as_empty_dict_within_foundations_submit_empty_params(self):
         self._test_can_load_parameters_within_foundations_submit(self.deployable_script_directory_empty_params, {})
 
-    @quarantine
     def test_can_load_default_parameters_within_foundations_submit_when_parameters_json_not_found(self):
         self._test_can_load_parameters_within_foundations_submit(self.deployable_script_directory_no_parameters, {})
 
@@ -66,7 +68,7 @@ class TestCanLoadParameters(Spec, RunLocalJob):
         self._test_command_that_loads_parameters_in_directory_for_python(['python', 'main.py'], script_directory, expected_loaded_parameters, check_for_warning)
 
     def _test_can_load_parameters_within_foundations_submit(self, script_directory, expected_loaded_parameters):
-        self._test_command_that_loads_parameters_in_directory(['python', '-m', 'foundations', 'submit','--project-name', self.project_name, '--entrypoint', 'project_code/script_to_run.py'], script_directory, expected_loaded_parameters)
+        self._test_command_that_loads_parameters_in_directory(['python', '-m', 'foundations', 'submit','--project-name', self.project_name, 'scheduler', '.', 'project_code/script_to_run.py'], script_directory, expected_loaded_parameters)
 
     def _test_command_that_loads_parameters_in_directory(self, command, script_directory, expected_loaded_parameters):
         from foundations_internal.change_directory import ChangeDirectory
@@ -76,14 +78,15 @@ class TestCanLoadParameters(Spec, RunLocalJob):
         import os
         import os.path as path
 
-        env = self._update_environment_with_home_directory()
+        foundations_home_var = os.getenv('FOUNDATIONS_HOME', '')
+        del os.environ['FOUNDATIONS_HOME']
 
         with ChangeDirectory(script_directory):
-            completed_process = subprocess.run(command, stdout=subprocess.PIPE, env=env)
+            completed_process = subprocess.run(command, stdout=subprocess.PIPE)
             process_output = completed_process.stdout.decode().strip().split('\n')
 
-        params_json = process_output[-1]
-        job_id = process_output[-2]
+        params_json = process_output[-2]
+        job_id = process_output[-3]
         project_name = self.project_name
 
         result_parameters = json.loads(params_json)
@@ -91,7 +94,10 @@ class TestCanLoadParameters(Spec, RunLocalJob):
         self._assert_flattened_parameter_keys_in_project_job_parameter_names_set(project_name, expected_loaded_parameters)
         self._assert_flattened_parameter_values_for_job_in_job_parameters(job_id, expected_loaded_parameters)
         self._assert_flattened_parameter_keys_in_project_input_parameter_names_set(project_name, expected_loaded_parameters)
-        self._assert_flattened_parameter_names_for_job_in_job_input_parameters(job_id, expected_loaded_parameters)
+        if expected_loaded_parameters:
+            self._assert_flattened_parameter_names_for_job_in_job_input_parameters(job_id, expected_loaded_parameters)
+
+        os.environ['FOUNDATIONS_HOME'] = foundations_home_var
 
     def _test_command_that_loads_parameters_in_directory_for_python(self, command, script_directory, expected_loaded_parameters, check_for_warning):
         from foundations_internal.change_directory import ChangeDirectory
