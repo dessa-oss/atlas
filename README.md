@@ -33,6 +33,9 @@ TODO
 ## Documentation
 Official documentation for Atlas can be found at https://www.docs.atlas.dessa.com 
 
+## System Overview
+TODO
+
 ## Community 
 For help or questions about Atlas see the [docs](www.docs.atlas.dessa.com), [Stack Overflow](https://stackoverflow.com/questions/tagged/foundations-atlas), or join the [Dessa Slack](https://join.slack.com/t/dessa-community/shared_invite/enQtNzY5ODkxOTc3OTkwLTk4MTg5NmNkOTQ5OWVjNjk2YzY0OWJlNDkwNDlhY2NmNTQzNmRmYjkxNzc2N2JiOTYxZGVkMmFiMjRhYThiYzM).
 
