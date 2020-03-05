@@ -162,7 +162,7 @@ pipeline{
                                     dir("${WORKSPACE}") {
                                         sh "./devops/teardown_frontend_dev_atlas.sh || true"
                                         sh "./atlas/foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh"
-                                        sh """export AUTH_CLIENT_CONFIG_PATH=`pwd`/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
+                                        sh """export AUTH_CLIENT_CONFIG_PATH=`pwd`/atlas/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
                                                 export REDIS_PORT=6379 && \
                                                 export FOUNDATIONS_SCHEDULER_URL=http://$ATLAS_LOCAL_SCHEDULER:5000 && \
                                                 export FOUNDATIONS_HOME=`pwd`/atlas/testing/auth_acceptance/foundations_home && \
