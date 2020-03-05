@@ -87,11 +87,11 @@ __pycache__
 !**/fixtures/**/*.json
 !**/authentication/*.json
 !**/foundations_authentication/keycloak/*.json
-testing/test-cli-init
+atlas/testing/test-cli-init
 test_pod.yaml
 
-testing/foundations_home/job_data
-testing/foundations_home/logs
+atlas/testing/foundations_home/job_data
+atlas/testing/foundations_home/logs
 !testing/foundations_home/config/*.config.yaml
 yarn.lock
 .mypy_cache/
@@ -115,7 +115,7 @@ foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/config/execution/de
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/job_data
 foundations_ui/cypress/fixtures/atlas_scheduler/.foundations/credentials.yaml
 
-testing/local_docker_scheduler_acceptance/foundations_home
+atlas/testing/local_docker_scheduler_acceptance/foundations_home
 
 # We should investigate why this is happening
 foundations_ui/cypress/**/foundations_ui
@@ -131,4 +131,4 @@ atlas/foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_hom
 
 !foundations_ui/package.json
 !foundations_ui/cypress.json
-testing/auth_acceptance/foundations_home/logs/*
+atlas/testing/auth_acceptance/foundations_home/logs/*
