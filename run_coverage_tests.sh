@@ -32,7 +32,7 @@ fi
 
 export TZ=EST
 
-for module_directory in $(echo foundations_*) $(echo *_utils)
+for module_directory in $(echo atlas/foundations_*) $(echo atlas/*_utils)
 do
     real_module_name=$module_directory
     
