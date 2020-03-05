@@ -165,7 +165,7 @@ pipeline{
                                         sh """export AUTH_CLIENT_CONFIG_PATH=`pwd`/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
                                                 export REDIS_PORT=6379 && \
                                                 export FOUNDATIONS_SCHEDULER_URL=http://$ATLAS_LOCAL_SCHEDULER:5000 && \
-                                                export FOUNDATIONS_HOME=`pwd`/testing/auth_acceptance/foundations_home && \
+                                                export FOUNDATIONS_HOME=`pwd`/atlas/testing/auth_acceptance/foundations_home && \
                                                 python ./devops/startup_atlas_api.py 37722 &"""
                                     }
                                     ws("${WORKSPACE}/atlas/testing") {
@@ -173,7 +173,7 @@ pipeline{
                                         sh """export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
                                                 export REDIS_URL=redis://${ATLAS_LOCAL_SCHEDULER}:5556 && \
                                                 python -Wi -m unittest -f -v auth_acceptance"""
-                                        sh "../devops/teardown_frontend_dev_atlas.sh || true"
+                                        sh "../../devops/teardown_frontend_dev_atlas.sh || true"
                                     }
                                 }
                             }
