@@ -1,14 +1,18 @@
 #!/bin/bash
 
-
-docker_registry="docker.shehanigans.net"
+docker_image="worker"
+docker_registry=${DOCKER_REGISTRY:-docker.shehanigans.net}
 pip_build_version=`python get_version.py`
 docker_build_version=$(echo $pip_build_version | sed 's/+/_/g')
 
 worker_dir="$(pwd)/worker_images"
 
-worker_image_tag=${docker_registry}/atlas-common/worker:${docker_build_version}
-worker_gpu_image_tag=${docker_registry}/atlas-common/worker-gpu:${docker_build_version}
+worker_image_tag=${docker_registry}/${docker_image}:${docker_build_version}
+worker_image_tag_latest=${docker_registry}/${docker_image}:latest
+
+worker_gpu_image_tag=${docker_registry}/${docker_image}-gpu:${docker_build_version}
+worker_gpu_image_tag_latest=${docker_registry}/${docker_image}-gpu:latest
+
 
 docker build \
     -t ${worker_image_tag} \
@@ -22,4 +26,12 @@ docker build \
     --file $worker_dir/tensorflow-gpu/Dockerfile \
     $worker_dir && \
 
-echo "Built worker images successfully" || echo "Failed to build worker images"
+docker tag \
+    $worker_image_tag \
+    $worker_image_tag_latest && \
+
+docker tag \
+    $worker_gpu_image_tag \
+    $worker_gpu_image_tag_latest && \
+
+echo "Built worker images successfully"
