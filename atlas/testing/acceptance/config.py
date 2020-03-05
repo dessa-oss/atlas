@@ -19,7 +19,11 @@ def set_foundations_home():
     os.environ["FOUNDATIONS_HOME"] = os.getcwd() + "/foundations_home"
     os.environ["FOUNDATIONS_COMMAND_LINE"] = "True"
     print(os.environ["FOUNDATIONS_HOME"])
-
+    print(os.listdir(os.environ["FOUNDATIONS_HOME"]))
+    print("="*20)
+    print(os.listdir(os.environ["FOUNDATIONS_HOME"]+os.path.sep+"config"))
+    print("=" * 20)
+    print(os.listdir(os.environ["FOUNDATIONS_HOME"] + os.path.sep + "config" + os.path.sep + "execution"))
 
 # noinspection PyUnresolvedReferences
 def config():
