@@ -92,7 +92,8 @@ test_pod.yaml
 
 atlas/testing/foundations_home/job_data
 atlas/testing/foundations_home/logs
-!testing/foundations_home/config/*.config.yaml
+!atlas/testing/foundations_home/config/execution/*.config.yaml
+!atlas/testing/foundations_home/config/submission/*.config.yaml
 yarn.lock
 .mypy_cache/
 .env
