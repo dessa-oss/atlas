@@ -16,7 +16,6 @@ ARCHIVE_ROOT = environ["ARCHIVE_ROOT"]
 
 def set_foundations_home():
     import os
-    os.chdir('..')
     os.environ["FOUNDATIONS_HOME"] = os.getcwd() + "/foundations_home"
     os.environ["FOUNDATIONS_COMMAND_LINE"] = "True"
     print(os.environ["FOUNDATIONS_HOME"])
