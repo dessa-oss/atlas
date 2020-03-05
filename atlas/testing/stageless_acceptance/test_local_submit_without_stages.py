@@ -7,7 +7,6 @@ import foundations.projects
 from pandas.testing import assert_frame_equal
 
 
-@quarantine
 class TestLocalSubmitWithoutStages(Spec):
 
     # @set_up_class
@@ -37,11 +36,6 @@ class TestLocalSubmitWithoutStages(Spec):
     def test_stageless_project_can_access_all_files_in_cwd(self):
         driver_submit_completed_process = self._run_job('stageless_project_nested_project_code', 'project_code/driver2.py')
         self.assertIn('found all expected files in cwd!', self._driver_stdout(driver_submit_completed_process))
-
-    def test_submitting_stageless_job_with_stage_code_fails_more_gracefully(self):
-        driver_submit_completed_process = self._run_job('stageless_project_but_not_really', 'project_code/driver.py')
-        error_message = 'Cannot create stages in a running stageless job - was code written with stages deployed in a stageless job?'
-        self.assertIn(error_message, driver_submit_completed_process.stderr.decode())
 
     def _test_submit_stageless_project(self, project_name, fixture_directory, driver_path):
         import subprocess
@@ -104,7 +98,6 @@ class TestLocalSubmitWithoutStages(Spec):
     def _assert_can_log_metrics(self, project_name, job_id):
         self.assertEqual(84, self._get_logged_metric(project_name, job_id, 'Score'))
         self.assertEqual(42, self._get_logged_metric(project_name, job_id, 'Accuracy'))
-        self.assertEqual(42, self._get_logged_metric(project_name, job_id, 'Cached_accuracy'))
     
     def _assert_can_set_tag(self, project_name, job_id):
         self.assertEqual('84', self._get_tag(project_name, job_id, 'Loss'))
