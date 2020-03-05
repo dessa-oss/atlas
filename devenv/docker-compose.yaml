@@ -24,7 +24,7 @@ services:
       - type: bind
         source: .foundations/database
         target: /data
-  scheduler:
+  foundations-scheduler:
     image: us.gcr.io/atlas-ce/scheduler:latest
     ports:
       - "5000:5000"
@@ -73,6 +73,15 @@ services:
         resources:
           limits:
             memory: 300m
+  auth_proxy:
+    image: gcr.io/atlas-ce/auth-proxy:latest
+    ports:
+      - "5558:5558"
+    entrypoint: python -m auth_proxy -n -H localhost -p 5558
+    deploy:
+      resources:
+        limits:
+          memory: 300m
   tb_server:
     image: us.gcr.io/atlas-ce/tensorboard-server:latest
     entrypoint: tensorboard --logdir /logs
