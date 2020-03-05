@@ -153,7 +153,7 @@ pipeline{
                     dir('atlas-ce') {
                         script {
                             version = sh(script: 'python get_version.py', returnStdout: true).trim()
-                            build job: "build-installer-atlas-ce", wait: false, parameters: [
+                            build job: "build-installer-atlas", wait: false, parameters: [
                                 [$class: 'StringParameterValue', name: 'ATLAS_CE_VERSION', value: version],
                                 [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: params.f9s_commit_hash],
                                 [$class: 'BooleanParameterValue', name: 'is_production', value: true]
