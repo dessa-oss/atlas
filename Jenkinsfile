@@ -273,17 +273,17 @@ pipeline{
                 }
             }
         }
-        stage('Trigger Build Artifacts for Foundations Pipeline') {
+        stage('Trigger Build Artifacts for Atlas Pipeline') {
             when{
                 anyOf { branch 'remove_references_of_team_and_ce'; branch 'master' }
             }
             steps {
                 container("python3") {
                     script {
-                        echo "Triggering job for building Atlas CE Artifacts"
+                        echo "Triggering job for building Atlas Artifacts"
                         f9s_commit_hash = sh(script: "echo \$(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
                         println("Attempting to trigger pipeline with version of ${f9s_commit_hash}")
-                        build job: "build-artifacts-foundations", wait: false, parameters: [
+                        build job: "build-artifacts-atlas", wait: false, parameters: [
                             [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: "${f9s_commit_hash}"]
                         ]
                     }
