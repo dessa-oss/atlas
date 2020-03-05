@@ -151,7 +151,7 @@ pipeline{
                                                 export AUTH_CLIENT_CONFIG_PATH=`pwd`/foundations_rest_api/config/auth_client_config.yaml && \
                                                 export REDIS_URL=redis://${ATLAS_LOCAL_SCHEDULER}:5556 && \
                                                 python -Wi -m unittest -f -v acceptance"""
-                                        sh "../../devops/teardown_frontend_dev_atlas.sh || true"
+                                        sh "../../../devops/teardown_frontend_dev_atlas.sh || true"
                                     }
                                 }
                             }
