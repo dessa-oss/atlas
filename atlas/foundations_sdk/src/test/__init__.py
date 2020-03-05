@@ -7,7 +7,6 @@ from test.parameters import *
 from test.test_global_import_serialize import TestGlobalImportSerialization
 from test.test_utils import TestUtils
 from test.test_projects import TestProjects
-from test.test_config import TestConfig
 from test.test_set_job_resources import TestSetJobResources
 from test.test_save_artifact import TestSaveArtifact
 from test.artifacts import *
