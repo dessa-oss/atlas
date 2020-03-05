@@ -44,7 +44,8 @@ class TestCanLoadParameters(Spec, RunLocalJob):
     @set_up
     def set_up(self):
         import subprocess
-        subprocess.run('python -m foundations login http://localhost:5558 -u test -p test'.split(' '))
+        import os
+        subprocess.run(f'python -m foundations login http://{os.getenv("LOCAL_DOCKER_SCHEDULER_HOST", "localhost")}:5558 -u test -p test'.split(' '))
 
     def test_can_load_parameters_within_python(self):
         self._test_can_load_parameters_within_python(self.script_directory, self.job_parameters, check_for_warning=True)
@@ -81,23 +82,26 @@ class TestCanLoadParameters(Spec, RunLocalJob):
         foundations_home_var = os.getenv('FOUNDATIONS_HOME', '')
         del os.environ['FOUNDATIONS_HOME']
 
-        with ChangeDirectory(script_directory):
-            completed_process = subprocess.run(command, stdout=subprocess.PIPE)
-            process_output = completed_process.stdout.decode().strip().split('\n')
+        try:
+            env = self._update_environment_with_home_directory() if os.getenv('RUNNING_ON_CI', False) else {}
 
-        params_json = process_output[-2]
-        job_id = process_output[-3]
-        project_name = self.project_name
+            with ChangeDirectory(script_directory):
+                completed_process = subprocess.run(command, stdout=subprocess.PIPE)
+                process_output = completed_process.stdout.decode().strip().split('\n')
 
-        result_parameters = json.loads(params_json)
-        self.assertEqual(expected_loaded_parameters, result_parameters)
-        self._assert_flattened_parameter_keys_in_project_job_parameter_names_set(project_name, expected_loaded_parameters)
-        self._assert_flattened_parameter_values_for_job_in_job_parameters(job_id, expected_loaded_parameters)
-        self._assert_flattened_parameter_keys_in_project_input_parameter_names_set(project_name, expected_loaded_parameters)
-        if expected_loaded_parameters:
-            self._assert_flattened_parameter_names_for_job_in_job_input_parameters(job_id, expected_loaded_parameters)
+            params_json = process_output[-2]
+            job_id = process_output[-3]
+            project_name = self.project_name
 
-        os.environ['FOUNDATIONS_HOME'] = foundations_home_var
+            result_parameters = json.loads(params_json)
+            self.assertEqual(expected_loaded_parameters, result_parameters)
+            self._assert_flattened_parameter_keys_in_project_job_parameter_names_set(project_name, expected_loaded_parameters)
+            self._assert_flattened_parameter_values_for_job_in_job_parameters(job_id, expected_loaded_parameters)
+            self._assert_flattened_parameter_keys_in_project_input_parameter_names_set(project_name, expected_loaded_parameters)
+            if expected_loaded_parameters:
+                self._assert_flattened_parameter_names_for_job_in_job_input_parameters(job_id, expected_loaded_parameters)
+        finally:
+            os.environ['FOUNDATIONS_HOME'] = foundations_home_var
 
     def _test_command_that_loads_parameters_in_directory_for_python(self, command, script_directory, expected_loaded_parameters, check_for_warning):
         from foundations_internal.change_directory import ChangeDirectory

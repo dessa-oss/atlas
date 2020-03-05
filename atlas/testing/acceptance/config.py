@@ -1,5 +1,6 @@
 
-from os import getcwd, environ
+from os import getcwd, environ, getenv
+import subprocess
 
 # separates test runs
 from uuid import uuid4
@@ -13,6 +14,11 @@ if "TEST_UUID" not in environ:
 TEST_UUID = environ["TEST_UUID"]
 ARCHIVE_ROOT = environ["ARCHIVE_ROOT"]
 
+def envsubst_foundations_home():
+    if 'LOCAL_DOCKER_SCHEDULER_HOST' in environ and getenv('RUNNING_ON_CI', False):
+        template_file_name = f'{getcwd()}/foundations_home/config/submission/scheduler.config.envsubst.yaml'
+        output_file_name = f'{getcwd()}/foundations_home/config/submission/scheduler.config.yaml'
+        subprocess.run(f'envsubst < {template_file_name} > {output_file_name}', shell=True)
 
 def set_foundations_home():
     import os
@@ -35,6 +41,6 @@ def config():
 
     module_manager.append_module(sys.modules['foundations_spec'])
 
-
+envsubst_foundations_home()
 set_foundations_home()
 config()
