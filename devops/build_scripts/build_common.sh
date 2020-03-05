@@ -12,16 +12,13 @@ build_module () {
     directory=$1
     module_name=$2
     cwd=$3
-    wheel_path=${directory}/dist/${module_name}-${wheel_name_tail}
-
-    cd "${directory}" && \
-
+    wheel_path="${cwd}/${directory}/dist/${module_name}-${wheel_name_tail}"
+    cd ${cwd}/${directory} && \
     rm -rf "./build" || true && \
     rm -rf "./dist" || true && \
-
     python setup.py sdist bdist_wheel && \
-    cd .. && \
     python -m pip install -U $wheel_path && \
+    cd .. && \
     mkdir -p ${cwd}/dist 2>/dev/null && \
     cp $wheel_path ${cwd}/dist
 }
