@@ -20,6 +20,10 @@ def envsubst_foundations_home():
         output_file_name = f'{getcwd()}/foundations_home/config/submission/scheduler.config.yaml'
         subprocess.run(f'envsubst < {template_file_name} > {output_file_name}', shell=True)
 
+    template_file_name = f'{getcwd()}/foundations_home/config/execution/default.config.envsubst.yaml'
+    output_file_name = f'{getcwd()}/foundations_home/config/execution/default.config.yaml'
+    subprocess.run(f'envsubst < {template_file_name} > {output_file_name}', shell=True)
+
 def set_foundations_home():
     import os
     os.environ["FOUNDATIONS_HOME"] = os.getcwd() + "/foundations_home"
@@ -41,6 +45,6 @@ def config():
 
     module_manager.append_module(sys.modules['foundations_spec'])
 
-envsubst_foundations_home()
 set_foundations_home()
+envsubst_foundations_home()
 config()
