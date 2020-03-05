@@ -249,7 +249,7 @@ pipeline{
         stage('Upload Coverage results to Jenkins') {
             steps {
                 container("python3") {
-                    sh "tar -czvf coverage.tar.gz coverage_results"
+                    sh "tar -czvf coverage.tar.gz atlas/coverage_results"
                     archiveArtifacts artifacts: 'coverage.tar.gz'
                 }
             }
