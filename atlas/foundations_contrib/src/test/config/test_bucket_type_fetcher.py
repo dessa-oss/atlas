@@ -19,12 +19,12 @@ class TestBucketTypeFetcher(Spec):
         with self.assertRaises(ValueError) as error_context:
             bucket_type = for_scheme(scheme='lou', default=None)
         
-        error_message = 'Invalid uri scheme `lou` supplied - supported schemes are: sftp, gs, s3, and local'
+        error_message = 'Invalid uri scheme `lou` supplied - supported schemes are: local'
         self.assertIn(error_message, error_context.exception.args)
     
     def test_for_scheme_returns_error_when_scheme_not_recognized_different_scheme(self):
         with self.assertRaises(ValueError) as error_context:
             bucket_type = for_scheme(scheme='hana', default=None)
         
-        error_message = 'Invalid uri scheme `hana` supplied - supported schemes are: sftp, gs, s3, and local'
+        error_message = 'Invalid uri scheme `hana` supplied - supported schemes are: local'
         self.assertIn(error_message, error_context.exception.args)
