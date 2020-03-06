@@ -11,7 +11,7 @@ image_tag_latest=${docker_registry}/${docker_image}:latest
 
 rm -rf "${curr}/tmp/pip_wheels" && \
     mkdir -p "${curr}/tmp/pip_wheels" && \
-    cp "${curr}/dist/*" "${curr}/tmp/pip_wheels" && \
+    cp ${curr}/dist/* ${curr}/tmp/pip_wheels && \
     docker build \
         -t ${image_tag} \
         --network=host \
