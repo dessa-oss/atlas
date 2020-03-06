@@ -1,10 +1,3 @@
-"""
-Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
-Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
-Proprietary and confidential
-Written by Eric lee <e.lee@dessa.com>, 08 2019
-"""
-
 import sys
 if sys.version_info[0] < 3:
     print("Foundations Atlas Installer: Must be using Python 3.6 or above")
