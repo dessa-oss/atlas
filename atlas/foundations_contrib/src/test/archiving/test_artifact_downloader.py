@@ -53,8 +53,6 @@ class TestArtifactDownloader(Spec):
 
             'template/t',
             'template/u',
-            'foundations_ssh/v',
-            'foundations_ssh/w',
         ]
 
     def test_downloads_single_file_to_specified_directory(self):
