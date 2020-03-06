@@ -150,10 +150,6 @@ black
  License: https://github.com/psf/black
  Source: MIT
 
-pylint
- License: GNU General Public License v2.0
- Source: https://github.com/PyCQA/pylint
-
 tensorboard
  License: Apache 2.0
  Source: https://github.com/tensorflow/tensorboard

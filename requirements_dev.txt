@@ -15,4 +15,3 @@ twine==1.13.0
 awscli==1.16.297
 setuptools_scm==3.3.3
 black
-pylint
