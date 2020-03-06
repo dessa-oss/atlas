@@ -72,7 +72,6 @@ class JobBundler(object):
 
     def _add_files_to_tarball(self, tar):
         self._tar_job_source_bundle_archive(tar)
-        # self._tar_job_binary(tar)
         self._tar_config_files(tar)
         self._tar_foundations_modules(tar)
         if 'run_script_environment' in self._config:

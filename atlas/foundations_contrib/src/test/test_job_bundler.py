@@ -144,15 +144,6 @@ class TestJobBundler(Spec):
         job_bundler._bundle_job()
         self.mock_tarfile_open.assert_called_with(self.temp_directory + '/fake_name.tgz', 'w:gz')
 
-    @quarantine
-    def test_bundle_job_adds_archive_and_binary_to_tarball(self):
-        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
-        job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
-        job_bundler._bundle_job()
-        add_archive_call = call('fake_source_archive_name', arcname='fake_name/job.tgz')
-        add_binary_call = call('fake_name.bin', arcname='fake_name/fake_name.bin')
-        mock_tar.add.assert_has_calls([add_archive_call, add_binary_call], any_order=True)
-
     def test_bundle_job_adds_config_files(self):
         mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
         self.mock_glob_glob.return_value = ['fake_config_filename.config.yaml']
