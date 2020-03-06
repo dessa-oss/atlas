@@ -34,9 +34,9 @@ def set_submission_config(redis_url, foundations_scheduler_url):
 if __name__ == '__main__':
     FOUNDATIONS_HOME = os.path.abspath(os.path.expanduser('.foundations'))
     FOUNDATIONS_SCHEDULER_URL = "foundations-scheduler:5000"
-    REDIS_URL = f"redis://localhost:6379"
+    REDIS_URL = f"redis://localhost:5556"
     PORT = sys.argv[1]
-    
+
     config_logging(FOUNDATIONS_HOME)
     set_submission_config(REDIS_URL, FOUNDATIONS_SCHEDULER_URL)
     print(f'Running Atlas API with Redis at: {config_manager.config()["redis_url"]}')

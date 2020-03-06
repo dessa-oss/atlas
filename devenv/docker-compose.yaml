@@ -3,7 +3,7 @@ services:
   foundations-tracker:
     image: redis:latest
     ports:
-      - "6379:6379"
+      - "5556:6379"
     deploy:
       resources:
         limits:
@@ -39,7 +39,7 @@ services:
       CUDA_VISIBLE_DEVICES: None
       NUM_WORKERS: 1
       REDIS_HOST: foundations-tracker
-      REDIS_PORT: 6379
+      REDIS_PORT: 5556
       FOUNDATIONS_HOME: .foundations
     deploy:
         resources:
