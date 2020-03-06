@@ -1,0 +1,11 @@
+{
+    "learning_rate": 0.125,
+    "layers": [
+        {
+            "neurons": 5
+        },
+        {
+            "neurons": 6
+        }
+    ]
+}

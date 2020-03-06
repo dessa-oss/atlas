@@ -1,11 +1,3 @@
-"""
-Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
-Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
-Proprietary and confidential
-Written by Eric lee <e.lee@dessa.com>, 08 2019
-"""
-
-
 import argparse
 import atexit
 import logging
@@ -128,8 +120,6 @@ class CLI:
         try:
             print(get_distribution("foundations-atlas").version)
         except DistributionNotFound:
-            # package is not installed; try pyinstaller
-            # for pyinstaller
             bundle_dir = getattr(sys, '_MEIPASS', path.abspath(path.join(path.dirname(__file__), "..")))
             file_path = path.join(bundle_dir, 'version')
             try:
@@ -315,7 +305,6 @@ class CLI:
                         sys.exit()
                 sleep(1)
         except KeyboardInterrupt as e:
-            # 2019-09-14: need another try-except for pyinstaller 3.5 because signal is given twice
             try:
                 logger.info("Ctrl-C interrupt caught")
                 logger.info("Shutting down...")

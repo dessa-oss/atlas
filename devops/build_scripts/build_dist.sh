@@ -3,7 +3,7 @@
 script_location="$(pwd)/devops/build_scripts"
 source "$script_location/build_common.sh"
 
-cwd=`pwd`
+cwd="$(pwd)/atlas"
 
 rm -rf dist/* && \
     build_module foundations_internal foundations_internal $cwd && \

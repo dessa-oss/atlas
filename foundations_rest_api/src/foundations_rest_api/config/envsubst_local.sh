@@ -1,1 +1,0 @@
-envsubst '$AUTH_SERVER_URL' < foundations_rest_api/src/foundations_rest_api/config/auth_client_config.envsubst.yaml > foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml

@@ -25,7 +25,7 @@ export AUTH_PROXY_PORT=${AUTH_PROXY_PORT:-5558}
 export AUTH_PROXY_HOST=${AUTH_PROXY_HOST:-localhost}
 export AUTH_PROXY_URL=http://${AUTH_PROXY_HOST}:${AUTH_PROXY_PORT}
 export AUTH_SERVER_URL=http://localhost:8080
-export AUTH_CLIENT_CONFIG_PATH=$CWD/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml
+export AUTH_CLIENT_CONFIG_PATH=$CWD/atlas/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml
 
 export F9S_LOG_DIR=$FOUNDATIONS_HOME/logs
 mkdir -p $F9S_LOG_DIR
@@ -113,7 +113,7 @@ function start_auth_server() {
     network_name=foundations-$TYPE
     export AUTH_SERVER_NAME=foundations-authentication-server \
         && echo "Attempting to start the auth server as ${AUTH_SERVER_NAME}" \
-        && ./foundations_authentication/src/foundations_authentication/launch.sh \
+        && ./atlas/foundations_authentication/src/foundations_authentication/launch.sh \
         && echo "Connecting the auth server ${AUTH_SERVER_NAME} to network ${network_name}" \
         && docker network connect $network_name $AUTH_SERVER_NAME
 }
