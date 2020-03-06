@@ -1,144 +1,61 @@
 #!/usr/bin/env bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+FOUNDATIONS_ROOT=..
 export SCRIPT_PID=$$
-
-# source activate_dev_env.sh
-# source ./devops/set_environment_for_dev.sh
-
-export REACT_APP_API_URL="http://127.0.0.1:${AUTH_PROXY_PORT}/api/v1/"
-export REACT_APP_APIARY_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v1/"
-export REACT_APP_API_STAGING_URL="http://localhost:${AUTH_PROXY_PORT}/api/v2beta/"
-export FOUNDATIONS_HOME=${FOUNDATIONS_HOME:-~/.foundations}
-export F9S_ENV_TYPE=${F9S_ENV_TYPE:-atlas}
-
-export ATLAS_PORT=${ATLAS_PORT:-37722}
+export FOUNDATIONS_HOME=${DIR}/.foundations
+export ATLAS_PORT=37722
 export GUI_PORT=3000
 
-export SCHEDULER_PORT=${SCHEDULER_PORT:-5000}
-export SCHEDULER_HOST=${SCHEDULER_HOST:-localhost}
-export FOUNDATIONS_SCHEDULER_HOST=$SCHEDULER_HOST
-export FOUNDATIONS_SCHEDULER_URL=http://${SCHEDULER_HOST}:${SCHEDULER_PORT}
+export REACT_APP_API_URL="http://127.0.0.1:${ATLAS_PORT}/api/v1/"
+export REACT_APP_APIARY_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v1/"
+export REACT_APP_API_STAGING_URL="http://localhost:${ATLAS_PORT}/api/v2beta/"
 
-export REDIS_HOST=${REDIS_HOST:-localhost}
-export REDIS_PORT=${REDIS_PORT:-6379}
-export REDIS_URL="redis://$REDIS_HOST:$REDIS_PORT"
+function check_status_of_process() {
+    process_name=$1
+    RESULT=$2
+    script_pid=$3
 
-export TRACKER_NAME=${TRACKER_NAME:-"foundations-tracker"}
-export TRACKER_URI="redis://$TRACKER_NAME:$REDIS_PORT"
-
-
-export AUTH_PROXY_PORT=${AUTH_PROXY_PORT:-5558}
-export AUTH_PROXY_HOST=${AUTH_PROXY_HOST:-localhost}
-export AUTH_PROXY_URL=http://${AUTH_PROXY_HOST}:${AUTH_PROXY_PORT}
-export AUTH_SERVER_URL=http://localhost:8080
-export AUTH_CLIENT_CONFIG_PATH=$CWD/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml
-
-export F9S_LOG_DIR=$FOUNDATIONS_HOME/logs
-mkdir -p $F9S_LOG_DIR
-
-export ARCHIVE_DIR=$FOUNDATIONS_HOME/job_data
-mkdir -p $ARCHIVE_DIR
-
-export WORKING_DIR=$FOUNDATIONS_HOME/local_docker_scheduler/work_dir
-mkdir -p $WORKING_DIR
-
-export JOB_BUNDLE_STORE_DIR=$FOUNDATIONS_HOME/job_bundle_store_dir
-mkdir -p $JOB_BUNDLE_STORE_DIR
-
-export NUM_WORKERS=1
-export LOCAL_DOCKER_SCHEDULER_DIR=../local-docker-scheduler
-
-export LOCAL_DOCKER_SCHEDULER_HOST=${LOCAL_DOCKER_SCHEDULER_HOST:-localhost}
-export REMOTE_FOUNDATIONS_HOME=${REMOTE_FOUNDATIONS_HOME:-$FOUNDATIONS_HOME}
-
-
-UI_FOLDER="foundations_ui"
-FIXTURE_FOLDER="atlas_scheduler"
-
-export CYPRESS_LOCAL_FOUNDATIONS_HOME="${CWD}/${UI_FOLDER}/cypress/fixtures/${FIXTURE_FOLDER}/.foundations" \
-export CYPRESS_SCHEDULER_IP="localhost"
-export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$FOUNDATIONS_HOME 
-export CYPRESS_SCHEDULER_REDIS_PORT=$REDIS_PORT 
-export CYPRESS_GUI_HOST="localhost"
-export CYPRESS_GUI_PORT=$GUI_PORT 
-
-function check_for_config_and_create_if_does_not_exists() {
-    FILE_TYPE=$1
-    if [ $FILE_TYPE == "execution" ]; then
-        CONFIG_PATH="${FOUNDATIONS_HOME}/config/execution"
-        FILE_PATH="${CONFIG_PATH}/default.config.yaml"
-        ENVSUBST_FILE="${CWD}/devops/envsubsts/default.config.envsubst.yaml"
-    elif [ $FILE_TYPE == "submission" ]; then
-        CONFIG_PATH="${FOUNDATIONS_HOME}/config/submission"
-        FILE_PATH="${CONFIG_PATH}/scheduler.config.yaml"
-        ENVSUBST_FILE="${CWD}/devops/envsubsts/scheduler.config.envsubst.yaml"
-    elif [ $FILE_TYPE == "worker_execution" ]; then
-        CONFIG_PATH="${FOUNDATIONS_HOME}/config/local_docker_scheduler/worker_config/execution"
-        FILE_PATH="${CONFIG_PATH}/default.config.yaml"
-        ENVSUBST_FILE="${CWD}/devops/envsubsts/worker.default.config.envsubst.yaml"
-    elif [ $FILE_TYPE == "worker_submission" ]; then
-        CONFIG_PATH="${FOUNDATIONS_HOME}/config/local_docker_scheduler/worker_config/submission"
-        FILE_PATH="${CONFIG_PATH}/scheduler.config.yaml"
-        ENVSUBST_FILE="${CWD}/devops/envsubsts/worker.scheduler.config.envsubst.yaml"
-    else
-        echo "${FILE_TYPE} is an unsupported config file type. Choose between execution, submission, worker_execution and worker_submission"
-        exit 1
-    fi
-
-    if [ ! -f "$FILE_PATH" ]; then
-        mkdir -p $CONFIG_PATH   || true 
-        envsubst < $ENVSUBST_FILE > $FILE_PATH
-        echo "genertated:"
-        cat $FILE_PATH
-    else
-        echo "${FILE_TYPE} configuration found"  
+    if [ $RESULT -ne 0  ]; then
+        echo "Failed to connect to ${process_name}"
+        kill -s TERM $script_pid
     fi
 }
 
+# ***************************************************************************************************************
+# Launch Docker Containers
+
+docker-compose up -d
 
 # ***************************************************************************************************************
-
-check_for_config_and_create_if_does_not_exists "execution"
-check_for_config_and_create_if_does_not_exists "submission"
-check_for_config_and_create_if_does_not_exists "worker_execution"
-check_for_config_and_create_if_does_not_exists "worker_submission"
-
-# ***************************************************************************************************************
-
-# echo " Ensuring stoping previous running altas"
-$DIR/stop_devenv.sh
-
-# ./devops/teardown_frontend_dev_atlas.sh
-
-# ***************************************************************************************************************
+# Launch REST API
 
 echo "Running Atlas REST API on port ${ATLAS_PORT}"
-python ./startup_atlas_api.py ${ATLAS_PORT} &
+python startup_atlas_api.py ${ATLAS_PORT} > .foundations/logs/atlas_rest_api.log 2>&1 &
 
 echo "Waiting for Atlas REST API to start at http://localhost:${ATLAS_PORT}"
-./devops/wait_for_url.sh "http://localhost:${ATLAS_PORT}/api/v2beta/projects" 10
+./wait_for_url.sh "http://localhost:${ATLAS_PORT}/api/v2beta/projects" 10
 
 check_status_of_process "Atlas REST API" $? $SCRIPT_PID
 
 # ***************************************************************************************************************
+# Launch UI
 
-cd foundations_ui && \
+cd $FOUNDATIONS_ROOT/foundations_ui && \
   echo "Install UIs dependencies" && \
   yarn install --silent 2> >(grep -v warning 1>&2) && \
   echo "Starting the UI in development mode with yarn" && \
-  yarn start > $FOUNDATIONS_HOME/logs/yarn.log 2>&1 &
+  yarn start > ${FOUNDATIONS_HOME}/logs/yarn.log 2>&1 &
 
 echo "Waiting for Atlas GUI to start at http://localhost:${GUI_PORT}"
-./devops/wait_for_url.sh "http://localhost:${GUI_PORT}" 80
+./wait_for_url.sh "http://localhost:${GUI_PORT}" 80
 
 check_status_of_process "Atlas GUI" $? $SCRIPT_PID
 
 # ***************************************************************************************************************
-
+# Logs
+docker-compose logs -f > .foundations/logs/containers.log 2>&1 &
 echo "Check log files for status of programs:"
-echo "    tail -f $FOUNDATIONS_HOME/logs/scheduler.log"
 echo "    tail -f $FOUNDATIONS_HOME/logs/yarn.log"
 echo "    tail -f $FOUNDATIONS_HOME/logs/atlas_rest_api.log"
-echo "    tail -f $FOUNDATIONS_HOME/logs/auth_proxy.log"
-echo "    docker logs -f ${AUTH_SERVER_NAME}"
+echo "    tail -f devenv/.foundations/logs/containers.log"
