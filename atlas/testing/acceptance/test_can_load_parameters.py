@@ -84,6 +84,7 @@ class TestCanLoadParameters(Spec, RunLocalJob):
 
         try:
             env = self._update_environment_with_home_directory() if os.getenv('RUNNING_ON_CI', False) else {}
+            env = {**os.environ, **env}
 
             with ChangeDirectory(script_directory):
                 completed_process = subprocess.run(command, stdout=subprocess.PIPE, env=env)
