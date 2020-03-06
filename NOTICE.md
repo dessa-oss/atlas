@@ -1,7 +1,7 @@
 ## Foundations Atlas Open Source Notice 
 THE FOLLOWING SETS FORTH ATTRIBUTION NOTICES FOR THIRD PARTY SOFTWARE THAT MAY BE CONTAINED IN PORTIONS OF FOUNDATONS ATLAS.
 
-### Python Dependencies
+## Python Dependencies
 requests
  License: Apache 2.0
  Source: https://github.com/psf/requests
@@ -153,6 +153,14 @@ black
 pylint
  License: GNU General Public License v2.0
  Source: https://github.com/PyCQA/pylint
+
+tensorboard
+ License: Apache 2.0
+ Source: https://github.com/tensorflow/tensorboard
+
+xgboost
+ License: Apache 2.0
+ Source: https://github.com/dmlc/xgboost
 
 
 ## JavaScript Dependencies
