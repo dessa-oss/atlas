@@ -132,3 +132,7 @@ foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_home/conf
 !foundations_ui/package.json
 !foundations_ui/cypress.json
 testing/auth_acceptance/foundations_home/logs/*
+
+devenv/.foundations/job_data/archive/
+devenv/.foundations/logs/
+devenv/.foundations/credentials.yaml
