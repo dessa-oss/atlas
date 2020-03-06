@@ -24,22 +24,3 @@ def add_jobs_to_archive(redis, list_of_job_ids):
 
 def list_archived_jobs(redis):
     return {job_id.decode() for job_id in redis.smembers(_ARCHIVED_JOBS_KEY)}
-
-def remove_job_from_code_path(config_manager, job_id):
-    from pysftp import Connection
-    import os.path as path
-
-    code_path = config_manager['code_path']
-    remote_host = config_manager['remote_host']
-    remote_user = config_manager['remote_user']
-    key_path = config_manager['key_path']
-    
-    try:
-        port = config_manager['port']
-    except KeyError:
-        port = 22
-
-    connection = Connection(remote_host, remote_user, private_key=key_path, port=port)
-
-    full_path = path.join(code_path, job_id + '.tgz')
-    connection.remove(full_path)
