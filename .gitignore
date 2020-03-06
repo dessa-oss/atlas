@@ -133,6 +133,6 @@ atlas/foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_hom
 !foundations_ui/package.json
 !foundations_ui/cypress.json
 atlas/testing/auth_acceptance/foundations_home/logs/*
-testing/foundations_home/credentials.yaml
-testing/foundations_home/config/submission/scheduler.config.yaml
-testing/foundations_home/config/execution/default.config.yaml
+atlas/testing/foundations_home/credentials.yaml
+atlas/testing/foundations_home/config/submission/scheduler.config.yaml
+atlas/testing/foundations_home/config/execution/default.config.yaml
