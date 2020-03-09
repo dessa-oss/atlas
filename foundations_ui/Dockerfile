@@ -17,7 +17,6 @@ WORKDIR /var/foundations_ui
 
 ENV REACT_APP_API_URL=/foundations_rest_api/api/v1/
 ENV REACT_APP_API_STAGING_URL=/foundations_rest_api/api/v2beta/
-ENV REACT_APP_APIARY_URL=http://private-d03986-iannelladessa.apiary-mock.com/
 ENV REACT_APP_SCHEDULER_TYPE=CE
 ENV SERVER_NAME=localhost
 ENV NODE_OPTIONS=--max_old_space_size=8192

@@ -34,7 +34,6 @@ class JobListActions {
       url = `${url}/${translatedColumnName}/${isAscending}`;
     }
 
-    // TODO get Jobs is currently in Beta
     return BaseActions.getFromStaging(url)
       .then(results => {
         return results;
@@ -58,8 +57,7 @@ class JobListActions {
     );
     url = url.concat('?').concat(filterURL);
 
-    // TODO get Jobs is currently in Beta
-    return BaseActions.getFromApiary(url)
+    return BaseActions.getFromStaging(url)
       .then(([status, result]) => {
         return {
           status: status,
@@ -737,16 +735,6 @@ class JobListActions {
       return filter.column;
     });
     return filteredArrayMapped.includes(columnName);
-  }
-
-  static deleteAllJobs(jobIds, callback) {
-    const deletedJobRequests = jobIds.map(
-      jobId => {
-        const uri = `projects/dummy_project_name/job_listing/${jobId}`;
-        return BaseActions.deleteBetaFromAPI(uri);
-      },
-    );
-    return Promise.all(deletedJobRequests).then(callback);
   }
 }
 
