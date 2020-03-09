@@ -27,19 +27,21 @@ Here are few of the high-level features:
   <img width="25%" src="atlas-logo.gif">
 </p>
 
+# Users guide
+
 ## Installation 
 TODO
 
 ## Documentation
 Official documentation for Atlas can be found at https://www.docs.atlas.dessa.com/
 
-## System Overview
-TODO
-
 ## Community 
-For help or questions about Atlas see the [docs](https://www.docs.atlas.dessa.com/), [Stack Overflow](https://stackoverflow.com/questions/tagged/foundations-atlas), or join the [Dessa Slack](https://join.slack.com/t/dessa-community/shared_invite/enQtNzY5ODkxOTc3OTkwLTk4MTg5NmNkOTQ5OWVjNjk2YzY0OWJlNDkwNDlhY2NmNTQzNmRmYjkxNzc2N2JiOTYxZGVkMmFiMjRhYThiYzM).
+If you have questions that are not addressed in the [documentation](https://www.docs.atlas.dessa.com/), there are several ways to ask: 
+- Open a [Github Issue](https://github.com/dessa-research/atlas/issues)
+- [Stack Overflow](https://stackoverflow.com/questions/tagged/foundations-atlas) - be sure to use the `foundations-atlas` tag.
+- Join the [Dessa Slack](https://join.slack.com/t/dessa-community/shared_invite/enQtNzY5ODkxOTc3OTkwLTk4MTg5NmNkOTQ5OWVjNjk2YzY0OWJlNDkwNDlhY2NmNTQzNmRmYjkxNzc2N2JiOTYxZGVkMmFiMjRhYThiYzM).
 
-To report a bug, file a documentation issue, or submit a feature request, please open a GitHub issue.
+We will do our best to help!
 
 ## Development Status
 Atlas has evolved very rapidly and has gone though many iterations in Dessa's history. 
@@ -47,10 +49,32 @@ Atlas has evolved very rapidly and has gone though many iterations in Dessa's hi
 The latest version is in BETA. 
 
 ## Contributing
-We ❤️ contributors and would love to work with you..
+We ❤️ contributors and would love to work with you. 
 
-TODO
+Atlas is currently open to external contributors.
 
+Follow this guide:
+* Found a Bug?
+  * File an issue with the following:
+    * Label as `bug`
+    * Steps to reproduce 
+    * System used 
+  * Got a fix? 
+    * Tag the issue you are fixing 
+    * Open a Pull Request. 
+* Requesting a feature?
+  * File an issue with the following:
+    * Label as `feature-request`
+    * Why is this important to you? 
+    * How will this impact a data scientists workflow?
+    * Add any relevant mockups (if it is user facing)
+  * Want to work on it?
+    * Open up a Pull Request! 
+* First-time contributor to OSS?
+  * Look for issues with the `first-timers-only` label and get help from the community Slack if you need it. 
+
+## Developers Guide
+TODO @Austin's guide goes here
 
 ## License
 ```
