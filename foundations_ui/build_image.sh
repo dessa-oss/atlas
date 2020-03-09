@@ -21,5 +21,4 @@ docker tag \
     ${image_tag} \
     ${image_tag_latest} &&
 
-echo "Successfully built image tagged to ${docker_build_version} and latest" ||
-    echo "Failed to build image"
+echo "Successfully built image tagged to ${docker_build_version} and latest"

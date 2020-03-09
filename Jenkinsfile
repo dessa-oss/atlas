@@ -71,7 +71,7 @@ pipeline{
                 stage('Install Foundations (container 1)') {
                     steps {
                         container("python3-1") {
-                            ws("${WORKSPACE}/testing") {
+                            ws("${WORKSPACE}/atlas/testing") {
                                 sh 'python -m pip install ../dist/*.whl'
                             }
                             dir("${WORKSPACE}/foundations_ui") {
@@ -83,7 +83,7 @@ pipeline{
                 stage('Install Foundations (container 2)') {
                     steps {
                         container("python3-2") {
-                            ws("${WORKSPACE}/testing") {
+                            ws("${WORKSPACE}/atlas/testing") {
                                 sh 'python -m pip install ../dist/*.whl'
                             }
                         }
@@ -92,7 +92,7 @@ pipeline{
                 stage('Install Foundations (container 3)') {
                     steps {
                         container("python3-3") {
-                            ws("${WORKSPACE}/testing") {
+                            ws("${WORKSPACE}/atlas/testing") {
                                 sh 'python -m pip install ../dist/*.whl'
                             }
                         }
@@ -101,7 +101,7 @@ pipeline{
                 stage('Install Foundations (container 4)') {
                     steps {
                         container("python3-4") {
-                            ws("${WORKSPACE}/testing") {
+                            ws("${WORKSPACE}/atlas/testing") {
                                 sh 'python -m pip install ../dist/*.whl'
                             }
                         }
@@ -115,7 +115,7 @@ pipeline{
                 stage('Atlas Acceptance Tests') {
                     steps{
                         container("python3") {
-                            ws("${WORKSPACE}/testing") {
+                            ws("${WORKSPACE}/atlas/testing") {
                                 sh 'cp -r ../testing/* . || true'
                                 sh """export LOCAL_DOCKER_SCHEDULER_HOST=$ATLAS_LOCAL_SCHEDULER && \
                                         export REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && \
@@ -127,7 +127,7 @@ pipeline{
                 stage('Atlas Acceptance Tests for Stageless Deploys') {
                     steps {
                         container("python3-1") {
-                            ws("${WORKSPACE}/testing") {
+                            ws("${WORKSPACE}/atlas/testing") {
                                 sh 'cp -r ../testing/* . || true'
                                 sh 'python -Wi -m unittest -f -v stageless_acceptance'
                             }
@@ -141,17 +141,17 @@ pipeline{
                                 container("python3-2") {
                                     dir("${WORKSPACE}"){
                                         sh "./devops/teardown_frontend_dev_atlas.sh || true"
-                                        sh "./foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh"
+                                        sh "./atlas/foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh"
                                         sh """export FOUNDATIONS_SCHEDULER_HOST=$ATLAS_LOCAL_SCHEDULER && \
-                                            cd foundations_rest_api/src && \
+                                            cd atlas/foundations_rest_api/src && \
                                             ./foundations_rest_api/config/job_submission_envsubst.sh"""
                                     }
-                                    dir("${WORKSPACE}/foundations_rest_api/src") {
+                                    dir("${WORKSPACE}/atlas/foundations_rest_api/src") {
                                         sh """export FOUNDATIONS_HOME=`pwd`/acceptance/v2beta/fixtures/remote_foundations_home && \
                                                 export AUTH_CLIENT_CONFIG_PATH=`pwd`/foundations_rest_api/config/auth_client_config.yaml && \
                                                 export REDIS_URL=redis://${ATLAS_LOCAL_SCHEDULER}:5556 && \
                                                 python -Wi -m unittest -f -v acceptance"""
-                                        sh "../../devops/teardown_frontend_dev_atlas.sh || true"
+                                        sh "../../../devops/teardown_frontend_dev_atlas.sh || true"
                                     }
                                 }
                             }
@@ -161,19 +161,19 @@ pipeline{
                                 container("python3-2") {
                                     dir("${WORKSPACE}") {
                                         sh "./devops/teardown_frontend_dev_atlas.sh || true"
-                                        sh "./foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh"
-                                        sh """export AUTH_CLIENT_CONFIG_PATH=`pwd`/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
+                                        sh "./atlas/foundations_rest_api/src/foundations_rest_api/config/envsubst_local.sh"
+                                        sh """export AUTH_CLIENT_CONFIG_PATH=`pwd`/atlas/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
                                                 export REDIS_PORT=6379 && \
                                                 export FOUNDATIONS_SCHEDULER_URL=http://$ATLAS_LOCAL_SCHEDULER:5000 && \
-                                                export FOUNDATIONS_HOME=`pwd`/testing/auth_acceptance/foundations_home && \
+                                                export FOUNDATIONS_HOME=`pwd`/atlas/testing/auth_acceptance/foundations_home && \
                                                 python ./devops/startup_atlas_api.py 37722 &"""
                                     }
-                                    ws("${WORKSPACE}/testing") {
+                                    ws("${WORKSPACE}/atlas/testing") {
                                         sh 'cp -r ../testing/* . || true'
                                         sh """export AUTH_CLIENT_CONFIG_PATH=/home/jenkins/agent/workspace/foundations_master/foundations_rest_api/src/foundations_rest_api/config/auth_client_config.yaml && \
                                                 export REDIS_URL=redis://${ATLAS_LOCAL_SCHEDULER}:5556 && \
                                                 python -Wi -m unittest -f -v auth_acceptance"""
-                                        sh "../devops/teardown_frontend_dev_atlas.sh || true"
+                                        sh "../../devops/teardown_frontend_dev_atlas.sh || true"
                                     }
                                 }
                             }
@@ -249,7 +249,7 @@ pipeline{
         stage('Upload Coverage results to Jenkins') {
             steps {
                 container("python3") {
-                    sh "tar -czvf coverage.tar.gz coverage_results"
+                    sh "tar -czvf coverage.tar.gz atlas/coverage_results"
                     archiveArtifacts artifacts: 'coverage.tar.gz'
                 }
             }

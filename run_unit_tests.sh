@@ -12,7 +12,7 @@ cwd=`pwd`
 
 export TZ=EST
 
-for module_directory in $(echo foundations_*) $(echo *_utils)
+for module_directory in $(echo atlas/foundations_*) $(echo atlas/*_utils)
 do
     run_unit_test "${cwd}/${module_directory}/src"
 done

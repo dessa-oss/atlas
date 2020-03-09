@@ -17,8 +17,8 @@ function get_coverage_report_for_module {
     fi
     if [ -d "${module_directory}/test" ] || [ -d "${module_directory}/integration" ]; then
         coverage html -i && \
-        mkdir -p "${cwd}/coverage_results" && \
-        cp .coverage "${cwd}/coverage_results/.coverage_${real_module_name}"
+        mkdir -p "${cwd}/atlas/coverage_results" && \
+        cp .coverage "${cwd}/atlas/coverage_results/.coverage_${real_module_name}"
     fi
 }
 
@@ -32,29 +32,25 @@ fi
 
 export TZ=EST
 
-for module_directory in $(echo foundations_*) $(echo *_utils)
+for module_directory in $(echo atlas/foundations_*) $(echo atlas/*_utils)
 do
-    real_module_name=$module_directory
-    
-    if [[ "$module_directory" == "foundations_sdk" ]]; then
+    real_module_name=$(basename "$module_directory")
+
+    if [[ "$module_directory" == "atlas/foundations_sdk" ]]; then
         real_module_name="foundations"
     fi
-
-    if [[ "$module_directory" == "ssh_utils" ]]; then
-        real_module_name="foundations_ssh"
-    fi
     
-    if [[ "$module_directory" == "gcp_utils" ]]; then
+    if [[ "$module_directory" == "atlas/gcp_utils" ]]; then
         real_module_name="foundations_gcp"
     fi
     
-    if [[ "$module_directory" == "aws_utils" ]]; then
+    if [[ "$module_directory" == "atlas/aws_utils" ]]; then
         real_module_name="foundations_aws"
     fi
-    
+
     get_coverage_report_for_module "${cwd}/${module_directory}/src" ${real_module_name} "${coverage_type}"
 done
 
-cd ${cwd}/coverage_results && \
+cd ${cwd}/atlas/coverage_results && \
 coverage combine .coverage* && \
 coverage html -i

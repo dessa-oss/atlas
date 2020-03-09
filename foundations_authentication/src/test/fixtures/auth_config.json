@@ -1,8 +1,0 @@
-{
-    "realm": "some_realm",
-    "auth-server-url": "http://some_host:8080/auth",
-    "resource": "some_resource",
-    "credentials": {
-      "secret": "some_secret"
-    }
-  }

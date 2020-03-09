@@ -31,13 +31,13 @@ Here are few of the high-level features:
 TODO
 
 ## Documentation
-Official documentation for Atlas can be found at https://www.docs.atlas.dessa.com 
+Official documentation for Atlas can be found at https://www.docs.atlas.dessa.com/
 
 ## System Overview
 TODO
 
 ## Community 
-For help or questions about Atlas see the [docs](www.docs.atlas.dessa.com), [Stack Overflow](https://stackoverflow.com/questions/tagged/foundations-atlas), or join the [Dessa Slack](https://join.slack.com/t/dessa-community/shared_invite/enQtNzY5ODkxOTc3OTkwLTk4MTg5NmNkOTQ5OWVjNjk2YzY0OWJlNDkwNDlhY2NmNTQzNmRmYjkxNzc2N2JiOTYxZGVkMmFiMjRhYThiYzM).
+For help or questions about Atlas see the [docs](https://www.docs.atlas.dessa.com/), [Stack Overflow](https://stackoverflow.com/questions/tagged/foundations-atlas), or join the [Dessa Slack](https://join.slack.com/t/dessa-community/shared_invite/enQtNzY5ODkxOTc3OTkwLTk4MTg5NmNkOTQ5OWVjNjk2YzY0OWJlNDkwNDlhY2NmNTQzNmRmYjkxNzc2N2JiOTYxZGVkMmFiMjRhYThiYzM).
 
 To report a bug, file a documentation issue, or submit a feature request, please open a GitHub issue.
 
@@ -54,7 +54,7 @@ TODO
 
 ## License
 ```
-Copyright 2015 Square, Inc.
+Copyright 2015-2020 Square, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

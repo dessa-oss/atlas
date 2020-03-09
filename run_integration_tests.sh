@@ -12,7 +12,7 @@ function run_integration_test {
 
 cwd=`pwd`
 
-for module_directory in $(echo foundations_*)
+for module_directory in $(echo atlas/foundations_*)
 do
     run_integration_test "${cwd}/${module_directory}/src"
 done
