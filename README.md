@@ -35,6 +35,8 @@ TODO
 ## Documentation
 Official documentation for Atlas can be found at https://www.docs.atlas.dessa.com/
 
+All docs are hosted on Read the Docs that track the `docs` folder, please open a pull request here to make changes. 
+
 ## Community 
 If you have questions that are not addressed in the [documentation](https://www.docs.atlas.dessa.com/), there are several ways to ask: 
 - Open a [Github Issue](https://github.com/dessa-research/atlas/issues)
