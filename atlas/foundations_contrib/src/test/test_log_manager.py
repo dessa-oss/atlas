@@ -36,7 +36,7 @@ class TestLogManager(Spec):
         import os.path
 
         FOUNDATIONS_HOME = os.getenv('FOUNDATIONS_HOME', '~/.foundations')
-        if os.getenv('RUNNING_IN_CI'):
+        if os.getenv('RUNNING_ON_CI'):
             return os.path.expanduser(f'{FOUNDATIONS_HOME}logs/system.log')
         return os.path.expanduser(f'{FOUNDATIONS_HOME}/logs/system.log')
 
