@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-FOUNDATIONS_ROOT=../atlas
 export SCRIPT_PID=$$
-export FOUNDATIONS_HOME=${DIR}/.foundations
 export ATLAS_PORT=37722
 export GUI_PORT=3000
+export FOUNDATIONS_SCHEDULER_URL="http://localhost:5000"
+export REDIS_URL="redis://localhost:5556"
 
 export REACT_APP_API_URL="http://127.0.0.1:${ATLAS_PORT}/api/v1/"
 export REACT_APP_API_STAGING_URL="http://localhost:${ATLAS_PORT}/api/v2beta/"
-
+ 
 function check_status_of_process() {
     process_name=$1
     RESULT=$2

@@ -131,6 +131,7 @@ atlas/foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_hom
 testing/auth_acceptance/foundations_home/logs/*
 
 devenv/.foundations/job_data/archive/
+devenv/.foundations/local_docker_scheduler/work_dir/
 devenv/.foundations/logs/
 devenv/.foundations/credentials.yaml
 atlas/testing/auth_acceptance/foundations_home/logs/*

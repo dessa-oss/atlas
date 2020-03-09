@@ -20,3 +20,4 @@ add_path "$cwd/atlas/foundations_spec/src" && \
     add_path "$cwd/atlas/foundations_core_rest_api_components/src" && \
 
 source "${cwd}/devops/set_environment_for_dev.sh"
+export FOUNDATIONS_HOME=${cwd}/devenv/.foundations
