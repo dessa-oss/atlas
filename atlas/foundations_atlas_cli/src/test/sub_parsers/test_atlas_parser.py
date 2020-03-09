@@ -21,7 +21,6 @@ class TestAtlasParser(Spec):
             if self._time_elapsed >= self.time_to_wait - self._epsilon:
                 self.callback()
 
-    sys_path = let_patch_mock('sys.path')
     run_file = let_patch_mock('importlib.import_module')
 
     os_file_exists = let_patch_mock('os.path.isfile')
