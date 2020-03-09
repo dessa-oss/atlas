@@ -2,7 +2,6 @@
 
 CWD=`pwd`
 
-export FOUNDATIONS_HOME=${FOUNDATIONS_HOME:-~/.foundations}
 export F9S_ENV_TYPE=${F9S_ENV_TYPE:-atlas}
 
 export ATLAS_PORT=${ATLAS_PORT:-37722}
