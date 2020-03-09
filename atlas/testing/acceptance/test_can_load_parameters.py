@@ -48,7 +48,9 @@ class TestCanLoadParameters(Spec, RunLocalJob, RunWithDefaultFoundationsHome):
         import os
 
         with self.unset_foundations_home():
-            subprocess.run(f'python -m foundations login http://{os.getenv("LOCAL_DOCKER_SCHEDULER_HOST", "localhost")}:5558 -u test -p test'.split(' '))
+            env = self._update_environment_with_home_directory() if os.getenv('RUNNING_ON_CI', False) else {}
+            env = {**os.environ, **env}
+            subprocess.run(f'python -m foundations login http://{os.getenv("LOCAL_DOCKER_SCHEDULER_HOST", "localhost")}:5558 -u test -p test'.split(' '), env=env)
 
     def test_can_load_parameters_within_python(self):
         self._test_can_load_parameters_within_python(self.script_directory, self.job_parameters, check_for_warning=True)
@@ -94,12 +96,14 @@ class TestCanLoadParameters(Spec, RunLocalJob, RunWithDefaultFoundationsHome):
             if os.getenv('RUNNING_ON_CI', False):
                 import re
                 from foundations_local_docker_scheduler_plugin.job_deployment import JobDeployment
+                from foundations_contrib.global_state import config_manager
 
                 job_id_regex = re.search('Job \'(.+?)\' has completed.', process_output[-1])
                 self.assertIsNotNone(job_id_regex)
                 job_id = job_id_regex.group(1)
 
                 # Creating a fake job deployment as a quick interface to grab its logs
+                config_manager.config()['scheduler_url'] = f"http://{os.environ['LOCAL_DOCKER_SCHEDULER_HOST']}"
                 job = JobDeployment(job_id, None, None)
                 process_output = job.get_job_logs()
 
