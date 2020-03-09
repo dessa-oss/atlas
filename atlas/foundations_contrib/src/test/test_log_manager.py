@@ -32,8 +32,10 @@ class TestLogManager(Spec):
 
     @let
     def file_log_path(self):
+        import os
         import os.path
-        return os.path.expanduser('~/.foundations/logs/system.log')
+        FOUNDATIONS_HOME = os.getenv('FOUNDATIONS_HOME', '~/.foundations')
+        return os.path.expanduser(f'{FOUNDATIONS_HOME}/logs/system.log')
 
     def test_root_logger_has_no_level_set(self):
         self._setup_logger()
