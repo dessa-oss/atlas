@@ -15,13 +15,6 @@ def _append_module():
     module_manager.append_module(sys.modules[__name__])
 
 
-def _inject_config_translate():
-    from foundations_internal.global_state import config_translator
-    import foundations_local_docker_scheduler_plugin.config.foundations_local_docker_scheduler_config_translate as translator
-
-    config_translator.add_translator('local', translator)
-
-
 def hide_yaml_warnings_for_deprecated_version():
     import warnings
     from yaml import YAMLLoadWarning
@@ -30,4 +23,3 @@ def hide_yaml_warnings_for_deprecated_version():
 
 hide_yaml_warnings_for_deprecated_version()
 _append_module()
-_inject_config_translate()
