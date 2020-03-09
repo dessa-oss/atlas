@@ -62,15 +62,6 @@ services:
         resources:
           limits:
             memory: 300m
-  # auth_proxy:
-  #   image: gcr.io/atlas-ce/auth-proxy:latest
-  #   ports:
-  #     - "5558:5558"
-  #   entrypoint: python -m auth_proxy -H localhost -p 5558
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         memory: 300m
   tb_server:
     image: us.gcr.io/atlas-ce/tensorboard-server:latest
     entrypoint: tensorboard --logdir /logs
@@ -96,6 +87,16 @@ services:
       resources:
         limits:
           memory: 300m
+  # TODO: set up the auth proxy as well.
+  # auth_proxy:
+  #   image: us.gcr.io/atlas-ce/auth-proxy:latest
+  #   ports:
+  #     - "5558:5558"
+  #   entrypoint: python -m auth_proxy -n -H localhost -p 5558
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 300m
 networks:
   default:
     name: foundations-atlas
