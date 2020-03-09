@@ -188,6 +188,10 @@ class CLI:
                             '--enable-gpu',
                             action='store_true',
                             help='Launch Atlas server with GPU support')
+        parser.add_argument('-p',
+                            '--authentication',
+                            action='store_true',
+                            help='Enable full authentication')
         parser.add_argument('-t',
                             '--disable-tensorboard',
                             action='store_true',
@@ -223,6 +227,11 @@ class CLI:
         if args.scheduler_host:
             self._atlas_host = args.scheduler_host
 
+        if args.authentication:
+            auth_proxy_entrypoint = ['python', '-m', 'auth_proxy']
+        else:
+            auth_proxy_entrypoint = ['python', '-m', 'auth_proxy', '-n']
+
         self.stop(args)
 
         self._load_configs()
@@ -232,7 +241,7 @@ class CLI:
         atexit.register(self._stop_and_remove_docker_objects)
 
         try:
-            specs = self._container_specs(args.dashboard_port, args.archive_port, args.tensorboard_port, args.enable_gpu, args.disable_tensorboard, num_workers, cuda_devices)
+            specs = self._container_specs(args.dashboard_port, args.archive_port, args.tensorboard_port, args.enable_gpu, args.disable_tensorboard, num_workers, cuda_devices, auth_proxy_entrypoint)
         except KeyError as e:
             logger.error(f"Cannot find key in configuration files: {e.args[0]}")
             sys.exit(1)
@@ -313,7 +322,7 @@ class CLI:
                 logger.info("Shutting down...")
             sys.exit()
 
-    def _container_specs(self, dashboard_port, archive_port, tensorboard_port, enable_gpu, disable_tensorboard, num_workers, cuda_devices):
+    def _container_specs(self, dashboard_port, archive_port, tensorboard_port, enable_gpu, disable_tensorboard, num_workers, cuda_devices, auth_proxy_entrypoint):
         import os
 
         docker_spec = self._config['docker']
@@ -381,7 +390,8 @@ class CLI:
                 'environment': [
                     "PROXY_CONFIG=/config/proxy_config.yaml",
                     "ROUTE_MAPPING=/config/route_mapping.yaml"
-                ]
+                ],
+                'entrypoint': auth_proxy_entrypoint
             },
             {
                 'image': docker_spec['authentication_server']['image'],
