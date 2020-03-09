@@ -105,7 +105,7 @@ class TestCanLoadParameters(Spec, RunLocalJob, RunWithDefaultFoundationsHome):
                 # Creating a fake job deployment as a quick interface to grab its logs
                 config_manager.config()['scheduler_url'] = f"http://{os.environ['LOCAL_DOCKER_SCHEDULER_HOST']}:5000"
                 job = JobDeployment(job_id, None, None)
-                process_output = job.get_job_logs()
+                process_output = job.get_job_logs().split('\n')
 
             params_json = process_output[-2]
             job_id = process_output[-3]
