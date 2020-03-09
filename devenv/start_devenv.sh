@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-FOUNDATIONS_ROOT=..
+FOUNDATIONS_ROOT=../atlas
 export SCRIPT_PID=$$
 export FOUNDATIONS_HOME=${DIR}/.foundations
 export ATLAS_PORT=37722
 export GUI_PORT=3000
 
 export REACT_APP_API_URL="http://127.0.0.1:${ATLAS_PORT}/api/v1/"
-export REACT_APP_APIARY_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v1/"
 export REACT_APP_API_STAGING_URL="http://localhost:${ATLAS_PORT}/api/v2beta/"
 
 function check_status_of_process() {
@@ -41,7 +40,7 @@ check_status_of_process "Atlas REST API" $? $SCRIPT_PID
 # ***************************************************************************************************************
 # Launch UI
 
-cd $FOUNDATIONS_ROOT/foundations_ui && \
+cd ../foundations_ui && \
   echo "Install UIs dependencies" && \
   yarn install --silent 2> >(grep -v warning 1>&2) && \
   echo "Starting the UI in development mode with yarn" && \

@@ -51,7 +51,7 @@ services:
       - "8080:8080"
     volumes:
       - type: bind
-        source: ../foundations_authentication/src/foundations_authentication/keycloak
+        source: ../atlas/foundations_authentication/src/foundations_authentication/keycloak
         target: /keycloak
     environment:
       KEYCLOAK_USER: admin
