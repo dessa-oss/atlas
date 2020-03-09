@@ -1,7 +1,0 @@
-cache_config:
-  end_point: /cache_end_point
-container_config_root: ${FOUNDATIONS_HOME}/config/local_docker_scheduler/worker_config
-job_deployment_env: local_docker_scheduler_plugin
-job_results_root: ${ARCHIVE_DIR}
-scheduler_url: ${AUTH_PROXY_URL}
-working_dir_root: ${WORKING_DIR}
