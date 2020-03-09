@@ -21,6 +21,7 @@ add_path "$cwd/atlas/foundations_spec/src" && \
 
 export FOUNDATIONS_HOME=${cwd}/devenv/.foundations
 export FOUNDATIONS_SCHEDULER_URL="http://localhost:5000"
+export REDIS_URL="redis://localhost:5556"
 
 # CYPRESS Environment Variables
 UI_FOLDER="foundations_ui"
