@@ -145,6 +145,9 @@ Deletes a specified job. Deleting only works for failed or completed jobs.
 
 ### `foundations login`
 
+!!! note See setup documentation
+    This command only works properly if you are running Atlas with authentication setup. Please read the documentation [here](https://www.docs.atlas.dessa.com/en/latest/atlas-modes/authentication/).
+
 ```bash
 foundations login 
     [--username (-u) username]
