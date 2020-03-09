@@ -3,26 +3,16 @@
 from foundations_spec import *
 from contextlib import contextmanager
 from acceptance.mixins.run_local_job import RunLocalJob
+from acceptance.mixins.run_with_default_foundations_home import RunWithDefaultFoundationsHome
 
-class TestResultJobBundle(Spec, RunLocalJob):
+class TestResultJobBundle(Spec, RunLocalJob, RunWithDefaultFoundationsHome):
     @set_up
     def set_up(self):
         import subprocess
         import os
-        subprocess.run(f'python -m foundations login http://{os.getenv("LOCAL_DOCKER_SCHEDULER_HOST", "localhost")}:5558 -u test -p test'.split(' '))
 
-    @contextmanager
-    def unset_foundations_home(self):
-        import os
-
-        foundations_home = os.getenv('FOUNDATIONS_HOME', None)
-        del os.environ['FOUNDATIONS_HOME']
-
-        try:
-            yield
-        finally:
-            if foundations_home is not None:
-                os.environ['FOUNDATIONS_HOME'] = foundations_home
+        with self.unset_foundations_home():
+            subprocess.run(f'python -m foundations login http://{os.getenv("LOCAL_DOCKER_SCHEDULER_HOST", "localhost")}:5558 -u test -p test'.split(' '))
 
     def test_local_run_job_bundle_is_same_as_remote(self):
         import os

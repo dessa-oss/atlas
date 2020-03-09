@@ -1,7 +1,8 @@
-
 from foundations_spec import *
 from acceptance.mixins.run_local_job import RunLocalJob
-class TestCanLoadParameters(Spec, RunLocalJob):
+from acceptance.mixins.run_with_default_foundations_home import RunWithDefaultFoundationsHome
+
+class TestCanLoadParameters(Spec, RunLocalJob, RunWithDefaultFoundationsHome):
 
     @let
     def job_parameters(self):
@@ -45,7 +46,9 @@ class TestCanLoadParameters(Spec, RunLocalJob):
     def set_up(self):
         import subprocess
         import os
-        subprocess.run(f'python -m foundations login http://{os.getenv("LOCAL_DOCKER_SCHEDULER_HOST", "localhost")}:5558 -u test -p test'.split(' '))
+
+        with self.unset_foundations_home():
+            subprocess.run(f'python -m foundations login http://{os.getenv("LOCAL_DOCKER_SCHEDULER_HOST", "localhost")}:5558 -u test -p test'.split(' '))
 
     def test_can_load_parameters_within_python(self):
         self._test_can_load_parameters_within_python(self.script_directory, self.job_parameters, check_for_warning=True)
@@ -79,10 +82,7 @@ class TestCanLoadParameters(Spec, RunLocalJob):
         import os
         import os.path as path
 
-        foundations_home_var = os.getenv('FOUNDATIONS_HOME', '')
-        del os.environ['FOUNDATIONS_HOME']
-
-        try:
+        with self.unset_foundations_home():
             env = self._update_environment_with_home_directory() if os.getenv('RUNNING_ON_CI', False) else {}
             env = {**os.environ, **env}
 
@@ -90,19 +90,30 @@ class TestCanLoadParameters(Spec, RunLocalJob):
                 completed_process = subprocess.run(command, stdout=subprocess.PIPE, env=env)
                 process_output = completed_process.stdout.decode().strip().split('\n')
 
+
+            if os.getenv('RUNNING_ON_CI', False):
+                import re
+                from foundations_local_docker_scheduler_plugin.job_deployment import JobDeployment
+
+                job_id_regex = re.search('Job \'(.+?)\' has completed.', process_output[-1])
+                self.assertIsNotNone(job_id_regex)
+                job_id = job_id_regex.group(1)
+
+                # Creating a fake job deployment as a quick interface to grab its logs
+                job = JobDeployment(job_id, None, None)
+                process_output = job.get_job_logs()
+
             params_json = process_output[-2]
             job_id = process_output[-3]
             project_name = self.project_name
-
             result_parameters = json.loads(params_json)
+
             self.assertEqual(expected_loaded_parameters, result_parameters)
             self._assert_flattened_parameter_keys_in_project_job_parameter_names_set(project_name, expected_loaded_parameters)
             self._assert_flattened_parameter_values_for_job_in_job_parameters(job_id, expected_loaded_parameters)
             self._assert_flattened_parameter_keys_in_project_input_parameter_names_set(project_name, expected_loaded_parameters)
             if expected_loaded_parameters:
                 self._assert_flattened_parameter_names_for_job_in_job_input_parameters(job_id, expected_loaded_parameters)
-        finally:
-            os.environ['FOUNDATIONS_HOME'] = foundations_home_var
 
     def _test_command_that_loads_parameters_in_directory_for_python(self, command, script_directory, expected_loaded_parameters, check_for_warning):
         from foundations_internal.change_directory import ChangeDirectory
