@@ -5,6 +5,17 @@ from acceptance.mixins.run_with_default_foundations_home import RunWithDefaultFo
 class TestCanLoadParameters(Spec, RunLocalJob, RunWithDefaultFoundationsHome):
 
     @let
+    def redis_connection(self):
+        import os
+
+        if os.getenv('RUNNING_ON_CI', False):
+            import redis
+            return redis.Redis(host=os.environ['LOCAL_DOCKER_SCHEDULER_HOST'], port='5556')
+
+        from foundations_contrib.global_state import redis_connection
+        return redis_connection
+
+    @let
     def job_parameters(self):
         import json
         with open(self.script_directory + '/foundations_job_parameters.json', 'r') as file:
@@ -142,22 +153,19 @@ class TestCanLoadParameters(Spec, RunLocalJob, RunWithDefaultFoundationsHome):
 
     def _assert_flattened_parameter_keys_in_project_job_parameter_names_set(self, project_name, expected_loaded_parameters):
         from foundations.job_parameters import flatten_parameter_dictionary
-        from foundations_contrib.global_state import redis_connection
 
         flattened_parameters = flatten_parameter_dictionary(expected_loaded_parameters)
         parameter_names = set(map(lambda param_name: bytes(param_name, 'ascii'), flattened_parameters))
-        logged_parameter_names = redis_connection.smembers('projects:{}:job_parameter_names'.format(project_name))
+        logged_parameter_names = self.redis_connection.smembers('projects:{}:job_parameter_names'.format(project_name))
         self.assertEqual(parameter_names, logged_parameter_names)
 
     def _assert_flattened_parameter_values_for_job_in_job_parameters(self, job_id, expected_loaded_parameters):
         from foundations.job_parameters import flatten_parameter_dictionary
-        from foundations_contrib.global_state import redis_connection
-
         import json
 
         flattened_parameters = flatten_parameter_dictionary(expected_loaded_parameters)
 
-        parameters_in_redis = redis_connection.get('jobs:{}:parameters'.format(job_id))
+        parameters_in_redis = self.redis_connection.get('jobs:{}:parameters'.format(job_id))
 
         if parameters_in_redis is None:
             logged_parameters = {}
@@ -168,16 +176,14 @@ class TestCanLoadParameters(Spec, RunLocalJob, RunWithDefaultFoundationsHome):
 
     def _assert_flattened_parameter_keys_in_project_input_parameter_names_set(self, project_name, expected_loaded_parameters):
         from foundations.job_parameters import flatten_parameter_dictionary
-        from foundations_contrib.global_state import redis_connection
 
         flattened_parameters = flatten_parameter_dictionary(expected_loaded_parameters)
         parameter_names = set(map(lambda param_key: bytes(param_key, 'ascii'),flattened_parameters))
-        logged_parameter_names = redis_connection.smembers('projects:{}:input_parameter_names'.format(project_name))
+        logged_parameter_names = self.redis_connection.smembers('projects:{}:input_parameter_names'.format(project_name))
         self.assertEqual(parameter_names, logged_parameter_names)
 
     def _assert_flattened_parameter_names_for_job_in_job_input_parameters(self, job_id, expected_loaded_parameters):
         from foundations.job_parameters import flatten_parameter_dictionary
-        from foundations_contrib.global_state import redis_connection
         from foundations_internal.foundations_serializer import loads
 
         flattened_parameters = flatten_parameter_dictionary(expected_loaded_parameters)
@@ -187,5 +193,5 @@ class TestCanLoadParameters(Spec, RunLocalJob, RunWithDefaultFoundationsHome):
         for parameter_name in flattened_parameters.keys():
             flattened_parameters_data.append({'argument': {'name': parameter_name, 'value': {'type': 'dynamic', 'name': parameter_name}}, 'stage_uuid': 'stageless'})
 
-        logged_parameters = redis_connection.get('jobs:{}:input_parameters'.format(job_id))
+        logged_parameters = self.redis_connection.get('jobs:{}:input_parameters'.format(job_id))
         self.assertEqual(flattened_parameters_data, loads(logged_parameters))
