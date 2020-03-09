@@ -130,55 +130,6 @@ class TestQueuedJobHelpers(Spec):
         add_jobs_to_archive(self.redis, [self.random_job_id, self.random_job_id_two])
         self.assertEqual({self.random_job_id.encode('utf-8'), self.random_job_id_two.encode('utf-8')}, self.redis.smembers('projects:global:jobs:archived'))
 
-    @patch('pysftp.Connection', _MockConnection)
-    def test_remove_from_code_path_calls_remove_on_sftp_connection(self):
-        from foundations.helpers.queued import remove_job_from_code_path
-        import os.path as path
-
-        config_manager = self._config_manager()
-
-        job_id = self.random_job_id
-        remove_job_from_code_path(config_manager, job_id)
-
-        full_path = path.join(self.code_path, job_id + '.tgz')
-        self.assertEqual(_MockConnection.remove_called_with, full_path)
-
-    @patch('pysftp.Connection', _MockConnection)
-    def test_remove_from_code_path_constructs_connections_with_correct_arguments(self):
-        from foundations.helpers.queued import remove_job_from_code_path
-
-        config_manager = self._config_manager()
-
-        job_id = self.random_job_id
-        remove_job_from_code_path(config_manager, job_id)
-
-        expected_connection_args = (self.remote_host, self.remote_user)
-        expected_connection_kwargs = {
-            'private_key': self.key_path,
-            'port': self.port
-        }
-
-        self.assertEqual(expected_connection_args, _MockConnection.last_args)
-        self.assertEqual(expected_connection_kwargs, _MockConnection.last_kwargs)
-
-    @patch('pysftp.Connection', _MockConnection)
-    def test_remove_from_code_path_constructs_connections_with_default_port_if_none_provided(self):
-        from foundations.helpers.queued import remove_job_from_code_path
-
-        config_manager = self._config_manager_no_port()
-
-        job_id = self.random_job_id
-        remove_job_from_code_path(config_manager, job_id)
-
-        expected_connection_args = (self.remote_host, self.remote_user)
-        expected_connection_kwargs = {
-            'private_key': self.key_path,
-            'port': 22
-        }
-
-        self.assertEqual(expected_connection_args, _MockConnection.last_args)
-        self.assertEqual(expected_connection_kwargs, _MockConnection.last_kwargs)
-
     def _random_uuid(self):
         from uuid import uuid4
         return str(uuid4())

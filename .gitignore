@@ -27,10 +27,6 @@ atlas/gcp_utils/build
 atlas/gcp_utils/dist
 atlas/gcp_utils/foundations_gcp.egg-info
 atlas/gcp_utils/src/foundations_gcp.egg-info
-atlas/ssh_utils/build
-atlas/ssh_utils/dist
-atlas/ssh_utils/foundations_ssh.egg-info
-atlas/ssh_utils/src/foundations_ssh.egg-info
 atlas/aws_utils/build
 atlas/aws_utils/dist
 atlas/aws_utils/foundations_aws.egg-info

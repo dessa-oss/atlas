@@ -13,7 +13,6 @@ add_path "$cwd/atlas/foundations_spec/src" && \
     add_path "$cwd/atlas/foundations_contrib/src" && \
     add_path "$cwd/atlas/foundations_sdk/src" && \
     add_path "$cwd/atlas/foundations_authentication/src" && \
-    add_path "$cwd/atlas/ssh_utils/src" && \
     add_path "$cwd/atlas/gcp_utils/src" && \
     add_path "$cwd/atlas/aws_utils/src" && \
     add_path "$cwd/atlas/foundations_local_docker_scheduler_plugin/src" && \

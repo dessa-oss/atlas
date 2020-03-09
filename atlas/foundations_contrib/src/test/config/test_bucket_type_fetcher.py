@@ -14,35 +14,17 @@ class TestBucketTypeFetcher(Spec):
 
         bucket_type = for_scheme(scheme='local', default=None)
         self.assertEqual(LocalFileSystemBucket, bucket_type)
-
-    def test_for_scheme_returns_aws_bucket_when_scheme_is_s3(self):
-        from foundations_aws.aws_bucket import AWSBucket
-
-        bucket_type = for_scheme(scheme='s3', default=None)
-        self.assertEqual(AWSBucket, bucket_type)        
-
-    def test_for_scheme_returns_gcp_bucket_when_scheme_is_gs(self):
-        from foundations_gcp.gcp_bucket import GCPBucket
-
-        bucket_type = for_scheme(scheme='gs', default=None)
-        self.assertEqual(GCPBucket, bucket_type)    
-
-    def test_for_scheme_returns_sftp_bucket_when_scheme_is_sftp(self):
-        from foundations_ssh.sftp_bucket import SFTPBucket
-
-        bucket_type = for_scheme(scheme='sftp', default=None)
-        self.assertEqual(SFTPBucket, bucket_type)            
     
     def test_for_scheme_returns_error_when_scheme_not_recognized(self):
         with self.assertRaises(ValueError) as error_context:
             bucket_type = for_scheme(scheme='lou', default=None)
         
-        error_message = 'Invalid uri scheme `lou` supplied - supported schemes are: sftp, gs, s3, and local'
+        error_message = 'Invalid uri scheme `lou` supplied - supported schemes are: local'
         self.assertIn(error_message, error_context.exception.args)
     
     def test_for_scheme_returns_error_when_scheme_not_recognized_different_scheme(self):
         with self.assertRaises(ValueError) as error_context:
             bucket_type = for_scheme(scheme='hana', default=None)
         
-        error_message = 'Invalid uri scheme `hana` supplied - supported schemes are: sftp, gs, s3, and local'
+        error_message = 'Invalid uri scheme `hana` supplied - supported schemes are: local'
         self.assertIn(error_message, error_context.exception.args)
