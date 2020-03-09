@@ -59,9 +59,7 @@ class LogManager(object):
                 'level': 'NOTSET'
             },
             'loggers': {
-                'paramiko': { 'level': 'ERROR' },
-                'paramiko.transport': { 'level': 'ERROR' },
-                'paramiko.transport.sftp': { 'level': 'ERROR' },
+
             }
         }
         logging.config.dictConfig(config)

@@ -1,10 +1,7 @@
 
 
 def for_scheme(scheme, default):
-    callback_mapping = { 
-        'sftp': _get_sftp_bucket, 
-        'gs': _get_gcp_bucket, 
-        's3': _get_aws_bucket, 
+    callback_mapping = {
         'local': _get_local_bucket,
         None: lambda: default
     }
@@ -13,7 +10,7 @@ def for_scheme(scheme, default):
 
 def _invalid_scheme_callback(scheme):
     def _raise_error():
-        error_message = 'Invalid uri scheme `{}` supplied - supported schemes are: sftp, gs, s3, and local'.format(scheme)
+        error_message = 'Invalid uri scheme `{}` supplied - supported schemes are: local'.format(scheme)
         raise ValueError(error_message)
     return _raise_error
 
@@ -21,14 +18,3 @@ def _get_local_bucket():
     from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
     return LocalFileSystemBucket
 
-def _get_aws_bucket():
-    from foundations_aws.aws_bucket import AWSBucket
-    return AWSBucket
-
-def _get_gcp_bucket():
-    from foundations_gcp.gcp_bucket import GCPBucket
-    return GCPBucket
-
-def _get_sftp_bucket():
-    from foundations_ssh.sftp_bucket import SFTPBucket
-    return SFTPBucket

@@ -39,10 +39,6 @@ do
     if [[ "$module_directory" == "atlas/foundations_sdk" ]]; then
         real_module_name="foundations"
     fi
-
-    if [[ "$module_directory" == "atlas/ssh_utils" ]]; then
-        real_module_name="foundations_ssh"
-    fi
     
     if [[ "$module_directory" == "atlas/gcp_utils" ]]; then
         real_module_name="foundations_gcp"

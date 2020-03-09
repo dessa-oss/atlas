@@ -144,7 +144,6 @@ def order_whl_files(whl_files):
         "foundations_atlas_cli",
         "foundations_orbit",
         "foundations_gcp",
-        "foundations_ssh",
         "foundations_aws",
         "foundations_scheduler_plugin",
         "foundations_local_docker_scheduler_plugin",
