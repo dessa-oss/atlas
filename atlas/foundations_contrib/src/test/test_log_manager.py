@@ -34,7 +34,10 @@ class TestLogManager(Spec):
     def file_log_path(self):
         import os
         import os.path
+
         FOUNDATIONS_HOME = os.getenv('FOUNDATIONS_HOME', '~/.foundations')
+        if os.getenv('RUNNING_IN_CI'):
+            return os.path.expanduser(f'{FOUNDATIONS_HOME}logs/system.log')
         return os.path.expanduser(f'{FOUNDATIONS_HOME}/logs/system.log')
 
     def test_root_logger_has_no_level_set(self):
