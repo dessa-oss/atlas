@@ -1,0 +1,24 @@
+queue:
+  type: redis_connection.RedisList
+  args:
+    key: queue
+    host: "${REDIS_HOST}"
+    port: ${REDIS_PORT}
+failed_jobs:
+  type: redis_connection.RedisDict
+  args:
+    key: failed_jobs
+    host: "${REDIS_HOST}"
+    port: ${REDIS_PORT}
+completed_jobs:
+  type: redis_connection.RedisDict
+  args:
+    key: completed_jobs
+    host: "${REDIS_HOST}"
+    port: ${REDIS_PORT}
+running_jobs:
+  type: redis_connection.RedisDict
+  args:
+    key: running_jobs
+    host: "${REDIS_HOST}"
+    port: ${REDIS_PORT}
