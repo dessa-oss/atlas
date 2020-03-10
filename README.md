@@ -80,11 +80,19 @@ Follow this guide:
 ## Development Setup 
 When you are ready, just follow the steps below in order to set up a development environment.
 
-1. You will need to have `docker`, `yarn`, and the `envsubst` command line tool on your machine in order spin up a local development environment.    
+1. You will need to have `docker`, `yarn`, and the `envsubst` command line tool on your machine in order spin up a local development environment.   
+  OSX: 
   `brew install docker`  
   `brew install yarn`  
   `brew install gettext`  
-  If you are on a linux machine then replace `brew install` with the equivalent command for your distributions package manager.  
+  Ubuntu:  
+  `apt install docker`  
+  `apt install docker-compose`  
+  `apt install yarn`  
+  `apt install gettext`  
+  
+  For other Linux machines, replace `apt install` with the equivalent command for your distributions package manager.  
+
 
 2. Clone this repository and enter the new directory  
   `git clone git@github.com:DeepLearnI/atlas.git && cd atlas`  
@@ -102,7 +110,7 @@ When you are ready, just follow the steps below in order to set up a development
     `pip install -r requirements_dev.txt`  
 
 4. Add the packages that make up Atlas to your python path and set some environemnt variables by sourcing the `activate_dev_env.sh` file.  
-   `. activate_dev_env.sh`   
+   `. ./activate_dev_env.sh`   
 
 5. Launch Atlas in development mode. This may take a while to pull some required docker images.  
    `make devenv-start`  
