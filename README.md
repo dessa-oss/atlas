@@ -30,7 +30,14 @@ Here are few of the high-level features:
 # Users guide
 
 ## Installation 
-TODO
+
+* [MacOS & Linux Quickstart Guide (~8 mins, recommended)](https://docs.atlas.dessa.com/en/latest/linux-ac-installation)
+* [Windows 10 Guide](https://docs.atlas.dessa.com/en/latest/windows-installation)
+* [AWS Cloud installation](https://docs.atlas.dessa.com/en/latest/team/atlas-on-aws)
+* [GCP Cloud installation](https://docs.atlas.dessa.com/en/latest/atlas-on-gcp)
+* Multi-node cluster deployment:
+  * [AWS guide](https://docs.atlas.dessa.com/en/latest/team/aws-installation)
+  * [On-prem cluster guide](https://docs.atlas.dessa.com/en/latest/team/on-prem-installation).
 
 ## Documentation
 Official documentation for Atlas can be found at https://www.docs.atlas.dessa.com/
