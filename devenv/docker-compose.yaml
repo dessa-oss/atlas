@@ -1,0 +1,102 @@
+version: "3.7"
+services:
+  foundations-tracker:
+    image: redis:latest
+    ports:
+      - "5556:6379"
+    deploy:
+      resources:
+        limits:
+          memory: 300m
+    volumes:
+      - type: bind
+        source: .foundations/database
+        target: /data
+  foundations-scheduler:
+    image: us.gcr.io/atlas-ce/scheduler:latest
+    ports:
+      - "5000:5000"
+    volumes:
+      - type: bind
+        source: ~/.docker
+        target: /root/.docker
+      - type: bind
+        source: .foundations/job_data
+        target: /archives
+      - type: bind
+        source: .foundations/local_docker_scheduler/work_dir
+        target: /working_dir
+      - type: bind
+        source: .foundations/config/local_docker_scheduler/tracker_client_plugins.yaml
+        target: /app/local-docker-scheduler/tracker_client_plugins.yaml
+      - type: bind
+        source: .foundations/config/local_docker_scheduler/database.config.yaml
+        target: /app/local-docker-scheduler/database.config.yaml
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    environment:
+      CUDA_VISIBLE_DEVICES: None
+      NUM_WORKERS: 1
+      REDIS_HOST: foundations-tracker
+      REDIS_PORT: 5556
+      FOUNDATIONS_HOME: .foundations
+    deploy:
+        resources:
+          limits:
+            memory: 300m
+  foundations-authentication-server:
+    image: jboss/keycloak:8.0.1
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: ../atlas/foundations_authentication/src/foundations_authentication/keycloak
+        target: /keycloak
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_IMPORT: /keycloak/atlas.json
+      KEYCLOAK_LOGLEVEL: INFO
+    deploy:
+        resources:
+          limits:
+            memory: 300m
+  tb_server:
+    image: us.gcr.io/atlas-ce/tensorboard-server:latest
+    entrypoint: tensorboard --logdir /logs
+    ports:
+      - "5959:6006"
+    volumes:
+      - type: bind
+        source: .foundations/job_data
+        target: /archive
+      - type: bind
+        source: .foundations/tensorboard/work_dir
+        target: /logs
+  tb_api:
+    image: us.gcr.io/atlas-ce/tensorboard-rest-api:latest
+    volumes:
+      - type: bind
+        source: .foundations/job_data
+        target: /archive
+      - type: bind
+        source: .foundations/tensorboard/work_dir
+        target: /logs
+    deploy:
+      resources:
+        limits:
+          memory: 300m
+  # TODO: set up the auth proxy as well.
+  auth_proxy:
+    image: us.gcr.io/atlas-ce/auth-proxy:latest
+    ports:
+      - "5558:80"
+    command: "-n"
+    deploy:
+      resources:
+        limits:
+          memory: 300m
+networks:
+  default:
+    name: foundations-atlas

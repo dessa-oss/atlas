@@ -1,0 +1,3 @@
+redis_tracker_client:
+  host: foundations-tracker
+  port: 6379
