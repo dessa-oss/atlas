@@ -14,5 +14,7 @@ Add a new entry to the relevant part of the tree in the `nav` section in `mkdocs
 
 Install the `mkdocs` python package and you can then run `mkdocs serve` in the root of this project. This will serve the pages to test locally at [http://localhost:8000/](http://localhost:8000/).
 
+_Make sure to have installed the Material theme with: `pip install mkdocs-material`_
+
 # How to compile #
 You must have admin access to our [readthedocs site](https://readthedocs.com/projects/dessa-atlas-community-docs/) in order to build the docs from the repo.
