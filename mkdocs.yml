@@ -76,6 +76,10 @@ nav:
       - Fake Trump Tweet Classifier Tutorial: tutorials/fake_trump_tutorial.md
       - Image Segmentation Tutorial: tutorials/image_segmentation_tutorial.md
       - Using Atlas with Apache Spark: https://medium.com/dessa-news/using-foundations-atlas-with-spark-to-create-an-end-to-end-big-data-machine-learning-development-c0220de01a88
+  - Contributing:
+      - Contributing to Atlas: https://github.com/DeepLearnI/atlas#contributing
+      - Setting Up Your Development Environment: https://github.com/DeepLearnI/atlas#development-setup
+      - High level systems overview: https://github.com/DeepLearnI/atlas#systems-overview
   - Support & Community:
     - Community: community.md
     - FAQ: faq.md
