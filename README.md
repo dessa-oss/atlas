@@ -59,6 +59,7 @@ Atlas is currently open to external contributors.
 
 Follow this guide:
 * Found a Bug?
+  * Search through the [issue list](https://github.com/DeepLearnI/atlas/issues?q=is%3Aopen+is%3Aissue+label%3Abug) to make sure an issue doesn't exist already.
   * File an issue with the following:
     * Label as `bug`
     * Steps to reproduce 
@@ -67,6 +68,7 @@ Follow this guide:
     * Tag the issue you are fixing 
     * Open a Pull Request. 
 * Requesting a feature?
+  * Search through the [issue list](https://github.com/DeepLearnI/atlas/issues?q=is%3Aopen+is%3Aissue+label%3Afeature-request) to make sure an issue doesn't exist already.
   * File an issue with the following:
     * Label as `feature-request`
     * Why is this important to you? 
