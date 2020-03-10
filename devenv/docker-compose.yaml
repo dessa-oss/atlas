@@ -45,7 +45,7 @@ services:
         resources:
           limits:
             memory: 300m
-  auth_server:
+  foundations-authentication-server:
     image: jboss/keycloak:8.0.1
     ports:
       - "8080:8080"
@@ -88,15 +88,15 @@ services:
         limits:
           memory: 300m
   # TODO: set up the auth proxy as well.
-  # auth_proxy:
-  #   image: us.gcr.io/atlas-ce/auth-proxy:latest
-  #   ports:
-  #     - "5558:5558"
-  #   entrypoint: python -m auth_proxy -n -H localhost -p 5558
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         memory: 300m
+  auth_proxy:
+    image: us.gcr.io/atlas-ce/auth-proxy:latest
+    ports:
+      - "5558:80"
+    command: "-n"
+    deploy:
+      resources:
+        limits:
+          memory: 300m
 networks:
   default:
     name: foundations-atlas
