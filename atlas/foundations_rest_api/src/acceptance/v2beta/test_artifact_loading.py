@@ -21,14 +21,14 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         shutil.rmtree('/tmp/foundations_acceptance', ignore_errors=True)
 
         JobsTestsHelperMixinV2.setUpClass()
-        klass._set_project_name(self._str_random_uuid())
-        klass._some_artifacts = self._str_random_uuid()
-        klass._no_artifacts = self._str_random_uuid()
-        klass._one_artifact = self._str_random_uuid()
+        klass._set_project_name(JobsTestsHelperMixinV2._str_random_uuid())
+        klass._some_artifacts = JobsTestsHelperMixinV2._str_random_uuid()
+        klass._no_artifacts = JobsTestsHelperMixinV2._str_random_uuid()
+        klass._one_artifact = JobsTestsHelperMixinV2._str_random_uuid()
 
-        random_uuid = self._str_random_uuid()
+        random_uuid = JobsTestsHelperMixinV2._str_random_uuid()
 
-        klass._make_running_job(klass._one_artifact, self._str_random_uuid(), start_timestamp=99999999)
+        klass._make_running_job(klass._one_artifact, JobsTestsHelperMixinV2._str_random_uuid(), start_timestamp=99999999)
         klass._make_completed_job(klass._no_artifacts, random_uuid, start_timestamp=100000000, end_timestamp=100086400)
         klass._make_completed_job(klass._some_artifacts, random_uuid, start_timestamp=100000001, end_timestamp=100086400)
 

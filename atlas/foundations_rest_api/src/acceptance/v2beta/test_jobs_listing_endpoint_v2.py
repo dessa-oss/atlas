@@ -53,7 +53,7 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     @classmethod
     def setUpClass(klass):
         JobsTestsHelperMixinV2.setUpClass()
-        klass._set_project_name(self._str_random_uuid())
+        klass._set_project_name(JobsTestsHelperMixinV2._str_random_uuid())
         klass._setup_five_jobs()
 
     @classmethod

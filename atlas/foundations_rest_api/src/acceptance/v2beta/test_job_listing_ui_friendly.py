@@ -12,14 +12,13 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     @classmethod
     def setUpClass(klass):
         JobsTestsHelperMixinV2.setUpClass()
-        self.project_name = self._str_random_uuid()
-        klass._set_project_name(self.project_name)
+        klass._set_project_name(JobsTestsHelperMixinV2._str_random_uuid())
 
     def submit_job(self):
         import subprocess
 
         submit_result = subprocess.run(
-            f"python -m foundations submit --project-name {self.project_name} scheduler acceptance/v2beta/fixtures/log_metric_set_tag log_metric_set_tag.py",
+            f"python -m foundations submit --project-name {self._project_name} scheduler acceptance/v2beta/fixtures/log_metric_set_tag log_metric_set_tag.py",
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,

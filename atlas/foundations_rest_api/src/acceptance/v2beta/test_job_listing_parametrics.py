@@ -16,8 +16,7 @@ class TestJobListingParametrics(
     @classmethod
     def setUpClass(klass):
         JobsTestsHelperMixinV2.setUpClass()
-        self.project_name = self._str_random_uuid()
-        klass._set_project_name(self.project_name)
+        klass._set_project_name(JobsTestsHelperMixinV2._str_random_uuid())
 
     @set_up
     def set_up(self):
@@ -28,7 +27,7 @@ class TestJobListingParametrics(
 
         submit_result = subprocess.run(
             "python -m foundations submit --project-name {0} {1} {2} {3}".format(
-                self.project_name,
+                self._project_name,
                 "scheduler",
                 "acceptance/v2beta/fixtures/log_metric_log_param_set_tag",
                 "log_metric_log_param_set_tag.py"
@@ -62,11 +61,11 @@ class TestJobListingParametrics(
             self.assertIsNotNone(job_data[key])
 
         self.assertEqual(expected_output_metrics, job_data["output_metrics"])
-        self.assertEqual(self.project_name, job_data["project"])
+        self.assertEqual(self._project_name, job_data["project"])
         self.assertEqual("completed", job_data["status"])
         self.assertEqual({"key": "value"}, job_data["tags"])
 
         self.assertEqual(
             [{"name": "key", "type": "string"}], data["output_metric_names"]
         )
-        self.assertEqual(self.project_name, data["name"])
+        self.assertEqual(self._project_name, data["name"])
