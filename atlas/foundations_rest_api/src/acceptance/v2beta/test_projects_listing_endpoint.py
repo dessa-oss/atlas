@@ -7,7 +7,7 @@ class TestProjectsListingEndpoint(Spec):
     client = app_manager.app().test_client()
     url = '/api/v2beta/projects'
 
-    def _str_random_uuid():
+    def _str_random_uuid(self):
         import uuid
         return str(uuid.uuid4())
 
