@@ -717,7 +717,7 @@ if __name__ == "__main__":
     logger.info("="*80)
     logger.info("To start the Foundations Atlas experience, you can see your next steps in our documentation:")
     logger.info("")
-    logger.info("    https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/ce-quickstart-guide/#start-up")
+    logger.info("    https://docs.atlas.dessa.com/en/latest/ce-quickstart-guide/#start-up")
     logger.info("")
     logger.info("Alternatively, jump right in by starting the Atlas server by running the following command in your current environment:")
     logger.info("")

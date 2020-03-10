@@ -69,7 +69,7 @@ The **status** can be in 1 of 4 states:
 **User** this is the name you got from your administrator when you signed up for an Atlas account or your machines username if authentication is not available.
 
 The **tags** section is really useful, this shows any tag that is attached to a given job. Tags are explained more in
-the [SDK Reference](https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/sdk-reference/SDK/).
+the [SDK Reference](https://docs.atlas.dessa.com/en/latest/sdk-reference/SDK/).
 
 #### Parameters
 

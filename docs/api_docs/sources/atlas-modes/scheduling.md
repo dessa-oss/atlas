@@ -11,7 +11,7 @@ The results are then stored in an archive location that can be accessed using th
     Atlas comes with a Docker based local scheduler out of the box. The installation also sets up a configuration file called `scheduler.config.yaml`, this is the `scheduler_config`
     that is used for most CLI and SDK commands.
     
-    See [here](https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/atlas-modes/scheduling/#submitting-to-a-remote-scheduler) to see how you can create a new scheduler config to launch to a remote machine.  
+    See [here](https://docs.atlas.dessa.com/en/latest/atlas-modes/scheduling/#submitting-to-a-remote-scheduler) to see how you can create a new scheduler config to launch to a remote machine.  
 
 ### Creating a project
 Use the `foundations init <project_name>` command to create a template project directory. This command will create a project directory in your current directory with the following contents:
@@ -68,7 +68,7 @@ However, if certain project-specific python packages are required, they can be a
 
 !!! note 
     The requirements.txt is installed everytime a job is launched. 
-    It is recommended to use a [custom Worker](https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/atlas-modes/scheduling/#custom-workers) with project requirements pre-installed to avoid the start-up delay.
+    It is recommended to use a [custom Worker](https://docs.atlas.dessa.com/en/latest/atlas-modes/scheduling/#custom-workers) with project requirements pre-installed to avoid the start-up delay.
  
 ### Hyperparameter searches
 
@@ -147,7 +147,7 @@ train_model(params["learning_rate"], params["epochs"])
 This not only makes it easy to specify a lot of different parameter values in one centralized location, but also makes tracking easier when running multiple jobs.
 In addition, by using this function, Atlas will automatically track the parameter values for the job on the GUI and SDK so manual parameter logging using `foundations.log_param()` is not required.
 
-See the [log_param](https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/sdk-reference/SDK/#log-parameter) docs for more info.
+See the [log_param](https://docs.atlas.dessa.com/en/latest/sdk-reference/SDK/#log-parameter) docs for more info.
 
 ### Retrieving logs and job archives 
 #### Viewing logs
