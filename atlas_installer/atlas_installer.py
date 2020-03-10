@@ -17,28 +17,31 @@ logger = logging.getLogger("Atlas CE installer")
 # Do not modify independently of the build script
 version = "There is no version information available."
 default_url = "https://foundations-public.s3.amazonaws.com"
-default_file = 'atlas_ce.tgz'
+default_file = 'atlas.tgz'
 default_readme_url = "https://foundations-public.s3.amazonaws.com/README.md"
 
 # # SHA1 sum of downloaded package for verification
 # SHA1SUM = "REPLACE_WITH_SHA1_SUM_OF_INTENDED_INSTALLATION_FILE"
 
-license_tar_string = 'This is the license tar byte string used by the builder do not remove'
-try:
-    license_tar_ints, license_tar_length = license_tar_string.split(" ", 2)
-    license_tar_ints = int(license_tar_ints)
-    license_tar_length = int(license_tar_length)
-    license_tar_byte_string = int(license_tar_ints).to_bytes(length=license_tar_length, byteorder='little', signed=True)
+def extract_license():
+    license_tar_string = 'This is the license tar byte string used by the builder do not remove'
+    try:
+        license_tar_ints, license_tar_length = license_tar_string.split(" ", 2)
+        license_tar_ints = int(license_tar_ints)
+        license_tar_length = int(license_tar_length)
+        license_tar_byte_string = int(license_tar_ints).to_bytes(length=license_tar_length, byteorder='little', signed=True)
 
-    logger.info("Unpacking license information")
-    with open("license.tgz", 'wb') as f:
-        f.write(license_tar_byte_string)
+        logger.info("Unpacking license information")
+        with open("license.tgz", 'wb') as f:
+            f.write(license_tar_byte_string)
 
-    with tarfile.open("license.tgz", "r:gz") as f:
-        f.extractall()
+        with tarfile.open("license.tgz", "r:gz") as f:
+            f.extractall()
+            
+        os.remove('license.tgz')
 
-except (ValueError, TypeError):
-    pass
+    except (ValueError, TypeError):
+        pass
 
 class DockerImageLoader(object):
 
@@ -627,6 +630,8 @@ def cleanup():
 
 if __name__ == "__main__":
     args = get_args()
+    
+    extract_license()
 
     handler = logging.StreamHandler(sys.stdout)
     if args.verbose:
