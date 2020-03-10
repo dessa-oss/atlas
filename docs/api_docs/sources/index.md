@@ -51,4 +51,6 @@ Prefer discussing over e-mail? Send us a message [here](https://dessa.com/contac
 
 ## License
 
-We ❤️ open source, Atlas is licensed using the Apache 2.0 License. To contribute to Atlas, get started (here)[TODO ADD LINK TO ISSUES]
+We ❤️ open source, Atlas is licensed using the Apache 2.0 License. 
+
+To contribute to Atlas, get started on our [Github](www.github.com/dessa-research/atlas).
