@@ -156,7 +156,7 @@ Password: `test`
     how you see fit but be aware that Atlas does not manage RAM or CPU resources for you.
     
 !!! note "GPUs"
-    To use GPUs, you can use `atlas-server start -g` as documented [here](https://docs.atlas.dessa.com).
+    To use GPUs, you can use `atlas-server start -g` as documented [here](https://docs.atlas.dessa.com/en/latest/atlas-modes/gpu/).
     
 ## Setup users client
 
