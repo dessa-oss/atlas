@@ -71,23 +71,26 @@ We ❤️ contributors and would love to work with you. When you are ready, just
     `pip install -r requirements_dev.txt`  
 
 4. Add the packages that make up Atlas to your python path and set some environemnt variables by sourcing the `activate_dev_env.sh` file.  
-   `. activate_dev_env.sh`  
+   `. activate_dev_env.sh`   
 
-5. Generate the required configuration files.  
-   `make devenv-configure`  
-
-6. Launch Atlas in development mode. This may take a while to pull some required docker images.  
+5. Launch Atlas in development mode. This may take a while to pull some required docker images.  
    `make devenv-start`  
 
-7. You can now create a sample project by running the following command.  
+6. You can now create a sample project by running the following command.  
   `python -m foundations init my-project`  
 
-8. Change into the newly created project directory and execute the following command to submit your first job. This can take a while the first time as one more image may need to be pulled.  
+7. Change into the newly created project directory and execute the following command to submit your first job. This can take a while the first time as one more image may need to be pulled.  
   `python -m foundations submit scheduler . main.py`  
    
-9. Navigate to `localhost:3000` and verify that your newly created project exists on the frontend. Click on the project and verify that your job executed successfully.
+8. Navigate to `localhost:3000` and verify that your newly created project exists on the frontend. Click on the project and verify that your job executed successfully.
 
-10. Congrats! You are ready to go.
+9. Congrats! You are ready to go.
+
+In order to run tests, simply run:  
+  `make unit-tests`  
+  `make integration-tests`  
+
+To run the unit and integration tests respectfully.
 
 
 ## License
