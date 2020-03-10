@@ -2,7 +2,7 @@
 
 ### Installation
 
-*Estimated time: 3 minutes*
+*Estimated time: 8 minutes*
 
 #### Prerequisites
 

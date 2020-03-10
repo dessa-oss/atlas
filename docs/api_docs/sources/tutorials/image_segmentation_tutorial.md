@@ -18,9 +18,10 @@ This tutorial assumes that you have already installed Foundations Atlas. If you 
 Atlas from [this link](https://www.atlas.dessa.com/) or use a cloud alternative as explained in the next section.
 
 ## Cloud option
-Alternatively, if you have an AWS account, try using our <a target="_blank" href="https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/atlas-on-aws/">Atlas CE AMI</a> (publicly available Amazon Machine Image for Atlas).
+Alternatively, if you have an AWS account, try using our <a target="_blank" href="https://docs.atlas.dessa.com">Atlas CE AMI</a> (publicly available Amazon Machine Image for Atlas).
 
 The AMI will start by automatically installing the latest version of Atlas on a conda environment as well as starting the atlas server, and downloading this tutorial, (`cd atlas_tutorials/Image-segmentation-tutorial`) and you can directly skip to `Image Segmentation` section. The AMI supports both GPU and CPU instances.
+
 ## Local option
 **Prerequisites**
 
@@ -33,7 +34,7 @@ The AMI will start by automatically installing the latest version of Atlas on a 
 
 **Steps**
 
-See <a target="_blank" href="https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/ce-quickstart-guide/">Atlas documentation</a>
+See <a target="_blank" href="https://docs.atlas.dessa.com/">Atlas documentation</a>
   
 
 <details>
@@ -469,4 +470,4 @@ Do you have any thoughts or feedback for Foundations Atlas? Join the [Dessa Slac
 
 ## References
 1. https://www.tensorflow.org/tutorials/images/segmentation
-1. https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/
+1. [https://docs.atlas.dessa.com/](https://docs.atlas.dessa.com/)

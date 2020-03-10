@@ -38,7 +38,7 @@ class CommonHeader extends React.Component {
     const { isLoggedIn } = this.props;
 
     const atlasAccessToken = Cookies.get('atlas_access_token');
-    let username = 'Atlas CE';
+    let username = 'Atlas';
 
     if (atlasAccessToken) {
       if (atlasAccessToken !== 'undefined') {

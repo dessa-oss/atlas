@@ -141,6 +141,33 @@ Deletes a specified job. Deleting only works for failed or completed jobs.
 * **`scheduler-config`**: The scheduler of which to delete a job.
 * **`job-id`**: A specific job ID. Find the job ID in the job listings page in the GUI.
 
+---
+
+### `foundations login`
+
+!!! note See setup documentation
+    This command only works properly if you are running Atlas with authentication setup. Please read the documentation [here](https://www.docs.atlas.dessa.com/en/latest/atlas-modes/authentication/).
+
+```bash
+foundations login 
+    [--username (-u) username]
+    [--password (-p) password]
+    <host>
+```
+
+Logs into the specified host after requesting a `username` and `password`. This will save a token under `~/.foundations/credentials.yaml` that will be used for any actions that require it going forward.
+
+**Positional Arguments**
+
+* **`host`**: The address, in form `http://<address>:<port>` of the authentication proxy to log in.
+
+**Optional Arguments**
+
+* **`username`**: The username for the account to login as
+* **`password`**: The plaintext password for the account to login as
+
+---
+
 **Optional Arguments**
 
 These are optional arguments global to all commands.

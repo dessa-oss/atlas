@@ -19,4 +19,17 @@ add_path "$cwd/atlas/foundations_spec/src" && \
     add_path "$cwd/atlas/foundations_rest_api/src" && \
     add_path "$cwd/atlas/foundations_core_rest_api_components/src" && \
 
-source "${cwd}/devops/set_environment_for_dev.sh"
+export FOUNDATIONS_HOME=${cwd}/devenv/.foundations
+export FOUNDATIONS_SCHEDULER_URL="http://localhost:5000"
+export REDIS_URL="redis://localhost:5556"
+
+# CYPRESS Environment Variables
+UI_FOLDER="foundations_ui"
+FIXTURE_FOLDER="atlas_scheduler"
+
+export CYPRESS_LOCAL_FOUNDATIONS_HOME="${CWD}/${UI_FOLDER}/cypress/fixtures/${FIXTURE_FOLDER}/.foundations" \
+export CYPRESS_SCHEDULER_IP="localhost"
+export CYPRESS_SCHEDULER_FOUNDATIONS_HOME=$FOUNDATIONS_HOME 
+export CYPRESS_SCHEDULER_REDIS_PORT=$REDIS_PORT 
+export CYPRESS_GUI_HOST="localhost"
+export CYPRESS_GUI_PORT=$GUI_PORT 
