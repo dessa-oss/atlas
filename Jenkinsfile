@@ -275,7 +275,7 @@ pipeline{
         }
         stage('Trigger Build Artifacts for Atlas Pipeline') {
             when{
-                anyOf { branch 'remove_references_of_team_and_ce'; branch 'master' }
+                branch 'master'
             }
             steps {
                 container("python3") {
