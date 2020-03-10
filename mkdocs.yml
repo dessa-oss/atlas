@@ -73,7 +73,6 @@ nav:
       - Auction Price Regression Tutorial: tutorials/auction_price_regression_tutorial.md
       - Nvidia RAPIDS Tutorial:  tutorials/rapids_tutorial.md
       - Audio Deep Fake Detection Tutorial: tutorials/fake_audio_detection_tutorial.md
-      - Fake Trump Tweet Classifier Tutorial: tutorials/fake_trump_tutorial.md
       - Image Segmentation Tutorial: tutorials/image_segmentation_tutorial.md
       - Using Atlas with Apache Spark: https://medium.com/dessa-news/using-foundations-atlas-with-spark-to-create-an-end-to-end-big-data-machine-learning-development-c0220de01a88
   - Contributing:

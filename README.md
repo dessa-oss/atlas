@@ -4,7 +4,7 @@
 ![Downloads](https://img.shields.io/badge/Downloads-2000+-blue "downloads")
 
 <p align="center">
-  <img width="20%" src="dessa-square-logo.png">
+  <img width="40%" src="dessa-square-logo.png">
 </p>
 
 ---
@@ -30,7 +30,14 @@ Here are few of the high-level features:
 # Users guide
 
 ## Installation 
-TODO
+
+* [MacOS & Linux Quickstart Guide (~8 mins, recommended)](https://docs.atlas.dessa.com/en/latest/linux-ac-installation)
+* [Windows 10 Guide](https://docs.atlas.dessa.com/en/latest/windows-installation)
+* [AWS Cloud installation](https://docs.atlas.dessa.com/en/latest/team/atlas-on-aws)
+* [GCP Cloud installation](https://docs.atlas.dessa.com/en/latest/atlas-on-gcp)
+* Multi-node cluster deployment:
+  * [AWS guide](https://docs.atlas.dessa.com/en/latest/team/aws-installation)
+  * [On-prem cluster guide](https://docs.atlas.dessa.com/en/latest/team/on-prem-installation).
 
 ## Documentation
 Official documentation for Atlas can be found at https://www.docs.atlas.dessa.com/
@@ -59,6 +66,7 @@ Atlas is currently open to external contributors.
 
 Follow this guide:
 * Found a Bug?
+  * Search through the [issue list](https://github.com/DeepLearnI/atlas/issues?q=is%3Aopen+is%3Aissue+label%3Abug) to make sure an issue doesn't exist already.
   * File an issue with the following:
     * Label as `bug`
     * Steps to reproduce 
@@ -67,6 +75,7 @@ Follow this guide:
     * Tag the issue you are fixing 
     * Open a Pull Request. 
 * Requesting a feature?
+  * Search through the [issue list](https://github.com/DeepLearnI/atlas/issues?q=is%3Aopen+is%3Aissue+label%3Afeature-request) to make sure an issue doesn't exist already.
   * File an issue with the following:
     * Label as `feature-request`
     * Why is this important to you? 
