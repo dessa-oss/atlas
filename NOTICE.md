@@ -69,15 +69,6 @@ THE FOLLOWING SETS FORTH ATTRIBUTION NOTICES FOR THIRD PARTY SOFTWARE THAT MAY B
 *Source:* https://bitbucket.org/dundeemt/pysftp
 
 
-
-**paramiko==2.4.1**
-
- *License:* GNU Library or Lesser General Public License (LGPL) (LGPL)
-
-*Source:* https://github.com/paramiko/paramiko/
-
-
-
 **freezegun==0.3.12**
 
  *License:* Apache 2.0
