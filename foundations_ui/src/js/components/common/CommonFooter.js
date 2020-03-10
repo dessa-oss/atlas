@@ -17,15 +17,7 @@ class CommonFooter extends React.Component {
     return (
       <div className="common-footer">
         <p>
-          TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc.
-          RAPIDS, the RAPIDS logo and any related marks are trademarks and/or registered trademarks of NVIDIA
-          Corporation.
-        </p>
-        <p>
-          Microsoft Azure, the Microsoft Azure logo and any related marks are trademarks and/or registered trademarks
-          of Microsoft Corporation.
-          Google Cloud Platform, the Google Cloud Platform logo and any related marks are trademarks and/or registered
-          trademarks of Google Inc.
+          © 2020 Square, Inc. ATLAS, DESSA, the Dessa Logo, and others are trademarks of Square, Inc. All third party names and trademarks are properties of their respective owners and are used for identification purposes only.
         </p>
       </div>
     );
