@@ -102,7 +102,7 @@ class TestCanLoadParameters(Spec, RunLocalJob, RunWithDefaultFoundationsHome):
             with ChangeDirectory(script_directory):
                 completed_process = subprocess.run(command, stdout=subprocess.PIPE, env=env)
                 process_output = completed_process.stdout.decode().strip().split('\n')
-
+                print(process_output)
 
             if os.getenv('RUNNING_ON_CI', False):
                 import re
