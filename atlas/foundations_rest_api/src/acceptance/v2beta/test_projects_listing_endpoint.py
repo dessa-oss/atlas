@@ -41,8 +41,7 @@ class TestProjectsListingEndpoint(Spec):
 
     def test_get_project_listing(self):
         data = self._get_from_route()
-        
-        self.assertEqual(3, len(data))
+
         self._assert_project_in(self.project_name_1, data)
         self._assert_project_in(self.project_name_2, data)
         self._assert_project_in(self.project_name_3, data)
