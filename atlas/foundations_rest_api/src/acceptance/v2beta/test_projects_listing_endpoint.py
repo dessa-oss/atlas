@@ -7,17 +7,19 @@ class TestProjectsListingEndpoint(Spec):
     client = app_manager.app().test_client()
     url = '/api/v2beta/projects'
 
-    @let
-    def redis(self):
-        from foundations_contrib.global_state import redis_connection
-        return redis_connection
+    def _str_random_uuid():
+        import uuid
+        return str(uuid.uuid4())
 
     @set_up
     def set_up(self):
-        self.redis.flushall()
-        self._create_project('hana')
-        self._create_project('sam')
-        self._create_project('danny')
+        self.project_name_1 = self._str_random_uuid()
+        self.project_name_2 = self._str_random_uuid()
+        self.project_name_3 = self._str_random_uuid()
+
+        self._create_project(self.project_name_1)
+        self._create_project(self.project_name_2)
+        self._create_project(self.project_name_3)
 
     def _create_project(self, project_name):
         import time
@@ -36,9 +38,9 @@ class TestProjectsListingEndpoint(Spec):
         data = self._get_from_route()
         
         self.assertEqual(3, len(data))
-        self._assert_project_in('hana', data)
-        self._assert_project_in('sam', data)
-        self._assert_project_in('danny', data)
+        self._assert_project_in(self.project_name_1, data)
+        self._assert_project_in(self.project_name_2, data)
+        self._assert_project_in(self.project_name_3, data)
 
     def _assert_project_in(self, project_name, projects):
         for project in projects:

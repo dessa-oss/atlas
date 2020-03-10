@@ -12,23 +12,14 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     @classmethod
     def setUpClass(klass):
         JobsTestsHelperMixinV2.setUpClass()
-        klass._set_project_name('lou')
-
-    @classmethod
-    def tearDownClass(klass):
-        from foundations_contrib.global_state import redis_connection as redis
-        redis.flushall()
-
-    @set_up
-    def set_up(self):
-        from foundations_contrib.global_state import redis_connection
-        redis_connection.flushall()
+        self.project_name = self._str_random_uuid()
+        klass._set_project_name(self.project_name)
 
     def submit_job(self):
         import subprocess
 
         submit_result = subprocess.run(
-            "python -m foundations submit --project-name lou scheduler acceptance/v2beta/fixtures/log_metric_set_tag log_metric_set_tag.py",
+            f"python -m foundations submit --project-name {self.project_name} scheduler acceptance/v2beta/fixtures/log_metric_set_tag log_metric_set_tag.py",
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,

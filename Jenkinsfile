@@ -111,7 +111,7 @@ pipeline{
         }
         stage('Acceptance Tests'){
             failFast true
-            parallel{
+            stages{
                 stage('Atlas Acceptance Tests') {
                     steps{
                         container("python3") {
