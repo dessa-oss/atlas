@@ -4,7 +4,7 @@
 ![Downloads](https://img.shields.io/badge/Downloads-2000+-blue "downloads")
 
 <p align="center">
-  <img width="20%" src="dessa-square-logo.png">
+  <img width="40%" src="dessa-square-logo.png">
 </p>
 
 ---
