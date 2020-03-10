@@ -12,7 +12,7 @@ import shutil
 import argparse
 import sys
 
-logger = logging.getLogger("Atlas CE installer")
+logger = logging.getLogger("Atlas installer")
 # The following line is needed for the build script to sed the build version
 # Do not modify independently of the build script
 version = "There is no version information available."
@@ -502,7 +502,7 @@ def get_args():
 
     parser = argparse.ArgumentParser(description='Installs Foundations Atlas Community Edition')
     parser.add_argument('-A', '--advanced', action='store_true', help='Allows configuration of settings for advanced setup; only applies if the configuration Task is to be performed')
-    parser.add_argument('-f', '--file', type=str, default=default_file, help='Specifies an alternate installation package file to download and/or unpack (default: atlas_ce.tgz)')
+    parser.add_argument('-f', '--file', type=str, default=default_file, help='Specifies an alternate installation package file to download and/or unpack (default: atlas.tgz)')
     parser.add_argument('-a', '--no-atlas-server', action='store_true', help='Task: Skips installation of the Atlas server (default: False)')
     parser.add_argument('-d', '--no-download', action='store_true', help='Task: Skips downloading of the installation package (default: False)')
     parser.add_argument('-p', '--no-unpack', action='store_true', help='Task: Skips unpacking the installation package (default: False)')
@@ -553,17 +553,17 @@ def welcome(args):
     """)
     logger.info("="*80)
     logger.info("=" * 80)
-    logger.info("Welcome to the Foundations Atlas CE Installer")
+    logger.info("Welcome to the Foundations Atlas Installer")
     logger.info("Please see license information under the licenses directory")
     logger.info("="*80)
     logger.info("=" * 80)
     logger.info("Please make sure you have Docker Engine 18.09 or higher running prior to running the installer.")
-    logger.info("The Atlas CE Installer is ready to begin installation and will perform the following steps.")
+    logger.info("The Atlas Installer is ready to begin installation and will perform the following steps.")
     logger.info("You can skip steps or only perform certain steps by setting the appropriate flags as shown below when running the installation script.")
     logger.info("=" * 80)
-    logger.info("1. Download the Atlas CE archive. (skip flag: -d, only flag: -N -d)")
-    logger.info("2. Unpack the Atlas CE archive. (skip flag: -p, only flag: -N -p)")
-    logger.info("3. Load the Atlas CE docker images to your local docker registry. (skip flag: -i, only flag: -N -i)")
+    logger.info("1. Download the Atlas archive. (skip flag: -d, only flag: -N -d)")
+    logger.info("2. Unpack the Atlas archive. (skip flag: -p, only flag: -N -p)")
+    logger.info("3. Load the Atlas docker images to your local docker registry. (skip flag: -i, only flag: -N -i)")
     logger.info("4. Install the Foundations SDK. (skip flag: -s, only flag: -N -s)")
     logger.info("5. Install Atlas Server. (skip flag: -a, only flag: -N -a)")
     logger.info("6. Cleanup unpacked files. This will not remove the downloaded archive. (skip flag: -C, only flag: -N -c)")
@@ -648,7 +648,7 @@ if __name__ == "__main__":
     welcome(args)
 
     if args.update:
-        # Steps required for before reinstalling the latest atlas ce can go here
+        # Steps required for before reinstalling the latest atlas can go here
         pass
 
     if not args.no_download:
@@ -677,7 +677,7 @@ if __name__ == "__main__":
         except FileNotFoundError:
             try:
                 logger.error("Cannot find {} locally.".format(args.file))
-                args.file = "atlas_ce.gpu.tgz"
+                args.file = "atlas.gpu.tgz"
                 logger.info("Trying to unpack {}".format(args.file))
                 untar_file(args.file)
             except FileNotFoundError:
