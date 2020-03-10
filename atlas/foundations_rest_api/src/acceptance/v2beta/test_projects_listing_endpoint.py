@@ -11,6 +11,11 @@ class TestProjectsListingEndpoint(Spec):
         import uuid
         return str(uuid.uuid4())
 
+    @let
+    def redis(self):
+        from foundations_contrib.global_state import redis_connection
+        return redis_connection
+
     @set_up
     def set_up(self):
         self.project_name_1 = self._str_random_uuid()
