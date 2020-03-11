@@ -1,4 +1,3 @@
-
 from foundations_spec import *
 from mock import patch
 
