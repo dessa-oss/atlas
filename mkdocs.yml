@@ -52,7 +52,7 @@ nav:
   - Installation Guide:
       - Quickstart Local:
         - Linux/MacOS: linux-mac-installation.md
-        - Windows: windows-installation.md
+        - Windows 10: windows-installation.md
       - Quickstart Cloud:
         - AWS: atlas-on-aws.md
         - GCP: atlas-on-gcp.md

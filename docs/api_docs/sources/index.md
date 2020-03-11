@@ -19,6 +19,11 @@ Atlas is a subset of *Foundations* which is a group of tools we have built for M
   <iframe src="https://www.youtube.com/embed/YnwtO48UYAU?start=2" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
 </div>
 
+### Version Note
+Atlas has evolved quite a lot throughout our history. The latest open-source version of Atlas includes a lot of architectural and design changes. 
+
+This is currently in BETA. 
+
 ### Here are some of the core features:
 
 **Experiment Management & Tracking:**
@@ -102,3 +107,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+© 2020 Square, Inc. ATLAS, DESSA, the Dessa Logo, and others are trademarks of Square, Inc. All third party names and trademarks are properties of their respective owners and are used for identification purposes only.

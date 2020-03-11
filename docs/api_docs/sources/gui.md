@@ -131,7 +131,7 @@ tags after a job has completed can be really useful for more precise record keep
 
 #### Artifacts
 
-By saving files in your code using, you can view and retrieve these files through the GUI.
+By saving files in your code using [the SDK](sdk-reference/SDK.md), you can view and retrieve these files through the GUI.
 
 If you log a photo or an audio file, you can interact with it on this page.
 

@@ -34,7 +34,7 @@
 !!! tip
     The longest part of the script is pulling the Atlas docker images, if the script fails at this point, 
     you can re-run it using `python atlas_installer.py -dp` to skip over the download and unpacking and go directly to the image pull.
-
+    
 ---
 
 ### Start Up
@@ -49,6 +49,7 @@ If you installed Atlas with GPU support, you can start the Atlas server in GPU m
  
 !!! success
     Validate that the GUI is running by going to the [GUI](http://localhost:5555). This is your centralized location to track all of your experiments.
+
 
 ---
 
