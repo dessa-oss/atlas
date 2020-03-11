@@ -15,20 +15,6 @@ class TestEnvironmentFetcher(Spec):
         self.mock_glob.return_value = []
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), [])
 
-    def test_environment_fetcher_checks_local_config_one_yaml(self):
-        import os
-
-        try:
-            original_foundations_home = os.environ.get('FOUNDATIONS_HOME', '')
-            os.environ['FOUNDATIONS_HOME'] = 'home/some/project'
-
-            config_path = 'home/some/project/config/execution/default.config.yaml'
-            self.mock_glob.return_value = [config_path]
-
-            self.assertEqual(EnvironmentFetcher()._get_local_environments(), [config_path])
-        finally:
-            os.environ['FOUNDATIONS_HOME'] = original_foundations_home
-
     @patch('os.getcwd', lambda: 'home/some/project')
     def test_environment_fetcher_checks_local_config_multiple_yaml(self):
         yamls = [
