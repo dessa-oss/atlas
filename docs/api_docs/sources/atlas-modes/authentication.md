@@ -7,6 +7,11 @@ All you need to do is run `atlas-server start -p` and you're ready to go.
 
 ### Setup information
 
+!!! danger
+    DO NOT SKIP THIS STEP. 
+    
+    By default Atlas uses the following publicly available username and password. Make sure you change them.
+
 Since Atlas uses Keycloak, you can use their [documentation](https://www.keycloak.org/docs/latest/server_admin/index.html#overview) for information on how to use the Keycloak Console. The console itself will be located at `https://<machine_address>:8443`. The admin account can create users and any user can login through the Atlas UI and CLI.
 
 Atlas comes with 2 default accounts that should be changed after testing is done.

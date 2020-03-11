@@ -30,13 +30,15 @@ This setup is ideal for teams of Machine Learning Engineers who want to share re
 
 1. SSH into the machine to be used as the master instance
 
-2. (Download)[https://github.com/dessa-research/atlas/releases] the installer file (atlas_installer.py) on to your machine.
+2. [Download](https://github.com/dessa-research/atlas/releases) the installer file (atlas_installer.py) on to your machine from our [Github Releases](https://github.com/dessa-research/atlas/releases) page.
 
 3. Create a conda environment (e.g. `conda create -y -n atlas-team python=3.6.8`)
 
 4. Activate the conda environment (e.g. `conda activate atlas-team`)
 
 5. Run the installer: `python atlas_installer.py -dl`
+!!! tip
+    Running `python atlas_installer.py --help` will show all available installer flags.
 
 6. Create a directory that will be the same path on each node (e.g. `sudo mkdir -p /atlas_work_dir`)
 
@@ -96,6 +98,11 @@ This setup is ideal for teams of Machine Learning Engineers who want to share re
 2. Run `atlas-server start`
 
 ### Log into Atlas' authentication system
+
+!!! danger
+    DO NOT SKIP THIS STEP. 
+    
+    By default Atlas uses the following publicly available username and password. Make sure you change them.
 
 Atlas runs a Keycloak authentication server for managing users and login.
 

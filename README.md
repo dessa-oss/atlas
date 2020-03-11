@@ -12,8 +12,17 @@
 # Atlas: Self-Hosted Machine Learning Platform
 Atlas is a flexible Machine Learning platform that consists of a Python SDK, CLI, GUI & Scheduler to help Machine Learning Engineering teams dramatically reduce the model development time & reduce effort in managing infrastructure.
 
+### Development Status
+Atlas has evolved very rapidly and has gone though many iterations in Dessa's history. 
+
+The latest version is in BETA. 
+
 ## Features
-Here are few of the high-level features:
+<p align="center">
+  <img width="80%" src="https://static.wixstatic.com/media/29a4f1_ffb0c04ef79843e79dbf2b1fa33a70c4~mv2.png/v1/fill/w_1440,h_1024/Time%20series%20forecast.png">
+</p>
+
+**Here are few of the high-level features:**
 1. _Self-hosted_: run Atlas on a single node e.g. your latop, or multi-node cluster e.g. on-premise servers or cloud clusters (AWS/GCP/etc.)
 2. _Job scheduling_: Collaborate with your team by scheduling and running concurrent ML jobs remotely on your cluster & fully utilize your system resources.
 3. _Flexibility_: Multiple GPU jobs? CPU jobs? need to use custom libraries or docker images? No problem - Atlas tries to be unopionated where possible, so you can run jobs how you like.
@@ -22,10 +31,6 @@ Here are few of the high-level features:
 6. _Easy to use SDK_: Atlas's easy to use SDK allows you to run jobs programatically allowing you to do multiple hyperparameter optimization runs programatically
 7. _Built in [Tensorboard](https://github.com/tensorflow/tensorboard) integration_: We ❤️ Tensorflow - compare multiple Tensorboard-compaitable job runs directly through the Atlas GUI.
 8. _Works well with others_: run any Python code with any frameworks.
-
-<p align="left">
-  <img width="25%" src="atlas-logo.gif">
-</p>
 
 # Users guide
 
@@ -53,11 +58,6 @@ If you have questions that are not addressed in the [documentation](https://www.
 We will do our best to help!
 
 # Development Guide
-
-## Development Status
-Atlas has evolved very rapidly and has gone though many iterations in Dessa's history. 
-
-The latest version is in BETA. 
 
 ## Contributing
 We ❤️ contributors and would love to work with you. 
@@ -89,48 +89,49 @@ Follow this guide:
 ## Development Setup 
 When you are ready, just follow the steps below in order to set up a development environment.
 
+Note: Steps outlined here are for MacOS - if you are on a linux machine then replace `brew install` with the equivalent command for your distributions package manager.  
+
 1. You will need to have `docker`, `yarn`, and the `envsubst` command line tool on your machine in order spin up a local development environment.    
-  `brew install docker`  
-  `brew install yarn`  
-  `brew install gettext`  
-  If you are on a linux machine then replace `brew install` with the equivalent command for your distributions package manager.  
+     * `brew install docker`  
+     * `brew install yarn`  
+     * `brew install gettext`  
 
 2. Clone this repository and enter the new directory  
-  `git clone git@github.com:DeepLearnI/atlas.git && cd atlas`  
+     * `git clone git@github.com:DeepLearnI/atlas.git && cd atlas`  
 
 3. Create and activate a brand new virtual environment with Python 3.7 then install the requirements. Some examples below.
-   Conda:  
-    `conda create --name foundations python=3.7 && conda activate foundations`  
-    `pip install -r requirements_dev.txt`  
-   Pipenv:  
-    `pipenv --python 3.7 && pipenv shell`  
-    `pipenv install`  
-    `pipenv install -r requirements_dev.txt --dev --pre --skip-lock`  
-  Venv:  
-    `python3 -m venv . && source bin/activate`  
-    `pip install -r requirements_dev.txt`  
+   * Using Conda:  
+      * `conda create --name foundations python=3.7 && conda activate foundations`  
+      * `pip install -r requirements_dev.txt`  
+   * Pipenv:  
+      * `pipenv --python 3.7 && pipenv shell`  
+      * `pipenv install`  
+      * `pipenv install -r requirements_dev.txt --dev --pre --skip-lock`  
+   * Venv:  
+      * `python3 -m venv . && source bin/activate`  
+      * `pip install -r requirements_dev.txt`  
 
 4. Add the packages that make up Atlas to your python path and set some environemnt variables by sourcing the `activate_dev_env.sh` file.  
-   `. activate_dev_env.sh`   
+     * `. activate_dev_env.sh`   
 
 5. Launch Atlas in development mode. This may take a while to pull some required docker images.  
-   `make devenv-start`  
+      * `make devenv-start`  
 
 6. You can now create a sample project by running the following command.  
-  `python -m foundations init my-project`  
+     * `python -m foundations init my-project`  
 
 7. Change into the newly created project directory and execute the following command to submit your first job. This can take a while the first time as one more image may need to be pulled.  
-  `python -m foundations submit scheduler . main.py`  
+     * `python -m foundations submit scheduler . main.py`  
    
 8. Navigate to `localhost:3000` and verify that your newly created project exists on the frontend. Click on the project and verify that your job executed successfully.
 
 9. Congrats! You are ready to go.
 
-In order to run tests, simply run:  
-  `make unit-tests`  
-  `make integration-tests`  
+## Running tests locally 
 
-To run the unit and integration tests respectfully.
+In order to run tests, simply run:  
+   * `make unit-tests`  
+   * `make integration-tests`  
 
 ## Systems Overview 
 *Last updated: March 2020*
@@ -210,3 +211,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+© 2020 Square, Inc. ATLAS, DESSA, the Dessa Logo, and others are trademarks of Square, Inc. All third party names and trademarks are properties of their respective owners and are used for identification purposes only.

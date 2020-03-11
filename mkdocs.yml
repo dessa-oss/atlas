@@ -43,22 +43,24 @@ extra:
     - type: 'linkedin'
       link: 'https://www.linkedin.com/company/dessa1/'
     - type: 'github'
-      link: https://github.com/dessa-public
+      link: https://github.com/dessa-research
 
 dev_addr: '0.0.0.0:8000'
 
 nav:
+  - GitHub 😸: https://www.github.com/dessa-research/atlas
   - Home: index.md
   - Installation Guide:
       - Quickstart Local:
         - Linux/MacOS: linux-mac-installation.md
-        - Windows: windows-installation.md
+        - Windows 10: windows-installation.md
       - Quickstart Cloud:
         - AWS: atlas-on-aws.md
         - GCP: atlas-on-gcp.md
       - Multinode Installation:
         - On Premise Installation: team/on-prem-installation.md
         - AWS Installation: team/aws-installation.md
+      - Uninstallation: uninstallation.md
   - Usage Guide:
       - Introduction: atlas-modes/modes.md
       - Execution: atlas-modes/execution.md
@@ -82,4 +84,4 @@ nav:
   - Support & Community:
     - Community: community.md
     - FAQ: faq.md
-    - Uninstallation: uninstallation.md
+

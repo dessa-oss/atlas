@@ -1,9 +1,10 @@
 # Uninstallation
 
-We are sad to see you go, but hope you enjoyed your time using Atlas. 
+We are sad to see you go 🙁, but hope you enjoyed your time using Atlas. 
 
 Hopefully you could send us feedback as to why you are no longer using Atlas: {==[foundations@dessa.com](mailto:foundations@dessa.com)==}
 
+## Uninstallation steps 
 ### Docker image removal
 
  1. Run `docker images | grep atlas` and make sure that you are not going to delete any non-Atlas Docker images
