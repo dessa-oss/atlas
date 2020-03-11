@@ -154,7 +154,8 @@ def order_whl_files(whl_files):
         "foundations_production",
         "foundations_core_rest_api_components",
         "foundations_rest_api",
-        "foundations_orbit_rest_api"
+        "foundations_orbit_rest_api",
+        "foundations_authentication"
     ]
 
     ordered_whl_files = []
