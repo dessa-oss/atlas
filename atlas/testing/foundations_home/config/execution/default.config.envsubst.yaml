@@ -3,4 +3,4 @@ cache_config:
 log_level: INFO
 results_config:
   archive_end_point: ${FOUNDATIONS_HOME}/job_data
-  redis_end_point: redis://localhost:6379
+  redis_end_point: redis://${EXECUTION_REDIS_HOST}:${EXECUTION_REDIS_PORT}

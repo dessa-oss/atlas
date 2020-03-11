@@ -19,6 +19,11 @@ def envsubst_foundations_home():
         template_file_name = f'{getcwd()}/foundations_home/config/submission/scheduler.config.envsubst.yaml'
         output_file_name = f'{getcwd()}/foundations_home/config/submission/scheduler.config.yaml'
         subprocess.run(f'envsubst < {template_file_name} > {output_file_name}', shell=True)
+    
+    if not getenv('EXECUTION_REDIS_HOST', None):
+        environ['EXECUTION_REDIS_HOST'] = 'localhost'
+    if not getenv('EXECUTION_REDIS_PORT', None):
+        environ['EXECUTION_REDIS_PORT'] = '6379'
 
     template_file_name = f'{getcwd()}/foundations_home/config/execution/default.config.envsubst.yaml'
     output_file_name = f'{getcwd()}/foundations_home/config/execution/default.config.yaml'
