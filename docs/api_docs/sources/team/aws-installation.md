@@ -154,6 +154,11 @@ Set environment variables
 
 ### Log into Atlas' authentication system
 
+!!! danger
+    DO NOT SKIP THIS STEP. 
+    
+    By default Atlas uses the following publicly available username and password. Make sure you change them.
+
 Atlas runs a Keycloak authentication server for managing users and login.
 
 * Login to Keycloak via the admin console: `https://<master_node_external_ip>:8443`. When first spun up the username and password will both `admin`
