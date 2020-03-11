@@ -1,10 +1,10 @@
 # The Atlas GUI
 
-### Introduction
+## Introduction
 
 ![Overview page](assets/images/overview.png "Overview page")
 
-Foundations Atlas helps you easily add record keeping into your modeling workflow — something essential in the modern-day modeling lifecycle.
+Atlas helps you easily add record keeping into your modeling workflow — something essential in the modern-day modeling lifecycle.
 
 Almost every piece of information can be retrieved and examined through the Foundations CLI, but our GUI gives you a better experience than working from a Terminal session does.
 
@@ -51,13 +51,12 @@ the string of characters will copy the ID to your clipboard.
 
 The **status** can be in 1 of 4 states:
  
- 1. Queued, a yellow circle
- 
- 2. Running, a green loading circle
-
- 3. Completed, a green circle with a white check mark
-
- 4. Error, a red circle with a white exclamation mark
+| Status    | Indicator                                |   |   |   |
+|-----------|------------------------------------------|---|---|---|
+| Queued    | Yellow circle                            |   |   |   |
+| Running   | Green loading circle                     |   |   |   |
+| Completed | Green circle with a white check mark     |   |   |   |
+| Error     | Red circle with a white exclamation mark |   |   |   |
 
 !!! note 
     If you get an error state, you can check the logs of a job at any point using the `foundations get logs` CLI command.

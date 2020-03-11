@@ -4,10 +4,25 @@
   <img src="assets/images/dessa-square-logo.png">
 </p>
 
-![Platform Support](https://img.shields.io/badge/Platforms-osx%20%7C%20linux%20%7C%20windows-lightgrey "platform")
-![Python Support](https://img.shields.io/badge/Python-%3E3.6-brightgreen "python")
-![Downloads](https://img.shields.io/badge/Downloads-1000+-brightgreen "downloads")
-[![Follow Dessa](https://img.shields.io/twitter/follow/dessa?label=Follow%20Dessa&style=social)](https://twitter.com/dessa)
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<div align="center">
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research/atlas" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star dessa-research/atlas on GitHub">Star</a>
+
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research/atlas/fork" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-repo-forked" data-size="large" data-show-count="true" aria-label="Fork dessa-research/atlas on GitHub">Fork</a>
+
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Follow @dessa-research on GitHub">Follow @dessa-research</a>
+
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research/atlas/subscription" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-eye" data-size="large" data-show-count="true" aria-label="Watch dessa-research/atlas on GitHub">Watch</a>
+
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research/atlas/issues" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-issue-opened" data-size="large" data-show-count="true" aria-label="Issue dessa-research/atlas on GitHub">Issue</a>
+</div>
 
 ## Atlas Documentation 
 
@@ -15,14 +30,19 @@ Atlas is a flexible Machine Learning platform that consists of a Python SDK, CLI
 
 Atlas is a subset of *Foundations* which is a group of tools we have built for Machine Learning Engineers. 
 
+![Platform Support](https://img.shields.io/badge/Platforms-osx%20%7C%20linux%20%7C%20windows-lightgrey "platform")
+![Python Support](https://img.shields.io/badge/Python-%3E3.6-brightgreen "python")
+![Downloads](https://img.shields.io/badge/Downloads-2000+-brightgreen "downloads")
+
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto;">
   <iframe src="https://www.youtube.com/embed/YnwtO48UYAU?start=2" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
 </div>
 
-### Version Note
+### BETA Note
+
 Atlas has evolved quite a lot throughout our history. The latest open-source version of Atlas includes a lot of architectural and design changes. 
 
-This is currently in BETA. 
+**This version is currently in BETA.**
 
 ### Here are some of the core features:
 

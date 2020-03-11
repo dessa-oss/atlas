@@ -2,7 +2,27 @@
 
 *Estimated time: 30 minutes*
 
-Find code for this tutorial [here]("https://github.com/dessa-public/cifar-tutorial").
+Find code for this tutorial [here](https://github.com/dessa-research/cifar-tutorial).
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<div>
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research/cifar-tutorial" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star dessa-research/atlas on GitHub">Star</a>
+
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research/cifar-tutorial/fork" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-repo-forked" data-size="large" data-show-count="true" aria-label="Fork dessa-research/atlas on GitHub">Fork</a>
+
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Follow @dessa-research on GitHub">Follow @dessa-research</a>
+
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research/cifar-tutorial/subscription" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-eye" data-size="large" data-show-count="true" aria-label="Watch dessa-research/atlas on GitHub">Watch</a>
+
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research/cifar-tutorial/issues" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-issue-opened" data-size="large" data-show-count="true" aria-label="Issue dessa-research/atlas on GitHub">Issue</a>
+</div>
 
 ## Introduction
 
