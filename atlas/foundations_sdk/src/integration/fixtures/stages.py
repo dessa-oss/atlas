@@ -22,6 +22,3 @@ def returns_fresh_generator():
 
 def executes_generator(gen):
     return next(gen)
-
-def create_stage(para):
-    return None
