@@ -1036,16 +1036,6 @@
         "config" : { }
       } ],
       "org.keycloak.keys.KeyProvider" : [ {
-        "id" : "1af71040-0aae-4aa5-80fc-6194ef987d7b",
-        "name" : "rsa-generated",
-        "providerId" : "rsa-generated",
-        "subComponents" : { },
-        "config" : {
-          "privateKey" : [ "MIIEpQIBAAKCAQEAmMbstyLzXdI4dOEU2kvFlyOEpCLkggvqOiBysI8sUB93j8UEVmf4kYYqCfG3UqcEkCrplwtkllu4DCSbD28N4akRu/8vFI+TQJgMTBOsQNY/yCVgpQ2V+u/85oeQgLIPibkGCL6daBXnvggEXu084tj5TMbajtPwLpJYmrHphWhgft3b2wOgmRgR5ZCnTbc/PO8Bo0NQVVCbJPGxppG28YKsdUnSdt6oIkSJX1vcbTXpzdMkWgjB2+jBOiGwyP0Vy2x1OK1FUlePP++5yr8ja/TIpU5EtcMeeoNJXsa9mID9OjiobToQjz+8K5k8gr8tZC+F0hIeViWOPiSPAsoeYQIDAQABAoIBAEJY2UIrFn9fJQ91FCY9E8EwNpFFafEkFYNKxiPw+XCOSdEQ4XJY0rT4C9entlJZn/yv9iOXWgaGLGZxmzlXpDKkxsPa7WpDc9JwdZ6wSHUb1jUoLlFflguVH0JKCzIooeDQjlNL3HXwVWTMfIFxC6kESzfRf+bZGYxQF9SOgPhjEC5/J/NchUpzbTVJDu3yRfvDMxdXMJBcIQGzY/Lo2C04ANpk/vhjJc5QtLyN0m1M/Bnd3MnG9UGsXLdqKUbbQYHOS/pIkQR6BEikDh6UEQqsnU076DQvGtR70OTQ45jAgoFtOoLe+xloVwf3D0C6nj6+5U7pIGTyv9AZRZ4neQUCgYEA2mqy8dELYtcoD5btG1X3S4zXI/sWRGYnVV/GJ/td68TLyB16v7ysp7wC6biE+egLUPF8pmyBe0k+fc0PFA/GcCwVl/DKDd0g1ZJCtAAkdx1n/RuW/2OcURLRUBkNL0S/0FnR96eQ+WH1vXINJim89/lpsWHtVU8pQbCEF7/SmEMCgYEAsxDIVikNJfCPWGhcikbWxbKC3CHIXC457XO+8nbM+UWzRDSkBVuPckl37v4ArLis+0qvmyxOH2Ugxl+1JDGIGawdF8un7e8saRRUf5DbK0CVjmJH7f1rCVmRT3INkDgjw7zB3Ky2rpB2HELHjwhIIlqZUsDXP2XQ6RKPR4gSposCgYEAg5YCprLVVD/hb7rysCRTbx2zw4aSvLR6f/HKVO4YgGE4kCBKglcuAYPAkYRMAK8umh5ShYUbYOYYkvvGWMTEPXIhtD8py75r+J88NmtbjLOXoaJMjyI425MlrUbabZ7SnLhwSe6W5deBkBe1GkfNA+wsI+Smcl3VsjCg9BnpyzcCgYEAidMSD9c7Coe1HXv+NmQ97R7wQBU0jVb7OTwMrb0pGXg/efD2ijUmHPZVfLs+s7LVWfnrXglk/B8vceC6oOgK9I+YOPeFAstDqIGAZEuPliP4uQYGjTSwDRtGkBqeO/Ip/P+tS3gYiBYjAq+XwAzE0MRhHOPXCTIJ8UtawtkGWe8CgYEAwYUQXdwcwlDyuUisi7O+EQCBWSbzwbUQggitt9Wshqz4rxFpwo++TmlXWkaYPtsHO7+QnbZXg52zaf1c5Z5uB1eQC/ixlq63pvAOEeEaN/IZYzUMS11B9RPlsXLQgEFJgUl5KidssTOsPtnlmOlH443kGphyol8YGELmKJ683Qw=" ],
-          "certificate" : [ "MIICmTCCAYECBgFuIvYwVTANBgkqhkiG9w0BAQsFADAQMQ4wDAYDVQQDDAVBdGxhczAeFw0xOTEwMzExNzU0NDlaFw0yOTEwMzExNzU2MjlaMBAxDjAMBgNVBAMMBUF0bGFzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmMbstyLzXdI4dOEU2kvFlyOEpCLkggvqOiBysI8sUB93j8UEVmf4kYYqCfG3UqcEkCrplwtkllu4DCSbD28N4akRu/8vFI+TQJgMTBOsQNY/yCVgpQ2V+u/85oeQgLIPibkGCL6daBXnvggEXu084tj5TMbajtPwLpJYmrHphWhgft3b2wOgmRgR5ZCnTbc/PO8Bo0NQVVCbJPGxppG28YKsdUnSdt6oIkSJX1vcbTXpzdMkWgjB2+jBOiGwyP0Vy2x1OK1FUlePP++5yr8ja/TIpU5EtcMeeoNJXsa9mID9OjiobToQjz+8K5k8gr8tZC+F0hIeViWOPiSPAsoeYQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQBXLw6iaFIppdHAfEkCWbHJzHeIH24DndpxYGUoGduv0koIe6b++c5rGi73iYD+nIuATlj9Uom9LNckrilZAzt7jH2QG1K8EVmU/+YQM68F5spUvVt/wbqgN2rKhv/0RQNr41uVAwaoa07uV8lKIYZJ0+FlpiNHmAitXKDVGFQzQd3Puo0Y6f6ZQrkXKV2jKzTGRD2GkM9N0aib2D3oKhEC0qInx+5QOVSzjgA2yYuAS0VkfCIag8jpLvPp+5qmzj7JPy5b26ZTFFd9dxcza0s4RUD4yd80WnLZE6f/g7oTdSk24cYLvC+rHzylShW/ge5rl4b+pvUi5KyFjQOf9xb1" ],
-          "priority" : [ "100" ]
-        }
-      }, {
         "id" : "d62b30a3-6b64-4608-b8ca-3ebc91ea2510",
         "name" : "hmac-generated",
         "providerId" : "hmac-generated",
