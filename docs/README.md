@@ -1,6 +1,6 @@
 # Readthedocs and branches
 
-We host our documentation on [readthedocs](https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/). We have configured readthedocs to compile different versions based on branches. Correspondingly we will be maintaining a branch per minor version. In addition, the master branch is the "latest" version shown in readthedocs.
+We host our documentation on [readthedocs](https://docs.atlas.dessa.com). We have configured readthedocs to compile different versions based on branches. Correspondingly we will be maintaining a branch per minor version. In addition, the master branch is the "latest" version shown in readthedocs.
 
 ## What this means for docs developers ##
 

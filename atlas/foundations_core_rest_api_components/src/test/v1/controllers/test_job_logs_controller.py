@@ -25,6 +25,5 @@ class TestJobLogsController(Spec):
         self.mock_get_job_logs.return_when(self.job_logs, self.job_id)
         self.controller.params = { 'job_id': self.job_id }
 
-    # @quarantine
     def test_index_returns_logs_for_job(self):
         self.assertEqual({'log': self.job_logs}, self.controller.index().as_json())

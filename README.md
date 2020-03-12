@@ -4,7 +4,7 @@
 ![Downloads](https://img.shields.io/badge/Downloads-2000+-blue "downloads")
 
 <p align="center">
-  <img width="20%" src="dessa-square-logo.png">
+  <img width="40%" src="dessa-square-logo.png">
 </p>
 
 ---
@@ -12,8 +12,17 @@
 # Atlas: Self-Hosted Machine Learning Platform
 Atlas is a flexible Machine Learning platform that consists of a Python SDK, CLI, GUI & Scheduler to help Machine Learning Engineering teams dramatically reduce the model development time & reduce effort in managing infrastructure.
 
+### Development Status
+Atlas has evolved very rapidly and has gone though many iterations in Dessa's history. 
+
+The latest version is in BETA. 
+
 ## Features
-Here are few of the high-level features:
+<p align="center">
+  <img width="80%" src="https://static.wixstatic.com/media/29a4f1_ffb0c04ef79843e79dbf2b1fa33a70c4~mv2.png/v1/fill/w_1440,h_1024/Time%20series%20forecast.png">
+</p>
+
+**Here are few of the high-level features:**
 1. _Self-hosted_: run Atlas on a single node e.g. your latop, or multi-node cluster e.g. on-premise servers or cloud clusters (AWS/GCP/etc.)
 2. _Job scheduling_: Collaborate with your team by scheduling and running concurrent ML jobs remotely on your cluster & fully utilize your system resources.
 3. _Flexibility_: Multiple GPU jobs? CPU jobs? need to use custom libraries or docker images? No problem - Atlas tries to be unopionated where possible, so you can run jobs how you like.
@@ -23,14 +32,17 @@ Here are few of the high-level features:
 7. _Built in [Tensorboard](https://github.com/tensorflow/tensorboard) integration_: We ❤️ Tensorflow - compare multiple Tensorboard-compaitable job runs directly through the Atlas GUI.
 8. _Works well with others_: run any Python code with any frameworks.
 
-<p align="left">
-  <img width="25%" src="atlas-logo.gif">
-</p>
-
 # Users guide
 
 ## Installation 
-TODO
+
+* [MacOS & Linux Quickstart Guide (~8 mins, recommended)](https://docs.atlas.dessa.com/en/latest/linux-ac-installation)
+* [Windows 10 Guide](https://docs.atlas.dessa.com/en/latest/windows-installation)
+* [AWS Cloud installation](https://docs.atlas.dessa.com/en/latest/team/atlas-on-aws)
+* [GCP Cloud installation](https://docs.atlas.dessa.com/en/latest/atlas-on-gcp)
+* Multi-node cluster deployment:
+  * [AWS guide](https://docs.atlas.dessa.com/en/latest/team/aws-installation)
+  * [On-prem cluster guide](https://docs.atlas.dessa.com/en/latest/team/on-prem-installation).
 
 ## Documentation
 Official documentation for Atlas can be found at https://www.docs.atlas.dessa.com/
@@ -47,11 +59,6 @@ We will do our best to help!
 
 # Development Guide
 
-## Development Status
-Atlas has evolved very rapidly and has gone though many iterations in Dessa's history. 
-
-The latest version is in BETA. 
-
 ## Contributing
 We ❤️ contributors and would love to work with you. 
 
@@ -59,6 +66,7 @@ Atlas is currently open to external contributors.
 
 Follow this guide:
 * Found a Bug?
+  * Search through the [issue list](https://github.com/DeepLearnI/atlas/issues?q=is%3Aopen+is%3Aissue+label%3Abug) to make sure an issue doesn't exist already.
   * File an issue with the following:
     * Label as `bug`
     * Steps to reproduce 
@@ -67,6 +75,7 @@ Follow this guide:
     * Tag the issue you are fixing 
     * Open a Pull Request. 
 * Requesting a feature?
+  * Search through the [issue list](https://github.com/DeepLearnI/atlas/issues?q=is%3Aopen+is%3Aissue+label%3Afeature-request) to make sure an issue doesn't exist already.
   * File an issue with the following:
     * Label as `feature-request`
     * Why is this important to you? 
@@ -77,7 +86,7 @@ Follow this guide:
 * First-time contributor to OSS?
   * Look for issues with the `first-timers-only` label and get help from the community Slack if you need it. 
 
-## Development Setup 
+## Development Setup
 When you are ready, just follow the steps below in order to set up a development environment.
 
 1. You will need to have `docker`, `yarn`, and the `envsubst` command line tool on your machine in order spin up a local development environment.   
@@ -93,43 +102,42 @@ When you are ready, just follow the steps below in order to set up a development
   
   For other Linux machines, replace `apt install` with the equivalent command for your distributions package manager.  
 
-
 2. Clone this repository and enter the new directory  
-  `git clone git@github.com:DeepLearnI/atlas.git && cd atlas`  
+     * `git clone git@github.com:DeepLearnI/atlas.git && cd atlas`  
 
 3. Create and activate a brand new virtual environment with Python 3.7 then install the requirements. Some examples below.
-   Conda:  
-    `conda create --name foundations python=3.7 && conda activate foundations`  
-    `pip install -r requirements_dev.txt`  
-   Pipenv:  
-    `pipenv --python 3.7 && pipenv shell`  
-    `pipenv install`  
-    `pipenv install -r requirements_dev.txt --dev --pre --skip-lock`  
-  Venv:  
-    `python3 -m venv . && source bin/activate`  
-    `pip install -r requirements_dev.txt`  
+   * Using Conda:  
+      * `conda create --name foundations python=3.7 && conda activate foundations`  
+      * `pip install -r requirements_dev.txt`  
+   * Pipenv:  
+      * `pipenv --python 3.7 && pipenv shell`  
+      * `pipenv install`  
+      * `pipenv install -r requirements_dev.txt --dev --pre --skip-lock`  
+   * Venv:  
+      * `python3 -m venv . && source bin/activate`  
+      * `pip install -r requirements_dev.txt`  
 
 4. Add the packages that make up Atlas to your python path and set some environemnt variables by sourcing the `activate_dev_env.sh` file.  
    `. ./activate_dev_env.sh`   
 
 5. Launch Atlas in development mode. This may take a while to pull some required docker images.  
-   `make devenv-start`  
+      * `make devenv-start`  
 
 6. You can now create a sample project by running the following command.  
-  `python -m foundations init my-project`  
+     * `python -m foundations init my-project`  
 
 7. Change into the newly created project directory and execute the following command to submit your first job. This can take a while the first time as one more image may need to be pulled.  
-  `python -m foundations submit scheduler . main.py`  
+     * `python -m foundations submit scheduler . main.py`  
    
 8. Navigate to `localhost:3000` and verify that your newly created project exists on the frontend. Click on the project and verify that your job executed successfully.
 
 9. Congrats! You are ready to go.
 
-In order to run tests, simply run:  
-  `make unit-tests`  
-  `make integration-tests`  
+## Running tests locally 
 
-To run the unit and integration tests respectfully.
+In order to run tests, simply run:  
+   * `make unit-tests`  
+   * `make integration-tests`  
 
 ## Systems Overview 
 *Last updated: March 2020*
@@ -209,3 +217,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+© 2020 Square, Inc. ATLAS, DESSA, the Dessa Logo, and others are trademarks of Square, Inc. All third party names and trademarks are properties of their respective owners and are used for identification purposes only.

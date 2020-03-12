@@ -1,4 +1,4 @@
-# atlas-ce-installer
+# atlas-installer
 
 During installation, Atlas installer 
 

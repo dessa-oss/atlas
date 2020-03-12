@@ -35,7 +35,6 @@ class TestAuthenticationController(Spec):
         from foundations_rest_api.global_state import app_manager
 
         with app_manager.app().test_request_context(query_string="code=code"):
-            # auth_client = mock_constructor("conf", "redirect_url")
             self.auth_controller.get("login")
             self.auth_client.token_using_auth_code.assert_called_once_with(code="code")
 
@@ -66,7 +65,7 @@ class TestAuthenticationController(Spec):
         from foundations_rest_api.global_state import app_manager
 
         headers = {"Authorization": "bearer token"}
-        # headers = {}
+
         with app_manager.app().test_request_context(headers=headers):
             self.auth_controller.get("logout")
             self.auth_client.logout.assert_called_once_with("token")

@@ -43,22 +43,24 @@ extra:
     - type: 'linkedin'
       link: 'https://www.linkedin.com/company/dessa1/'
     - type: 'github'
-      link: https://github.com/dessa-public
+      link: https://github.com/dessa-research
 
 dev_addr: '0.0.0.0:8000'
 
 nav:
+  - GitHub 😸: https://www.github.com/dessa-research/atlas
   - Home: index.md
   - Installation Guide:
       - Quickstart Local:
         - Linux/MacOS: linux-mac-installation.md
-        - Windows: windows-installation.md
+        - Windows 10: windows-installation.md
       - Quickstart Cloud:
         - AWS: atlas-on-aws.md
         - GCP: atlas-on-gcp.md
       - Multinode Installation:
         - On Premise Installation: team/on-prem-installation.md
         - AWS Installation: team/aws-installation.md
+      - Uninstallation: uninstallation.md
   - Usage Guide:
       - Introduction: atlas-modes/modes.md
       - Execution: atlas-modes/execution.md
@@ -73,7 +75,6 @@ nav:
       - Auction Price Regression Tutorial: tutorials/auction_price_regression_tutorial.md
       - Nvidia RAPIDS Tutorial:  tutorials/rapids_tutorial.md
       - Audio Deep Fake Detection Tutorial: tutorials/fake_audio_detection_tutorial.md
-      - Fake Trump Tweet Classifier Tutorial: tutorials/fake_trump_tutorial.md
       - Image Segmentation Tutorial: tutorials/image_segmentation_tutorial.md
       - Using Atlas with Apache Spark: https://medium.com/dessa-news/using-foundations-atlas-with-spark-to-create-an-end-to-end-big-data-machine-learning-development-c0220de01a88
   - Contributing:
@@ -83,4 +84,4 @@ nav:
   - Support & Community:
     - Community: community.md
     - FAQ: faq.md
-    - Uninstallation: uninstallation.md
+

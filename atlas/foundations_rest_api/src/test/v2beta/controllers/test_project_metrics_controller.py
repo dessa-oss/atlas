@@ -38,39 +38,42 @@ class TestProjectMetricsController(Spec):
     def set_up(self):
         self.patch('foundations_rest_api.global_state.redis_connection', self.mock_redis)
 
-    @quarantine
     def test_index_returns_timestamp_ordered_metrics(self):
         self.controller.params = {'project_name': self.project_name}
         self._log_metric(33, 'job13', 'metric77', 123.4)
 
-        expected_output = [
-            {
+        expected_output = {
+            'all_metric_names': ['metric77'],
+            'metric_query': [{
                 'metric_name': 'metric77',
                 'values': [['job13', 123.4]]
-            }
-        ]
+            }]
+        }
+
         self.assertEqual(expected_output, self.controller.index().as_json())
 
-    @quarantine
     def test_index_returns_timestamp_ordered_metrics_different_metrics(self):
         self.controller.params = {'project_name': self.project_name}
         self._log_metric(321, 'job1', 'metric1', 432)
         self._log_metric(123, 'job2', 'metric1', 843)
         self._log_metric(123, 'job1', 'metric2', 221)
 
-        expected_output = [
-            {
+        expected_output = {
+            'all_metric_names': [
+                'metric1', 'metric2'
+            ],
+            'metric_query': [{
                 'metric_name': 'metric1',
                 'values': [['job2', 843], ['job1', 432]]
             },
             {
                 'metric_name': 'metric2',
                 'values': [['job1', 221]]
-            }
-        ]
+            }]
+        }
+
         self.assertEqual(expected_output, self.controller.index().as_json())
 
-    @quarantine
     def test_index_returns_timestamp_ordered_metrics_metric_filter(self):
         metric_name = self.faker.name()
         self.controller.params = {'project_name': self.project_name, 'metric_name': metric_name}
@@ -78,12 +81,16 @@ class TestProjectMetricsController(Spec):
         self._log_metric(123, 'job2', metric_name, 843)
         self._log_metric(123, 'job1', 'metric2', 221)
 
-        expected_output = [
-            {
-                'metric_name': metric_name,
-                'values': [['job2', 843], ['job1', 432]]
-            }
-        ]
+        expected_output = {
+            'all_metric_names':[
+                metric_name, 'metric2'
+            ],
+            'metric_query': [{
+                'metric_name': metric_name, 'values':
+                [['job2', 843], ['job1', 432]]
+            }]
+        }
+
         self.assertEqual(expected_output, self.controller.index().as_json())
 
     def _log_metric(self, timestamp, job_id, key, value):

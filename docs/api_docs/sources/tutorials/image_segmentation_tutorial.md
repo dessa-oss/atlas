@@ -2,10 +2,26 @@
 
 *Estimated time: 30 minutes*
 
-Find code for this tutorial [here](https://github.com/dessa-public/Image-segmentation-tutorial).
+Find code for this tutorial [here](https://github.com/dessa-research/Image-segmentation-tutorial).
 
-<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto;">
-  <iframe src="https://www.youtube.com/embed/TnMq0V_O1zs?start=146" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<div>
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research/Image-segmentation-tutorial" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star dessa-research/atlas on GitHub">Star</a>
+
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research/Image-segmentation-tutorial/fork" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-repo-forked" data-size="large" data-show-count="true" aria-label="Fork dessa-research/atlas on GitHub">Fork</a>
+
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Follow @dessa-research on GitHub">Follow @dessa-research</a>
+
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research/Image-segmentation-tutorial/subscription" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-eye" data-size="large" data-show-count="true" aria-label="Watch dessa-research/atlas on GitHub">Watch</a>
+
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/dessa-research/Image-segmentation-tutorial/issues" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-issue-opened" data-size="large" data-show-count="true" aria-label="Issue dessa-research/atlas on GitHub">Issue</a>
 </div>
 
 ## Introduction
@@ -18,9 +34,10 @@ This tutorial assumes that you have already installed Foundations Atlas. If you 
 Atlas from [this link](https://www.atlas.dessa.com/) or use a cloud alternative as explained in the next section.
 
 ## Cloud option
-Alternatively, if you have an AWS account, try using our <a target="_blank" href="https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/atlas-on-aws/">Atlas CE AMI</a> (publicly available Amazon Machine Image for Atlas).
+Alternatively, if you have an AWS account, try using our <a target="_blank" href="https://docs.atlas.dessa.com">Atlas CE AMI</a> (publicly available Amazon Machine Image for Atlas).
 
 The AMI will start by automatically installing the latest version of Atlas on a conda environment as well as starting the atlas server, and downloading this tutorial, (`cd atlas_tutorials/Image-segmentation-tutorial`) and you can directly skip to `Image Segmentation` section. The AMI supports both GPU and CPU instances.
+
 ## Local option
 **Prerequisites**
 
@@ -33,7 +50,7 @@ The AMI will start by automatically installing the latest version of Atlas on a 
 
 **Steps**
 
-See <a target="_blank" href="https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/ce-quickstart-guide/">Atlas documentation</a>
+See <a target="_blank" href="https://docs.atlas.dessa.com/">Atlas documentation</a>
   
 
 <details>
@@ -469,4 +486,4 @@ Do you have any thoughts or feedback for Foundations Atlas? Join the [Dessa Slac
 
 ## References
 1. https://www.tensorflow.org/tutorials/images/segmentation
-1. https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/
+1. [https://docs.atlas.dessa.com/](https://docs.atlas.dessa.com/)

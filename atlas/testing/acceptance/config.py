@@ -1,5 +1,6 @@
 
-from os import getcwd, environ
+from os import getcwd, environ, getenv
+import subprocess
 
 # separates test runs
 from uuid import uuid4
@@ -13,6 +14,20 @@ if "TEST_UUID" not in environ:
 TEST_UUID = environ["TEST_UUID"]
 ARCHIVE_ROOT = environ["ARCHIVE_ROOT"]
 
+def envsubst_foundations_home():
+    if 'LOCAL_DOCKER_SCHEDULER_HOST' in environ and getenv('RUNNING_ON_CI', False):
+        template_file_name = f'{getcwd()}/foundations_home/config/submission/scheduler.config.envsubst.yaml'
+        output_file_name = f'{getcwd()}/foundations_home/config/submission/scheduler.config.yaml'
+        subprocess.run(f'envsubst < {template_file_name} > {output_file_name}', shell=True)
+    
+    if not getenv('EXECUTION_REDIS_HOST', None):
+        environ['EXECUTION_REDIS_HOST'] = 'localhost'
+    if not getenv('EXECUTION_REDIS_PORT', None):
+        environ['EXECUTION_REDIS_PORT'] = '6379'
+
+    template_file_name = f'{getcwd()}/foundations_home/config/execution/default.config.envsubst.yaml'
+    output_file_name = f'{getcwd()}/foundations_home/config/execution/default.config.yaml'
+    subprocess.run(f'envsubst < {template_file_name} > {output_file_name}', shell=True)
 
 def set_foundations_home():
     import os
@@ -35,6 +50,6 @@ def config():
 
     module_manager.append_module(sys.modules['foundations_spec'])
 
-
 set_foundations_home()
+envsubst_foundations_home()
 config()

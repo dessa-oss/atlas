@@ -78,9 +78,9 @@ class TestLogManager(Spec):
         self.log_manager.get_logger('foundations_contrib.config_manager')
         self.assertEqual(2, len(self.root_logger.handlers))
 
-    @quarantine
     def test_console_log_handler_return_format(self):
-        self.log_manager.get_logger('foundations_contrib.config_manager')
+        self.config_manager['log_level'] = 'DEBUG'
+        self._setup_logger()
         formatter = self.console_log_handler.formatter
         self.assertEqual('%(asctime)s - %(name)s - %(levelname)s - %(message)s', formatter._fmt)
 
@@ -90,9 +90,9 @@ class TestLogManager(Spec):
         self.log_manager.get_logger('foundations_contrib.config_manager')
         self.assertEqual(stdout, self.console_log_handler.stream)
 
-    @quarantine
     def test_file_log_handler_return_format(self):
-        self.log_manager.get_logger('foundations_contrib.config_manager')
+        self.config_manager['log_level'] = 'DEBUG'
+        self._setup_logger()
         formatter = self.file_log_handler.formatter
         self.assertEqual('%(asctime)s - %(name)s - %(levelname)s - %(message)s', formatter._fmt)
 

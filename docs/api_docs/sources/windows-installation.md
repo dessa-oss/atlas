@@ -1,8 +1,8 @@
-# Windows Installation
+# Windows 10 Installation
 
 ### Installation
 
-*Estimated time: 3 minutes*
+*Estimated time: 10 minutes*
 
 #### Prerequisites
 

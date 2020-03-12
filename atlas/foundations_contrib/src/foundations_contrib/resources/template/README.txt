@@ -29,5 +29,4 @@ A preferred solution would be to have your data available on your compute infras
 - Additional Resources
 ----------------------
 
-Step-by-step guide: [https://github.com/DeepLearnI/foundations/blob/master/documentation/STEPBYSTEPGUIDE.md](https://github.com/DeepLearnI/foundations/blob/master/documentation/STEPBYSTEPGUIDE.md)
-API docs: [https://dessa-foundations.readthedocs-hosted.com/en/latest/](https://dessa-foundations.readthedocs-hosted.com/en/latest/)
+API docs: [https://docs.atlas.dessa.com/](https://docs.atlas.dessa.com/)

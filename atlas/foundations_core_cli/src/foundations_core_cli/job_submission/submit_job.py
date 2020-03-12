@@ -44,7 +44,7 @@ def submit(arguments):
         if arguments.command:
             config_manager['worker_container_overrides']['args'] = arguments.command
             if not os.path.exists(arguments.command[0]):
-                logger.warning(f"Hey 👋, seems like your command '{' '.join(arguments.command)}' is not an existing file in your current directory. If you are using Atlas's advanced custom docker image functionality and know what you are doing, you can ignore this message.")
+                logger.warning(f"Hey, seems like your command '{arguments.command[0]}' is not an existing file in your current directory. If you are using Atlas's advanced custom docker image functionality and know what you are doing, you can ignore this message.")
         else:
             logger.warning('No command was specified.')
 
