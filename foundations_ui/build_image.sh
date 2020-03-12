@@ -3,7 +3,7 @@
 # NB: File is expected to be executed from root of project
 
 docker_image="foundations-gui"
-docker_registry=${DOCKER_REGISTRY:-docker.shehanigans.net}
+docker_registry=${DOCKER_REGISTRY:-us.gcr.io/atlas}
 pip_build_version=`python get_version.py`
 docker_build_version=$(echo $pip_build_version | sed 's/+/_/g')
 
