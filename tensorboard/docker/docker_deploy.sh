@@ -1,6 +1,6 @@
 # Usage: ./docker_deploy.sh <repo> <tag> <archive_mount> <logdir_mount> <tb_port>
 
-NEXUS_DOCKER_REGISTRY=${1:-docker.shehanigans.net}
+NEXUS_DOCKER_REGISTRY=${1:-us.gcr.io/atlas}
 build_version=${2:-latest}
 archive=${3:-archive}
 logdir=${4:-logs}
