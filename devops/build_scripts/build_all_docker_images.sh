@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export NEXUS_DOCKER_STAGING=docker-staging.shehanigans.net
+export NEXUS_DOCKER_STAGING=us.gcr.io/atlas
 source ./devops/set_environment_for_docker_scheduler.sh
  
 script_location="$(pwd)/devops/build_scripts"

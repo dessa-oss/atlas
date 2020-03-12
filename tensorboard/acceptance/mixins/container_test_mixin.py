@@ -9,7 +9,7 @@ from .docker_test_mixin import DockerTestMixin
 
 class ContainerTestMixin(DockerTestMixin):
 
-    repo = 'docker.shehanigans.net'
+    repo = 'us.gcr.io/atlas'
 
     def set_up_container(self, image_name, timeout=60, **kwargs):
         self.containers = getattr(self, 'containers', {})
