@@ -43,7 +43,8 @@ class JobBundler(object):
         return self._job_name + ".tgz"
 
     def job_archive(self):
-        return self._path + "/" + self.job_archive_name()
+        import os
+        return self._path + os.path.sep + self.job_archive_name()
 
     def _job_binary(self):
         return self._job_name + ".bin"
@@ -52,7 +53,8 @@ class JobBundler(object):
         return self._job_name + ".results.tgz"
 
     def _job_config_yaml(self):
-        return self._path + "/" + self._job_name + ".config.yaml"
+        import os
+        return self._path + os.path.sep + self._job_name + ".config.yaml"
 
     def _save_job(self):
         with open(self._job_binary(), "w+b") as file:
@@ -72,7 +74,6 @@ class JobBundler(object):
 
     def _add_files_to_tarball(self, tar):
         self._tar_job_source_bundle_archive(tar)
-        # self._tar_job_binary(tar)
         self._tar_config_files(tar)
         self._tar_foundations_modules(tar)
         if 'run_script_environment' in self._config:
@@ -115,10 +116,11 @@ class JobBundler(object):
 
     def _tar_foundations_modules(self, tarfile):
         from foundations_internal.global_state import module_manager
+        import os
 
         for module_name, module_directory in module_manager.module_directories_and_names():
             self._log().debug('Adding module {} at {}'.format(module_name, module_directory))
-            tarfile.add(module_directory, arcname=self._job_name + '/' + module_name)
+            tarfile.add(module_directory, arcname=self._job_name + os.path.sep + module_name)
 
     def _log(self):
         from foundations_contrib.global_state import log_manager

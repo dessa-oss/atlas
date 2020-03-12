@@ -62,15 +62,3 @@ class TestBundleDeployment(Spec):
             response = submit_job_bundle(folder_job_bundle)
 
             self.assertEqual(mock_response, response)
-
-
-#TODO: DOJO/ quick demo
-
-# with patch('builtins.open', mock_open()) as mock_file:
-#     mock_file().read.return_value = 'hello'
-
-# mock_open = self.patch('builtins.open', ConditionalReturn())
-# mock_file = Mock()
-# mock_open.return_when(mock_file, '.', 'rb')
-# mock_file.__enter__ = lambda *_: mock_file
-# mock_file.__exit__ = Mock()

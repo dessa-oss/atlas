@@ -4,8 +4,6 @@ import acceptance.config
 from acceptance.test_recursion_limit import TestRecursionLimit
 from acceptance.test_job_data_producers import TestJobDataProducers
 from acceptance.test_cli_init import TestCLIInit
-from acceptance.test_set_environment import TestSetEnvironment
-from acceptance.test_class_stage_deployment import TestClassStageDeployment
 from acceptance.test_log_metric_outside_stage import TestLogMetricOutsideStage
 from acceptance.test_annotate_without_stage import TestAnnotateWithoutStage
 from acceptance.test_can_load_parameters import TestCanLoadParameters

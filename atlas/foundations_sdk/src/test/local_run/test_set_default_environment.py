@@ -7,7 +7,6 @@ import sys
 class TestSetDefaultEnvironment(Spec):
 
     mock_environment_fetcher = let_patch_instance('foundations_core_cli.environment_fetcher.EnvironmentFetcher')
-    mock_set_environment = let_patch_mock('foundations.config.set_environment')
     mock_uuid4 = let_patch_mock('uuid.uuid4')
     mock_message_router = let_patch_mock('foundations_contrib.global_state.message_router')
     mock_at_exit = let_patch_mock('atexit.register')
@@ -128,16 +127,6 @@ class TestSetDefaultEnvironment(Spec):
         set_up_default_environment_if_present()
         mock_set_up_environment.assert_called()
 
-    def test_default_environment_not_loaded_when_absent(self):
-        self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
-        set_up_default_environment_if_present()
-        self.mock_set_environment.assert_not_called()
-
-    def test_default_environment_not_loaded_when_no_environments(self):
-        self.mock_environment_fetcher.get_all_environments.return_value = (None, None)
-        set_up_default_environment_if_present()
-        self.mock_set_environment.assert_not_called()
-
     def test_load_execution_environment_returns_true_when_execution_default_present(self):
         self._set_up_config_listing_mock()
         self.assertEqual(True, load_execution_environment())
@@ -169,11 +158,6 @@ class TestSetDefaultEnvironment(Spec):
             '_is_deployment: true\nrun_script_environment: {}\n'
         )
 
-    def test_default_environment_not_loaded_when_in_command_line(self):
-        self.mock_os_environment['FOUNDATIONS_COMMAND_LINE'] = 'True'
-        set_up_job_environment()
-        self.mock_set_environment.assert_not_called()
-    
     def test_warns_when_default_environment_not_present_and_not_in_command_line(self):
         self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
         set_up_default_environment_if_present()

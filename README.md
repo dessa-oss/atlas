@@ -86,7 +86,7 @@ Follow this guide:
 * First-time contributor to OSS?
   * Look for issues with the `first-timers-only` label and get help from the community Slack if you need it. 
 
-## Development Setup 
+## Development Setup
 When you are ready, just follow the steps below in order to set up a development environment.
 
 Note: Steps outlined here are for MacOS - if you are on a linux machine then replace `brew install` with the equivalent command for your distributions package manager.  

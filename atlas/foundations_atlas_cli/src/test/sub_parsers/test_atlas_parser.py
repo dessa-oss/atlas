@@ -1,4 +1,3 @@
-
 import faker
 from unittest import mock
 from unittest.mock import patch
@@ -22,7 +21,6 @@ class TestAtlasParser(Spec):
             if self._time_elapsed >= self.time_to_wait - self._epsilon:
                 self.callback()
 
-    sys_path = let_patch_mock('sys.path')
     run_file = let_patch_mock('importlib.import_module')
 
     os_file_exists = let_patch_mock('os.path.isfile')
@@ -219,61 +217,30 @@ class TestAtlasParser(Spec):
             any_order=True
         )
 
-    @quarantine
-    def test_retrieve_artifacts_calls_environment_fetcher(self):
-        CommandLineInterface(['get', 'job', self.fake_env, self.mock_job_id]).execute()
-        self.find_environment_mock.assert_called_with(self.fake_env)
-
-    @quarantine
-    def test_retrieve_artifacts_loads_environment(self):
-        fake_env_path = os.path.join(self.faker.uri_path(), self.fake_env)
-        self.find_environment_mock.return_value = [fake_env_path]
-        CommandLineInterface(['get', 'job', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.config_manager_mock.add_simple_config_path.assert_called_with(fake_env_path)
-
     def test_retrieve_artifacts_fails_if_missing_environment(self):
         self.find_environment_mock.return_value = []
         CommandLineInterface(['get', 'job', self.fake_env, self.mock_job_id]).execute()
         self.exit_mock.assert_called_with(1)
 
-    @quarantine
     def test_retrieve_artifacts_prints_error_if_missing_environment(self):
         self.find_environment_mock.return_value = []
-        CommandLineInterface(['get', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.print_mock.assert_called_with('Error: Could not find environment `{}`'.format(self.fake_env))
-
-    @quarantine
-    def test_retrieve_artifacts_gets_pipeline_archiver(self):
-        CommandLineInterface(['get', 'artifacts', '--job_id={}'.format(self.mock_job_id)]).execute()
-        self.get_pipeline_archiver_for_job_mock.assert_called_with(self.mock_job_id)
-
-    @quarantine
-    def test_retrieve_artifacts_creates_archive_downloader(self):
-        self.get_pipeline_archiver_for_job_mock.return_value = self.pipeline_archiver_mock
-        CommandLineInterface(['get', 'artifacts', '--job_id={}'.format(self.mock_job_id)]).execute()
-        self.artifact_downloader_class_mock.assert_called_with(self.pipeline_archiver_mock)
-
-    @quarantine
-    def test_retrieve_artifacts_calls_download_files(self):
-        self.get_pipeline_archiver_for_job_mock.return_value = self.pipeline_archiver_mock
-        self.artifact_downloader_class_mock.return_value = self.artifact_downloader_mock
-        CommandLineInterface(['get', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--source_dir={}'.format(self.fake_source_dir), '--save_dir={}'.format(self.fake_save_dir)]).execute()
-        self.artifact_downloader_mock.download_files.assert_called_with(self.fake_source_dir, self.fake_save_dir)
+        CommandLineInterface(['get', 'job', self.fake_env, self.mock_job_id]).execute()
+        self.print_mock.assert_any_call('Could not find submission configuration with name: `{}`'.format(self.fake_env))
 
     def test_submit_forwards_default_arguments_to_command_line_job_submission(self):
         self.patch('foundations_core_cli.job_submission.submit_job.submit', MockCommandLineJobDeployer)
 
         expected_arguments = Mock()
-        expected_arguments.scheduler_config = None
-        expected_arguments.job_directory = None
+        expected_arguments.scheduler_config = self.fake_env
+        expected_arguments.job_directory = self.fake_directory
         expected_arguments.entrypoint = None
         expected_arguments.project_name = None
         expected_arguments.ram = None
         expected_arguments.num_gpus = None
         expected_arguments.stream_job_logs = True
-        expected_arguments.command = None
+        expected_arguments.command = [self.command]
 
-        CommandLineInterface(['submit']).execute()
+        CommandLineInterface(['submit', self.fake_env, self.fake_directory, self.command]).execute()
         arguments = MockCommandLineJobDeployer.arguments
 
         self._assert_submit_arguments_equal(expected_arguments, arguments)
@@ -350,23 +317,21 @@ class TestAtlasParser(Spec):
             any_order=True
         )
 
-    @quarantine
     def test_get_job_logs_for_environment_that_does_not_exist_prints_error_message(self):
         self.find_environment_mock.return_value = []
-        CommandLineInterface(['get', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.print_mock.assert_any_call('Error: Could not find environment `{}`'.format(self.fake_env))
+        CommandLineInterface(['get', 'logs', self.fake_env, self.mock_job_id]).execute()
+        self.print_mock.assert_any_call('Could not find submission configuration with name: `{}`'.format(self.fake_env))
 
     def test_get_job_logs_for_environment_that_does_not_exist_exits_with_code_1(self):
         self.find_environment_mock.return_value = []
         CommandLineInterface(['get', 'logs', self.fake_env, self.mock_job_id]).execute()
         self.exit_mock.assert_called_with(1)
 
-    @quarantine
     def test_get_job_logs_for_environment_that_exists_for_job_that_does_not_exist_prints_error_message(self):
         self._set_job_status(None)
 
         self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
-        CommandLineInterface(['get', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        CommandLineInterface(['get', 'logs', self.fake_env, self.mock_job_id]).execute()
         self.print_mock.assert_called_with('Error: Job `{}` does not exist for environment `{}`'.format(self.mock_job_id, self.fake_env))
 
     def test_get_job_logs_for_environment_that_exists_for_job_that_does_not_exist_exits_with_code_1(self):
@@ -376,36 +341,36 @@ class TestAtlasParser(Spec):
         CommandLineInterface(['get', 'logs', self.fake_env, self.mock_job_id]).execute()
         self.exit_mock.assert_called_with(1)
 
-    @quarantine
     def test_get_job_logs_for_queued_job_prints_error_message(self):
         self._set_job_status('queued')
 
         self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
-        CommandLineInterface(['get', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        CommandLineInterface(['get', 'logs', self.fake_env, self.mock_job_id]).execute()
         self.print_mock.assert_called_with('Error: Job `{}` is queued and has not produced any logs'.format(self.mock_job_id))
 
-    @quarantine
     def test_get_job_logs_for_queued_job_exits_with_code_1(self):
         self._set_job_status('queued')
 
         self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
-        CommandLineInterface(['get', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        CommandLineInterface(['get', 'logs', self.fake_env, self.mock_job_id]).execute()
         self.exit_mock.assert_called_with(1)
 
-    @quarantine
     def test_get_job_logs_for_job_that_exists_and_is_not_queued_prints_logs(self):
         self._set_job_status(self.fake_job_status)
         self.mock_job_deployment.get_job_logs.return_value = self.fake_job_logs
         self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
-        CommandLineInterface(['get', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        CommandLineInterface(['get', 'logs', self.fake_env, self.mock_job_id]).execute()
         self.print_mock.assert_called_with(self.fake_job_logs)
 
-    @quarantine
     def test_get_job_logs_for_job_that_exists_and_is_not_queued_does_not_call_exit(self):
         self._set_job_status(self.fake_job_status)
         self.mock_job_deployment.get_job_logs.return_value = self.fake_job_logs
-        self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
-        CommandLineInterface(['get', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+
+        load_mock = Mock()
+        self.patch('foundations_core_cli.job_submission.config.load', load_mock)
+        load_mock.return_value = None
+
+        CommandLineInterface(['get', 'logs', self.fake_env, self.mock_job_id]).execute()
         self.exit_mock.assert_not_called()
 
     def _assert_deploy_arguments_equal(self, expected_arguments, actual_arguments):

@@ -15,25 +15,13 @@ class TestJobListingTrimCharacters(
     @classmethod
     def setUpClass(klass):
         JobsTestsHelperMixinV2.setUpClass()
-        klass._set_project_name("hanna")
-
-    @classmethod
-    def tearDownClass(klass):
-        from foundations_contrib.global_state import redis_connection as redis
-
-        redis.flushall()
-
-    @set_up
-    def set_up(self):
-        from foundations_contrib.global_state import redis_connection
-
-        redis_connection.flushall()
+        klass._set_project_name(JobsTestsHelperMixinV2._str_random_uuid())
 
     def submit_job(self):
         import subprocess
 
         submit_result = subprocess.run(
-            "python -m foundations submit --project-name hanna scheduler acceptance/v2beta/fixtures/log_int_metric log_int_metric.py",
+            f"python -m foundations submit --project-name {self._project_name} scheduler acceptance/v2beta/fixtures/log_int_metric log_int_metric.py",
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,

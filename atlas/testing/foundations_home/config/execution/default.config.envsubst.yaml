@@ -1,0 +1,6 @@
+cache_config:
+  end_point: /cache
+log_level: INFO
+results_config:
+  archive_end_point: ${FOUNDATIONS_HOME}/job_data
+  redis_end_point: redis://${EXECUTION_REDIS_HOST}:${EXECUTION_REDIS_PORT}

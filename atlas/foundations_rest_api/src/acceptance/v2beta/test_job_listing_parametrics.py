@@ -16,19 +16,10 @@ class TestJobListingParametrics(
     @classmethod
     def setUpClass(klass):
         JobsTestsHelperMixinV2.setUpClass()
-        klass._set_project_name("hanna")
-
-    @classmethod
-    def tearDownClass(klass):
-        from foundations_contrib.global_state import redis_connection as redis
-
-        redis.flushall()
+        klass._set_project_name(JobsTestsHelperMixinV2._str_random_uuid())
 
     @set_up
     def set_up(self):
-        from foundations_contrib.global_state import redis_connection
-
-        redis_connection.flushall()
         self.submit_job()
 
     def submit_job(self):
@@ -36,7 +27,7 @@ class TestJobListingParametrics(
 
         submit_result = subprocess.run(
             "python -m foundations submit --project-name {0} {1} {2} {3}".format(
-                "hanna",
+                self._project_name,
                 "scheduler",
                 "acceptance/v2beta/fixtures/log_metric_log_param_set_tag",
                 "log_metric_log_param_set_tag.py"
@@ -70,11 +61,11 @@ class TestJobListingParametrics(
             self.assertIsNotNone(job_data[key])
 
         self.assertEqual(expected_output_metrics, job_data["output_metrics"])
-        self.assertEqual("hanna", job_data["project"])
+        self.assertEqual(self._project_name, job_data["project"])
         self.assertEqual("completed", job_data["status"])
         self.assertEqual({"key": "value"}, job_data["tags"])
 
         self.assertEqual(
             [{"name": "key", "type": "string"}], data["output_metric_names"]
         )
-        self.assertEqual("hanna", data["name"])
+        self.assertEqual(self._project_name, data["name"])

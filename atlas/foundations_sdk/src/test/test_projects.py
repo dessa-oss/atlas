@@ -124,11 +124,6 @@ class TestProjects(Spec):
         )
         self.redis.flushall()
 
-    # @let
-    # def foundations_context(self):
-    #     from foundations.global_state import foundations_context
-    #     return foundations_context
-
     def test_set_project_name_sets_project_name(self):
         set_project_name(self.project_name)
         self.assertEqual(

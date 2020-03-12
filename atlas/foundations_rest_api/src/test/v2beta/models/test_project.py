@@ -55,7 +55,6 @@ class TestProjectV2(Spec):
         lazy_result = Project.find_by(name="my first project")
         self.assertTrue(isinstance(lazy_result, LazyResult))
 
-    @quarantine
     def test_find_by_name_project_is_response_containing_project(self):
         lazy_result = Project.find_by(name="my first project")
         self.assertTrue(isinstance(lazy_result.evaluate(), Project))
@@ -64,7 +63,6 @@ class TestProjectV2(Spec):
         lazy_result = Project.find_by(name="my first project")
         self.assertEqual("my first project", lazy_result.evaluate().name)
 
-    @quarantine
     def test_find_by_name_project_has_name_different_name(self):
         lazy_result = Project.find_by(name="my favourite project")
         self.assertEqual("my favourite project", lazy_result.evaluate().name)
