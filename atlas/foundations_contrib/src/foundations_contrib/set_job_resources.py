@@ -19,18 +19,6 @@ def set_job_resources(num_gpus=0, ram=None):
     Notes:
         Setting the resources for a job from a given notebook or driver file will cause any additional jobs (ex: hyperparameter search) deployed from the same file and using the same process to use the same resources, unless specified otherwise.
         To clear specifying resources and use the default, you can pass in set_job_resources(1, None).  Set num_gpus=0 to use CPU instead.
-
-     TODO Is this still a valid example
-    Example:
-        ```python
-        import foundations
-        from algorithms import train_model
-
-        foundations.set_job_resources(1, 1)
-        train_model = foundations.create_stage(train_model)
-        model = train_model()
-        model.run()
-        ```
     """
     if ram is not None and ram <= 0:
         raise ValueError('Invalid RAM quantity. Please provide a RAM quantity greater than zero.')

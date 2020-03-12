@@ -53,13 +53,8 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     @classmethod
     def setUpClass(klass):
         JobsTestsHelperMixinV2.setUpClass()
-        klass._set_project_name('hanna')
+        klass._set_project_name(JobsTestsHelperMixinV2._str_random_uuid())
         klass._setup_five_jobs()
-
-    @classmethod
-    def tearDownClass(klass):
-        from foundations_contrib.global_state import redis_connection as redis
-        redis.flushall()
 
     @classmethod
     def _setup_five_jobs(klass):

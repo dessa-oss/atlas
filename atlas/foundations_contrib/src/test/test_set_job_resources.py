@@ -99,8 +99,7 @@ class TestSetJobResources(Spec):
         job_resources = current_foundations_context().job_resources()
         self.assertEqual(JobResources(self.num_gpus, None), job_resources)
 
-    @quarantine
-    def test_set_job_resources_num_gpus_defaults_to_one(self):
+    def test_set_job_resources_num_gpus_defaults_to_zero(self):
         set_job_resources(ram=self.ram)
         job_resources = current_foundations_context().job_resources()
-        self.assertEqual(JobResources(1, self.ram), job_resources)
+        self.assertEqual(JobResources(0, self.ram), job_resources)

@@ -12,18 +12,6 @@ def set_project_name(project_name="default"):
 
     Raises:
         - This method doesn't raise any exceptions.
-
-    Example:
-        ```python
-        import foundations
-        from algorithms import train_model
-
-        foundations.set_project_name("my project")
-
-        train_model = foundations.create_stage(train_model)
-        model = train_model()
-        deployment = model.run()
-        ```
     """
     from foundations.global_state import current_foundations_context
     current_foundations_context().set_project_name(project_name)
@@ -41,20 +29,6 @@ def _get_metrics_for_all_jobs(project_name):
 
     Raises:
         ValueError -- An exception indicating that the requested project does not exist
-
-    Example:
-        ```python
-        import foundations
-        from algorithms import train_model, print_metrics
-
-        train_model = foundations.create_stage(train_model)
-        model = train_model()
-        job_name = 'Experiment number 3'
-        deployment = model.run(job_name=job_name)
-        deployment.wait_for_deployment_to_complete()
-        all_metrics = foundations.get_metrics_for_all_jobs(job_name)
-        print_metrics(all_metrics)
-        ```
     """
 
     from foundations_contrib.models.project_listing import ProjectListing
@@ -79,19 +53,6 @@ def get_metrics_for_all_jobs(project_name):
 
     Raises:
         ValueError -- An exception indicating that the requested project does not exist
-
-    Example:
-        ```python
-        import foundations
-        from algorithms import train_model, print_metrics
-
-        train_model = foundations.create_stage(train_model)
-        foundations.set_tag('model', 'CNN')
-        model = train_model()
-
-        all_metrics = foundations.prototype.get_metrics_for_all_jobs(job_name)
-        print_metrics(all_metrics)
-        ```
     """
     from foundations_contrib.global_state import redis_connection
     from foundations.helpers.annotate import annotations_for_multiple_jobs
@@ -132,17 +93,6 @@ def set_tag(key, value=''):
     Notes:
         If a tag is updated multiple times, Foundations will update the tag to the newest value, but return a warning indicating that the
         key has been updated.
-
-    Example:
-        ```python
-        import foundations
-        from algorithms import train_model_xgboost
-
-        train_model = foundations.create_stage(train_model_xgboost)
-        model = train_model()
-        foundations.set_tag('model', 'xgboost')
-        model.run()
-        ```
     """
     from foundations.utils import log_warning_if_not_running_in_job
     log_warning_if_not_running_in_job(_set_tag_in_running_jobs, key, value)

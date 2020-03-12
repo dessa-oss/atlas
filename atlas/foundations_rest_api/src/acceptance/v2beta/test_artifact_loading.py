@@ -21,14 +21,16 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         shutil.rmtree('/tmp/foundations_acceptance', ignore_errors=True)
 
         JobsTestsHelperMixinV2.setUpClass()
-        klass._set_project_name('hana')
-        klass._some_artifacts = 'job_0'
-        klass._no_artifacts = 'job_1'
-        klass._one_artifact = 'job_2'
+        klass._set_project_name(JobsTestsHelperMixinV2._str_random_uuid())
+        klass._some_artifacts = JobsTestsHelperMixinV2._str_random_uuid()
+        klass._no_artifacts = JobsTestsHelperMixinV2._str_random_uuid()
+        klass._one_artifact = JobsTestsHelperMixinV2._str_random_uuid()
 
-        klass._make_running_job(klass._one_artifact, 'soju hero', start_timestamp=99999999)
-        klass._make_completed_job(klass._no_artifacts, 'beethoven', start_timestamp=100000000, end_timestamp=100086400)
-        klass._make_completed_job(klass._some_artifacts, 'beethoven', start_timestamp=100000001, end_timestamp=100086400)
+        random_uuid = JobsTestsHelperMixinV2._str_random_uuid()
+
+        klass._make_running_job(klass._one_artifact, JobsTestsHelperMixinV2._str_random_uuid(), start_timestamp=99999999)
+        klass._make_completed_job(klass._no_artifacts, random_uuid, start_timestamp=100000000, end_timestamp=100086400)
+        klass._make_completed_job(klass._some_artifacts, random_uuid, start_timestamp=100000001, end_timestamp=100086400)
 
         klass._old_config = deepcopy(global_state.config_manager.config())
         klass._old_context = global_state.foundations_context
@@ -42,9 +44,6 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
     @classmethod
     def tearDownClass(klass):
         import foundations_contrib.global_state as global_state
-        from foundations_contrib.global_state import redis_connection as redis
-
-        redis.flushall()
 
         global_state.config_manager.reset()
         global_state.config_manager.config().update(klass._old_config)

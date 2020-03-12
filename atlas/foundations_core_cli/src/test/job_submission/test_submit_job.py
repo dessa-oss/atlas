@@ -160,11 +160,11 @@ class TestJobSubmissionSubmit(Spec):
         submit(self.mock_arguments)
         self.assertEqual(self.job_config['worker'], self.config_manager['worker_container_overrides'])
 
-    @quarantine
     def test_sets_override_worker_container_config_with_docker_command_provided(self):
         self._set_up_deploy_config()
         command = self.faker.words()
-        self.mock_arguments.command = ' '.join(command)
+        self.mock_arguments.command = command
+        self.mock_os_path_exists.return_when(True, command[0])
         submit(self.mock_arguments)
         self.assertEqual({'args': command}, self.config_manager['worker_container_overrides'])
 
@@ -194,18 +194,6 @@ class TestJobSubmissionSubmit(Spec):
         self._set_up_job_config()
         submit(self.mock_arguments)
         self.mock_set_resources.assert_called_with(num_gpus=self.job_config['num_gpus'], ram=self.job_config['ram'])
-
-    @quarantine
-    def test_validates_job_schema(self):
-        import jsonschema
-
-        self.job_config.clear()
-        self.job_config.update(self.faker.pydict())
-        self._set_up_deploy_config()
-        self._load_job_config_file()
- 
-        with self.assertRaises(jsonschema.ValidationError) as error_context:
-            submit(self.mock_arguments)
 
     def _set_up_deploy_config(self):
         self.mock_arguments.project_name = self.project_name

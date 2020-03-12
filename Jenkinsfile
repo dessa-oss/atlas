@@ -119,6 +119,8 @@ pipeline{
                                 sh 'cp -r ../testing/* . || true'
                                 sh """export LOCAL_DOCKER_SCHEDULER_HOST=$ATLAS_LOCAL_SCHEDULER && \
                                         export REDIS_HOST=$ATLAS_LOCAL_SCHEDULER && \
+                                        export EXECUTION_REDIS_HOST=localhost && \
+                                        export EXECUTION_REDIS_PORT=6379 && \
                                         python -Wi -m unittest -f -v acceptance"""
                             }
                         }

@@ -166,14 +166,3 @@ class TestJobSourceBundle(Spec):
         job_source_bundle = JobSourceBundle(self.fake_bundle_name, self.fake_target_name)
         job_source_bundle.bundle()
         mock_tar.add.assert_called_with('.')
-    
-    @quarantine
-    @patch.object(JobSourceBundle, '_protected_file_error_messages')
-    def test_bundle_iterates_through_files_and_logs(self, mock_error_message):
-        mock_tar = self.MockTarWithFiles()
-        self.mock_tarfile_open.return_value = mock_tar
-        job_source_bundle = JobSourceBundle(self.fake_bundle_name, self.fake_target_name)
-        job_source_bundle.bundle()
-        file_call_1 = call('fake_file1')
-        file_call_2 = call('fake_file2')
-        mock_error_message.assert_has_calls([file_call_1, file_call_2])

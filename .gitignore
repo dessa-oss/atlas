@@ -135,3 +135,9 @@ devenv/.foundations/local_docker_scheduler/work_dir/
 devenv/.foundations/logs/
 devenv/.foundations/credentials.yaml
 atlas/testing/auth_acceptance/foundations_home/logs/*
+atlas/testing/foundations_home/credentials.yaml
+atlas/testing/foundations_home/config/submission/scheduler.config.yaml
+atlas/testing/foundations_home/config/execution/default.config.yaml
+
+!atlas/testing/stageless_acceptance/fixtures/stageless_project_nested_project_code/data/*
+!atlas/testing/stageless_acceptance/fixtures/stageless_project_nested_project_code/data/*/*

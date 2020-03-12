@@ -394,15 +394,14 @@ class TestConfigManager(Spec):
                        '_implementation'] = {metric + '_type': 'some_' + metric}
         config_manager.reflect_constructor(metric, metric, lambda: 'socks')
 
-    @quarantine
-    @patch('logging.Logger.info')
-    def test_reflect_constructor_info(self, mock):
+    @patch('logging.Logger.debug')
+    def test_reflect_constructor_debug_deployment(self, mock):
         self.call_reflect_constructor('deployment')
         mock.assert_called_with(
             'Configured with {\'deployment_type\': \'some_deployment\'}')
 
     @patch('logging.Logger.debug')
-    def test_reflect_constructor_debug(self, mock):
+    def test_reflect_constructor_debug_archive(self, mock):
         self.call_reflect_constructor('archive')
         mock.assert_called_with(
             'Configured with {\'archive_type\': \'some_archive\'}')

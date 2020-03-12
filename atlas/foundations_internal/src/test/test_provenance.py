@@ -33,6 +33,8 @@ class TestProvenance(Spec):
         def job_archive(self):
             return 'space'
 
+    mock_getuser = let_patch_mock('getpass.getuser')
+
     @let
     def config_manager(self):
         from foundations_contrib.config_manager import ConfigManager
@@ -149,8 +151,8 @@ class TestProvenance(Spec):
         self.assertNotEqual({}, provenance.module_versions)
         self.assertNotEqual(None, provenance.pip_freeze)
 
-    @quarantine
     def test_load_provenance_from_archive_with_empty_archive(self):
+        self.mock_getuser.return_value = self.user_name
         provenance = Provenance()
         mock_archive = self.MockArchive()
 
@@ -164,7 +166,7 @@ class TestProvenance(Spec):
         self.assertEqual(provenance.python_version, None)
         self.assertEqual(provenance.job_run_data, {})
         self.assertEqual(provenance.project_name, 'default')
-        self.assertEqual(provenance.user_name, 'trial')
+        self.assertEqual(provenance.user_name, provenance.user_name)
         self.assertEqual(provenance.annotations, {})
 
     def test_load_provenance_from_archive_with_specific_value_persists(self):
@@ -200,8 +202,8 @@ class TestProvenance(Spec):
         self.assertEqual(provenance_two.user_name, 'Alan Turing')
         self.assertEqual(provenance_two.annotations, {'model': 'mlp', 'layer': 'all of them'})
 
-    @quarantine
     def test_save_to_archive_with_no_job_source(self):
+        self.mock_getuser.return_value = self.user_name
         provenance = Provenance()
         mock_archive = self.MockArchive()
 
@@ -215,7 +217,7 @@ class TestProvenance(Spec):
                                        'tags': [],
                                        'job_run_data': {},
                                        'project_name': 'default',
-                                       'user_name': 'trial',
+                                       'user_name': provenance.user_name,
                                        }, mock_archive.archive_provenance)
 
     def test_save_to_archive_with_no_job_source_with_values(self):
@@ -276,10 +278,10 @@ class TestProvenance(Spec):
         provenance = Provenance()
         self.assertEqual(provenance.project_name, "default")
 
-    @quarantine
     def test_provenance_default_user_name(self):
+        self.mock_getuser.return_value = self.user_name
         provenance = Provenance()
-        self.assertEqual(provenance.user_name, "trial")
+        self.assertEqual(self.user_name, provenance.user_name)
 
     def test_user_name_is_set_correctly_when_foundations_user_variable_set(self):
         mock_environ = self.patch('os.getenv', ConditionalReturn())

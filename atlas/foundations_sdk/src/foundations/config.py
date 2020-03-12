@@ -14,24 +14,6 @@ def set_environment(environment_name):
 
     Notes:
         Primarily used when using Jupyter to specify deployment environment without the Foundations CLI
-
-    # TODO is this still a relevant example
-    Example:
-        ```python
-        #Jupyter Cell
-        import foundations
-        foundations.set_environment('local')
-
-        #Jupyter Cell
-        from project_code.data_helper import load_data
-        from project_code.algorithms import train_model
-
-        load_data = foundations.create_stage(load_data)
-        train_model = foundations.create_stage(train_model)
-        data = load_data()
-        model = train_model(data)
-        model.run()
-        ```
     """
     from foundations_contrib.global_state import config_manager
 
