@@ -1035,28 +1035,7 @@
         "subComponents" : { },
         "config" : { }
       } ],
-      "org.keycloak.keys.KeyProvider" : [ {
-        "id" : "d62b30a3-6b64-4608-b8ca-3ebc91ea2510",
-        "name" : "hmac-generated",
-        "providerId" : "hmac-generated",
-        "subComponents" : { },
-        "config" : {
-          "kid" : [ "674312de-0ec7-4ff4-bc9e-3e501e23eeee" ],
-          "secret" : [ "x2MCoeLuSsOB_rNY9_BgO74WdUmyD4uIohLVlrPdmRnrF-XOe-mB7pFrwhHm9cVwMVrmsjXh01mxDirRoPrz5A" ],
-          "priority" : [ "100" ],
-          "algorithm" : [ "HS256" ]
-        }
-      }, {
-        "id" : "c716612e-6230-470a-8a5b-fa231bb88b19",
-        "name" : "aes-generated",
-        "providerId" : "aes-generated",
-        "subComponents" : { },
-        "config" : {
-          "kid" : [ "61661ace-16ee-4255-b904-c2da70fa6c19" ],
-          "secret" : [ "qQP2IRPzOMK3Je8iw-nwaw" ],
-          "priority" : [ "100" ]
-        }
-      } ]
+      "org.keycloak.keys.KeyProvider" : []
     },
     "internationalizationEnabled" : false,
     "supportedLocales" : [ ],
