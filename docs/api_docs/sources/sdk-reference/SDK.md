@@ -234,14 +234,12 @@ job_deployment.get_job_details() -> dict
 Retrieve metadata, hyper-parameters, metrics & tags for all jobs associated with a project 
 
 ```python
-foundations.get_metrics_for_all_jobs(project_name, include_input_params=False)
+foundations.get_metrics_for_all_jobs(project_name)
 ```
 
 __Arguments__
 
 - __project_name__ ([str]): Name of the project to filter by
-
-- __include_input_params__ ([bool]): Default `False`. Optional way to specify if metrics should include all model input metrics
 
 __Returns__
 
