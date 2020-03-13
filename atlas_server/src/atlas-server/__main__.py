@@ -209,6 +209,11 @@ class CLI:
                             '--scheduler-host',
                             type=str,
                             help='Specify host for Atlas')
+        parser.add_argument('-u',
+                    '--auth-server-port',
+                    type=int,
+                    default=8080,
+                    help='Port to access authentication server')
 
         return parser.parse_args(sys.argv[2:])
 
@@ -241,7 +246,7 @@ class CLI:
         atexit.register(self._stop_and_remove_docker_objects)
 
         try:
-            specs = self._container_specs(args.dashboard_port, args.archive_port, args.tensorboard_port, args.enable_gpu, args.disable_tensorboard, num_workers, cuda_devices, auth_proxy_entrypoint)
+            specs = self._container_specs(args.dashboard_port, args.archive_port, args.tensorboard_port, args.enable_gpu, args.disable_tensorboard, num_workers, cuda_devices, auth_proxy_entrypoint, args.auth_server_port)
         except KeyError as e:
             logger.error(f"Cannot find key in configuration files: {e.args[0]}")
             sys.exit(1)
@@ -322,7 +327,7 @@ class CLI:
                 logger.info("Shutting down...")
             sys.exit()
 
-    def _container_specs(self, dashboard_port, archive_port, tensorboard_port, enable_gpu, disable_tensorboard, num_workers, cuda_devices, auth_proxy_entrypoint):
+    def _container_specs(self, dashboard_port, archive_port, tensorboard_port, enable_gpu, disable_tensorboard, num_workers, cuda_devices, auth_proxy_entrypoint, auth_server_port):
         import os
 
         docker_spec = self._config['docker']
@@ -341,7 +346,6 @@ class CLI:
 
         redis_internal_port = 6379
         tensorboard_rest_internal_port = 5000
-        auth_server_port = 8080
 
         # # Find where the keycloak configuration path is
         # os.environ["FOUNDATIONS_COMMAND_LINE"] = "True"
