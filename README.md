@@ -51,7 +51,7 @@ All docs are hosted on Read the Docs that track the `docs` folder, please open a
 
 ## Community 
 If you have questions that are not addressed in the [documentation](https://www.docs.atlas.dessa.com/), there are several ways to ask: 
-- Open a [Github Issue](https://github.com/dessa-research/atlas/issues)
+- Open a [Github Issue](https://github.com/dessa-oss/atlas/issues)
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/foundations-atlas) - be sure to use the `foundations-atlas` tag.
 - Join the [Dessa Slack](https://join.slack.com/t/dessa-community/shared_invite/enQtNzY5ODkxOTc3OTkwLTk4MTg5NmNkOTQ5OWVjNjk2YzY0OWJlNDkwNDlhY2NmNTQzNmRmYjkxNzc2N2JiOTYxZGVkMmFiMjRhYThiYzM).
 
