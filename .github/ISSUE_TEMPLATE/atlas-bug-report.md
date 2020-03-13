@@ -2,10 +2,13 @@
 name: Atlas bug report
 about: "Bug report for Atlas \U0001F41B"
 title: "[BUG] Title"
-labels: Atlas, bug
+labels: bug
 assignees: ''
 
 ---
+
+**Platform & setup**
+Give us details of your OS and your setup.
 
 **Describe the bug**
 A clear and concise description of what the bug is.
@@ -23,5 +26,5 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Additional context**
+**Additional context / Stacktrace**
 Add any other context about the problem here e.g. what system were you on? F9s trial environment? GCP? DGX?

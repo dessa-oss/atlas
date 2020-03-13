@@ -2,7 +2,7 @@
 name: Technical Debt Item
 about: Call out technical debt items to add to our technical backlog
 title: "[debt] Title"
-labels: Foundations, tech debt
+labels: ''
 assignees: ''
 
 ---

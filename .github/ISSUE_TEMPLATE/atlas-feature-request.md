@@ -1,8 +1,8 @@
 ---
 name: Atlas feature request
 about: "Suggest an \U0001F4A1 for Atlas"
-title: "[Request] Title"
-labels: Atlas
+title: Title
+labels: feature-request
 assignees: ''
 
 ---
@@ -11,9 +11,9 @@ assignees: ''
 Explain the problem you faced, that you want to solve
 
 **Describe the solution you'd like**
-Here is your opportunity to really the user experience of the solution
+When proposing a solution, consider the following:
+- UX of the API/SDK 
+- UX and workflow of a data scientists
 
 **Optional - Describe hacks you've considered**
 Hackerman 🤯
-
-**Estimate**
