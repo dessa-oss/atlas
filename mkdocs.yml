@@ -43,12 +43,12 @@ extra:
     - type: 'linkedin'
       link: 'https://www.linkedin.com/company/dessa1/'
     - type: 'github'
-      link: https://github.com/dessa-research
+      link: https://github.com/dessa-oss
 
 dev_addr: '0.0.0.0:8000'
 
 nav:
-  - GitHub 😸: https://www.github.com/dessa-research/atlas
+  - GitHub 😸: https://www.github.com/dessa-oss/atlas
   - Home: index.md
   - Installation Guide:
       - Quickstart Local:

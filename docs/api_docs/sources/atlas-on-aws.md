@@ -109,7 +109,7 @@ We should now be able to use your downloaded `.pem` key to then SSH into the ins
 ### Installing Atlas 
 * You should now be within your AWS instance.
 * Create a new directory for Atlas: `mkdir atlas`
-* Find a version of Atlas from https://github.com/dessa-research/atlas/releases that you want to install and run `wget <link_to_installer_file>` to download the installer file to this instance.
+* Find a version of Atlas from https://github.com/dessa-oss/atlas/releases that you want to install and run `wget <link_to_installer_file>` to download the installer file to this instance.
 *  Create and activate a Python >=3.6 virtual environment using Conda or venv to minimize dependency issues.
     * `conda create --name=atlas python=3.7`
 * Ensure you are in the right conda environment, then run the install script `python atlas_installer.py` and follow the instructions.

@@ -30,7 +30,7 @@ This setup is ideal for teams of Machine Learning Engineers who want to share re
 
 1. SSH into the machine to be used as the master instance
 
-2. [Download](https://github.com/dessa-research/atlas/releases) the installer file (atlas_installer.py) on to your machine from our [Github Releases](https://github.com/dessa-research/atlas/releases) page.
+2. [Download](https://github.com/dessa-oss/atlas/releases) the installer file (atlas_installer.py) on to your machine from our [Github Releases](https://github.com/dessa-oss/atlas/releases) page.
 
 3. Create a conda environment (e.g. `conda create -y -n atlas-team python=3.6.8`)
 
@@ -175,7 +175,7 @@ The following steps outline the configurations for a user to have on their clien
 
 1. (As an admin) Create a user account in the Keycloak admin console (`https://<master_node_external_ip>:8443`) by going to "Atlas" realm > Users > Add User
 
-2. (As an admin) Give the user the provided installer file (atlas_installer.py) from [here](https://github.com/dessa-research/atlas/releases)
+2. (As an admin) Give the user the provided installer file (atlas_installer.py) from [here](https://github.com/dessa-oss/atlas/releases)
 
 3. (As an admin) Give the user the configuration file on the master machine under `~/.foundations/config/submission/scheduler.config.yaml`
 

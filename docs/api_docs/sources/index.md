@@ -9,19 +9,19 @@
 
 <div align="center">
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/dessa-research/atlas" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star dessa-research/atlas on GitHub">Star</a>
+<a class="github-button" href="https://github.com/dessa-oss/atlas" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star dessa-oss/atlas on GitHub">Star</a>
 
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/dessa-research/atlas/fork" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-repo-forked" data-size="large" data-show-count="true" aria-label="Fork dessa-research/atlas on GitHub">Fork</a>
+<a class="github-button" href="https://github.com/dessa-oss/atlas/fork" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-repo-forked" data-size="large" data-show-count="true" aria-label="Fork dessa-oss/atlas on GitHub">Fork</a>
 
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/dessa-research" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Follow @dessa-research on GitHub">Follow @dessa-research</a>
+<a class="github-button" href="https://github.com/dessa-oss" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Follow @dessa-oss on GitHub">Follow @dessa-oss</a>
 
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/dessa-research/atlas/subscription" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-eye" data-size="large" data-show-count="true" aria-label="Watch dessa-research/atlas on GitHub">Watch</a>
+<a class="github-button" href="https://github.com/dessa-oss/atlas/subscription" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-eye" data-size="large" data-show-count="true" aria-label="Watch dessa-oss/atlas on GitHub">Watch</a>
 
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/dessa-research/atlas/issues" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-issue-opened" data-size="large" data-show-count="true" aria-label="Issue dessa-research/atlas on GitHub">Issue</a>
+<a class="github-button" href="https://github.com/dessa-oss/atlas/issues" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-issue-opened" data-size="large" data-show-count="true" aria-label="Issue dessa-oss/atlas on GitHub">Issue</a>
 </div>
 
 ## Atlas Documentation 
@@ -100,7 +100,7 @@ foundations submit my_aws_scheduler_instance . main.py --num-gpus=3
 ## Contribute to Atlas
 Atlas is open-source (Apache 2.0) and we welcome all levels of contributors!
 
-To contribute to Atlas, get started on our [Github](www.github.com/dessa-research/atlas).
+To contribute to Atlas, get started on our [Github](www.github.com/dessa-oss/atlas).
 
 ## Join the community 
 

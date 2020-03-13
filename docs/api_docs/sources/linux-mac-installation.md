@@ -10,7 +10,7 @@
  2. Python \>=3.6
  3. \>5GB of free machine storage
  4. The `atlas_installer.py` file.
-    - Download the latest release from the [GitHub releases](https://github.com/dessa-research/atlas/releases)
+    - Download the latest release from the [GitHub releases](https://github.com/dessa-oss/atlas/releases)
 
 ---
 
