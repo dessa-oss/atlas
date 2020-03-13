@@ -76,8 +76,8 @@ fi
 echo "using python from `which python`"
 
 if [ ! -f atlas_installer.py ]; then
-   wget https://github.com/dessa-research/atlas/releases/download/0.1/atlas_installer.py
-   wget https://github.com/dessa-research/atlas/releases/download/0.1/atlas.tgz
+   wget https://github.com/dessa-oss/atlas/releases/download/0.1/atlas_installer.py
+   wget https://github.com/dessa-oss/atlas/releases/download/0.1/atlas.tgz
 fi
 
 MAIN_PATH=`which python | grep -o '^.*atlas_env'`/lib/python3.6/site-packages/atlas-server/
