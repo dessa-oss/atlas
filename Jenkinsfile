@@ -6,6 +6,9 @@ pipeline{
     agent {
         label 'ci-pipeline-jenkins-slave'
     }
+    environment {
+       is_release_version=false
+    }
     stages {
         stage('Preparation') {
             steps {
@@ -244,15 +247,22 @@ pipeline{
                         }
                     }
                 }
-
             }
-        
         }
         stage('Upload Coverage results to Jenkins') {
             steps {
                 container("python3") {
                     sh "tar -czvf coverage.tar.gz atlas/coverage_results"
                     archiveArtifacts artifacts: 'coverage.tar.gz'
+                }
+            }
+        }
+        stage('Set Deployment to be True') {
+            when { tag "*.*" }
+            steps {
+                echo 'Deploying only because this commit is tagged...'
+                script {
+                    env.is_release_version=true
                 }
             }
         }
@@ -286,7 +296,8 @@ pipeline{
                         f9s_commit_hash = sh(script: "echo \$(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
                         println("Attempting to trigger pipeline with version of ${f9s_commit_hash}")
                         build job: "build-artifacts-atlas", wait: false, parameters: [
-                            [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: "${f9s_commit_hash}"]
+                            [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: "${f9s_commit_hash}"],
+                            [$class: 'BooleanParameterValue', name: 'is_release_version', value: env.is_release_version]
                         ]
                     }
                 }
