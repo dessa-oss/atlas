@@ -287,7 +287,7 @@ pipeline{
         }
         stage('Trigger Build Artifacts for Atlas Pipeline') {
             when{
-                branch 'master'
+                expression {  branch 'kd_testing_jenkins_or_conditions' || tag "*.*" }
             }
             steps {
                 container("python3") {
