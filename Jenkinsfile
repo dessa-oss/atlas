@@ -287,7 +287,7 @@ pipeline{
         }
         stage('Trigger Build Artifacts for Atlas Pipeline') {
             when{
-                branch 'master'
+                expression { return branch ('master') || tag ("*.*") }
             }
             steps {
                 container("python3") {
