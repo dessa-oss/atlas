@@ -9,26 +9,25 @@
 
 <div align="center">
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/dessa-research/atlas" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star dessa-research/atlas on GitHub">Star</a>
+<a class="github-button" href="https://github.com/dessa-oss/atlas" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star dessa-oss/atlas on GitHub">Star</a>
 
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/dessa-research/atlas/fork" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-repo-forked" data-size="large" data-show-count="true" aria-label="Fork dessa-research/atlas on GitHub">Fork</a>
+<a class="github-button" href="https://github.com/dessa-oss/atlas/fork" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-repo-forked" data-size="large" data-show-count="true" aria-label="Fork dessa-oss/atlas on GitHub">Fork</a>
 
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/dessa-research" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Follow @dessa-research on GitHub">Follow @dessa-research</a>
+<a class="github-button" href="https://github.com/dessa-oss" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Follow @dessa-research on GitHub">Follow @dessa-oss</a>
 
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/dessa-research/atlas/subscription" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-eye" data-size="large" data-show-count="true" aria-label="Watch dessa-research/atlas on GitHub">Watch</a>
+<a class="github-button" href="https://github.com/dessa-oss/atlas/subscription" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-eye" data-size="large" data-show-count="true" aria-label="Watch dessa-oss/atlas on GitHub">Watch</a>
 
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/dessa-research/atlas/issues" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-issue-opened" data-size="large" data-show-count="true" aria-label="Issue dessa-research/atlas on GitHub">Issue</a>
+<a class="github-button" href="https://github.com/dessa-oss/atlas/issues" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-issue-opened" data-size="large" data-show-count="true" aria-label="Issue dessa-oss/atlas on GitHub">Issue</a>
 </div>
 
 ## Atlas Documentation 
 
-Atlas is a flexible Machine Learning platform that consists of a Python SDK, CLI, GUI & Scheduler to help Machine Learning Engineering teams dramatically reduce the model development time & reduce effort in managing infrastructure.
+Atlas is a flexible machine learning platform that consists of a Python SDK, CLI, GUI & Scheduler that helps machine learning practitioners dramatically reduce time spent on model development & effort in managing infrastructure.
 
-Atlas is a subset of *Foundations* which is a group of tools we have built for Machine Learning Engineers. 
 
 ![Platform Support](https://img.shields.io/badge/Platforms-osx%20%7C%20linux%20%7C%20windows-lightgrey "platform")
 ![Python Support](https://img.shields.io/badge/Python-%3E3.6-brightgreen "python")
@@ -38,41 +37,41 @@ Atlas is a subset of *Foundations* which is a group of tools we have built for M
   <iframe src="https://www.youtube.com/embed/YnwtO48UYAU?start=2" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
 </div>
 
-### BETA Note
+###
 
-Atlas has evolved quite a lot throughout our history. The latest open-source version of Atlas includes a lot of architectural and design changes. 
+Atlas is one half of **Foundations,** a group of tools we've built to manage the machine learning workflow from end to end. Orbit makes up the other half of *Foundations*, and has tools for managing models in production. Atlas has evolved quite a lot throughout our history. The latest open-source version of Atlas includes extensive architectural and design changes. 
 
-**This version is currently in BETA.**
+This version of Atlas is currently in **beta**.
 
-### Here are some of the core features:
+### <h2>Here are some of the core features:
 
 **Experiment Management & Tracking:**
 <br>Tag experiments and easily track hyperparameters, metrics, and artifacts such as images, GIFs, and audio clips in a web-based GUI to track the performance of your models
 
 ![GUI](https://static.wixstatic.com/media/29a4f1_c8d1a4f9ab1941ab9ade5e934cf8b149~mv2.png/v1/fill/w_1440,h_1024/tumour.png "Artifact GUI")
 
-**Job queuing & scheduling:** <br>Launch and queue thousands of experiment variations to fully utilize your system resources
+**Job Queuing & Scheduling:** <br>Launch and queue thousands of experiments and fully utilize your system resources.
 
 ![GUI](https://static.wixstatic.com/media/29a4f1_ffb0c04ef79843e79dbf2b1fa33a70c4~mv2.png/v1/fill/w_1440,h_1024/Time%20series%20forecast.png "GUI")
 
-**Collaboration & Bookkeeping:** <br>Keep a journal of thoughts, ideas, and comments on projects
+**Collaboration & Documentation:** <br>Keep a journal of thoughts, ideas, and comments on projects.
 
 **Reproducibility:** <br>
-Maintain an audit trail of every single experiment you run, complete with code and any saved items
+Maintain an audit trail of every single experiment you run, complete with code and any saved items.
 
-**Authentication & other integrations:** <br>
+**Authentication & Other Integrations:** <br>
 Collaborate across your team by seting up Atlas on a cluster and aproviding user access controls via [KeyCloak integration](atlas-modes/authentication.md).
 
 Slice and dice your models from the GUI via the [Tensorboard](gui.md) integration.
 
 ## How does Atlas Work?
-Atlas consists of the following core modules:
+**Atlas consists of the following core modules:**
 
 * [GUI](gui.md) - A Dockerized web application to view job status for various projects.  
-* Foundations [SDK](sdk-reference/SDK.md) & [CLI](cli.md) - A programmatic and command-line interfaces for Atlas.
-* [Local Scheduler](atlas-modes/scheduling.md) - A scheduler which is used for job orchestration and management.
+* Foundations [SDK](sdk-reference/SDK.md) & [CLI](cli.md) - A programmatic and command-line interface for Atlas.
+* [Local Scheduler](atlas-modes/scheduling.md) - A scheduler used for job orchestration and management.
 
-Here is an example workflow: 
+**Here's an example workflow:**
 
 1. Install Atlas on your machine or on the Cloud 
 2. Use the SDK to log various metrics, hyperparameters or use the `submit` SDK command to automate submission of jobs for e.g:
@@ -104,7 +103,7 @@ To contribute to Atlas, get started on our [Github](www.github.com/dessa-researc
 
 ## Join the community 
 
-Want to contribute to Atlas? or just want to get in touch with Atlas users and Dessa Deep Learning Engineers? Join our community Slack [here](https://join.slack.com/t/dessa-community/shared_invite/enQtNzY5ODkxOTc3OTkwLTk4MTg5NmNkOTQ5OWVjNjk2YzY0OWJlNDkwNDlhY2NmNTQzNmRmYjkxNzc2N2JiOTYxZGVkMmFiMjRhYThiYzM). 
+Want to contribute to Atlas? Or just want to get in touch with other Atlas users and engineers from Dessa? Join our community Slack [here](https://join.slack.com/t/dessa-community/shared_invite/enQtNzY5ODkxOTc3OTkwLTk4MTg5NmNkOTQ5OWVjNjk2YzY0OWJlNDkwNDlhY2NmNTQzNmRmYjkxNzc2N2JiOTYxZGVkMmFiMjRhYThiYzM). 
 
 Prefer discussing over e-mail? Send us a message [here](https://dessa.com/contact/).
 
