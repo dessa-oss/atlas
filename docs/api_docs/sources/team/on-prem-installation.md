@@ -30,8 +30,7 @@ This setup is ideal for teams of Machine Learning Engineers who want to share re
 
 1. SSH into the machine to be used as the master instance
 
-2. Download the installer file (atlas_installer.py) on to your machine from our [Github Releases](https://github.com/dessa-
-/atlas/releases) page.
+2. Download the installer file (atlas_installer.py) on to your machine from our [Github Releases](https://github.com/dessa-oss/atlas/releases) page.
 
 3. Create a conda environment to gurantee no dependency conflicts (e.g. `conda create -y -n atlas python=3.6.8`)
 
