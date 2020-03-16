@@ -323,7 +323,7 @@ pipeline{
                     ]
                 ]
 
-                slackSend(channel: '#f9s-builds', attachments: attachments)
+                slackSend(channel: '#dessa-atlas-builds', attachments: attachments)
             }
         }
         success {
