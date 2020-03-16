@@ -1,0 +1,2 @@
+
+from test.config.test_bucket_type_fetcher import TestBucketTypeFetcher

@@ -1,0 +1,7 @@
+
+from test.consumers.jobs import *
+from test.consumers.test_job_metric_consumer import TestJobMetricConsumer
+from test.consumers.test_job_metric_name_consumer import TestJobMetricNameConsumer
+from test.consumers.test_annotate import TestAnnotate
+from test.consumers.test_project_metrics import TestProjectMetrics
+from test.consumers.test_single_project_metric import TestSingleProjectMetric

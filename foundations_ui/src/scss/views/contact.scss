@@ -1,0 +1,30 @@
+.ctaWrapper {
+    width: 1000px;
+    display: flex;
+    flex-direction: row;
+    height: 240px;
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+    justify-content: space-between;
+    .ctaElement {
+        border: 1px solid #999;
+        width: 267px;
+        align-content: space-evenly;
+        background-color: #fff;
+        p {
+            font-size: 15px;
+            padding: 20px;
+        }
+        button {
+            padding: 4px;
+            width: 267px;
+            background-color: #009aff;
+            border: none;
+            height: 40px;
+            position: absolute;
+            bottom: 0px;
+            display: block;
+        }
+    }
+}

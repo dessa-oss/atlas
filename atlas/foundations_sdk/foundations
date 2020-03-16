@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export FOUNDATIONS_COMMAND_LINE=True
+python -m foundations $@

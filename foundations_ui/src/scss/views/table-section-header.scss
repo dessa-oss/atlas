@@ -1,0 +1,41 @@
+.table-section-header{
+  display: inline-block;
+  vertical-align: middle;
+  width: $table-section-width;
+  height: 36px;
+
+  .arrow-container {
+    width: 36px;
+    height: 36px;
+    float: right;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    cursor: pointer;
+  }
+}
+
+.column-header {
+  background-color: #FBFBFB;
+  height: 52px;
+  line-height: 52px;
+  width: 100%;
+  border-top: solid 1px #E2E2E2;
+  border-top-left-radius: 1px;
+  border-top-right-radius: 1px;
+}
+
+.table-header-text {
+  color: #747474;
+  margin: 0px;
+  line-height: 52px;
+}
+
+.table-header-arrow {
+  border-top: 6px solid $color-white;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  position: absolute;
+  top: 15px;
+  right: 12px;
+}

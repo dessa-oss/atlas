@@ -1,0 +1,12 @@
+build
+node_modules
+LICENSES
+Create-React-App-README.md
+env.sh.example
+fix_lint.sh
+README.md
+yarn.lock
+package-lock.json
+cypress
+cypress.json
+build_gui.sh

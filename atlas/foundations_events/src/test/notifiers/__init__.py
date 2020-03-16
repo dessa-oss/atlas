@@ -1,0 +1,3 @@
+
+from test.notifiers.test_slack_notifier import TestSlackNotifier
+from test.notifiers.test_job_notifier import TestJobNotifier

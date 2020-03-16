@@ -1,0 +1,88 @@
+.job-cell{
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: $standard-cell-padding;
+  padding-right: $standard-cell-padding;
+  margin: 0px;
+  line-height: $row-height;
+  height: $row-height;
+  text-align: center;
+  width: $standard-cell-width;
+  position: relative;
+  p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &.error {
+    color: $color-status-red;
+    background-color: $color-error-background;
+  }
+
+  &:not(.Tags) {
+    background-color: #fff;
+    border-top: 1px solid $color-border-bottom;
+  }
+
+  &.Tags {
+    width: calc(#{$standard-cell-width} + 10px);
+    position: relative;
+    left: -10px;
+  }
+}
+
+.launch-date {
+  // margin-left: 5px;
+  display: inline;
+}
+
+.start-cell {
+  line-height: normal;
+}
+
+.job-id-cell {
+  line-height: normal;
+  width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+.duration-cell{
+  text-align: right;
+  width: calc( 18% - (5px * 4 + 0.25px));
+}
+
+.tagWrapper {
+  text-align: left;
+  width: -webkit-fill-available;
+  width: -moz-available;
+}
+
+.full-height {
+  overflow-x: scroll;
+  width: max-content;
+  overflow-y: scroll;
+}
+
+.job-cell-hover {
+  height: $row-height;
+  transition: all 0.3s ease;
+  background-color: $color-background;
+  position: absolute;
+  color: $color-black;
+  z-index: 1;
+  margin-top: -5px;
+  margin-left: -80px;
+  text-align: center;
+  padding: 5px 12px 5px 12px;
+  border-radius: 5px;
+  -webkit-box-shadow: 1px 4px 5px 1px #c3c3c3;
+  -moz-box-shadow: 1px 4px 5px 1px #c3c3c3;
+  box-shadow: 1px 4px 5px 1px #c3c3c3;
+  p {
+    margin-right: 0;
+  }
+  width: 300px;
+  white-space: wrap;
+}

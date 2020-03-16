@@ -1,0 +1,2 @@
+
+from foundations_core_rest_api_components.versioning import __version__

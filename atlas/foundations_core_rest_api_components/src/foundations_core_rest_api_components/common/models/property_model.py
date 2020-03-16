@@ -1,0 +1,2 @@
+
+from foundations_contrib.models.property_model import PropertyModel

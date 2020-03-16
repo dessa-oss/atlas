@@ -1,0 +1,32 @@
+scheduler_rest_api:
+  - /job_bundle
+  - /job_bundle/<string:job_id>
+  - /queued_jobs
+  - /queued_jobs/<int:position>
+  - /running_jobs
+  - /running_jobs/<string:job_id>
+  - /running_jobs/<string:job_id>/logs
+  - /running_jobs/<string:job_id>/container_id
+  - /completed_jobs
+  - /completed_jobs/<string:job_id>/logs
+  - /failed_jobs
+  - /failed_jobs/<string:job_id>/logs
+  - /workers
+  - /workers/<int:worker_id>
+  - /jobs/<string:job_id>
+foundations_rest_api:
+  - /api/v2beta/projects
+  - /api/v2beta/auth/cli_login
+  - /api/v2beta/auth/logout
+  - /api/v2beta/auth/verify
+  - /api/v2beta/userinfo
+  - /api/v2beta/projects/<string:project_name>/job_listing
+  - /api/v2beta/projects/<string:project_name>/description
+  - /api/v2beta/projects/<string:project_name>/note_listing
+  - /api/v2beta/projects/<string:project_name>/overview_metrics
+  - /api/v2beta/projects/<string:project_name>/job_listing/<string:job_id>/logs
+  - /api/v2beta/upload_to_tensorboard
+  - /api/v2beta/projects/<string:project_name>/job_listing/<string:job_id>/tag/<string:tag_name>
+  - /api/v2beta/projects/<string:project_name>/job_listing/<string:job_id>/tags/<string:tag_name>
+  - /api/v2beta/projects/<string:project_name>/job_listing/<string:job_id>/tags
+  - /api/v2beta/projects/<string:project_name>/job_listing/<string:job_id>

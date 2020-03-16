@@ -1,0 +1,1 @@
+recursive-include foundations_core_rest_api_components resources/*

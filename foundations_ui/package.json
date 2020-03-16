@@ -1,0 +1,165 @@
+{
+  "name": "foundations-ui",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@babel/core": "7.1.0",
+    "@svgr/webpack": "2.4.1",
+    "axios": "^0.19.0",
+    "bfj": "6.1.1",
+    "case-sensitive-paths-webpack-plugin": "2.1.2",
+    "css-loader": "1.0.0",
+    "file-loader": "2.0.0",
+    "fork-ts-checker-webpack-plugin-alt": "0.4.14",
+    "fs-extra": "7.0.0",
+    "html-webpack-plugin": "4.0.0-alpha.2",
+    "identity-obj-proxy": "3.0.0",
+    "jquery": "^3.3.1",
+    "js-cookie": "^2.2.1",
+    "js-file-download": "^0.4.7",
+    "jwt-decode": "^2.2.0",
+    "keycloak-js": "4.0.0-beta.2",
+    "mini-css-extract-plugin": "0.4.3",
+    "moment": "^2.24.0",
+    "node-sass": "4.12",
+    "normalize.css": "^8.0.1",
+    "optimize-css-assets-webpack-plugin": "5.0.1",
+    "package.json": "^2.0.1",
+    "plotly.js": "^1.50.0",
+    "pnp-webpack-plugin": "1.1.0",
+    "postcss-flexbugs-fixes": "4.1.0",
+    "postcss-loader": "3.0.0",
+    "postcss-preset-env": "6.0.6",
+    "postcss-safe-parser": "4.0.1",
+    "prop-types": "^15.6.2",
+    "react": "16.8",
+    "react-app-polyfill": "^0.1.3",
+    "react-audio-player": "^0.11.1",
+    "react-copy-to-clipboard": "^5.0.1",
+    "react-dev-utils": "^6.1.1",
+    "react-dom": "^16.6.0",
+    "react-flatpickr": "^3.6.4",
+    "react-hot-loader": "^4.12.10",
+    "react-keycloak": "^7.0.1-191016",
+    "react-markdown": "^4.1.0",
+    "react-plotly.js": "^2.3.0",
+    "react-router-dom": "^4.3.1",
+    "react-scroll-sync": "^0.7.0",
+    "react-select": "^3.0.5",
+    "react-test-renderer": "^16.6.1",
+    "react-testing-library": "^5.2.3",
+    "react-toastify": "^5.3.2",
+    "react-tooltip": "^3.10.0",
+    "reactstrap": "^8.0.0",
+    "remarkable": "^2.0.0",
+    "resolve": "1.8.1",
+    "sass-loader": "^7.1.0",
+    "style-loader": "0.23.0",
+    "svgo": "1.3.0",
+    "terser-webpack-plugin": "1.1.0",
+    "url-loader": "1.1.1",
+    "webpack": "4.19.1",
+    "webpack-dev-server": "3.1.11",
+    "webpack-manifest-plugin": "2.0.4",
+    "workbox-webpack-plugin": "3.6.3"
+  },
+  "scripts": {
+    "start": "node scripts/start.js",
+    "build": "node scripts/build.js",
+    "prune": "node scripts/yarn-prune.js",
+    "testLint": "node node_modules/.bin/eslint .",
+    "cy:run": "cypress run"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.d.ts"
+    ],
+    "resolver": "jest-pnp-resolver",
+    "setupFiles": [
+      "react-app-polyfill/jsdom"
+    ],
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/src/**/?(*.)(spec|test).{js,jsx,ts,tsx}"
+    ],
+    "testEnvironment": "jsdom",
+    "testURL": "http://localhost",
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
+      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
+      "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
+      "^.+\\.module\\.(css|sass|scss)$"
+    ],
+    "moduleNameMapper": {
+      "^react-native$": "react-native-web",
+      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
+    },
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "web.ts",
+      "ts",
+      "web.tsx",
+      "tsx",
+      "json",
+      "web.jsx",
+      "jsx",
+      "node"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  },
+  "devDependencies": {
+    "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "^9.0.0",
+    "babel-jest": "23.6.0",
+    "babel-loader": "8.0.4",
+    "babel-plugin-named-asset-import": "^0.2.3",
+    "babel-preset-react-app": "^6.1.0",
+    "chalk": "2.4.1",
+    "dotenv": "6.0.0",
+    "dotenv-expand": "4.2.0",
+    "enzyme": "^3.7.0",
+    "enzyme-adapter-react-16": "^1.7.0",
+    "enzyme-to-json": "^3.3.4",
+    "eslint": "^5.8.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react-hooks": "^2.3.0",
+    "faker": "^4.1.0",
+    "jest": "23.6.0",
+    "jest-dom": "2.1.1",
+    "jest-pnp-resolver": "1.0.1",
+    "jest-resolve": "23.6.0",
+    "cypress": "^3.7.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-react-app": "^3.0.5",
+    "eslint-loader": "2.1.1",
+    "eslint-plugin-cypress": "^2.8.1",
+    "eslint-plugin-flowtype": "2.50.1"
+  },
+  "resolutions": {
+    "svgo": "1.3.0",
+    "jsdom": "15.2.1"
+  }
+}

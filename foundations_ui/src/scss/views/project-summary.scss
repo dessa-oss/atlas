@@ -1,0 +1,136 @@
+.project-summary-container {
+  margin: auto;
+  background-color: $color-background;
+  border: 1px solid $color-border-bottom;
+  padding: 25px;
+  width: 210px;
+  display: inline-block;
+  margin-right: 30px;
+  margin-bottom: 25px;
+  border-radius: 7px;
+  height: 315px;
+  outline: none;
+  vertical-align: top;
+
+  .project-summary-tags-container {
+    float: left;
+    bottom: 0px;
+    right: 5px;
+    text-align: left;
+  }
+}
+
+.project-summary-tags-container {
+  text-align: right;
+  float: right;
+  width: 200px;
+  position: relative;
+  bottom: 100px;
+  
+  div {
+    white-space: normal;
+    text-align: right;
+    height: 120px;
+    width: 200px;
+    float: right;
+
+    &.job-cell-hover{
+      position: relative;
+      height: 200px;
+      overflow-y: scroll;
+      text-align: left;
+    }
+
+  }
+
+  span {
+    background: $color-dessa-blue;
+    color: white;
+    border-radius: 3px;
+    margin-left: 5px;
+    padding: 3px 11px;
+    display: inline-block;
+    margin-top: 10px;
+
+    &.view-all-tags {
+      background: none;
+      color: $color-active-blue;
+      display: block;
+      width: 73px;
+      position: relative;
+      left: 102px;
+    }
+
+  }
+
+  .span-more {
+    background: transparent;
+    color: #000000;
+    margin-left: 5px;
+    display: inline-block;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  p {
+    color: #B1B1B1;
+    margin-bottom: 0px;
+    text-align: left;
+    margin-left: 5px;
+  }
+}
+
+
+.project-summary-container.elevation-1{
+  box-shadow: none;
+  &:first-child {
+    margin-top: 15px;
+    border-radius: 6px 6px 0px 0px;
+  }
+  &:last-child {
+    border-radius: 0px 0px 6px 6px;
+  }
+}
+
+.project-summary-info-container {
+  width: 100%;
+  word-break: break-all;
+  h2 {
+    color: $color-dark-blue;
+    margin-bottom: 10px;
+    margin-top: 0px;
+    font-size: 30px;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  p, span {
+    color: $color-dark-blue;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+  p, span {
+    font-size: 15px;
+  }
+}
+
+.project-summary-metrics-container {
+  width: 25%;
+}
+
+.project-summary-button-container {
+  button {
+    float: right;
+    margin-right: 50px;
+    display: inline;
+    border-radius: 2px;
+    width: 130px;
+    height: 40px;
+    margin-top: -46px;
+    font-size: 16px;
+    text-transform: none;
+  }
+}

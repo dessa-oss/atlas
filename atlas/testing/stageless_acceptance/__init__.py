@@ -1,0 +1,4 @@
+
+import foundations
+
+from stageless_acceptance.test_local_submit_without_stages import TestLocalSubmitWithoutStages

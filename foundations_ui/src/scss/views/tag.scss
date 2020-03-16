@@ -1,0 +1,79 @@
+// .job-tag {
+  // background-color: rgb(13, 171, 126);
+  // color: white;
+  // border-radius: 3px;
+  // margin-left: 15px;
+  // padding: 5px 10px;
+  // background-size: 15px 15px;
+  // vertical-align: middle;
+// }
+
+// div.job-tag {
+//   display: inline-block;
+//   height: 17px;
+//   vertical-align: middle;
+//   position: relative;
+//   top: -1px;
+//   margin-left: 0px;
+// }
+
+.job-tag {
+  background-color: $color-dessa-blue;
+  color: white;
+  border-radius: 3px;
+  margin-left: 10px;
+  padding: 2px 10px 4px 10px;
+  background-size: 15px 15px;
+  vertical-align: middle;
+  display: inline-block;
+  margin-bottom: 5px;
+  line-height: normal;
+  height: 20px;
+  .close-button {
+    border-radius: 0px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    margin-left: 15px;
+    margin-right: -5px;
+    margin-top: -3px;
+    cursor: pointer;
+  }
+
+}
+
+.job-tag-ellipse {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  top: -5px;
+}
+
+.job-cell > p.type-tag {
+  text-overflow: unset;
+  p {
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    top: -5px;
+    cursor: pointer;
+  }
+}
+
+.job-cell-hover {
+  height: 200px;
+  width: 200px;
+  white-space: normal;
+  text-align: left;
+  overflow-y: scroll;
+
+  .job-tag {
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 50px;
+    max-width: 120px;
+    height: 17px;
+    margin-left: 20px;
+    line-height: normal; 
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,11 @@
+
+FROM jboss/keycloak
+
+ENV KEYCLOAK_USER admin
+ENV KEYCLOAK_PASSWORD admin 
+ENV KEYCLOAK_IMPORT /keycloak/atlas.json
+ENV KEYCLOAK_LOGLEVEL DEBUG
+
+VOLUME keycloak:/keycloak
+
+EXPOSE 8080

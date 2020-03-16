@@ -1,0 +1,408 @@
+.modal-open {
+    overflow: hidden;
+  }
+  
+  .modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    display: none;
+    overflow: hidden;
+    outline: 0;
+
+    .close {
+      position: absolute;
+      right: 25px;
+      top: 15px;
+      width: 25px;
+      height: 25px;
+      padding: 10px;
+      outline: none;
+    }
+  }
+  
+  .modal-open .modal {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  
+  .modal-dialog {
+    position: relative;
+    margin: 0.5rem;
+    pointer-events: none;
+  }
+  
+  .modal.fade .modal-dialog {
+    transition: -webkit-transform 0.3s ease-out;
+    transition: transform 0.3s ease-out;
+    transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out;
+    -webkit-transform: translate(0, -25%);
+    transform: translate(0, -25%);
+  }
+  
+  .modal.show .modal-dialog {
+  }
+  
+  .modal-dialog-centered {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    min-height: calc(100% - (0.5rem * 2));
+  }
+  
+  .modal-content {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+    background-clip: padding-box;
+    background-color: #F9F9F9;
+    border-radius: 0.3rem;
+    outline: 0;
+    padding: 20px;
+  }
+  
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1040;
+    background-color: #000;
+  }
+  
+  .modal-backdrop.fade {
+    opacity: 0;
+  }
+  
+  .modal-backdrop.show {
+    opacity: 0.5;
+  }
+  
+  .modal-header {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    border-top-left-radius: 0.3rem;
+    border-top-right-radius: 0.3rem;
+  }
+  
+  .modal-header .close {
+    padding: 1rem;
+    margin: -1rem -1rem -1rem auto;
+  }
+  
+  .modal-title {
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+  
+  .modal-body {
+    position: relative;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1rem;
+  }
+  
+  .modal-footer {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-top: 1px solid #e9ecef;
+  }
+  
+  .modal-footer > :not(:first-child) {
+    margin-left: 0.25rem;
+  }
+  
+  .modal-footer > :not(:last-child) {
+    margin-right: 0.25rem;
+  }
+  
+  .modal-scrollbar-measure {
+    position: absolute;
+    top: -9999px;
+    width: 50px;
+    height: 50px;
+    overflow: scroll;
+  }
+
+.modal-job-details {
+    width: 80%;
+    min-width: 480px;
+    margin-left: 10% !important; // important needed to override the reactstrap library
+    margin-top: 10% !important;
+    height: 50%;
+  
+    .contanier-main {
+      width: 100%;
+      height: 770px;
+  
+      .container-title {
+        display: inline-block;
+  
+        .label-id {
+          display: inline-block;
+          font-size: 18px;
+          @extend .f--roboto-bold;
+        }
+  
+        .container-id {
+          display: inline-block;
+          border: solid 1px #BEBEBE;
+          margin-left: 10px;
+          position: relative;
+          border-radius: 3px;
+          background: white;
+
+          .text-id {
+            display: inline-block;
+            margin-left: 10px;
+            margin-right: 10px;
+            padding-right: 25px;
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+
+          }
+
+          .i--icon-copy {
+            top: 10px;
+            right: 0px;
+            margin-right: 10px;
+          }
+        }
+  
+        .button-close {
+          position: absolute;
+          right: 20px;
+          top: 20px;
+          cursor: pointer;
+          width: 30px;
+          height: 30px;
+          text-align: center;
+          line-height: 2;
+        }
+      }
+  
+      .container-tags {
+        margin-top: 20px;
+
+        &.tag-icon {
+          height: 11px;
+        } 
+  
+        .job-tag:first-child() {
+          vertical-align: middle
+        }
+
+        .container-tag {
+          background: blue;
+          display: inline-block;
+  
+          .text-tag {
+            display: inline-block;
+            color: white;
+          }
+  
+          .icon-remove {
+            display: inline-block;
+          }
+        }
+  
+        .button-add {
+          border: solid 1px #e9ecef;
+          color: grey;
+          width: 20px;
+          height: 20px;
+          text-align: center; 
+          cursor: pointer;
+          display: inline-block;
+          margin-left: 20px;
+        }
+
+        .container-add-new-tag {
+          margin-top: 20px;
+
+          input {
+            width: 100px;
+            display: inline-block;
+            height: 20px;
+            margin-left: 10px;
+            padding: 10px;
+            vertical-align: middle;
+
+            &:first-child {
+              margin-left: 0px;
+            }
+
+          }
+
+          button {
+            width: 80px;
+            height: 45px;
+            display: inline-block;
+            background-color: #0FA3B1;
+            font-size: 80%;
+            padding: 10px;
+            line-height: 0.5;
+            margin-left: 10px;
+            border-radius: 5px;
+            vertical-align: middle;
+            cursor: pointer;
+
+            &:last-child {
+              background: #d84247;
+            }
+          }
+        }
+      }
+
+    .container-tabs {
+
+        border-bottom: 3px solid $color-border-bottom;
+      
+        div {
+          display: inline-block;
+          width: 50%;
+        }
+      
+        h3 {
+          display: inline-block;
+          color: $color-text;
+          padding: 10px 25px;
+          margin: 6px 0px;
+          @extend .f--roboto;
+          cursor: pointer;
+      
+          &.active {
+            @extend .f--roboto-bold;
+            font-weight: normal;
+            color: #00A4B2;
+            border-bottom: solid 3px #00A4B2;
+            margin: -6px 0px;
+            padding-bottom: 16px;
+          }
+        }
+      }
+
+      .container-logs {
+        height: 450px;
+        border: solid 1px #e9ecef;
+        border-radius: 8px;
+        margin-top: 20px;
+        overflow-y: scroll;
+        white-space: pre-wrap;
+        padding: 15px;
+        background: white;
+        font-family: 'Inconsolata', monospace;
+      }
+
+      .container-artifacts {
+          margin: 20px;
+
+          .image-artifacts {
+              width: 100%;
+              height: 300px;
+              border: solid 1px #e9ecef;
+              border-radius: 8px;
+              background-color: white;
+          }
+
+          .container-artifacts-table {
+            width: 100%;
+            height: 300px;
+            overflow-y: scroll;
+            margin-top: 25px;
+
+            .table-artifacts-header {
+                background-color: #EDEDED;
+                width: 15%;
+                display: inline-block;
+                height: 40px;
+                vertical-align: middle;
+                border-top-left-radius: 3px;
+                border-top-right-radius: 3px;
+
+                &.last {
+                    width: 85%; 
+                }
+
+                p {
+                    @extend .f--roboto;
+                    font-weight: normal;
+                    width: 100%;
+                    text-align: center;
+                }
+            }
+
+            .table-artifacts-row {
+                background-color: white;
+                height: 40px;
+                border-bottom: solid 3px #f9f9f9;
+
+                .table-artifacts-row-cell {
+                    width: 15%;
+                    display: inline-block;
+                    height: 100%;
+
+                    &.last {
+                        width: 85%; 
+                    }
+    
+                    p {
+                        @extend .f--roboto;
+                        font-weight: normal;
+                        width: 100%;
+                        text-align: center;
+                        float: left;
+                    }
+
+                    .button-download {
+                      width: 30px;
+                      height: 30px;
+                      float: right;
+
+                      div {
+                        width: 20px;
+                        height: 20px;
+                        margin-top: 10px;
+                      }
+                    }
+                }
+
+                
+            }
+          }
+      }
+    }
+  }

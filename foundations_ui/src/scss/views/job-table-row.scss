@@ -1,0 +1,18 @@
+.job-table-row{
+  margin: 0px;
+  padding: 0px;
+  height: $row-height;
+  white-space: nowrap;
+  background: $color-white;
+
+  &:last-child() {
+    border-bottom: 1px solid $color-border-bottom;
+  }
+
+  .job-cell:last-child() {
+    position: relative;
+    left: -30px;
+    width: calc(#{$column-width} + 30px);
+  }
+
+}

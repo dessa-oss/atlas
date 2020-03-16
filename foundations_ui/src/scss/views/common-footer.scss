@@ -1,0 +1,17 @@
+.common-footer {
+  text-align: center;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  background-color: #3A3D3D; 
+  color: $color-white;
+  box-sizing: border-box;
+  height: $footer-height;
+  .dessa-policies {
+    margin-bottom: 10px;
+  }
+  p {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-size: 9px;
+  }
+}

@@ -1,0 +1,247 @@
+.job-details-header {
+  margin-bottom: 30px;
+
+  div.job-details-filter-button {
+    height: 30px;
+  }
+
+  p {
+    display: inline-block;
+    font-size: 14px;
+    margin-left: 5px;
+    width: 150px;
+    word-wrap: break-word;
+    vertical-align: middle;
+  }
+
+  button {
+    height: 35px;
+    vertical-align: middle;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.75;
+    }
+
+    &.drop-shadow {
+      -webkit-box-shadow: 0px 2px 9px 1px rgba(114,167,211,0.57);
+      -moz-box-shadow: 0px 2px 9px 1px rgba(114,167,211,0.57);
+      box-shadow: 0px 2px 10px 1px rgba(114,167,211,0.57);
+    }
+  }
+
+  button:nth-of-type(1) {
+    width: 200px;
+    background: $color-dessa-blue;
+    margin-right: 30px;
+
+    p {
+      margin-left: -5px;
+    }
+
+    span {
+      display: inline-block;
+      height: 18px;
+      width: 18px;
+      
+      cursor: pointer;
+      vertical-align: middle;
+      position: relative;
+      left: 20px;
+    }
+
+  }
+
+  button:nth-of-type(2) {
+    width: 220px;
+    background: $color-dessa-blue;
+    opacity: 1;
+    margin-right: 30px;
+
+    &.grey {
+      background: $color-job-headers;
+      border: none;
+      color: #ffffff;
+    }
+
+    &:hover {
+      opacity: 0.75;
+    }
+
+    span {
+      display: inline-block;
+      height: 15px;
+      width: 15px;
+      cursor: pointer;
+      vertical-align: middle;
+      position: relative;
+    }
+
+    p {
+      margin-left: 0;
+    }
+    
+    &.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+
+  button:nth-of-type(3) {
+    background: #DC5454;
+    padding-left: 15px;
+    padding-right: 15px;
+
+    p {
+      width: 100px;
+    }
+    
+    &.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.job-details-filter-button {
+  float: right;
+  height: 50px;
+  vertical-align: middle;
+  border: 2px solid $color-border-bottom;
+  border-radius: 4px;
+  width: 170px;
+  cursor: pointer;
+  margin-right: 4px;
+
+  .i--icon-arrow-down {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+  }
+
+  p {
+    font-size: 13px;
+    line-height: 30px;
+    width: calc(100% - 30px);
+  }
+}
+
+.job-details-filter-container {
+  text-align: left;
+  padding: 15px 0 5px 15px;
+  width: 400px;
+  height: 400px;
+  position: absolute;
+  left: calc(100% - 420px);
+
+  .filter-container {
+    background: $color-white;
+    height: 100%;
+    padding: 20px;
+  }
+
+  .column-filter-header {
+    margin: 10px;
+    height: 80px;
+
+    input, button {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    input {
+      width: 86%;
+      margin-right: 20px;
+    }
+
+    button {
+      width: 30px;
+      height: 30px;
+    }
+
+    .column-control-buttons {
+      button {
+        float: right;
+        margin-left: 20px;
+        width: 100px;
+        height: 30px;
+        padding: 10px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        margin-right: 0px;
+      }
+    }
+
+    .column-filter-buttons {
+      button {
+        margin-bottom: 0px;
+      }
+    }
+  }
+
+  .column-filter-list {
+    height: 225px;
+    margin-left: 10px;
+    overflow-y: scroll;
+    width: 100%;
+
+    &.empty {
+      overflow: hidden;
+      margin-left: 0;
+    }
+
+    .column-filter-image-empty {
+      width: 100%;
+      height: 100%;
+      background-image: url('../assets/svgs/empty_box_man.svg');
+      background-size: 75%;
+      background-repeat: no-repeat;
+      background-position: center;
+
+      .container-text-empty {
+        width: 100%;
+        padding-left: 25%;
+        padding-top: 20%;
+
+        p {
+         display: block;
+         text-align: center;
+        }
+
+        .column-filter-text-empty {
+          @extend .f--roboto-bold;
+          text-align: center;
+          word-wrap:break-word;
+  
+          &:last-child {
+            @extend .f--roboto;
+            font-weight: normal;
+            padding-top: 5%;
+            font-weight: normal;
+          }
+        }
+      }
+    }
+
+    div {
+      margin: 0px;
+    }
+
+  }
+
+  .column-filter-buttons {
+    button {
+      float: right;
+      margin-left: 10px;
+      width: 100px;
+      padding: 10px;
+      margin-top: 25px;
+    }
+
+    button:nth-of-type(1) {
+      margin-right: 8px;
+    }
+  }
+}

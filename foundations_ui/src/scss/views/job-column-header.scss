@@ -1,0 +1,108 @@
+.job-column-header {
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  height: $column-header-height;
+  margin: auto;
+  width: $column-width;
+  box-sizing: border-box;
+
+  h4 {
+    min-width: $static-column-header-text-width;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    font-weight: 400;
+    position: relative;
+
+    .arrow-down {
+      border-top: 5px solid #595959;
+      position: absolute;
+      bottom: 0;
+      top: 0;
+      margin: auto 10px;
+    }
+
+  }
+
+  .status-header{
+    min-width: $static-status-width;
+    max-width: $static-status-width;
+    padding-left: 0px;
+    padding-right: 0px;
+    overflow: visible;
+  }
+
+  .delete-job-header {
+    min-width: $static-delete-job-width;
+    max-width: $static-delete-job-width;
+    padding-left: 0px;
+    padding-right: 0px;
+    overflow: visible;
+  }
+
+  .static-header {
+    margin: auto;
+    position: relative;
+
+    h4 {
+      &:hover {
+        + .tooltip {
+          display: block;
+        }
+      }
+    }
+
+    .tooltip {
+      top: -3px;
+      left: -15px;
+      display: none;
+      &:hover {
+        display: block;
+      }
+    }
+
+  }
+
+  .static-status-header {
+    max-width: $static-status-width;
+    min-width: $static-status-width;
+    margin: auto;
+    position: relative;
+    
+    h4 {
+      &:hover {
+        + .tooltip {
+          display: block;
+        }
+      }
+    }
+
+    .tooltip {
+      min-width: fit-content;
+      width: fit-content;
+      top: -2px;
+      left: -5px;
+      display: none;
+      &:hover {
+        display: block;
+      }
+    }
+
+    .icon-container {
+      width: 25%;
+
+      .i--icon-filtered {
+        position: relative;
+        left: -5px;
+      }
+    }
+
+    .arrow-down {
+      position: relative;
+      left: 10px;
+    }
+  }
+}

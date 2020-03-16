@@ -1,0 +1,70 @@
+.job-table-row-container {
+  margin: 0px;
+  display: inline-block;
+  vertical-align: middle;
+  border-bottom: 1px solid #DCDCDC;
+  width: 100%;
+  height: calc(100% - 2 * 1px - 36px - 35px - 30px);
+  padding-right: 17px;
+  box-sizing: content-box;
+
+  .job-cell:first-child() {
+    border-left: 1px solid $color-border-bottom;
+  }
+}
+
+.job-table-content {
+  height: calc(90% - #{$header-nav-height} - #{$header-control-height});
+  padding: 0px;
+  width: 100%;
+  overflow-y: hidden;
+  margin-top: 10px;
+}
+
+.job-table-container{
+  height: 100%;
+  min-height: 700px;  
+  min-width: $minimum-table-width;
+  position: relative;
+}
+
+.table-row-number {
+  display: inline-block;
+  vertical-align: top;
+  width: 30px;
+  margin-left: -29px;
+  text-align: center;
+  height: $row-number-height;
+  overflow-y: scroll;
+
+  // this will hide the scrollbar
+  padding-right: 17px;
+  box-sizing: content-box;
+  p {
+    color: $color-9c-grey;
+    height: $row-height;
+    margin: 0px;
+    line-height: $row-height;
+  }
+}
+
+.pagination-controls {
+  position: absolute;
+  bottom: 0;
+  background: $color-background-grey;
+  width: calc(100% - 30px );
+  height: $pagination-height;
+  line-height: $pagination-height;
+  border: 1px solid $color-border-bottom;
+  text-align: right;
+  padding: 0px 15px;
+
+  p {
+    display: inline-block;
+    margin: 0px 15px;
+  }
+
+  div {
+    display: inline-block;
+  }
+}

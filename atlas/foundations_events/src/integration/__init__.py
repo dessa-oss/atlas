@@ -1,0 +1,3 @@
+import foundations
+
+from integration.test_consumers import TestConsumers

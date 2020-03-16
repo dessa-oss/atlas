@@ -1,0 +1,87 @@
+site_name: Foundations Atlas
+docs_dir: docs/api_docs/sources
+site_description: 'Documentation for Foundations Atlas, a platform for end-to-end machine learning. Created by Dessa.'
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: true
+  - toc:
+      permalink: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+theme:
+  name: 'material'
+  custom_dir: 'theme'
+  logo: 'favicon.png'
+  favicon: 'favicon.ico'
+  palette:
+    primary: 'black'
+    accent: 'light blue'
+  font:
+    text: 'Roboto'
+    code: 'Roboto Mono'
+
+
+extra:
+  social:
+    - type: 'medium'
+      link: 'https://medium.com/@dessa_'
+    - type: 'twitter'
+      link: 'https://twitter.com/dessa'
+    - type: 'linkedin'
+      link: 'https://www.linkedin.com/company/dessa1/'
+    - type: 'github'
+      link: https://github.com/dessa-oss
+
+dev_addr: '0.0.0.0:8000'
+
+nav:
+  - GitHub 😸: https://www.github.com/dessa-oss/atlas
+  - Home: index.md
+  - Installation Guide:
+      - Quickstart Local:
+        - Linux/MacOS: linux-mac-installation.md
+        - Windows 10: windows-installation.md
+      - Quickstart Cloud:
+        - AWS: atlas-on-aws.md
+        - GCP: atlas-on-gcp.md
+      - Multinode Installation:
+        - On Premise Installation: team/on-prem-installation.md
+        - AWS Installation: team/aws-installation.md
+      - Uninstallation: uninstallation.md
+  - Usage Guide:
+      - Introduction: atlas-modes/modes.md
+      - Execution: atlas-modes/execution.md
+      - Scheduling: atlas-modes/scheduling.md
+      - GPU usage & concurrency: atlas-modes/gpu.md
+      - Authentication: atlas-modes/authentication.md
+  - GUI: gui.md
+  - Python SDK: sdk-reference/SDK.md
+  - CLI: cli.md
+  - Tutorials:
+      - CIFAR Tutorial:  tutorials/cifar_tutorial.md
+      - Auction Price Regression Tutorial: tutorials/auction_price_regression_tutorial.md
+      - Nvidia RAPIDS Tutorial:  tutorials/rapids_tutorial.md
+      - Audio Deep Fake Detection Tutorial: tutorials/fake_audio_detection_tutorial.md
+      - Image Segmentation Tutorial: tutorials/image_segmentation_tutorial.md
+      - Using Atlas with Apache Spark: https://medium.com/dessa-news/using-foundations-atlas-with-spark-to-create-an-end-to-end-big-data-machine-learning-development-c0220de01a88
+  - Contributing:
+      - Contributing to Atlas: https://github.com/DeepLearnI/atlas#contributing
+      - Setting Up Your Development Environment: https://github.com/DeepLearnI/atlas#development-setup
+      - High level systems overview: https://github.com/DeepLearnI/atlas#systems-overview
+  - Support & Community:
+    - Community: community.md
+    - FAQ: faq.md
+

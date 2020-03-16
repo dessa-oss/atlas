@@ -1,0 +1,2 @@
+
+from foundations_core_rest_api_components.common.models.property_model import PropertyModel
