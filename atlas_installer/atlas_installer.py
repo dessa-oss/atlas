@@ -16,9 +16,8 @@ logger = logging.getLogger("Atlas installer")
 # The following line is needed for the build script to sed the build version
 # Do not modify independently of the build script
 version = "There is no version information available."
-default_url = "https://foundations-public.s3.amazonaws.com"
+default_url = "https://github.com/dessa-oss/atlas/releases/download/{}".format(version)
 default_file = 'atlas.tgz'
-default_readme_url = "https://foundations-public.s3.amazonaws.com/README.md"
 
 # # SHA1 sum of downloaded package for verification
 # SHA1SUM = "REPLACE_WITH_SHA1_SUM_OF_INTENDED_INSTALLATION_FILE"
@@ -655,6 +654,7 @@ if __name__ == "__main__":
     if not args.no_download:
         # Download files
         file_url = "{}/{}".format(args.host, args.file)
+        log.info("Attempting to download the installation package from {}".format(file_url))
 
         if os.path.exists(default_file):
             shutil.move(default_file, 'tmp_' + default_file)
@@ -707,11 +707,6 @@ if __name__ == "__main__":
 
     if not args.no_cleanup:
         cleanup()
-
-    try:
-        download_file_from_url(default_readme_url)
-    except:
-        pass
 
     logger.info("="*80)
     logger.info("Foundations Atlas Installer has finished its tasks.")
