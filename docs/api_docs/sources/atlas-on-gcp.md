@@ -55,34 +55,35 @@ We've put together a script that does a lot of the leg work (create environments
 ```
 #!/bin/bash
 
-wget https://repo.anaconda.com/archive/Anaconda3-2019.07-Linux-x86_64.sh -O ~/miniconda.sh
+wget https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh -O ~/miniconda.sh
 bash $HOME/miniconda.sh -b -p $HOME/miniconda
 eval "$($(pwd)/miniconda/bin/conda shell.bash hook)"
 conda init
 source ~/.bashrc
 
 # create conda env for atlas installation if not already exists
-if [[ $(conda env list | grep atlas_ce_env | awk '{print $1}') != 'atlas_ce_env' ]]; then
+if [[ $(conda env list | grep atlas_env | awk '{print $1}') != 'atlas_env' ]]; then
    conda update -n base -c defaults conda --yes
-   conda create -n atlas_ce_env python=3.6 --yes
+   conda create -n atlas_env python=3.6 --yes
 fi
 
 if [[ `which python` != '$HOME/miniconda/bin/python' ]]; then
   # activate the environment
   eval "$(conda shell.bash hook)"
-  conda activate atlas_ce_env
+  conda activate atlas_env
 fi
 
 echo "using python from `which python`"
 
-if [ ! -f atlas_ce_installer.py ]; then
-   wget https://s3.amazonaws.com/foundations-public/atlas_ce_installer.py
+if [ ! -f atlas_installer.py ]; then
+   wget https://github.com/dessa-oss/atlas/releases/latest/download/atlas_installer.py
+   wget https://github.com/dessa-oss/atlas/releases/latest/download/atlas.tgz
 fi
 
-MAIN_PATH=`which python | grep -o '^.*atlas_ce_env'`/lib/python3.6/site-packages/atlas-server/
+MAIN_PATH=`which python | grep -o '^.*atlas_env'`/lib/python3.6/site-packages/atlas-server/
 
 if [ ! -d ${MAIN_PATH} ]; then
-   yes | python atlas_ce_installer.py
+   yes | python atlas_installer.py --no-download --use-specified-version
 
  # ip fix
  echo -e "import urllib.request\nexternal_ip = urllib.request.urlopen('https://ident.me').read().decode('utf8')" > ${MAIN_PATH}/new_main.py
@@ -92,8 +93,10 @@ if [ ! -d ${MAIN_PATH} ]; then
  mv ${MAIN_PATH}/new_main.py ${MAIN_PATH}/__main__.py
 fi
 
+sudo apt install lsof
+
 if [[ `sudo lsof -i:5555` == '' ]]; then
-   atlas-server start > /dev/null 2>&1 &
+   atlas-server start --auth-server-port 8081 > /dev/null 2>&1 &
 fi
 
 cd
@@ -102,15 +105,20 @@ git clone https://github.com/DeepLearnI/auction-price-regression-tutorial.git
 
 ```
 2. Next up, running `bash install_atlas.sh` will install Atlas and start it running within Docker
-3. Next we'll source the conda environment created by Atlas by running `source ~/.bashrc` and then `conda activate atlas_ce_env`
+3. Next we'll source the conda environment created by Atlas by running `source ~/.bashrc` and then `conda activate atlas_env`
 
 Now Atlas is running and you'll have access to both the `foundations` and `atlas-server` CLI.
+
+> Ensure that your VM has network rules that opens port 5555 to access from the internet
+
+[Creating a firewall rule](https://cloud.google.com/vpc/docs/using-firewalls#creating_firewall_rules)
+
+[Adding rule to running instance](https://cloud.google.com/vpc/docs/add-remove-network-tags#adding_and_removing_tags)
+
 
 You should now be able to view the Atlas Dashboard by going in your browser to `<external.ip.of.your.instance>:5555`. If you ever need to find the IP of your instance you can find it on your GCP console <a target="_blank" href="https://console.cloud.google.com/compute/instances">instance list</a>).
 
 ![SSH into instance](assets/images/gcp-ssh-ip.png)
-
-In the dashboard's project page your should see a project that has been run once. These projects were baked into the script to help get started.
 
 ### Run our first Atlas job
 
@@ -169,7 +177,7 @@ It should open a new VSCode window where we'll be able to select "File" > "Open.
 At the menu bar at the top of VSCode window we'll select the "Terminal" > "New Terminal". Choose "bash" from the drop down that will give us bash shell access to GCP.
 
 * cd into `atlas-tutorials/auction_price_regression_tutorial`
-* Activate the environment with `conda activate atlas_ce_env`
+* Activate the environment with `conda activate atlas_env`
 * Let's test that we can run a job with  `foundations submit scheduler . driver.py`
 * You should see this job in the Atlas GUI
 

@@ -41,6 +41,7 @@ import foundations_core_cli
 from foundations.artifacts import *
 from foundations.local_run import set_up_default_environment_if_present
 
+from foundations.set_tensorboard_logdir import set_tensorboard_logdir
 
 def _append_module():
     import sys

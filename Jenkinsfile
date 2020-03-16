@@ -286,9 +286,23 @@ pipeline{
             }
         }
         stage('Trigger Build Artifacts for Atlas Pipeline') {
-            when{
-                expression { return branch ('master') || tag ("*.*") }
+            when { branch 'master' }
+            steps {
+                container("python3") {
+                    script {
+                        echo "Triggering job for building Atlas Artifacts"
+                        f9s_commit_hash = sh(script: "echo \$(git log --pretty=format:'%h' -n 1)", returnStdout: true).trim()
+                        println("Attempting to trigger pipeline with version of ${f9s_commit_hash}")
+                        build job: "build-artifacts-atlas", wait: false, parameters: [
+                            [$class: 'StringParameterValue', name: 'f9s_commit_hash', value: "${f9s_commit_hash}"],
+                            [$class: 'BooleanParameterValue', name: 'is_release_version', value: env.is_release_version]
+                        ]
+                    }
+                }
             }
+        }
+        stage('Trigger Build Artifacts for Atlas Pipeline (For Release)') {
+            when { tag "*.*" }
             steps {
                 container("python3") {
                     script {
@@ -323,7 +337,7 @@ pipeline{
                     ]
                 ]
 
-                slackSend(channel: '#f9s-builds', attachments: attachments)
+                slackSend(channel: '#dessa-atlas-builds', attachments: attachments)
             }
         }
         success {
