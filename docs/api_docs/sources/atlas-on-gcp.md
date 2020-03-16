@@ -76,8 +76,8 @@ fi
 echo "using python from `which python`"
 
 if [ ! -f atlas_installer.py ]; then
-   wget https://github.com/dessa-oss/atlas/releases/download/0.1/atlas_installer.py
-   wget https://github.com/dessa-oss/atlas/releases/download/0.1/atlas.tgz
+   wget https://github.com/dessa-oss/atlas/releases/latest/download/atlas_installer.py
+   wget https://github.com/dessa-oss/atlas/releases/latest/download/atlas.tgz
 fi
 
 MAIN_PATH=`which python | grep -o '^.*atlas_env'`/lib/python3.6/site-packages/atlas-server/
@@ -109,7 +109,12 @@ git clone https://github.com/DeepLearnI/auction-price-regression-tutorial.git
 
 Now Atlas is running and you'll have access to both the `foundations` and `atlas-server` CLI.
 
-> Ensure that your VM has network rules that opens port 5555 to access from the internet.
+> Ensure that your VM has network rules that opens port 5555 to access from the internet
+
+[Creating a firewall rule](https://cloud.google.com/vpc/docs/using-firewalls#creating_firewall_rules)
+
+[Adding rule to running instance](https://cloud.google.com/vpc/docs/add-remove-network-tags#adding_and_removing_tags)
+
 
 You should now be able to view the Atlas Dashboard by going in your browser to `<external.ip.of.your.instance>:5555`. If you ever need to find the IP of your instance you can find it on your GCP console <a target="_blank" href="https://console.cloud.google.com/compute/instances">instance list</a>).
 
