@@ -7,11 +7,9 @@ This setup is ideal for teams of Machine Learning Engineers who want to run Deep
 If you are looking to setup _only for yourself_ without an authentication system follow the steps [here](aws-installation.md).
 
 ## Prerequisite
-* AWS account for admin
+* AWS account
 
 ## Setup master node
-
-Atlas will need a master node instance, worker instance node(s), as well as an EFS filesystem.
 
 ### Creating master instance on AWS
 
@@ -61,15 +59,20 @@ Now, click **Review and Launch** to go review our instance before launching.
 
 Our instance setup should now look similar to the below.
 
-<!-- ![Review](../assets/images/aws-review-instance-launch.png) -->
-
+![Review](../assets/images/aws-review-instance-launch.png)
 
 * Click "Launch" which should then ask you to create a new key pair
-* Select "Create a new key pair" and give it the name "atlas-team" (note: if you've already used this key name before you can either re-use of, or create another unique key name)
+
+* Select "Create a new key pair" and give it the name "atlas" (note: if you've already used this key name before you can either re-use of, or create another unique key name)
+
 * Download the key pair
+
 * Click "Launch Instances"
+
 * It should then redirect you to the Launch Status page
+
 * Beside "The following instance launches have been initiated" you should see your new instance ID. Click the ID to go to the **Instances** page
+
 * You can find the public IPv4 address of the instance in the lower **Description** panel.
 
 ![aws now launching](../assets/images/aws-now-launching.png)
@@ -87,7 +90,6 @@ We'll also need to setup an EFS filesystem that we can use as a central storage 
 
 ![efs creation](../assets/images/atlas-team-efs.png)
 
-
 * After creation click on **On-premise mount instructions**, and it will provide a few commands that will mount the filesystem. You'll need the `sudo mount -t nfs4...` command in a few steps, so either copy it or keep this tab open for easy access.
 
 ![mount efs](../assets/images/mount-instructions.png)
@@ -96,17 +98,17 @@ We'll also need to setup an EFS filesystem that we can use as a central storage 
 
 The following outlines how to setup Atlas on the master node:
 
-* SSH into the master instance `ssh -i /path/to/key/<key_name>.pem  ubuntu@ipv4.of.ec2.instance`
+* SSH into the master instance `ssh -i /path/to/key/<key_name>.pem ubuntu@ipv4.of.ec2.instance`
 
-* Download the installer onto the instance (both the atlas_installer.py and atlas_team.tgz). These two files are provided by Dessa.
+*  Download the installer file (atlas_installer.py) on to your machine from our [Github Releases](https://github.com/dessa-research/atlas/releases) page.
 
-* Create a conda environment: `conda create -y -n atlas-team python=3.6.8`
+* Create a conda environment: `conda create -y -n atlas python=3.6.8`
 
 * Run `echo ". /home/ubuntu/anaconda3/etc/profile.d/conda.sh" >> ~/.bashrc` and then `source ~/.bashrc` to make sure conda can be used in your shell
 
-* Activate the conda environment `conda activate atlas-team`
+* Activate the conda environment `conda activate atlas`
 
-* Run the installer: `python atlas_installer.py -dl`
+* Run the installer: `python atlas_installer.py`
 
 * Backup `~/.foundations` directory: `cp -r ~/.foundations ~/.BACK_foundations`
 
@@ -117,6 +119,10 @@ The following outlines how to setup Atlas on the master node:
 * Create a directory as follows: `mkdir ~/f9s_work_dir`
 
 ### Updating master node configurations
+
+By default, the configuration files created by running the Atlas installer are setup for a local configuration. To get everything to communicate
+with the required remote locations, we have to update the configuration files manually. Specifically, this includes pointing to the remote Redis
+instance and giving the paths to the necessary directories.
 
 **~/.foundations/config/local_docker_scheduler/database.config.yaml**
 
@@ -142,40 +148,26 @@ The following outlines how to setup Atlas on the master node:
 
 ### Starting Atlas Server
 
-Set environment variables
+Due to the fact that Atlas is setup to run locally out of the box, we must give it some extra information to kick things into a distributed mindset.
 
-* `export HOST_ADDRESS=http://<MASTER-NODE-PRIVATE-IP>:5000/`
+1. Set environment variables
 
-* `export REDIS_ADDRESS=<MASTER-NODE-PRIVATE-IP>`
+  * `export HOST_ADDRESS=http://<MASTER-NODE-PRIVATE-IP>:5000/`
 
-* `export NUM_WORKERS=0`, which will mean this master node will not be used for computing jobs. Default is 1 if not provided
+  * `export REDIS_ADDRESS=<MASTER-NODE-PRIVATE-IP>`
 
-* Run `atlas-server start` to start the Atlas server
+  * `export NUM_WORKERS=0`, which will mean this master node will not be used for computing jobs. Default is 1 if not provided
 
-### Log into Atlas' authentication system
+2. Run `atlas-server start` to start the Atlas server
 
-!!! danger
-    DO NOT SKIP THIS STEP. 
-    
-    By default Atlas uses the following publicly available username and password. Make sure you change them.
+!!! note "Enabling authentication"
+    If you want to run Atlas with authentication, you can run `atlas-server start -p`. More information can be found [here](https://docs.atlas.dessa.com/en/latest/atlas-modes/authentication/). **Authentication is only needed on the master node.**
 
-Atlas runs a Keycloak authentication server for managing users and login.
-
-* Login to Keycloak via the admin console: `https://<master_node_external_ip>:8443`. When first spun up the username and password will both `admin`
-
-* We recommend changing the admin password upon first login
-
-* You can also create a user at this point. To do so, in the admin console go to Users > Add User
-
-### Add new users
-
-After logging into the authentication system, the admin user can create new Atlas users:
-
-* In the sidebar, go to `Users` > `Add user`
-
-* Enter information for the new user and save
-
-* Go to `Credentials` tab to configure a password for the new user
+!!! note "Distributed scheduler"
+    To achieve a multi-node scheduler, a lookup table if maintained within the Redis provided by `REDIS_ADDRESS`. This lookup table allows for discovery
+    of what scheduler node (via `HOST_ADDRESS`) is running which job at a specific time. This means that when a request comes into the master node for
+    information on a particular job, the information provided through these environment variables allow the request to be proxied to the correct scheduler
+    instance.
 
 
 ## Setup worker node
@@ -188,26 +180,32 @@ For our multi-node system, we can spin up as many worker instances as needed. Be
 
 2. SSH into the worker instance `ssh -i /path/to/key/<key_name>.pem ubuntu@ipv4.of.ec2.instance`
 
-3. Download the installer onto the instance (both atlas_installer.py and atlas_team.tgz). These two files are provided by Dessa.
+3. Download the installer file (atlas_installer.py) on to your machine from our [Github Releases](https://github.com/dessa-research/atlas/releases) page.
 
-4. Create a conda environment: `conda create -y -n atlas-team python=3.6.8`
+4. Create a conda environment: `conda create -y -n atlas python=3.6.8`
 
-5. Activate the conda environment: `conda activate atlas-team`
+5. Activate the conda environment: `conda activate atlas`
 
-6. Run the installer: `python atlas_installer.py -dl`. Using `-dl` tells the Atlas installer: 
-
-    `-d`: no download
-
-    `-l`: use latest
+6. Run the installer: `python atlas_installer.py`
 
 7. Mount the EFS system to `~/.foundations`. Do this by using the mount command that was provided after creating the EFS filesytem: `sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-b563e834.efs.us-east-1.amazonaws.com:/ ~/.foundations`
 
 8. Set environment variables
+
     * `export HOST_ADDRESS=http://<NODES-IP>:5000/`
+
     * `export REDIS_ADDRESS=<MASTER-NODE-PRIVATE-IP>`
+
     * `export NUM_WORKERS=1`
 
-9. Run `atlas-server start` to start the Atlas server
+9.  Run `atlas-server start` to start the Atlas server
+
+!!! danger "Workers"
+    The `NUM_WORKERS` environment variable dictates how many jobs can be run concurrently on this machine. Feel free to adjust
+    how you see fit but be aware that Atlas does not manage RAM or CPU resources for you.
+    
+!!! note "GPUs"
+    To use GPUs, you can use `atlas-server start -g` as documented [here](https://docs.atlas.dessa.com/en/latest/atlas-modes/gpu/).
 
 
 ## Getting users set up
@@ -232,7 +230,7 @@ The following steps outline the configurations for a user to have on their clien
 * Update the `scheduler_url` value with the master node's external IP, and the port should `5558` 
 
 
-Example of `team.config.yaml`:
+Example of configuration yaml (let's call it `remote.config.yaml`):
 
     cache_config:
         end_point: /cache_end_point
@@ -242,13 +240,13 @@ Example of `team.config.yaml`:
     scheduler_url: http://<master_node_external_ip>:5558
     working_dir_root: /home/ubuntu/f9s_work_dir
 
-The `team.config.yaml` file should be put on the user's machine at `~/.foundations/config/submissions/`.
+The file configured to communicate with the Atlas environemtn should be put on the user's machine at `~/.foundations/config/submissions/`. If we stick with `remote.config.yaml`, it will be easier to understand the tutorial.
 
 To test that job submission is working, the user can submit a job with the following steps:
 
 * On the user's machine, make sure the conda environment is enabled with Atlas installed, then run `foundations init <project_name>` to create a simple project with Foundations' scaffolding
 
-* `cd` into the project directory, and run `foundations submit team . main.py`, where `team` is the first part of the name of the config file we just added
+* `cd` into the project directory, and run `foundations submit remote . main.py`, where `remote` is the first part of the name of the config file we just added
 
 * This should submit a job to our master node, which should then schedule that to the worker.
 
@@ -256,7 +254,7 @@ To test that job submission is working, the user can submit a job with the follo
 
 ![first job](../assets/images/first_atlas_project.png)
 
-You should be all setup with Atlas Team now. To conclude, here's what we've done:
+You should be all setup with multi-node Atlas now. To conclude, here's what we've done:
 
 * A master machine for orchestrating job execution
 * A worker node for executing jobs
@@ -267,7 +265,7 @@ You should be all setup with Atlas Team now. To conclude, here's what we've done
 
 To remove a specific worker node, just terminate the specific worker instance from the AWS console.
 
-To shut down Atlas Team from AWS. Make sure to shut down all instances and related infrastructure when wanting to stop incurring all AWS costs. Make sure to remove all of the following:
+To shut down Atlas from AWS. Make sure to shut down all instances and related infrastructure when wanting to stop incurring all AWS costs. Make sure to remove all of the following:
 
 - Master node
 - Worker node(s)
