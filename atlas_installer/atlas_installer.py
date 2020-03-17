@@ -654,7 +654,7 @@ if __name__ == "__main__":
     if not args.no_download:
         # Download files
         file_url = "{}/{}".format(args.host, args.file)
-        log.info("Attempting to download the installation package from {}".format(file_url))
+        logger.info("Attempting to download the installation package from {}".format(file_url))
 
         if os.path.exists(default_file):
             shutil.move(default_file, 'tmp_' + default_file)
