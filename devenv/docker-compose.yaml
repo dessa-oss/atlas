@@ -76,6 +76,8 @@ services:
         target: /logs
   tb_api:
     image: us.gcr.io/atlas-ce/tensorboard-rest-api:latest
+    ports:
+      - "5001:5000"
     volumes:
       - type: bind
         source: .foundations/job_data

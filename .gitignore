@@ -62,7 +62,6 @@ tmp
 foundations.zip
 .vscode
 .venv/
-.env
 **/spike*
 .history
 site/
@@ -92,7 +91,6 @@ atlas/testing/foundations_home/logs
 !atlas/testing/foundations_home/config/submission/*.config.yaml
 yarn.lock
 .mypy_cache/
-.env
 .venv/
 Pipfile*
 **/*.whl
@@ -130,10 +128,10 @@ atlas/foundations_rest_api/src/acceptance/v2beta/fixtures/remote_foundations_hom
 !foundations_ui/cypress.json
 testing/auth_acceptance/foundations_home/logs/*
 
-devenv/.foundations/job_data/archive/
-devenv/.foundations/local_docker_scheduler/work_dir/
-devenv/.foundations/logs/
-devenv/.foundations/credentials.yaml
+# devenv/.foundations/job_data/archive/
+# devenv/.foundations/local_docker_scheduler/work_dir/
+# devenv/.foundations/logs/
+# devenv/.foundations/credentials.yaml
 atlas/testing/auth_acceptance/foundations_home/logs/*
 atlas/testing/foundations_home/credentials.yaml
 atlas/testing/foundations_home/config/submission/scheduler.config.yaml
@@ -141,3 +139,6 @@ atlas/testing/foundations_home/config/execution/default.config.yaml
 
 !atlas/testing/stageless_acceptance/fixtures/stageless_project_nested_project_code/data/*
 !atlas/testing/stageless_acceptance/fixtures/stageless_project_nested_project_code/data/*/*
+
+# We should unignore this at some point and enforce some rules for OSS
+.pylintrc

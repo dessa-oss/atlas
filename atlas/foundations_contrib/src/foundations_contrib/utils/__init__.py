@@ -72,7 +72,7 @@ def file_archive_name_with_additional_prefix(prefix, additional_prefix, name):
     return file_archive_name(prefix, additional_prefix + "/" + name)
 
 
-def run_command(command: str, timeout: int = 60, **kwargs) -> sp.CompletedProcess:
+def run_command(command: str, timeout: int = 60, quiet: bool = False, **kwargs) -> sp.CompletedProcess:
     fixed_kwargs = {
         "shell": True,
         "stdout": sp.PIPE,
@@ -84,11 +84,13 @@ def run_command(command: str, timeout: int = 60, **kwargs) -> sp.CompletedProces
     try:
         result = sp.run(command, **kwargs)
     except sp.TimeoutExpired as error:
-        print("Command timed out.")
-        print(error.stdout.decode())
+        if not quiet:
+            print("Command timed out.")
+            print(error.stdout.decode())
         raise Exception(error.stderr.decode())
     except sp.CalledProcessError as error:
-        print(f"Command failed: \n\t{command}\n")
+        if not quiet:
+            print(f"Command failed: \n\t{command}\n")
         raise Exception(error.stderr.decode())
     return result
 

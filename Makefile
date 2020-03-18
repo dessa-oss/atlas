@@ -1,4 +1,3 @@
-
 .PHONY: devenv-start
 devenv-start: devenv-stop
 	cd devenv && ./configure.sh && ./start_devenv.sh
@@ -21,3 +20,7 @@ integration-tests:
 .PHONY: acceptance-tests
 acceptance-tests:
 	./run_acceptance_tests.sh
+
+.PHONY: cypress-tests
+cypress-tests:
+	./devops/run_cypress_test.sh

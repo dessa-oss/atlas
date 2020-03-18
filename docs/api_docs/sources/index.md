@@ -1,7 +1,7 @@
 # Foundations Atlas
 
 <p align="center">
-  <img src="assets/images/dessa-square-logo-new.png">
+  <img src="assets/images/dessa-square-logo.png">
 </p>
 
 <!-- Place this tag in your head or just before your close body tag. -->

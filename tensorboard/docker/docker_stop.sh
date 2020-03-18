@@ -1,1 +1,0 @@
-docker stop tensorboard-server tensorboard-rest-api

@@ -30,10 +30,11 @@ class TestTensorboardEndpoint(Spec):
     
     @let
     def deployment(self):
+    
         return foundations.submit(
             project_name='tensorboard',
             entrypoint='tensorboard_job',
-            job_dir='fixtures/tensorboard_job'
+            job_directory='acceptance/tensorboard_job',
         )
 
     @let

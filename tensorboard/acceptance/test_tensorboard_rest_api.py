@@ -1,93 +1,98 @@
-
-import requests
+import os
 from subprocess import PIPE
 
-from foundations_spec import Spec, set_up, tear_down
-from foundations_contrib.utils import run_command, cd
-from .mixins.container_test_mixin import ContainerTestMixin
+import requests
 
-class TestTensorboardRestAPI(Spec, ContainerTestMixin):
+from foundations_spec import Spec, set_up_class, tear_down_class
+from foundations_contrib.utils import run_command, cd, wait_for_condition
+from dotenv import load_dotenv
 
-    API_CONTAINER_NAME = 'tensorboard-rest-api'
-    API_IMAGE_NAME = 'tensorboard-rest-api'
+load_dotenv()
+TB_API_PORT = os.getenv("TB_API_PORT")
+SERVICE_NAME = "tb_api"
 
-    SERVER_CONTAINER_NAME = 'tensorboard-server'
-    SERVER_IMAGE_NAME = 'tensorboard-server'
 
-    @set_up
-    def set_up(self):
-        self._create_temp_directories('archive', 'logs')
+class TestTensorboardRestAPI(Spec):
 
-        volumes_binds = {
-            self._temp_directories['archive']: {
-                'bind': '/archive',
-                'mode': 'rw'
-            },
-            self._temp_directories['logs']: {
-                'bind': '/logs',
-                'mode': 'rw'
-            }
-        }
+    tag = "latest"
 
-        with cd('docker/tensorboard_rest_api'):
-            run_command(f'tensorboard/docker/tensorboard_rest_api/build_image.sh {self.repo} {self.tag}', cwd='../../..')
-        super().set_up_container(self.API_IMAGE_NAME, name=self.API_CONTAINER_NAME, ports={5000: 5000}, volumes=volumes_binds)
+    @set_up_class
+    def set_up(cls):
+        run_command(f"docker-compose up -d --force-recreate {SERVICE_NAME}")
+        run_command(
+            f"docker-compose logs -f > .foundations/logs/{SERVICE_NAME}.log 2>&1 &"
+        )
+        wait_for_condition(
+            cls.service_is_ready,
+            timeout=10,
+            fail_hook=lambda: Spec().fail("Tensorboard API failed to start."),
+        )
 
-        with cd('docker/tensorboard_server'):
-            run_command(f'tensorboard/docker/tensorboard/build_image.sh {self.repo} {self.tag}', cwd='../../..')
-        super().set_up_container(self.SERVER_IMAGE_NAME, name=self.SERVER_CONTAINER_NAME, ports={6006: 5959}, volumes=volumes_binds)
+    @staticmethod
+    def service_is_ready():
+        try:
+            container_logs = run_command(
+                f"docker-compose logs {SERVICE_NAME}"
+            ).stdout.decode()
+            assert f"* Running on http://0.0.0.0:5000/" in container_logs
+        except AssertionError:
+            return False
+        else:
+            return True
 
-    @tear_down
-    def tear_down(self):
-        super().tear_down()
-        self._cleanup_temp_directories()
-
-    def test_starts_tensorboard_rest_api(self):
-        self.containers[self.API_CONTAINER_NAME].reload()
-        container_logs = self.wait_for_container_logs(self.API_CONTAINER_NAME, retries=5)
-        self.assertIn('* Running on http://0.0.0.0:5000/', container_logs)
+    @tear_down_class
+    def tear_down_class(cls):
+        run_command(f"docker-compose stop {SERVICE_NAME}")
+        run_command(f"docker-compose rm -f {SERVICE_NAME}")
 
     def test_tensorboard_rest_api_creates_symbolic_links_in_logdir_to_archive(self):
-        test_file_content = 'hello'
-        job_id = 123
-        sync_dir_name = '__tensorboard__'
-        sync_dir = f'/archive/archive/{job_id}/synced_directories/{sync_dir_name}'
-        test_file_path = f'{sync_dir}/test.txt'
-        test_link_path = f'/logs/{job_id}/test.txt'
+        test_file_content = "this is a test"
 
-        create_test_file = (
-            f'docker exec -it {self.API_CONTAINER_NAME} '
-            f'sh -c "mkdir -p {sync_dir} && echo \"{test_file_content}\" > {test_file_path}"')
+        self._create_test_file_in_mounted_archive(test_file_content)
+        self._hit_the_create_sym_links_endpoint()
 
-        run_command(create_test_file)
+        cat_linked_file = (
+            f"docker-compose exec {SERVICE_NAME} cat /logs/test_job/test.txt"
+        )
+        linked_file_content = run_command(cat_linked_file).stdout.decode().strip()
 
+        self.assertEqual(test_file_content, linked_file_content)
+
+    @staticmethod
+    def _create_test_file_in_mounted_archive(test_file_content):
+        sync_dir = (
+            f".foundations/job_data/archive/test_job/synced_directories/__tensorboard__"
+        )
+        os.makedirs(sync_dir, exist_ok=True)
+        with open(f"{sync_dir}/test.txt", "w") as test_file:
+            test_file.write(test_file_content)
+
+    @staticmethod
+    def _hit_the_create_sym_links_endpoint():
         payload_from_frontend = {
-            'tensorboard_locations': [
+            "tensorboard_locations": [
                 {
-                    'job_id': f'{job_id}',
-                    'synced_directory': f'archive/{job_id}/synced_directories/__tensorboard__'
+                    "job_id": "test_job",
+                    "synced_directory": f"archive/test_job/synced_directories/__tensorboard__",
                 }
             ]
         }
         try:
             _make_request(
-                'POST',
-                f'http://localhost:5000/create_sym_links',
-                json=payload_from_frontend)
+                "POST",
+                f"http://localhost:{TB_API_PORT}/create_sym_links",
+                json=payload_from_frontend,
+            )
         except requests.HTTPError as e:
-            msg = f'HTTP Error -> {e.response.text}'
+            msg = f"HTTP Error -> {e.response.text}"
             raise AssertionError(msg)
-
-        cat_linked_file = (f'docker exec {self.SERVER_CONTAINER_NAME} '
-                           f'cat {test_link_path}')
-        linked_file_content = run_command(cat_linked_file).stdout.decode().strip()
-
-        self.assertEqual(test_file_content, linked_file_content)
 
 
 def _make_request(method: str, url: str, **kwargs) -> requests.Response:
     """Make a request. Raises an exception if unsuccessful."""
-    resp = requests.request(method, url, **kwargs)
-    if resp.status_code < 200 or resp.status_code >= 300:
-        resp.raise_for_status()
-    return resp
+    res = requests.request(method, url, **kwargs)
+    try:
+        res.raise_for_status()
+    except requests.HTTPError as exc:
+        raise exc
+    return res
