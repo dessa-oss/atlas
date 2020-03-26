@@ -1,6 +1,6 @@
 FROM python:3.7-alpine
 
-MAINTAINER Eric Kin Ho Lee
+LABEL maintainer="Eric Kin Ho Lee"
 
 RUN apk --update add --no-cache g++ make
 
