@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export build_version=$(python get_version.py)
+release_version=$(echo $build_version | sed "s/.dev[0-9]*//")
 root_dir="$(pwd)"
 base_dir="${root_dir}/atlas_installer"
 working_dir="${base_dir}/dist"
@@ -8,8 +9,8 @@ working_dir="${base_dir}/dist"
 rm -rf $working_dir \
     && mkdir -p $working_dir \
     && echo "Building atlas installer script..." \
-    && echo "Copying the current atlas version (${build_version}) into the installer file" \
-    && sed "s/There is no version information available./${build_version}/g" \
+    && echo "Copying the current atlas version (${release_version}) into the installer file" \
+    && sed "s/There is no version information available./${release_version}/g" \
         $base_dir/atlas_installer.py > $working_dir/atlas_installer_before_notice.py \
     && echo "Compressing the notice into a tar file" \
     && tar -zcvf $working_dir/licenses.tgz NOTICE.md > /dev/null 2>&1 \
