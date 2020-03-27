@@ -2,36 +2,31 @@ version: "3.7"
 services:
   tb_server:
     image: ${DOCKER_REGISTRY}/tensorboard-server:latest
-    entrypoint: tensorboard --logdir /logs
     ports:
       - "${TB_SERVER_PORT}:6006"
     volumes:
       - type: bind
-        source: .foundations/job_data
+        source: ${JOB_DATA}
         target: /archive
       - type: bind
-        source: .foundations/tensorboard/work_dir
+        source: ${LOGDIR}
         target: /logs
     build: ./tensorboard_server
-    environment: 
-      - TB_SERVER_PORT
   tb_api:
     image: ${DOCKER_REGISTRY}/tensorboard-rest-api:latest
     ports:
       - "${TB_API_PORT}:5000"
     volumes:
       - type: bind
-        source: .foundations/job_data
+        source: ${JOB_DATA}
         target: /archive
       - type: bind
-        source: .foundations/tensorboard/work_dir
+        source: ${LOGDIR}
         target: /logs
     deploy:
       resources:
         limits:
           memory: 300m
-    command: "python /app/tensorboard_rest_api_server.py /archive"
     environment: 
-      - TB_API_PORT
       - DEBUG
     build: ./tensorboard_rest_api
