@@ -22,4 +22,4 @@ VOLUME /archive
 
 EXPOSE 5000
 
-CMD ["python", "/app/tensorboard_rest_api_server.py"]
+CMD ["python", "/app/tensorboard_api.py"]

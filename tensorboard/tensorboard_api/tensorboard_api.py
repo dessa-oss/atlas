@@ -4,7 +4,6 @@ from typing import List
 import sys
 
 from flask import Flask, request
-from dotenv import load_dotenv
 
 app = Flask(__name__)
 
@@ -45,7 +44,6 @@ def run_command(command: str, timeout: int=60, **kwargs) -> sp.CompletedProcess:
     return result
 
 if __name__ == "__main__":
-    load_dotenv()
     ARCHIVE_ROOT = sys.argv[1] if len(sys.argv) > 1 else '/archive' 
     PORT = sys.argv[2] if len(sys.argv) > 2 else 5000
     DEBUG = bool(int(os.getenv('DEBUG', 0)))
