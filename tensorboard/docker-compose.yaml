@@ -1,6 +1,7 @@
 version: "3.7"
 services:
   tb_server:
+    build: ./tensorboard_server
     image: ${DOCKER_REGISTRY}/tensorboard-server:latest
     ports:
       - "${TB_SERVER_PORT}:6006"
@@ -11,9 +12,9 @@ services:
       - type: bind
         source: ${LOGDIR}
         target: /logs
-    build: ./tensorboard_server
   tb_api:
-    image: ${DOCKER_REGISTRY}/tensorboard-rest-api:latest
+    build: ./tensorboard_api
+    image: ${DOCKER_REGISTRY}/tensorboard-api:latest
     ports:
       - "${TB_API_PORT}:5000"
     volumes:
@@ -29,4 +30,3 @@ services:
           memory: 300m
     environment: 
       - DEBUG
-    build: ./tensorboard_rest_api
