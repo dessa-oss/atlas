@@ -24,9 +24,5 @@ services:
       - type: bind
         source: ${LOGDIR}
         target: /logs
-    deploy:
-      resources:
-        limits:
-          memory: 300m
     environment: 
       - DEBUG
