@@ -393,11 +393,11 @@ def dump_all_config_files(advanced, use_specified_version):
                 "container": TENSORBOARD_SERVER_CONTAINER_NAME
             },
             "authentication_server": {
-                "image": f"{AUTHENTICATION_SERVER_IMAGE_NAME}:{AUTHENTICATION_SERVER_IMAGE_TAG}",
+                "image": "{}:{}".format(AUTHENTICATION_SERVER_IMAGE_NAME, AUTHENTICATION_SERVER_IMAGE_TAG),
                 "container": AUTHENTICATION_SERVER_CONTAINER_NAME
             },
             "authentication_proxy": {
-                "image": f"{AUTHENTICATION_PROXY_IMAGE_NAME}:{AUTHENTICATION_PROXY_IMAGE_TAG}",
+                "image": "{}:{}".format(AUTHENTICATION_PROXY_IMAGE_NAME, AUTHENTICATION_PROXY_IMAGE_TAG),
                 "container": AUTHENTICATION_PROXY_CONTAINER_NAME
             }
         }
