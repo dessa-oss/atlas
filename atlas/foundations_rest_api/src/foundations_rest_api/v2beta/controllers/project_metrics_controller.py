@@ -64,7 +64,7 @@ class ProjectMetricsController(object):
         from foundations_internal.fast_serializer import deserialize
 
         for metric_key, serialized_metric in self._serialized_project_metrics().items():
-            job_id, metric_name = metric_key.decode().split(":")
+            job_id, metric_name = metric_key.decode().split(":", 1)
             timestamp, value = deserialize(serialized_metric)
             yield {
                 "job_id": job_id,
