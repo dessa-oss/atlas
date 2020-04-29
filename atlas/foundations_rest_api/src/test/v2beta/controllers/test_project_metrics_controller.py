@@ -52,6 +52,20 @@ class TestProjectMetricsController(Spec):
 
         self.assertEqual(expected_output, self.controller.index().as_json())
 
+    def test_index_returns_timestamp_ordered_metrics_when_metric_name_has_colons(self):
+        self.controller.params = {'project_name': self.project_name}
+        self._log_metric(33, 'job13', 'metric77:007', 123.4)
+
+        expected_output = {
+            'all_metric_names': ['metric77:007'],
+            'metric_query': [{
+                'metric_name': 'metric77:007',
+                'values': [['job13', 123.4]]
+            }]
+        }
+
+        self.assertEqual(expected_output, self.controller.index().as_json())
+
     def test_index_returns_timestamp_ordered_metrics_different_metrics(self):
         self.controller.params = {'project_name': self.project_name}
         self._log_metric(321, 'job1', 'metric1', 432)
