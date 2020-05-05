@@ -21,7 +21,12 @@ function check_status_of_process() {
 # ***************************************************************************************************************
 # Launch Docker Containers
 
-docker-compose up -d
+if docker-compose up -d ; then
+  echo "Containers up."
+else
+  echo "Containers failed to start"
+  exit 1
+fi
 
 # ***************************************************************************************************************
 # Launch REST API
