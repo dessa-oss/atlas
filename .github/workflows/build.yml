@@ -16,7 +16,10 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
+    strategy:
+      # You can use PyPy versions in python-version. For example, pypy2 and pypy3
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -25,12 +28,11 @@ jobs:
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7
-
+        python-version: ${{ matrix.python-version }}
+        
     - name: Install requirements
       run: pip install -r requirements_test.txt
 
-    # Runs a single command using the runners shell
     - name: Run unit tests
       run: |
         . ./activate_dev_env.sh
