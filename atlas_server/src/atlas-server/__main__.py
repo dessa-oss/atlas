@@ -419,7 +419,7 @@ class CLI:
         if args.enable_gpu:
             scheduler_spec['runtime'] = 'nvidia'
 
-        # specs.append(scheduler_spec)
+        specs.append(scheduler_spec)
 
         if not args.disable_tensorboard:
             specs.append(
