@@ -232,11 +232,6 @@ class CLI:
         if args.scheduler_host:
             self._atlas_host = args.scheduler_host
 
-        if args.authentication:
-            auth_proxy_entrypoint = ['python', '-m', 'auth_proxy']
-        else:
-            auth_proxy_entrypoint = ['python', '-m', 'auth_proxy', '-n']
-
         self.stop(args)
 
         self._load_configs()
@@ -246,7 +241,7 @@ class CLI:
         atexit.register(self._stop_and_remove_docker_objects)
 
         try:
-            specs = self._container_specs(args.dashboard_port, args.archive_port, args.tensorboard_port, args.enable_gpu, args.disable_tensorboard, num_workers, cuda_devices, auth_proxy_entrypoint, args.auth_server_port)
+            specs = self._container_specs(args, num_workers, cuda_devices)
         except KeyError as e:
             logger.error(f"Cannot find key in configuration files: {e.args[0]}")
             sys.exit(1)
@@ -327,7 +322,7 @@ class CLI:
                 logger.info("Shutting down...")
             sys.exit()
 
-    def _container_specs(self, dashboard_port, archive_port, tensorboard_port, enable_gpu, disable_tensorboard, num_workers, cuda_devices, auth_proxy_entrypoint, auth_server_port):
+    def _container_specs(self, args, num_workers, cuda_devices):
         import os
 
         docker_spec = self._config['docker']
@@ -336,22 +331,16 @@ class CLI:
         archive_host = self._atlas_host
         tb_host = self._atlas_host
 
-        n1_gui_p = dashboard_port
+        n1_gui_p = args.dashboard_port
         n2_scheduler_p = self._config['docker']['scheduler']['port']
         n3_redis_p = self._config['docker']['redis']['port']
-        n4_archive_p = archive_port
-        n6_tensorboard_server = tensorboard_port
+        n4_archive_p = args.archive_port
+        n6_tensorboard_server = args.tensorboard_port
         p3 = self._submission_config['job_results_root']
         p8 = self._config['tensorboard_work_dir']
 
         redis_internal_port = 6379
         tensorboard_rest_internal_port = 5000
-
-        # # Find where the keycloak configuration path is
-        # os.environ["FOUNDATIONS_COMMAND_LINE"] = "True"
-        # import foundations
-        # foundations_path = foundations.__file__
-        # foundations_keycloak_config_path = foundations_path.replace("foundations/__init__.py", "foundations_contrib/authentication/keycloak")
 
         specs = [
             {
@@ -375,7 +364,7 @@ class CLI:
                                 f"FOUNDATIONS_TENSORBOARD_HOST=http://{tb_host}:{n6_tensorboard_server}",
                                 f'FOUNDATIONS_DEPLOYMENT_ENV=local_docker_scheduler_plugin',
                                 f"FOUNDATIONS_SCHEDULER_URL=http://{docker_spec['scheduler']['container']}:5000",
-                                f"AUTH_SERVER_URL=http://{docker_spec['authentication_server']['container']}:{auth_server_port}/auth"],
+                                f"AUTH_SERVER_URL=http://{docker_spec['authentication_server']['container']}:{args.auth_server_port}/auth"],
                 'mem_limit': '300m',
                 'command': '/bin/sh -c "/configs/envsubst.sh && /start.sh"'},
             {
@@ -395,18 +384,8 @@ class CLI:
                     "PROXY_CONFIG=/config/proxy_config.yaml",
                     "ROUTE_MAPPING=/config/route_mapping.yaml"
                 ],
-                'entrypoint': auth_proxy_entrypoint
+                'entrypoint': f"python -m auth_proxy{'' if args.authentication else ' -n'}"
             },
-            {
-                'image': docker_spec['authentication_server']['image'],
-                'name': docker_spec['authentication_server']['container'],
-                'environment': [f"KEYCLOAK_USER=admin",
-                                f"KEYCLOAK_PASSWORD=admin",
-                                f"KEYCLOAK_IMPORT=/config/atlas.json",
-                                f"KEYCLOAK_LOGLEVEL=DEBUG"],
-                'ports': {8080: auth_server_port, 8443: 8443},
-                'volumes': {self._config['auth_server_config_dir']: {'bind': '/config', 'mode': 'rw'}},
-            }
         ]
 
         scheduler_spec = \
@@ -437,12 +416,12 @@ class CLI:
                 'mem_limit': '300m'
             }
 
-        if enable_gpu:
+        if args.enable_gpu:
             scheduler_spec['runtime'] = 'nvidia'
 
-        specs.append(scheduler_spec)
+        # specs.append(scheduler_spec)
 
-        if not disable_tensorboard:
+        if not args.disable_tensorboard:
             specs.append(
                 {
                     'image': docker_spec['tensorboard_server']['image'],
@@ -466,6 +445,22 @@ class CLI:
                 }
             )
 
+        if args.authentication:
+            specs.append(
+                {
+                    'image': docker_spec['authentication_server']['image'],
+                    'name': docker_spec['authentication_server']['container'],
+                    'environment': ["KEYCLOAK_LOGLEVEL=DEBUG"],
+                    'ports': {8080: args.auth_server_port, 8443: 8443},
+                    'volumes': {
+                        convert_win_path_to_posix(Path(self._config['persistent_storage'] + '/h2/data')) 
+                        if is_windows() 
+                        else self._config['persistent_storage'] + '/h2/data': {
+                            'bind': '/opt/jboss/keycloak/standalone/data', 'mode': 'rw'
+                            },
+                        },
+                }
+            )
         return specs
 
     @staticmethod
