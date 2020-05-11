@@ -38,6 +38,9 @@ class FoundationsContext(object):
     def job_id(self):
         return self.pipeline_context().file_name
 
+    def set_job_id(self, value):
+        self.pipeline_context().file_name = value
+
     def job_resources(self):
         return self._job_resources
 
