@@ -37,3 +37,23 @@ jobs:
       run: |
         . ./activate_dev_env.sh
         make unit-tests
+
+  devenv:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        runs-on:
+        - ubuntu-latest
+        - macos-latest
+      fail-fast: true
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Test devenv start
+      run: |
+        . ./activate_dev_env.sh
+        make devenv-start
