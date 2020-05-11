@@ -40,12 +40,10 @@ def _clear_state():
 
 
 def _create_foundations_context():
-    from foundations_internal.pipeline_context import PipelineContext
     from foundations_internal.pipeline import Pipeline
     from foundations_internal.foundations_context import FoundationsContext
 
-    _pipeline_context = PipelineContext()
-    _pipeline = Pipeline(_pipeline_context)
+    _pipeline = Pipeline()
 
     return FoundationsContext(_pipeline)
 

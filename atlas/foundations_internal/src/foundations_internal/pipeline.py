@@ -1,8 +1,10 @@
-
+from .pipeline_context import PipelineContext
 
 class Pipeline(object):
 
-    def __init__(self, pipeline_context):
+    def __init__(self, pipeline_context=None):
+        if pipeline_context is None:
+            pipeline_context = PipelineContext()
         self._pipeline_context = pipeline_context
         self._uuid = 'eecbbe4788acaee0393bcad40f37f134566ad8a7'
 
