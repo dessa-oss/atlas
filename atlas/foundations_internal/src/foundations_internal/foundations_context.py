@@ -14,15 +14,6 @@ class FoundationsContext(object):
         self._pipeline = pipeline
         self._job_resources = self._default_job_resources()
 
-    def pipeline(self):
-        """The current pipeline used for all staging functionality in Foundations
-
-        Returns:
-            Pipeline -- As above
-        """
-
-        return self._pipeline
-
     def pipeline_context(self):
         """The current pipeline context associate with the assigned pipeline
 
