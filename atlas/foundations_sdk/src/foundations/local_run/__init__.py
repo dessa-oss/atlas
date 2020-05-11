@@ -104,10 +104,10 @@ def _at_exit_callback():
 
     global _exception_happened
 
-    pipeline_context = current_foundations_context().pipeline_context()
-    upload_artifacts(pipeline_context.job_id)
+    upload_artifacts(current_foundations_context().job_id())
     # This try-except block should be refactored at a later date
 
+    pipeline_context = current_foundations_context().pipeline_context()
     if _exception_happened:
         FailedJob(
             message_router,
