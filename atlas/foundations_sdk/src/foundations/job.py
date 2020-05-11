@@ -13,6 +13,23 @@ class Job(object):
         from foundations_internal.serializer import serialize
         return serialize(self)
 
+    @property
+    def user_name(self):
+        return self.pipeline_context().provenance.user_name
+
+    @user_name.setter
+    def user_name(self, value):
+        self.pipeline_context().provenance.user_name = value
+
+    @property
+    def project_name(self):
+        return self.pipeline_context().provenance.project_name
+
+    @project_name.setter
+    def project_name(self, value):
+        self.pipeline_context().provenance.project_name = value
+
+
     @staticmethod
     def deserialize(serialized_self):
         from foundations_internal.serializer import deserialize
