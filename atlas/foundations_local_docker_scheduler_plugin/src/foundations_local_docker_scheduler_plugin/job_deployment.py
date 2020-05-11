@@ -74,8 +74,8 @@ class JobDeployment(object):
             if response.status_code != 200:
                  raise RuntimeError(f'Unable to submit job bundle. {response.text}')
 
-            project_name = self._job.pipeline_context().provenance.project_name
-            username = self._job.pipeline_context().provenance.user_name
+            project_name = self._job.project_name
+            username = self._job.user_name
 
             job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path = self._get_paths()
 
