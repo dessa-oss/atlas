@@ -69,6 +69,16 @@ class TestGlobalMetricLogger(Spec):
 
         self._pipeline_context = PipelineContext()
         self.mock_current_foundations_context.pipeline_context.return_value = self._pipeline_context
+        self.mock_current_foundations_context.project_name = lambda: self._pipeline_context.provenance.project_name
+        self.mock_current_foundations_context.job_id = lambda: self._pipeline_context.file_name
+
+        def mock_is_in_running_job():
+            try:
+                return self._pipeline_context.file_name is not None
+            except ValueError:
+                return False
+
+        self.mock_current_foundations_context.is_in_running_job = mock_is_in_running_job
 
         self._message_router = self.MockMessageRouter()
         self._logger = GlobalMetricLogger(self._message_router)
