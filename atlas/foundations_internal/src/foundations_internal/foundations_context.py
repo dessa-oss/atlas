@@ -59,3 +59,11 @@ class FoundationsContext(object):
     def _default_job_resources(self):
         from foundations_internal.job_resources import JobResources
         return JobResources(1, None)
+
+    @property
+    def user_name(self):
+        return self.pipeline_context().provenance.user_name
+
+    @user_name.setter
+    def user_name(self, value):
+        self.pipeline_context().provenance.user_name = value
