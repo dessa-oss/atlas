@@ -22,7 +22,7 @@ def deploy(project_name, entrypoint, params):
         "enable_stages": False,
     }
 
-    current_foundations_context().pipeline_context().provenance.user_name = (
+    current_foundations_context().user_name = (
         _get_user_name_from_token()
     )
     pipeline_context_wrapper = PipelineContextWrapper(
