@@ -8,20 +8,6 @@ class FoundationsContext(object):
         pipeline {Pipeline} -- The initial Foundation pipeline to use for stages
     """
 
-    class ChangePipeline(object):
-
-        def __init__(self, context, pipeline):
-            self._context = context
-            self._pipeline = pipeline
-            self._previous_pipeline = None
-
-        def __enter__(self):
-            self._previous_pipeline = self._context._pipeline
-            self._context._pipeline = self._pipeline
-
-        def __exit__(self, exception_type, exception_value, traceback):
-            self._context._pipeline = self._previous_pipeline
-
     def __init__(self, pipeline):
         self._pipeline = pipeline
         self._job_resources = self._default_job_resources()
@@ -43,19 +29,6 @@ class FoundationsContext(object):
         """
 
         return self._pipeline.pipeline_context()
-
-    def change_pipeline(self, new_pipeline):
-        """Replaces the pipeline entrypoint for stages within a with block
-        and then resets it upon exitting
-        
-        Arguments:
-            new_pipeline {Pipeline} -- The pipeline to set
-        
-        Returns:
-            ChangePipeline -- The class to implement the above functionality
-        """
-
-        return self.ChangePipeline(self, new_pipeline)
 
     def __getstate__(self):
         raise ValueError('FoundationsContexts do not support serialization')

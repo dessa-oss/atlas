@@ -38,21 +38,6 @@ class TestFoundationsContext(Spec):
         self.assertEqual(self._pipeline_context,
                          self._context.pipeline_context())
 
-    def test_change_pipeline_changes_pipeline(self):
-        from foundations_internal.pipeline import Pipeline
-
-        new_pipeline = Pipeline(self._pipeline_context)
-        with self._context.change_pipeline(new_pipeline):
-            self.assertEqual(new_pipeline, self._context.pipeline())
-
-    def test_change_logger_resets_logger(self):
-        from foundations_internal.pipeline import Pipeline
-
-        new_pipeline = Pipeline(self._pipeline_context)
-        with self._context.change_pipeline(new_pipeline):
-            pass
-        self.assertEqual(self._pipeline, self._context.pipeline())
-
     def test_set_project_name_sets_provenance_project_name(self):
         self._context.set_project_name('my project')
         self.assertEqual(
