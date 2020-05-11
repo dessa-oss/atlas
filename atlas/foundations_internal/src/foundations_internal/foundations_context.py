@@ -1,4 +1,4 @@
-
+from .pipeline import Pipeline
 
 class FoundationsContext(object):
     """The global state for all staging related functionality for Foundations.
@@ -8,7 +8,9 @@ class FoundationsContext(object):
         pipeline {Pipeline} -- The initial Foundation pipeline to use for stages
     """
 
-    def __init__(self, pipeline):
+    def __init__(self, pipeline=None):
+        if pipeline is None:
+            pipeline = Pipeline()
         self._pipeline = pipeline
         self._job_resources = self._default_job_resources()
 
