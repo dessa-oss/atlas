@@ -5,6 +5,6 @@ for file in $(find .foundations -type f -name "*.config"); do \
 done
 
 # .docker is missing in github actions runner
-if [ ! -d "$HOME/.docker"]; then
+if [ ! -d "$HOME/.docker" ]; then
     mkdir $HOME/.docker
 fi
