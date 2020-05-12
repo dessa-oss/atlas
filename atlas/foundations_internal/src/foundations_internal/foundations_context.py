@@ -14,15 +14,6 @@ class FoundationsContext(object):
         self._pipeline = pipeline
         self._job_resources = self._default_job_resources()
 
-    def pipeline_context(self):
-        """The current pipeline context associate with the assigned pipeline
-
-        Returns:
-            PipelineContext -- As above
-        """
-
-        return self._pipeline.pipeline_context()
-
     def __getstate__(self):
         raise ValueError('FoundationsContexts do not support serialization')
 
@@ -40,11 +31,11 @@ class FoundationsContext(object):
 
     @property
     def job_id(self):
-        return self.pipeline_context().file_name
+        return self._pipeline.pipeline_context().file_name
 
     @job_id.setter
     def job_id(self, value):
-        self.pipeline_context().file_name = value
+        self._pipeline.pipeline_context().file_name = value
 
     @property
     def job_resources(self):
@@ -59,13 +50,13 @@ class FoundationsContext(object):
 
     def is_in_running_job(self):
         try:
-            return self.pipeline_context().file_name is not None
+            return self._pipeline.pipeline_context().file_name is not None
         except ValueError:
             return False
 
     @property
     def provenance(self):
-        return self.pipeline_context().provenance
+        return self._pipeline.pipeline_context().provenance
 
     def _default_job_resources(self):
         from foundations_internal.job_resources import JobResources
@@ -73,8 +64,8 @@ class FoundationsContext(object):
 
     @property
     def user_name(self):
-        return self.pipeline_context().provenance.user_name
+        return self._pipeline.pipeline_context().provenance.user_name
 
     @user_name.setter
     def user_name(self, value):
-        self.pipeline_context().provenance.user_name = value
+        self._pipeline.pipeline_context().provenance.user_name = value

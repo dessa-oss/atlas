@@ -31,10 +31,6 @@ class TestFoundationsContext(Spec):
         self._pipeline = Pipeline(self._pipeline_context)
         self._context = FoundationsContext(self._pipeline)
 
-    def test_pipeline_context(self):
-        self.assertEqual(self._pipeline_context,
-                         self._context.pipeline_context())
-
     def test_set_project_name_sets_provenance_project_name(self):
         self._context.project_name = 'my project'
         self.assertEqual('my project', self._pipeline_context.provenance.project_name)
