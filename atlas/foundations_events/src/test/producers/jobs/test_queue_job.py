@@ -8,17 +8,17 @@ from foundations_events.producers.jobs.queue_job import QueueJob
 class TestProducerQueueJob(unittest.TestCase):
 
     def setUp(self):
-        from foundations_internal.pipeline_context import PipelineContext
+        from foundations_internal.foundations_context import FoundationsContext
         from faker import Faker
 
         self.route_name = None
         self.message = None
 
-        self._pipeline_context = PipelineContext()
-        self._pipeline_context.file_name = 'some_project'
+        self._foundations_context = FoundationsContext()
+        self._foundations_context.set_job_id('some_project')
         self._router = Mock()
         self._router.push_message.side_effect = self._push_message
-        self._producer = QueueJob(self._router, self._pipeline_context)
+        self._producer = QueueJob(self._router, self._foundations_context)
         self._faker = Faker()
 
     def test_push_message_sends_queue_job_message_to_correct_channel(self):
@@ -27,31 +27,31 @@ class TestProducerQueueJob(unittest.TestCase):
 
     def test_push_message_sends_queue_job_message_with_job_id(self):
         job_id = self._make_string_uuid()
-        self._pipeline_context.file_name = job_id
+        self._foundations_context.set_job_id(job_id)
         self._producer.push_message()
         self.assertEqual(job_id, self.message['job_id'])
 
     def test_push_message_send_queue_job_message_with_project_name(self):
         project_name = self._faker.name()
-        self._pipeline_context.provenance.project_name = project_name
+        self._foundations_context.set_project_name(project_name)
         self._producer.push_message()
         self.assertEqual(project_name, self.message['project_name'])
 
     def test_push_message_send_queue_job_message_with_job_parameters(self):
         run_data = self._make_run_data()
-        self._pipeline_context.provenance.job_run_data = run_data
+        self._foundations_context.provenance.job_run_data = run_data
         self._producer.push_message()
         self.assertEqual(run_data, self.message['job_parameters'])
 
     def test_push_message_send_queue_job_message_with_user_name(self):
         user_name = self._faker.name()
-        self._pipeline_context.provenance.user_name = user_name
+        self._foundations_context.user_name = user_name
         self._producer.push_message()
         self.assertEqual(user_name, self.message['user_name'])
 
     def test_push_message_send_queue_job_message_with_annotations(self):
         annotations = self._faker.name()
-        self._pipeline_context.provenance.annotations = annotations
+        self._foundations_context.provenance.annotations = annotations
         self._producer.push_message()
         self.assertEqual(annotations, self.message['annotations'])
 
