@@ -18,20 +18,10 @@ class TestJobSubmissionDeployment(Spec):
     def current_directory(self):
         return f'{self.faker.uri_path()}/{self.project_name}'
 
-    @let
-    def pipeline_context(self):
-        from foundations_internal.pipeline_context import PipelineContext
-        return PipelineContext()
-
-    @let
-    def pipeline(self):
-        from foundations_internal.pipeline import Pipeline
-        return Pipeline(self.pipeline_context)
-    
     @let_now
     def foundations_context(self):
         from foundations_internal.foundations_context import FoundationsContext
-        return self.patch('foundations_contrib.global_state.foundations_context', FoundationsContext(self.pipeline))
+        return self.patch('foundations_contrib.global_state.foundations_context', FoundationsContext())
 
     @let_now
     def config_manager(self):
@@ -66,11 +56,11 @@ class TestJobSubmissionDeployment(Spec):
 
     def test_sets_project_name_from_parameter(self):
         deploy(self.project_name, self.entrypoint, self.params)
-        self.assertEqual(self.project_name, self.pipeline_context.provenance.project_name)
+        self.assertEqual(self.project_name, self.foundations_context.project_name)
 
     def test_sets_project_name_from_current_directory_when_not_specified(self):
         deploy(None, self.entrypoint, self.params)
-        self.assertEqual(self.project_name, self.pipeline_context.provenance.project_name)
+        self.assertEqual(self.project_name, self.foundations_context.project_name)
 
     def test_sets_run_script_environment_to_include_entrypoint(self):
         deploy(self.project_name, self.entrypoint, self.params)

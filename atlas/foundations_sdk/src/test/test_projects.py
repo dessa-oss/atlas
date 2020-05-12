@@ -111,15 +111,10 @@ class TestProjects(Spec):
 
     @set_up
     def set_up(self):
-        from foundations_internal.pipeline_context import PipelineContext
+        self.foundations_context.job_id = None
+        self.foundations_context.project_name = self.project_name
 
-        self._pipeline_context = PipelineContext()
-        self._pipeline_context.file_name = None
-        self._pipeline_context.provenance.project_name = self.project_name
-
-        self.foundations_context.pipeline_context.return_value = self._pipeline_context
-
-        self.foundations_context.pipeline_context().provenance.annotations = (
+        self.foundations_context.provenance.annotations = (
             self.provenance_annotations
         )
         self.redis.flushall()
@@ -128,14 +123,14 @@ class TestProjects(Spec):
         set_project_name(self.project_name)
         self.assertEqual(
             self.project_name,
-            self.foundations_context.pipeline_context().provenance.project_name,
+            self.foundations_context.project_name,
         )
 
     def test_set_project_name_sets_project_name_different_name(self):
         set_project_name(self.project_name)
         self.assertEqual(
             self.project_name,
-            self.foundations_context.pipeline_context().provenance.project_name,
+            self.foundations_context.project_name,
         )
 
     def test_set_project_name_is_global(self):
@@ -144,7 +139,7 @@ class TestProjects(Spec):
         foundations.set_project_name(self.project_name)
         self.assertEqual(
             self.project_name,
-            self.foundations_context.pipeline_context().provenance.project_name,
+            self.foundations_context.project_name,
         )
 
     def test_set_project_name_is_global(self):
@@ -153,7 +148,7 @@ class TestProjects(Spec):
         foundations.set_project_name(self.project_name)
         self.assertEqual(
             self.project_name,
-            self.foundations_context.pipeline_context().provenance.project_name,
+            self.foundations_context.project_name,
         )
 
     @patch("foundations_contrib.models.project_listing.ProjectListing.find_project")

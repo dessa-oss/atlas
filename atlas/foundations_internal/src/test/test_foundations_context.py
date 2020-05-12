@@ -24,23 +24,18 @@ class TestFoundationsContext(Spec):
         return self.faker.word()
 
     def setUp(self):
-        from foundations_internal.pipeline import Pipeline
-        from foundations_internal.pipeline_context import PipelineContext
-
-        self._pipeline_context = PipelineContext()
-        self._pipeline = Pipeline(self._pipeline_context)
-        self._context = FoundationsContext(self._pipeline)
+        self._context = FoundationsContext()
 
     def test_set_project_name_sets_provenance_project_name(self):
         self._context.project_name = 'my project'
-        self.assertEqual('my project', self._pipeline_context.provenance.project_name)
+        self.assertEqual('my project', self._context.project_name)
 
     def test_set_project_name_sets_provenance_project_name_different_name(self):
         self._context.project_name = 'my other project'
-        self.assertEqual('my other project', self._pipeline_context.provenance.project_name)
+        self.assertEqual('my other project', self._context.project_name)
 
     def test_get_job_id(self):
-        self._pipeline_context.file_name = self.job_id
+        self._context.job_id = self.job_id
         self.assertEqual(self.job_id, self._context.job_id)
 
     def test_pickle_getstate_raises_exception(self):
@@ -88,7 +83,7 @@ class TestFoundationsContext(Spec):
         self.assertEqual(self.fake_project_name, self._context.project_name)
 
     def test_is_in_running_job_returns_true_if_pipeline_context_has_job_id(self):
-        self._pipeline_context.file_name = self.job_id
+        self._context.job_id = self.job_id
         self.assertTrue(self._context.is_in_running_job())
 
     def test_is_in_running_job_returns_false_if_pipeline_context_does_not_have_job_id(self):

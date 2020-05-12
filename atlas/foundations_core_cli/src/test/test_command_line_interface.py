@@ -72,11 +72,9 @@ class TestCommandLineInterface(Spec):
 
     @let_now
     def current_foundations_context_instance(self):
-        from foundations_internal.pipeline import Pipeline
         from foundations_internal.foundations_context import FoundationsContext
 
-        _pipeline = Pipeline(self.pipeline_context)
-        foundations_context = FoundationsContext(_pipeline)
+        foundations_context = FoundationsContext()
         self.current_foundations_context.return_value = foundations_context
         return foundations_context
 

@@ -22,11 +22,9 @@ class TestJobListingV2(Spec):
     @set_up
     def set_up(self):
         import fakeredis
-        from foundations_internal.pipeline import Pipeline
-        from foundations_internal.pipeline_context import PipelineContext
+        from foundations_internal.foundations_context import FoundationsContext
 
-        self._pipeline_context = PipelineContext()
-        self._pipeline = Pipeline(self._pipeline_context)
+        self._context = FoundationsContext()
         self.patch('foundations_rest_api.global_state.redis_connection', fakeredis.FakeRedis())
 
     def test_has_job_id(self):
@@ -370,8 +368,8 @@ class TestJobListingV2(Spec):
         from foundations_events.producers.jobs import QueueJob
         from foundations_events.producers.jobs import RunJob
 
-        QueueJob(message_router, self._pipeline_context).push_message()
-        RunJob(message_router, self._pipeline_context).push_message()
+        QueueJob(message_router, self._context).push_message()
+        RunJob(message_router, self._context).push_message()
 
     def _assert_list_contains_items(self, expected, result):
         for item in expected:

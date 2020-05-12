@@ -30,8 +30,6 @@ class TestDeploymentManager(unittest.TestCase):
     def setUp(self):
         from foundations_contrib.config_manager import ConfigManager
         from foundations_internal.deployment_manager import DeploymentManager
-        from foundations_internal.pipeline import Pipeline
-        from foundations_internal.pipeline_context import PipelineContext
         from foundations_internal.foundations_context import FoundationsContext
 
         self._listing = self.MockListing()
@@ -47,9 +45,7 @@ class TestDeploymentManager(unittest.TestCase):
 
         self._deployment_manager = DeploymentManager(self._config)
 
-        self._pipeline_context = PipelineContext()
-        self._pipeline = Pipeline(self._pipeline_context)
-        self._foundations_context = FoundationsContext(self._pipeline)
+        self._foundations_context = FoundationsContext()
 
     def test_deploy_persisted_project_name(self):
         self._foundations_context.project_name = "my project"

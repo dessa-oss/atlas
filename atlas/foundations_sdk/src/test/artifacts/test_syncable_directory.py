@@ -233,14 +233,19 @@ class TestSyncableDirectory(Spec):
     def test_foundations_create_syncable_directory_defaults_to_current_job_for_remote_and_local(self):
         from foundations import create_syncable_directory
 
-        self.patch('foundations_internal.pipeline_context.PipelineContext.file_name', self.local_job_id)
+        context = Mock()
+        context.job_id = self.local_job_id
+        self.patch('foundations_contrib.global_state.current_foundations_context').return_value = context
         instance = self._mock_syncable_directory(self.local_job_id)
         self.assertEqual(instance, create_syncable_directory(self.key, self.directory_path))
 
     def test_foundations_create_syncable_directory_uses_source_job_for_remote(self):
         from foundations import create_syncable_directory
 
-        self.patch('foundations_internal.pipeline_context.PipelineContext.file_name', self.local_job_id)
+        context = Mock()
+        context.job_id = self.local_job_id
+        self.patch('foundations_contrib.global_state.current_foundations_context').return_value = context
+
         instance = self._mock_syncable_directory(self.remote_job_id)
         self.assertEqual(instance, create_syncable_directory(self.key, self.directory_path, self.remote_job_id))        
 
