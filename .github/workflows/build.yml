@@ -50,7 +50,10 @@ jobs:
         python-version: 3.7
     - name: Install requirements
       run: pip install -r requirements_test.txt
-
+    - name: Install docker
+      run: |
+        brew install docker
+      if: ${{ matrix.os }} == macos-latest
     - name: Start devenv
       run: |
         . ./activate_dev_env.sh
