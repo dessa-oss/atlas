@@ -64,7 +64,7 @@ class TestJobSubmissionDeployment(Spec):
         self.mock_os_getcwd.return_value = self.current_directory
         self.mock_context_wrapper_klass.return_when(self.mock_context_wrapper, self.pipeline_context)
         self.mock_open.return_when(self.mock_file, 'foundations_job_parameters.json', 'w+')
-        self.mock_deploy_job.return_when(self.mock_deployment, self.mock_context_wrapper, None, {})
+        self.mock_deploy_job.return_when(self.mock_deployment, self.foundations_context, None, {})
 
     def test_sets_project_name_from_parameter(self):
         deploy(self.project_name, self.entrypoint, self.params)

@@ -11,29 +11,27 @@ def deploy(project_name, entrypoint, params):
         redis_connection,
         config_manager,
     )
-    from foundations_internal.pipeline_context_wrapper import PipelineContextWrapper
 
     if project_name is None:
         project_name = path.basename(os.getcwd())
 
-    current_foundations_context().set_project_name(project_name)
+    foundations_context = current_foundations_context()
+
+    foundations_context.set_project_name(project_name)
     config_manager["run_script_environment"] = {
         "script_to_run": entrypoint,
         "enable_stages": False,
     }
 
-    current_foundations_context().user_name = (
+    foundations_context.user_name = (
         _get_user_name_from_token()
-    )
-    pipeline_context_wrapper = PipelineContextWrapper(
-        current_foundations_context().pipeline_context()
     )
 
     if params is not None:
         with open("foundations_job_parameters.json", "w+") as params_file:
             json.dump(params, params_file)
 
-    return deploy_job(pipeline_context_wrapper, None, {})
+    return deploy_job(foundations_context, None, {})
 
 
 def _get_user_name_from_token() -> str:
