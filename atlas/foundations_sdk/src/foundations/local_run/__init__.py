@@ -111,7 +111,7 @@ def _at_exit_callback():
     if _exception_happened:
         FailedJob(
             message_router,
-            pipeline_context,
+            current_foundations_context(),
             {"type": Exception, "exception": "", "traceback": []},
         ).push_message()
     else:
