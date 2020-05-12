@@ -105,9 +105,6 @@ class TestCommandLineInterface(Spec):
         self.psutil_process_mock.side_effect = self._process_constructor
         self.mock_environment['MODEL_SERVER_CONFIG_PATH'] = '/path/to/file'
         self.patch('foundations_contrib.root', return_value=self.mock_contrib_root)
-        self.mock_pipeline_context_wrapper = Mock()
-        self.mock_pipeline_context_wrapper_class = self.patch('foundations_internal.pipeline_context_wrapper.PipelineContextWrapper', ConditionalReturn())
-        self.mock_pipeline_context_wrapper_class.return_when(self.mock_pipeline_context_wrapper, self.current_foundations_context_instance.pipeline_context())
 
     def test_add_sub_parser_adds_new_subparser(self):
         hello_said = False

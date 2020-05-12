@@ -27,10 +27,6 @@ class TestJobDeployer(Spec):
         return self.faker.uuid4()
 
     @let
-    def fake_pipeline_context_wrapper(self):
-        return Mock()
-
-    @let
     def fake_pipeline_context(self):
         return Mock()
 

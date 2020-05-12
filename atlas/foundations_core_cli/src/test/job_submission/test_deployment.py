@@ -55,14 +55,12 @@ class TestJobSubmissionDeployment(Spec):
         mock.__exit__ = lambda *args: None
         return mock
 
-    mock_context_wrapper_klass = let_patch_mock_with_conditional_return('foundations_internal.pipeline_context_wrapper.PipelineContextWrapper')
     mock_context_wrapper = let_mock()
     mock_get_user_name_from_token = let_patch_mock('foundations_core_cli.job_submission.deployment._get_user_name_from_token')
 
     @set_up
     def set_up(self):
         self.mock_os_getcwd.return_value = self.current_directory
-        self.mock_context_wrapper_klass.return_when(self.mock_context_wrapper, self.pipeline_context)
         self.mock_open.return_when(self.mock_file, 'foundations_job_parameters.json', 'w+')
         self.mock_deploy_job.return_when(self.mock_deployment, self.foundations_context, None, {})
 
