@@ -73,7 +73,7 @@ class TestLogMetric(Spec):
         foundations_context_function = self.patch('foundations_contrib.global_state.current_foundations_context')
 
         self.foundations_context = Mock()
-        self.foundations_context.job_id.side_effect = ValueError()
+        self.foundations_context.job_id = ValueError()
         self.foundations_context.is_in_running_job.return_value = False
         self.foundations_context.project_name.return_value = self.fake_project_name
         foundations_context_function.return_value = self.foundations_context
@@ -95,7 +95,7 @@ class TestLogMetric(Spec):
         self._message_router.add_listener(SingleProjectMetric(self._redis), 'job_metrics')
 
     def _set_job_running(self):
-        self.foundations_context.job_id.side_effect = lambda: self.fake_job_id
+        self.foundations_context.job_id = self.fake_job_id
         self.foundations_context.is_in_running_job.return_value = True
 
     def _run_job_and_log_metric(self, metric_name, metric_value):

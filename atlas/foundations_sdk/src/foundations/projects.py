@@ -102,7 +102,7 @@ def _set_tag_in_running_jobs(key, value):
     from foundations_contrib.global_state import message_router, current_foundations_context
     from foundations_events.producers.tag_set import TagSet
 
-    job_id = current_foundations_context().job_id()
+    job_id = current_foundations_context().job_id
 
     tag_set_producer = TagSet(message_router, job_id, key, value)
     tag_set_producer.push_message()

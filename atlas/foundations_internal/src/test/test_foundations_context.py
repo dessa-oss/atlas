@@ -47,7 +47,7 @@ class TestFoundationsContext(Spec):
 
     def test_get_job_id(self):
         self._pipeline_context.file_name = self.job_id
-        self.assertEqual(self.job_id, self._context.job_id())
+        self.assertEqual(self.job_id, self._context.job_id)
 
     def test_pickle_getstate_raises_exception(self):
         with self.assertRaises(ValueError) as error_context:

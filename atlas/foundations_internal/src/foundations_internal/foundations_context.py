@@ -35,10 +35,13 @@ class FoundationsContext(object):
     def set_project_name(self, project_name):
         self.provenance.project_name = project_name
 
+
+    @property
     def job_id(self):
         return self.pipeline_context().file_name
 
-    def set_job_id(self, value):
+    @job_id.setter
+    def job_id(self, value):
         self.pipeline_context().file_name = value
 
     def job_resources(self):

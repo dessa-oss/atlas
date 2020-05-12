@@ -21,7 +21,7 @@ class QueueJob(object):
 
     def _message(self):
         message = {
-            'job_id': self._foundations_context.job_id(),
+            'job_id': self._foundations_context.job_id,
             'project_name': self._foundations_context.project_name(),
             'job_parameters': self._foundations_context.provenance.job_run_data,
             'user_name': self._foundations_context.user_name,

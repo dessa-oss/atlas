@@ -60,7 +60,7 @@ class TestSaveArtifact(Spec):
 
     def test_save_artifact_in_job_appends_file_to_archive(self):
         self._mock_foundations_context.is_in_running_job.return_value = True
-        self._mock_foundations_context.job_id.return_value = self.job_id
+        self._mock_foundations_context.job_id = self.job_id
 
         save_artifact(self.filepath)
         self._mock_archive.append_file.assert_called_once_with('user_artifacts', self.filepath, self.job_id, target_name=None)
@@ -76,7 +76,7 @@ class TestSaveArtifact(Spec):
         import os.path as path
 
         self._mock_foundations_context.is_in_running_job.return_value = True
-        self._mock_foundations_context.job_id.return_value = self.job_id
+        self._mock_foundations_context.job_id = self.job_id
 
         filename = path.basename(self.filepath)
         _, extension = path.splitext(filename)
@@ -102,7 +102,7 @@ class TestSaveArtifact(Spec):
         import os.path as path
 
         self._mock_foundations_context.is_in_running_job.return_value = True
-        self._mock_foundations_context.job_id.return_value = self.job_id
+        self._mock_foundations_context.job_id = self.job_id
 
         save_artifact(self.filepath)
         save_artifact(self.filepath_2)
@@ -128,7 +128,7 @@ class TestSaveArtifact(Spec):
         import os.path as path
 
         self._mock_foundations_context.is_in_running_job.return_value = True
-        self._mock_foundations_context.job_id.return_value = self.job_id
+        self._mock_foundations_context.job_id = self.job_id
 
         save_artifact(self.filepath)
         save_artifact(self.filepath_2)
@@ -137,7 +137,7 @@ class TestSaveArtifact(Spec):
 
     def test_save_artifact_in_job_with_key_appends_file_to_archive_using_basename_as_target(self):
         self._mock_foundations_context.is_in_running_job.return_value = True
-        self._mock_foundations_context.job_id.return_value = self.job_id
+        self._mock_foundations_context.job_id = self.job_id
 
         save_artifact(self.filepath, key=self.key)
         self._mock_archive.append_file.assert_called_once_with('user_artifacts', self.filepath, self.job_id, target_name=None)
@@ -146,7 +146,7 @@ class TestSaveArtifact(Spec):
         import os.path as path
 
         self._mock_foundations_context.is_in_running_job.return_value = True
-        self._mock_foundations_context.job_id.return_value = self.job_id
+        self._mock_foundations_context.job_id = self.job_id
 
         save_artifact(self.filepath, key=self.key)
         basename = path.basename(self.filepath)
@@ -165,7 +165,7 @@ class TestSaveArtifact(Spec):
 
     def test_save_artifact_in_job_with_key_when_key_already_exists_for_job_logs_warning(self):
         self._mock_foundations_context.is_in_running_job.return_value = True
-        self._mock_foundations_context.job_id.return_value = self.job_id
+        self._mock_foundations_context.job_id = self.job_id
 
         save_artifact(self.filepath, key=self.key)
         save_artifact(self.filepath_2, key=self.key)
@@ -175,7 +175,7 @@ class TestSaveArtifact(Spec):
         import os.path as path
 
         self._mock_foundations_context.is_in_running_job.return_value = True
-        self._mock_foundations_context.job_id.return_value = self.job_id
+        self._mock_foundations_context.job_id = self.job_id
 
         save_artifact(self.filepath, key=self.key)
         save_artifact(self.filepath_2, key=self.key)
@@ -198,7 +198,7 @@ class TestSaveArtifact(Spec):
         import os.path as path
 
         self._mock_foundations_context.is_in_running_job.return_value = True
-        self._mock_foundations_context.job_id.return_value = self.job_id
+        self._mock_foundations_context.job_id = self.job_id
 
         filename = path.basename(self.filepath)
 

@@ -410,7 +410,7 @@ class TestProjects(Spec):
         assert_frame_equal(expected_data_frame, job_annotations)
 
     def test_set_tag_when_in_job_sets_tag(self):
-        self.foundations_context.job_id.return_value = self.job_id
+        self.foundations_context.job_id = self.job_id
         set_tag(self.random_tag, self.random_tag_value)
         self.message_router.push_message.assert_called_with(
             "job_tag",

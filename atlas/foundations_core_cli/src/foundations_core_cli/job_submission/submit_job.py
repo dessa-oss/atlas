@@ -56,7 +56,7 @@ def submit(arguments):
 
         from foundations.global_state import current_foundations_context
         try:
-            cur_job_id = current_foundations_context().job_id()
+            cur_job_id = current_foundations_context().job_id
         except ValueError:
             cur_job_id = None
 
@@ -73,6 +73,6 @@ def submit(arguments):
                 pass
 
         if cur_job_id is not None:
-            current_foundations_context().set_job_id(cur_job_id)
+            current_foundations_context().job_id = cur_job_id
 
         return deployment

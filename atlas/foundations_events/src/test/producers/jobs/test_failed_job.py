@@ -14,7 +14,7 @@ class TestProducerFailedJob(unittest.TestCase):
         self.message = None
 
         self._foundations_context = FoundationsContext()
-        self._foundations_context.set_job_id('some_project')
+        self._foundations_context.job_id = 'some_project'
         self._router = Mock()
         self._router.push_message.side_effect = self._push_message
         self._error_information = {'type': None,
@@ -27,12 +27,12 @@ class TestProducerFailedJob(unittest.TestCase):
         self.assertEqual('fail_job', self.route_name)
 
     def test_push_message_sends_fail_job_message_with_job_id(self):
-        self._foundations_context.set_job_id('my fantastic job')
+        self._foundations_context.job_id = 'my fantastic job'
         self._producer.push_message()
         self.assertEqual('my fantastic job', self.message['job_id'])
 
     def test_push_message_sends_fail_job_message_with_job_id_different_job(self):
-        self._foundations_context.set_job_id('neural nets in space!')
+        self._foundations_context.job_id = 'neural nets in space!'
         self._producer.push_message()
         self.assertEqual('neural nets in space!', self.message['job_id'])
 

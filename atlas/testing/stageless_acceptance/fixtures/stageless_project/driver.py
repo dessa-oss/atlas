@@ -8,7 +8,7 @@ from model import *
 set_tag('model', 'cnn')
 
 def print_words():
-    print(f'Job \'{current_foundations_context().job_id()}\' deployed')
+    print(f'Job \'{current_foundations_context().job_id}\' deployed')
     print('Hello World!')
 
 print_words()

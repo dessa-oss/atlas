@@ -10,7 +10,7 @@ def save_artifact(filepath, key=None):
     if not foundations_context.is_in_running_job():
         logger.warning('Cannot save artifact outside of job.')
     else:
-        job_id = foundations_context.job_id()
+        job_id = foundations_context.job_id
 
         artifact_saver = _ArtifactSaver(logger, filepath, job_id, key)
         artifact_saver.save_artifact()

@@ -23,7 +23,7 @@ class GlobalMetricLogger(object):
         return self._foundations_context.project_name()
 
     def _job_id(self):
-        return self._foundations_context.job_id()
+        return self._foundations_context.job_id
 
     @property
     def _foundations_context(self):

@@ -24,7 +24,7 @@ class FailedJob(object):
             'exception': str(self._error_information['exception']),
             'traceback': traceback.format_list(self._error_information['traceback'])
         }
-        job_id = self._foundations_context.job_id()
+        job_id = self._foundations_context.job_id
         message = {
             'job_id': job_id,
             'error_information': error_information,

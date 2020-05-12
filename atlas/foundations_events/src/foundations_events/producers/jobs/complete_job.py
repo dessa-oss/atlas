@@ -18,7 +18,7 @@ class CompleteJob(object):
         self._message_router.push_message(
             'complete_job',
             {
-                'job_id': self._foundations_context.job_id(),
+                'job_id': self._foundations_context.job_id,
                 'project_name': self._foundations_context.project_name()
             }
         )

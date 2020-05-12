@@ -17,7 +17,7 @@ class RunJob(object):
 
         provenance = self._foundations_context.provenance
         message = {
-            'job_id': self._foundations_context.job_id(),
+            'job_id': self._foundations_context.job_id,
             'project_name': provenance.project_name,
             'monitor_name': provenance.monitor_name or 'None'
         }

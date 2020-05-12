@@ -28,7 +28,7 @@ def _log_metric_in_running_job(key, value):
     from foundations_events.producers.metric_logged import MetricLogged
 
     project_name = current_foundations_context().project_name()
-    job_id = current_foundations_context().job_id()
+    job_id = current_foundations_context().job_id
 
     metric_logged_producer = MetricLogged(message_router, project_name, job_id, key, value)
     metric_logged_producer.push_message()

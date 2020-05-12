@@ -54,7 +54,7 @@ class TestLogParam(Spec):
         foundations_context_function = self.patch('foundations_contrib.global_state.current_foundations_context')
 
         self.foundations_context = Mock()
-        self.foundations_context.job_id.side_effect = ValueError()
+        self.foundations_context.job_id = ValueError()
         self.foundations_context.is_in_running_job.return_value = False
         self.foundations_context.project_name.return_value = 'default'
         foundations_context_function.return_value = self.foundations_context
@@ -130,5 +130,5 @@ class TestLogParam(Spec):
         self.assertEqual(expected_params, actual_params)
 
     def _set_job_running(self):
-        self.foundations_context.job_id.side_effect = lambda: self.job_id
+        self.foundations_context.job_id = self.job_id
         self.foundations_context.is_in_running_job.return_value = True

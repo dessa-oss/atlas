@@ -106,7 +106,7 @@ def _at_exit_callback():
 
     global _exception_happened
 
-    upload_artifacts(current_foundations_context().job_id())
+    upload_artifacts(current_foundations_context().job_id)
     # This try-except block should be refactored at a later date
 
     if _exception_happened:
@@ -123,7 +123,7 @@ def _set_job_state(foundations_context):
     from uuid import uuid4
     import os
 
-    foundations_context.set_job_id(os.environ.get("FOUNDATIONS_JOB_ID", str(uuid4())))
+    foundations_context.job_id = os.environ.get("FOUNDATIONS_JOB_ID", str(uuid4()))
     foundations_context.set_project_name(
         os.environ.get(
             "FOUNDATIONS_PROJECT_NAME",

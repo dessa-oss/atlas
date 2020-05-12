@@ -15,7 +15,7 @@ class TestProducerQueueJob(unittest.TestCase):
         self.message = None
 
         self._foundations_context = FoundationsContext()
-        self._foundations_context.set_job_id('some_project')
+        self._foundations_context.job_id = 'some_project'
         self._router = Mock()
         self._router.push_message.side_effect = self._push_message
         self._producer = QueueJob(self._router, self._foundations_context)
@@ -27,7 +27,7 @@ class TestProducerQueueJob(unittest.TestCase):
 
     def test_push_message_sends_queue_job_message_with_job_id(self):
         job_id = self._make_string_uuid()
-        self._foundations_context.set_job_id(job_id)
+        self._foundations_context.job_id = job_id
         self._producer.push_message()
         self.assertEqual(job_id, self.message['job_id'])
 
