@@ -107,7 +107,6 @@ def _at_exit_callback():
     upload_artifacts(current_foundations_context().job_id())
     # This try-except block should be refactored at a later date
 
-    pipeline_context = current_foundations_context().pipeline_context()
     if _exception_happened:
         FailedJob(
             message_router,
@@ -115,7 +114,7 @@ def _at_exit_callback():
             {"type": Exception, "exception": "", "traceback": []},
         ).push_message()
     else:
-        CompleteJob(message_router, pipeline_context).push_message()
+        CompleteJob(message_router, current_foundations_context()).push_message()
 
 
 def _set_job_state(pipeline_context):
