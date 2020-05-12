@@ -31,7 +31,7 @@ def log_param(key, value):
 def _log_param_in_running_job(key, value):
     from foundations_contrib.global_state import current_foundations_context, redis_connection
 
-    project_name = current_foundations_context().project_name()
+    project_name = current_foundations_context().project_name
     job_id = current_foundations_context().job_id
 
     _insert_parameter_name_into_projects_params_set(redis_connection, project_name, key)

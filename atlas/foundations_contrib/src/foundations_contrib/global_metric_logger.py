@@ -20,7 +20,7 @@ class GlobalMetricLogger(object):
         return self._foundations_context.is_in_running_job()
 
     def _project_name(self):
-        return self._foundations_context.project_name()
+        return self._foundations_context.project_name
 
     def _job_id(self):
         return self._foundations_context.job_id

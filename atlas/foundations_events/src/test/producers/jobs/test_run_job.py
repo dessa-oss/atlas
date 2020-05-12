@@ -25,7 +25,7 @@ class TestProducerRunJob(unittest.TestCase):
 
     def test_push_message_sends_run_job_message_with_job_id(self):
         self._foundations_context.job_id = 'my fantastic job'
-        self._foundations_context.set_project_name('this project')
+        self._foundations_context.project_name = 'this project'
         self._producer.push_message()
         self.assertEqual({'job_id': 'my fantastic job',
                           'project_name': 'this project',
@@ -33,7 +33,7 @@ class TestProducerRunJob(unittest.TestCase):
 
     def test_push_message_sends_run_job_message_with_job_id_different_job_different_project(self):
         self._foundations_context.job_id = 'neural nets in space!'
-        self._foundations_context.set_project_name('that project')
+        self._foundations_context.project_name = 'that project'
         self._producer.push_message()
         self.assertEqual({'job_id': 'neural nets in space!',
                           'project_name': 'that project',

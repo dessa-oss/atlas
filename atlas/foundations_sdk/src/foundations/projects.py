@@ -14,7 +14,7 @@ def set_project_name(project_name="default"):
         - This method doesn't raise any exceptions.
     """
     from foundations.global_state import current_foundations_context
-    current_foundations_context().set_project_name(project_name)
+    current_foundations_context().project_name = project_name
 
 
 def _get_metrics_for_all_jobs(project_name):

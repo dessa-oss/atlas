@@ -33,7 +33,7 @@ class TestProducerQueueJob(unittest.TestCase):
 
     def test_push_message_send_queue_job_message_with_project_name(self):
         project_name = self._faker.name()
-        self._foundations_context.set_project_name(project_name)
+        self._foundations_context.project_name = project_name
         self._producer.push_message()
         self.assertEqual(project_name, self.message['project_name'])
 

@@ -37,12 +37,12 @@ class TestProducerFailedJob(unittest.TestCase):
         self.assertEqual('neural nets in space!', self.message['job_id'])
 
     def test_push_message_sends_complete_job_message_with_project_name(self):
-        self._foundations_context.set_project_name('my fantastic job')
+        self._foundations_context.project_name = 'my fantastic job'
         self._producer.push_message()
         self.assertDictContainsSubset({'project_name': 'my fantastic job'}, self.message)
 
     def test_push_message_sends_complete_job_message_with_project_name_different_job(self):
-        self._foundations_context.set_project_name('neural nets in space!')
+        self._foundations_context.project_name = 'neural nets in space!'
         self._producer.push_message()
         self.assertDictContainsSubset({'project_name': 'neural nets in space!'}, self.message)
 

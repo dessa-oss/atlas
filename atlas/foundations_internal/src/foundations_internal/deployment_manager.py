@@ -26,7 +26,7 @@ class DeploymentManager(object):
 
         deployment = self._create_deployment(job_name, job)
         deployment.config().update(deployment_config)
-        project_name = current_foundations_context().project_name()
+        project_name = current_foundations_context().project_name
 
         deployment.deploy()
         logger.info("Job submitted with ID '{}' in project '{}'.".format(job_name, project_name))
@@ -37,7 +37,7 @@ class DeploymentManager(object):
         constructor, constructor_args, constructor_kwargs = self.project_listing_constructor_and_args_and_kwargs()
         listing = constructor(*constructor_args, **constructor_kwargs)
         listing.track_pipeline(
-            foundations_context.project_name())
+            foundations_context.project_name)
 
     def _create_deployment(self, job_name, job):
         from foundations_contrib.job_source_bundle import JobSourceBundle

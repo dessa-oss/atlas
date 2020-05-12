@@ -20,11 +20,11 @@ class Job(object):
 
     @property
     def project_name(self):
-        return self._foundations_context.project_name()
+        return self._foundations_context.project_name
 
     @project_name.setter
     def project_name(self, value):
-        self._foundations_context.set_project_name(value)
+        self._foundations_context.project_name = value
 
     @staticmethod
     def deserialize(serialized_self):

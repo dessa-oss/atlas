@@ -17,7 +17,7 @@ def deploy(project_name, entrypoint, params):
 
     foundations_context = current_foundations_context()
 
-    foundations_context.set_project_name(project_name)
+    foundations_context.project_name = project_name
     config_manager["run_script_environment"] = {
         "script_to_run": entrypoint,
         "enable_stages": False,

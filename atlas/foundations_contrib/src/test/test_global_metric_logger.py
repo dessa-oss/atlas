@@ -69,7 +69,6 @@ class TestGlobalMetricLogger(Spec):
 
         self._pipeline_context = PipelineContext()
         self.mock_current_foundations_context.pipeline_context.return_value = self._pipeline_context
-        self.mock_current_foundations_context.project_name = lambda: self._pipeline_context.provenance.project_name
 
         def mock_is_in_running_job():
             try:
@@ -84,6 +83,7 @@ class TestGlobalMetricLogger(Spec):
 
         self._pipeline_context.file_name = None
         self._pipeline_context.provenance.project_name = self.fake_project_name
+        self.mock_current_foundations_context.project_name = self._pipeline_context.provenance.project_name
 
     @tear_down
     def tear_down(self):

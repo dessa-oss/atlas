@@ -75,7 +75,7 @@ class TestLogMetric(Spec):
         self.foundations_context = Mock()
         self.foundations_context.job_id = ValueError()
         self.foundations_context.is_in_running_job.return_value = False
-        self.foundations_context.project_name.return_value = self.fake_project_name
+        self.foundations_context.project_name = self.fake_project_name
         foundations_context_function.return_value = self.foundations_context
 
         self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())

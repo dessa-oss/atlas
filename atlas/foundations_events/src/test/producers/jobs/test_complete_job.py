@@ -8,7 +8,6 @@ from foundations_events.producers.jobs.complete_job import CompleteJob
 class TestProducerCompleteJob(unittest.TestCase):
 
     def setUp(self):
-        from foundations_internal.pipeline_context import PipelineContext
         from foundations_internal.foundations_context import FoundationsContext
 
         self.route_name = None
@@ -35,12 +34,12 @@ class TestProducerCompleteJob(unittest.TestCase):
         self.assertDictContainsSubset({'job_id': 'neural nets in space!'}, self.message)
 
     def test_push_message_sends_complete_job_message_with_project_name(self):
-        self._foundations_context.set_project_name('my fantastic job')
+        self._foundations_context.project_name = 'my fantastic job'
         self._producer.push_message()
         self.assertDictContainsSubset({'project_name': 'my fantastic job'}, self.message)
 
     def test_push_message_sends_complete_job_message_with_project_name_different_job(self):
-        self._foundations_context.set_project_name('neural nets in space!')
+        self._foundations_context.project_name = 'neural nets in space!'
         self._producer.push_message()
         self.assertDictContainsSubset({'project_name': 'neural nets in space!'}, self.message)
 

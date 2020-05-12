@@ -29,10 +29,12 @@ class FoundationsContext(object):
     def __setstate__(self, state):
         raise ValueError('FoundationsContexts do not support serialization')
 
+    @property
     def project_name(self):
         return self.provenance.project_name
 
-    def set_project_name(self, project_name):
+    @project_name.setter
+    def project_name(self, project_name):
         self.provenance.project_name = project_name
 
 

@@ -36,14 +36,12 @@ class TestFoundationsContext(Spec):
                          self._context.pipeline_context())
 
     def test_set_project_name_sets_provenance_project_name(self):
-        self._context.set_project_name('my project')
-        self.assertEqual(
-            'my project', self._pipeline_context.provenance.project_name)
+        self._context.project_name = 'my project'
+        self.assertEqual('my project', self._pipeline_context.provenance.project_name)
 
     def test_set_project_name_sets_provenance_project_name_different_name(self):
-        self._context.set_project_name('my other project')
-        self.assertEqual('my other project',
-                         self._pipeline_context.provenance.project_name)
+        self._context.project_name = 'my other project'
+        self.assertEqual('my other project', self._pipeline_context.provenance.project_name)
 
     def test_get_job_id(self):
         self._pipeline_context.file_name = self.job_id
@@ -87,11 +85,11 @@ class TestFoundationsContext(Spec):
         self.assertEqual(JobResources(1, None), self._context.job_resources)
 
     def test_project_name_is_default_when_project_name_not_yet_set(self):
-        self.assertEqual('default', self._context.project_name())
+        self.assertEqual('default', self._context.project_name)
 
     def test_project_name_is_correct_when_project_name_set(self):
-        self._context.set_project_name(self.fake_project_name)
-        self.assertEqual(self.fake_project_name, self._context.project_name())
+        self._context.project_name = self.fake_project_name
+        self.assertEqual(self.fake_project_name, self._context.project_name)
 
     def test_is_in_running_job_returns_true_if_pipeline_context_has_job_id(self):
         self._pipeline_context.file_name = self.job_id
