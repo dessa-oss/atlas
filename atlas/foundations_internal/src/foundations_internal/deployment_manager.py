@@ -5,17 +5,14 @@ class DeploymentManager(object):
     def __init__(self, config_manager):
         self._config_manager = config_manager
 
-    def simple_deploy(self, foundations_context, job_name, job_params):
+    def simple_deploy(self, job, job_name, job_params):
         import uuid
-
-        from foundations.job import Job
 
         if not job_name:
             job_name = str(uuid.uuid4())
-        job = Job(foundations_context, **job_params)
 
         deployment = self.deploy({}, job_name, job)
-        self._record_project(foundations_context)
+        self._record_project(job)
         return deployment
 
     def deploy(self, deployment_config, job_name, job):

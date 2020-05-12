@@ -15,15 +15,15 @@ def deploy(project_name, entrypoint, params):
     if project_name is None:
         project_name = path.basename(os.getcwd())
 
-    foundations_context = current_foundations_context()
+    job = current_foundations_context()
 
-    foundations_context.project_name = project_name
+    job.project_name = project_name
     config_manager["run_script_environment"] = {
         "script_to_run": entrypoint,
         "enable_stages": False,
     }
 
-    foundations_context.user_name = (
+    job.user_name = (
         _get_user_name_from_token()
     )
 
@@ -31,7 +31,7 @@ def deploy(project_name, entrypoint, params):
         with open("foundations_job_parameters.json", "w+") as params_file:
             json.dump(params, params_file)
 
-    return deploy_job(foundations_context, None, {})
+    return deploy_job(job, None, {})
 
 
 def _get_user_name_from_token() -> str:
