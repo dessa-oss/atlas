@@ -5,17 +5,17 @@ class DeploymentManager(object):
     def __init__(self, config_manager):
         self._config_manager = config_manager
 
-    def simple_deploy(self, stage, job_name, job_params):
+    def simple_deploy(self, foundations_context, job_name, job_params):
         import uuid
 
         from foundations.job import Job
 
         if not job_name:
             job_name = str(uuid.uuid4())
-        job = Job(stage, **job_params)
+        job = Job(foundations_context, **job_params)
 
         deployment = self.deploy({}, job_name, job)
-        self._record_project(stage)
+        self._record_project(foundations_context)
         return deployment
 
     def deploy(self, deployment_config, job_name, job):
@@ -33,11 +33,11 @@ class DeploymentManager(object):
 
         return deployment
 
-    def _record_project(self, stage):
+    def _record_project(self, foundations_context):
         constructor, constructor_args, constructor_kwargs = self.project_listing_constructor_and_args_and_kwargs()
         listing = constructor(*constructor_args, **constructor_kwargs)
         listing.track_pipeline(
-            stage.pipeline_context().provenance.project_name)
+            foundations_context.project_name())
 
     def _create_deployment(self, job_name, job):
         from foundations_contrib.job_source_bundle import JobSourceBundle

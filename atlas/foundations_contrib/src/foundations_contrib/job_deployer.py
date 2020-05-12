@@ -6,10 +6,5 @@ def deploy_job(foundations_context, job_name, job_params):
     logger = log_manager.get_logger(__name__)
     logger.info("Job submission started. Ctrl-C to cancel.")
 
-    from foundations_internal.pipeline_context_wrapper import PipelineContextWrapper
-    pipeline_context_wrapper = PipelineContextWrapper(
-        foundations_context.pipeline_context()
-    )
-
-    job_deployment = deployment_manager.simple_deploy(pipeline_context_wrapper, job_name, job_params)
+    job_deployment = deployment_manager.simple_deploy(foundations_context, job_name, job_params)
     return DeploymentWrapper(job_deployment)

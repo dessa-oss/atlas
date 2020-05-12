@@ -6,7 +6,6 @@ class TestJobDeployer(Spec):
 
     mock_log_manager = let_patch_mock('foundations_contrib.global_state.log_manager')
     mock_deployment_manager = let_patch_mock('foundations_contrib.global_state.deployment_manager')
-    mock_pipeline_context_wrapper_cls = let_patch_mock_with_conditional_return('foundations_internal.pipeline_context_wrapper.PipelineContextWrapper')
 
     mock_logger = Mock()
     mock_deployment = Mock()
@@ -17,10 +16,8 @@ class TestJobDeployer(Spec):
         mock_get_logger.return_when(self.mock_logger, 'foundations_contrib.job_deployer')
         self.mock_log_manager.get_logger = mock_get_logger
 
-        self.mock_pipeline_context_wrapper_cls.return_when(self.fake_pipeline_context_wrapper, self.fake_pipeline_context)
-
         mock_simple_deploy = ConditionalReturn()
-        mock_simple_deploy.return_when(self.mock_deployment, self.fake_pipeline_context_wrapper, self.fake_job_name, self.fake_job_params)
+        mock_simple_deploy.return_when(self.mock_deployment, self.fake_foundations_context, self.fake_job_name, self.fake_job_params)
         self.mock_deployment_manager.simple_deploy = mock_simple_deploy
 
         self.mock_deployment.job_name.return_value = self.fake_job_name
