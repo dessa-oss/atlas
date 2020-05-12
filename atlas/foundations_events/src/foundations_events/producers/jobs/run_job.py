@@ -9,15 +9,15 @@ class RunJob(object):
     
     def __init__(self, message_router, foundations_context):
         self._message_router = message_router
-        self._foundaions_context = foundations_context
+        self._foundations_context = foundations_context
 
     def push_message(self):
         """See above
         """
 
-        provenance = self._foundaions_context.provenance
+        provenance = self._foundations_context.provenance
         message = {
-            'job_id': self._foundaions_context.file_name,
+            'job_id': self._foundations_context.job_id(),
             'project_name': provenance.project_name,
             'monitor_name': provenance.monitor_name or 'None'
         }
