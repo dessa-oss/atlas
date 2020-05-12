@@ -55,11 +55,13 @@ def set_up_job_environment():
         f"Foundations has been run with the following configuration:\n"
         f"{yaml.dump(config_manager.config(), default_flow_style=False)}"
     )
-    pipeline_context = current_foundations_context().pipeline_context()
-    _set_job_state(pipeline_context)
 
-    QueueJob(message_router, current_foundations_context()).push_message()
-    RunJob(message_router, current_foundations_context()).push_message()
+    foundations_context = current_foundations_context()
+    
+    _set_job_state(foundations_context)
+
+    QueueJob(message_router, foundations_context).push_message()
+    RunJob(message_router, foundations_context).push_message()
 
     atexit.register(_at_exit_callback)
     _set_up_exception_handling()
@@ -117,14 +119,16 @@ def _at_exit_callback():
         CompleteJob(message_router, current_foundations_context()).push_message()
 
 
-def _set_job_state(pipeline_context):
+def _set_job_state(foundations_context):
     from uuid import uuid4
     import os
 
-    pipeline_context.file_name = os.environ.get("FOUNDATIONS_JOB_ID", str(uuid4()))
-    pipeline_context.provenance.project_name = os.environ.get(
-        "FOUNDATIONS_PROJECT_NAME",
-        os.environ.get("PROJECT_NAME", _default_project_name()),
+    foundations_context.set_job_id(os.environ.get("FOUNDATIONS_JOB_ID", str(uuid4())))
+    foundations_context.set_project_name(
+        os.environ.get(
+            "FOUNDATIONS_PROJECT_NAME",
+            os.environ.get("PROJECT_NAME", _default_project_name()),
+        )
     )
 
 
