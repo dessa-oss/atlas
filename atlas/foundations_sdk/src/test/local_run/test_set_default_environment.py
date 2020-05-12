@@ -108,7 +108,7 @@ class TestSetDefaultEnvironment(Spec):
         self.at_exit = None
 
         self.mock_run_job_klass.return_when(self.mock_run_job, self.mock_message_router, self.pipeline_context)
-        self.mock_complete_job_klass.return_when(self.mock_complete_job, self.mock_message_router, self.pipeline_context)
+        self.mock_complete_job_klass.return_when(self.mock_complete_job, self.mock_message_router, self.foundations_context)
         self.mock_failed_job_klass.return_when(self.mock_failed_job, self.mock_message_router, self.foundations_context, self.exception_data)
 
         self.mock_config_listing_klass.return_when(self.mock_config_listing, 'execution')
