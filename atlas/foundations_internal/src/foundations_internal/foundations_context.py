@@ -44,10 +44,12 @@ class FoundationsContext(object):
     def job_id(self, value):
         self.pipeline_context().file_name = value
 
+    @property
     def job_resources(self):
         return self._job_resources
 
-    def set_job_resources(self, job_resources):
+    @job_resources.setter
+    def job_resources(self, job_resources):
         self._job_resources = job_resources
 
     def reset_job_resources(self):

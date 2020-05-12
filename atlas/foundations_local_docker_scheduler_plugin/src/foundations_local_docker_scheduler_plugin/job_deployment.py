@@ -242,7 +242,7 @@ class JobDeployment(object):
 
     def _job_resources(self):
         from foundations_contrib.global_state import current_foundations_context
-        return current_foundations_context().job_resources()
+        return current_foundations_context().job_resources
 
     def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, project_name, username, worker_container_overrides):
         from foundations_contrib.global_state import current_foundations_context
@@ -295,11 +295,11 @@ class JobDeployment(object):
             "network": "foundations-atlas"
         }
 
-        if current_foundations_context().job_resources().ram is not None:
-            worker_container['mem_limit'] = int(current_foundations_context().job_resources().ram)
+        if current_foundations_context().job_resources.ram is not None:
+            worker_container['mem_limit'] = int(current_foundations_context().job_resources.ram)
 
-        if (current_foundations_context().job_resources().num_gpus is not None
-                and current_foundations_context().job_resources().num_gpus > 0):
+        if (current_foundations_context().job_resources.num_gpus is not None
+                and current_foundations_context().job_resources.num_gpus > 0):
             worker_container['image'] = 'us.gcr.io/dessa-atlas/worker-gpu:latest'
             worker_container['runtime'] = 'nvidia'
 
@@ -333,7 +333,7 @@ class JobDeployment(object):
 
     def _create_gpu_spec(self):
         from foundations_contrib.global_state import foundations_context
-        resources = foundations_context.job_resources()
+        resources = foundations_context.job_resources
         gpu_spec = {
             "num_gpus": resources.num_gpus
         }

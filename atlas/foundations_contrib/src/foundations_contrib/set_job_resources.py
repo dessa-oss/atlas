@@ -27,4 +27,4 @@ def set_job_resources(num_gpus=0, ram=None):
         raise ValueError('Invalid GPU quantity. Please provide a non-negative integer GPU quantity.')
 
     job_resources = JobResources(num_gpus, ram)
-    current_foundations_context().set_job_resources(job_resources)
+    current_foundations_context().job_resources = job_resources
