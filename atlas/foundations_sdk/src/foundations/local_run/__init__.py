@@ -59,7 +59,7 @@ def set_up_job_environment():
     _set_job_state(pipeline_context)
 
     QueueJob(message_router, pipeline_context).push_message()
-    RunJob(message_router, pipeline_context).push_message()
+    RunJob(message_router, current_foundations_context()).push_message()
 
     atexit.register(_at_exit_callback)
     _set_up_exception_handling()
