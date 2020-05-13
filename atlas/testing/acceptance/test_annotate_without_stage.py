@@ -25,9 +25,8 @@ class TestAnnotateWithoutStage(Spec, MetricsFetcher):
 
         foundations.set_project_name('default')
         self._job_id = str(uuid4())
-        pipeline_context = current_foundations_context().pipeline_context()
-        pipeline_context.file_name = self._job_id
-        queue_job = QueueJob(message_router, pipeline_context)
+        current_foundations_context().set_job_id(self._job_id)
+        queue_job = QueueJob(message_router, current_foundations_context())
         queue_job.push_message()
 
     def test_set_tag_outside_of_job_throws_warning_and_does_not_set_tag_but_still_executes(self):

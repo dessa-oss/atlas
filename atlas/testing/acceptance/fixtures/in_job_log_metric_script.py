@@ -8,10 +8,9 @@ from foundations_events.producers.jobs import RunJob
 foundations.set_project_name('default')
 
 job_id = os.environ['ACCEPTANCE_TEST_JOB_ID']
-pipeline_context = current_foundations_context().pipeline_context()
-pipeline_context.file_name = job_id
+current_foundations_context().set_job_id(job_id)
 
-RunJob(message_router, pipeline_context).push_message()
+RunJob(message_router, current_foundations_context()).push_message()
 
 foundations.log_metric('key', 'value')
 print('Hello World!')
