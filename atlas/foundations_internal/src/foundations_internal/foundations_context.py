@@ -1,23 +1,12 @@
 from foundations_internal.provenance import Provenance
 
-class FoundationsContext(object):
-    """The global state for all staging related functionality for Foundations.
-    This is where everything awesome begins!!!
 
-    Arguments:
-        pipeline {Pipeline} -- The initial Foundation pipeline to use for stages
-    """
+class FoundationsContext(object):
 
     def __init__(self):
         self._job_resources = self._default_job_resources()
         self._job_id = None
         self._provenance = Provenance()
-
-    def __getstate__(self):
-        raise ValueError('FoundationsContexts do not support serialization')
-
-    def __setstate__(self, state):
-        raise ValueError('FoundationsContexts do not support serialization')
 
     @property
     def project_name(self):
