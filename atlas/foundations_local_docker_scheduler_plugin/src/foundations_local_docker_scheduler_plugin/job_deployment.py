@@ -332,8 +332,8 @@ class JobDeployment(object):
         return worker_container
 
     def _create_gpu_spec(self):
-        from foundations_contrib.global_state import foundations_context
-        resources = foundations_context.job_resources
+        from foundations_contrib.global_state import foundations_job
+        resources = foundations_job.job_resources
         gpu_spec = {
             "num_gpus": resources.num_gpus
         }

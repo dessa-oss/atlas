@@ -22,9 +22,9 @@ class TestJobListingV2(Spec):
     @set_up
     def set_up(self):
         import fakeredis
-        from foundations_internal.foundations_context import FoundationsContext
+        from foundations_internal.foundations_job import FoundationsJob
 
-        self._context = FoundationsContext()
+        self._context = FoundationsJob()
         self.patch('foundations_rest_api.global_state.redis_connection', fakeredis.FakeRedis())
 
     def test_has_job_id(self):

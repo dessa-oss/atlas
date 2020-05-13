@@ -30,7 +30,7 @@ class TestDeploymentManager(unittest.TestCase):
     def setUp(self):
         from foundations_contrib.config_manager import ConfigManager
         from foundations_internal.deployment_manager import DeploymentManager
-        from foundations_internal.foundations_context import FoundationsContext
+        from foundations_internal.foundations_job import FoundationsJob
 
         self._listing = self.MockListing()
 
@@ -45,7 +45,7 @@ class TestDeploymentManager(unittest.TestCase):
 
         self._deployment_manager = DeploymentManager(self._config)
 
-        self._foundations_context = FoundationsContext()
+        self._foundations_context = FoundationsJob()
 
     def test_deploy_persisted_project_name(self):
         self._foundations_context.project_name = "my project"

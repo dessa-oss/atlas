@@ -20,8 +20,8 @@ class TestJobSubmissionDeployment(Spec):
 
     @let_now
     def foundations_context(self):
-        from foundations_internal.foundations_context import FoundationsContext
-        return self.patch('foundations_contrib.global_state.foundations_context', FoundationsContext())
+        from foundations_internal.foundations_job import FoundationsJob
+        return self.patch('foundations_contrib.global_state.foundations_context', FoundationsJob())
 
     @let_now
     def config_manager(self):

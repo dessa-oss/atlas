@@ -77,9 +77,9 @@ class TestSetDefaultEnvironment(Spec):
 
     @let_now
     def foundations_context(self):
-        from foundations_internal.foundations_context import FoundationsContext
+        from foundations_internal.foundations_job import FoundationsJob
 
-        context = FoundationsContext()
+        context = FoundationsJob()
         return self.patch('foundations_contrib.global_state.foundations_context', context)
 
     mock_config_listing_klass = let_patch_mock_with_conditional_return('foundations_core_cli.typed_config_listing.TypedConfigListing')

@@ -2,7 +2,7 @@
 import unittest
 
 from foundations_spec import *
-from foundations_internal.foundations_context import FoundationsContext
+from foundations_internal.foundations_job import FoundationsJob
 from foundations_internal.job_resources import JobResources
 
 class TestFoundationsContext(Spec):
@@ -24,7 +24,7 @@ class TestFoundationsContext(Spec):
         return self.faker.word()
 
     def setUp(self):
-        self._context = FoundationsContext()
+        self._context = FoundationsJob()
 
     def test_set_project_name_sets_provenance_project_name(self):
         self._context.project_name = 'my project'

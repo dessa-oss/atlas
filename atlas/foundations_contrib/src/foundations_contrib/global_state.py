@@ -40,9 +40,9 @@ def _clear_state():
 
 
 def _create_foundations_context():
-    from foundations_internal.foundations_context import FoundationsContext
+    from foundations_internal.foundations_job import FoundationsJob
 
-    return FoundationsContext()
+    return FoundationsJob()
 
 
 foundations_context = _create_foundations_context()

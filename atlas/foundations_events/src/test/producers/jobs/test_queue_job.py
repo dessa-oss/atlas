@@ -8,13 +8,13 @@ from foundations_events.producers.jobs.queue_job import QueueJob
 class TestProducerQueueJob(unittest.TestCase):
 
     def setUp(self):
-        from foundations_internal.foundations_context import FoundationsContext
+        from foundations_internal.foundations_job import FoundationsJob
         from faker import Faker
 
         self.route_name = None
         self.message = None
 
-        self._foundations_context = FoundationsContext()
+        self._foundations_context = FoundationsJob()
         self._foundations_context.job_id = 'some_project'
         self._router = Mock()
         self._router.push_message.side_effect = self._push_message
