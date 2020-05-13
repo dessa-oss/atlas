@@ -18,15 +18,15 @@ class TestAnnotateWithoutStage(Spec, MetricsFetcher):
     def set_up(self):
         from uuid import uuid4
         from foundations_events.producers.jobs import QueueJob
-        from foundations_contrib.global_state import message_router, current_foundations_context
+        from foundations_contrib.global_state import message_router, current_foundations_job
         from acceptance.cleanup import cleanup
 
         cleanup()
 
         foundations.set_project_name('default')
         self._job_id = str(uuid4())
-        current_foundations_context().job_id = self._job_id
-        queue_job = QueueJob(message_router, current_foundations_context())
+        current_foundations_job().job_id = self._job_id
+        queue_job = QueueJob(message_router, current_foundations_job())
         queue_job.push_message()
 
     def test_set_tag_outside_of_job_throws_warning_and_does_not_set_tag_but_still_executes(self):

@@ -27,8 +27,8 @@ class GlobalMetricLogger(object):
 
     @property
     def _foundations_context(self):
-        from foundations_contrib.global_state import current_foundations_context
-        return current_foundations_context()
+        from foundations_contrib.global_state import current_foundations_job
+        return current_foundations_job()
 
 def global_metric_logger_for_job():
     from foundations_contrib.global_state import message_router

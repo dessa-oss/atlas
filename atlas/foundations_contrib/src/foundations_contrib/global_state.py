@@ -39,14 +39,14 @@ def _clear_state():
     redis_connection._redis_connection = None
 
 
-def _create_foundations_context():
+def _create_foundations_job():
     from foundations_internal.foundations_job import FoundationsJob
 
     return FoundationsJob()
 
 
-foundations_context = _create_foundations_context()
+foundations_context = _create_foundations_job()
 
 
-def current_foundations_context():
+def current_foundations_job():
     return foundations_context

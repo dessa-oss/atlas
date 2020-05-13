@@ -29,7 +29,7 @@ class TestCommandLineInterface(Spec):
 
     mock_subprocess_run = let_patch_mock('subprocess.run')
     psutil_process_mock = let_patch_mock('psutil.Process')
-    current_foundations_context = let_patch_mock('foundations_contrib.global_state.current_foundations_context')
+    current_foundations_job = let_patch_mock('foundations_contrib.global_state.current_foundations_job')
     mock_message_router = let_patch_mock('foundations_contrib.global_state.message_router')
     print_mock = let_patch_mock('builtins.print')
     environment_fetcher_mock = let_patch_mock('foundations_core_cli.environment_fetcher.EnvironmentFetcher.get_all_environments')
@@ -41,11 +41,6 @@ class TestCommandLineInterface(Spec):
     @let_now
     def mock_environment(self):
         return self.patch('os.environ', {})
-
-    @let
-    def pipeline_context(self):
-        from foundations_internal.pipeline_context import PipelineContext
-        return PipelineContext()
 
     @let
     def level_1_subparsers_mock(self):
@@ -71,12 +66,12 @@ class TestCommandLineInterface(Spec):
         return PosixPath(path)
 
     @let_now
-    def current_foundations_context_instance(self):
+    def current_foundations_job_instance(self):
         from foundations_internal.foundations_job import FoundationsJob
 
-        foundations_context = FoundationsJob()
-        self.current_foundations_context.return_value = foundations_context
-        return foundations_context
+        foundations_job = FoundationsJob()
+        self.current_foundations_job.return_value = foundations_job
+        return foundations_job
 
     @let
     def command(self):

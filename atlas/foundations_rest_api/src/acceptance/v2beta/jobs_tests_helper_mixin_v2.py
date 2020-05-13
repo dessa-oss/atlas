@@ -70,11 +70,11 @@ class JobsTestsHelperMixinV2(object):
 
     @classmethod
     def _set_tags(klass, job_name, tags):
-        from foundations_contrib.global_state import current_foundations_context
+        from foundations_contrib.global_state import current_foundations_job
         from foundations import set_tag
 
-        foundations_context = current_foundations_context()
-        foundations_context.job_id = job_name
+        foudnations_context = current_foundations_job()
+        foudnations_context.job_id = job_name
 
         if tags is not None:
             for key, value in tags.items():

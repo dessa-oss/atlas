@@ -4,7 +4,7 @@ from foundations_contrib.global_metric_logger import GlobalMetricLogger, global_
 
 class TestGlobalMetricLogger(Spec):
 
-    mock_current_foundations_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')
+    mock_current_foundations_job = let_patch_instance('foundations_contrib.global_state.current_foundations_job')
     mock_logger = let_mock()
 
     class MockMessageRouter(object):
@@ -67,16 +67,16 @@ class TestGlobalMetricLogger(Spec):
     def set_up(self):
         def mock_is_in_running_job():
             try:
-                return self.mock_current_foundations_context.job_id is not None
+                return self.mock_current_foundations_job.job_id is not None
             except ValueError:
                 return False
 
-        self.mock_current_foundations_context.is_in_running_job = mock_is_in_running_job
+        self.mock_current_foundations_job.is_in_running_job = mock_is_in_running_job
 
         self._message_router = self.MockMessageRouter()
         self._logger = GlobalMetricLogger(self._message_router)
 
-        self.mock_current_foundations_context.project_name = self.fake_project_name
+        self.mock_current_foundations_job.project_name = self.fake_project_name
         self._job_id = None
 
     @tear_down
@@ -85,34 +85,34 @@ class TestGlobalMetricLogger(Spec):
         log_manager.set_foundations_not_running_warning_printed(False)
 
     def test_log_metric_stores_metric(self):
-        self.mock_current_foundations_context.job_id = self.fake_job_id
+        self.mock_current_foundations_job.job_id = self.fake_job_id
         self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
         self.assertEqual([{'job_metrics': self.message}], self._logged_metrics())
 
     def test_log_metric_shows_warning_if_not_in_running_job(self):
-        self.mock_current_foundations_context.job_id = None
+        self.mock_current_foundations_job.job_id = None
         self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
         self.mock_logger.warning.assert_called_with('Script not run with Foundations.')
 
     def test_log_metric_shows_warning_only_once_if_not_in_running_job(self):
-        self.mock_current_foundations_context.job_id = None
+        self.mock_current_foundations_job.job_id = None
         self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
         self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
         self.mock_logger.warning.assert_called_once_with('Script not run with Foundations.')
 
     def test_log_metric_does_not_show_warning_if_in_running_job(self):
-        self.mock_current_foundations_context.job_id = self.fake_job_id
+        self.mock_current_foundations_job.job_id = self.fake_job_id
         self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
         self.mock_logger.warning.assert_not_called()
 
     def test_log_metric_can_log_multiple_messages(self):
-        self.mock_current_foundations_context.job_id = self.fake_job_id
+        self.mock_current_foundations_job.job_id = self.fake_job_id
         self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
         self._logger.log_metric(self.fake_metric_name_2, self.fake_metric_value_2)
         self.assertEqual([{'job_metrics': self.message}, {'job_metrics': self.message_2}], self._logged_metrics())
 
     def test_log_metric_does_not_log_anything_if_not_in_running_job(self):
-        self.mock_current_foundations_context.job_id = None
+        self.mock_current_foundations_job.job_id = None
         self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
         self.assertEqual([], self._logged_metrics())
 

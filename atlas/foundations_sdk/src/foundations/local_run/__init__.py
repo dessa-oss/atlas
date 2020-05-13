@@ -44,7 +44,7 @@ def set_up_job_environment():
     from foundations_events.producers.jobs import QueueJob
     from foundations_events.producers.jobs import RunJob
     from foundations_contrib.global_state import (
-        current_foundations_context,
+        current_foundations_job,
         message_router,
         config_manager,
     )
@@ -56,7 +56,7 @@ def set_up_job_environment():
         f"{yaml.dump(config_manager.config(), default_flow_style=False)}"
     )
 
-    foundations_context = current_foundations_context()
+    foundations_context = current_foundations_job()
     
     _set_job_state(foundations_context)
 
@@ -97,7 +97,7 @@ def _handle_exception(exception_type, value, traceback):
 
 def _at_exit_callback():
     from foundations_contrib.global_state import (
-        current_foundations_context,
+        current_foundations_job,
         message_router,
     )
     from foundations_contrib.archiving.upload_artifacts import upload_artifacts
@@ -106,17 +106,16 @@ def _at_exit_callback():
 
     global _exception_happened
 
-    upload_artifacts(current_foundations_context().job_id)
     # This try-except block should be refactored at a later date
 
     if _exception_happened:
         FailedJob(
             message_router,
-            current_foundations_context(),
+            current_foundations_job(),
             {"type": Exception, "exception": "", "traceback": []},
         ).push_message()
     else:
-        CompleteJob(message_router, current_foundations_context()).push_message()
+        CompleteJob(message_router, current_foundations_job()).push_message()
 
 
 def _set_job_state(foundations_context):

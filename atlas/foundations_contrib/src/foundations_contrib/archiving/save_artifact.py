@@ -2,10 +2,10 @@
 import json
 
 def save_artifact(filepath, key=None):
-    from foundations_contrib.global_state import log_manager, current_foundations_context
+    from foundations_contrib.global_state import log_manager, current_foundations_job
 
     logger = log_manager.get_logger(__name__)
-    foundations_context = current_foundations_context()
+    foundations_context = current_foundations_job()
 
     if not foundations_context.is_in_running_job():
         logger.warning('Cannot save artifact outside of job.')

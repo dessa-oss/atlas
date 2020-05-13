@@ -70,13 +70,13 @@ class TestLogMetric(Spec):
         import os
         from foundations_contrib.global_state import message_router
 
-        foundations_context_function = self.patch('foundations_contrib.global_state.current_foundations_context')
+        foundations_job_function = self.patch('foundations_contrib.global_state.current_foundations_job')
 
-        self.foundations_context = Mock()
-        self.foundations_context.job_id = ValueError()
-        self.foundations_context.is_in_running_job.return_value = False
-        self.foundations_context.project_name = self.fake_project_name
-        foundations_context_function.return_value = self.foundations_context
+        self.foundations_job = Mock()
+        self.foundations_job.job_id = ValueError()
+        self.foundations_job.is_in_running_job.return_value = False
+        self.foundations_job.project_name = self.fake_project_name
+        foundations_job_function.return_value = self.foundations_job
 
         self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
         self._message_router = message_router
@@ -95,8 +95,8 @@ class TestLogMetric(Spec):
         self._message_router.add_listener(SingleProjectMetric(self._redis), 'job_metrics')
 
     def _set_job_running(self):
-        self.foundations_context.job_id = self.fake_job_id
-        self.foundations_context.is_in_running_job.return_value = True
+        self.foundations_job.job_id = self.fake_job_id
+        self.foundations_job.is_in_running_job.return_value = True
 
     def _run_job_and_log_metric(self, metric_name, metric_value):
         self._set_job_running()

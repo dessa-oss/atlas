@@ -5,14 +5,14 @@ def _config():
     from os import getcwd
     from foundations_contrib.global_state import (
         config_manager,
-        current_foundations_context,
+        current_foundations_job,
     )
     from foundations_contrib.global_state import config_manager
     from foundations_contrib.local_file_system_pipeline_archive import LocalFileSystemPipelineArchive
     from foundations_contrib.local_file_system_pipeline_listing import LocalFileSystemPipelineListing
 
     # ensure a job uuid is set
-    current_foundations_context().job_id = "integration-test-job"
+    current_foundations_job().job_id = "integration-test-job"
 
     # separates test runs
     test_uuid = uuid4()

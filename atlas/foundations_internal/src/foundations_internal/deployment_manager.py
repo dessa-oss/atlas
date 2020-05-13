@@ -17,13 +17,13 @@ class DeploymentManager(object):
 
     def deploy(self, deployment_config, job_name, job):
         from foundations import log_manager
-        from foundations.global_state import current_foundations_context
+        from foundations.global_state import current_foundations_job
 
         logger = log_manager.get_logger(__name__)
 
         deployment = self._create_deployment(job_name, job)
         deployment.config().update(deployment_config)
-        project_name = current_foundations_context().project_name
+        project_name = current_foundations_job().project_name
 
         deployment.deploy()
         logger.info("Job submitted with ID '{}' in project '{}'.".format(job_name, project_name))
