@@ -76,11 +76,11 @@ class TestSetDefaultEnvironment(Spec):
         return self.faker.uuid4()
 
     @let_now
-    def foundations_context(self):
+    def foundations_job(self):
         from foundations_internal.foundations_job import FoundationsJob
 
-        context = FoundationsJob()
-        return self.patch('foundations_contrib.global_state.foundations_context', context)
+        job = FoundationsJob()
+        return self.patch('foundations_contrib.global_state.foundations_job', job)
 
     mock_config_listing_klass = let_patch_mock_with_conditional_return('foundations_core_cli.typed_config_listing.TypedConfigListing')
 
@@ -100,9 +100,9 @@ class TestSetDefaultEnvironment(Spec):
         self.message = None
         self.at_exit = None
 
-        self.mock_run_job_klass.return_when(self.mock_run_job, self.mock_message_router, self.foundations_context)
-        self.mock_complete_job_klass.return_when(self.mock_complete_job, self.mock_message_router, self.foundations_context)
-        self.mock_failed_job_klass.return_when(self.mock_failed_job, self.mock_message_router, self.foundations_context, self.exception_data)
+        self.mock_run_job_klass.return_when(self.mock_run_job, self.mock_message_router, self.foundations_job)
+        self.mock_complete_job_klass.return_when(self.mock_complete_job, self.mock_message_router, self.foundations_job)
+        self.mock_failed_job_klass.return_when(self.mock_failed_job, self.mock_message_router, self.foundations_job, self.exception_data)
 
         self.mock_config_listing_klass.return_when(self.mock_config_listing, 'execution')
 
@@ -161,12 +161,12 @@ class TestSetDefaultEnvironment(Spec):
 
     def test_sets_default_job_id(self):
         set_up_job_environment()
-        self.assertEqual(self.random_uuid, self.foundations_context.job_id)
+        self.assertEqual(self.random_uuid, self.foundations_job.job_id)
 
     def test_sets_override_job_id(self):
         self.mock_os_environment['FOUNDATIONS_JOB_ID'] = self.override_job_id
         set_up_job_environment()
-        self.assertEqual(self.override_job_id, self.foundations_context.job_id)
+        self.assertEqual(self.override_job_id, self.foundations_job.job_id)
 
     def test_pushes_queued_job_message_with_project_name_set(self):
         set_up_job_environment()

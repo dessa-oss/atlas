@@ -15,4 +15,4 @@ def cleanup():
     for file in glob('*.tgz'):
         remove(file)
 
-    foundations_contrib.global_state.foundations_context = FoundationsJob()
+    foundations_contrib.global_state.foundations_job = FoundationsJob()

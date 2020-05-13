@@ -45,8 +45,8 @@ def _create_foundations_job():
     return FoundationsJob()
 
 
-foundations_context = _create_foundations_job()
+foundations_job = _create_foundations_job()
 
 
 def current_foundations_job():
-    return foundations_context
+    return foundations_job
