@@ -37,7 +37,7 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
 
         global_state.config_manager.reset()
 
-        global_state.foundations_context = FoundationsContext(klass._pipeline)
+        global_state.foundations_context = FoundationsContext()
 
         klass._save_artifacts()
 
@@ -54,8 +54,8 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
     def _set_job_id(klass, job_id):
         import foundations_contrib.global_state as global_state
 
-        context = global_state.foundations_context.pipeline_context()
-        context.file_name = job_id
+        context = global_state.foundations_context
+        context.job_id = job_id
 
     @classmethod
     def _artifact_fixture_path(klass, artifact_name):

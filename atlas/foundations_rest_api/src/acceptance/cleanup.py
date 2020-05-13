@@ -4,9 +4,8 @@ def cleanup():
     from os.path import isdir
     from glob import glob
     from foundations_rest_api.global_state import redis_connection
-    from foundations_contrib.global_state import foundations_context
-    from foundations_internal.pipeline_context import PipelineContext
-    from foundations_internal.pipeline import Pipeline
+    import foundations_contrib.global_state
+    from foundations_internal.foundations_context import FoundationsContext
 
     tmp_dir = getcwd() + '/tmp'
     if isdir(tmp_dir):
@@ -17,6 +16,4 @@ def cleanup():
 
     redis_connection.flushall()
 
-    pipeline_context = PipelineContext()
-    pipeline = Pipeline(pipeline_context)
-    foundations_context._pipeline = pipeline
+    foundations_contrib.global_state.foundations_context = FoundationsContext()
