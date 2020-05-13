@@ -64,9 +64,9 @@ class TestFoundationsContext(Spec):
         self._context.project_name = self.fake_project_name
         self.assertEqual(self.fake_project_name, self._context.project_name)
 
-    def test_is_in_running_job_returns_true_if_pipeline_context_has_job_id(self):
+    def test_is_in_running_job_returns_true_if_foundations_context_has_job_id(self):
         self._context.job_id = self.job_id
         self.assertTrue(self._context.is_in_running_job())
 
-    def test_is_in_running_job_returns_false_if_pipeline_context_does_not_have_job_id(self):
+    def test_is_in_running_job_returns_false_if_foundations_context_does_not_have_job_id(self):
         self.assertFalse(self._context.is_in_running_job())
