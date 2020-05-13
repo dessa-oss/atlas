@@ -38,24 +38,6 @@ class TestFoundationsContext(Spec):
         self._context.job_id = self.job_id
         self.assertEqual(self.job_id, self._context.job_id)
 
-    def test_pickle_getstate_raises_exception(self):
-        with self.assertRaises(ValueError) as error_context:
-            self._context.__getstate__()
-        self.assertIn('FoundationsContexts do not support serialization', error_context.exception.args)
-
-    def test_pickle_setstate_raises_exception(self):
-        with self.assertRaises(ValueError) as error_context:
-            self._context.__setstate__({})
-        self.assertIn('FoundationsContexts do not support serialization', error_context.exception.args)
-
-    def test_is_unserializable(self):
-        import pickle
-
-        with self.assertRaises(ValueError) as error_context:
-            pickle.dumps(self._context)
-
-        self.assertIn('FoundationsContexts do not support serialization', error_context.exception.args)
-
     def test_job_resources_has_default_gpus_one(self):
         job_resources = self._context.job_resources
         self.assertEqual(1, job_resources.num_gpus)
