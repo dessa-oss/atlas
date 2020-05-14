@@ -21,7 +21,7 @@ class TestLogMetricOutsideStage(Spec, MetricsFetcher):
 
         foundations.set_project_name('default')
         self._job_id = str(uuid4())
-        current_foundations_context().set_job_id(self._job_id)
+        current_foundations_context().job_id = self._job_id
         queue_job = QueueJob(message_router, current_foundations_context())
         queue_job.push_message()
 
