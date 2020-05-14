@@ -77,4 +77,4 @@ class TestLogParam(Spec):
 
     def _set_job_id(self, job_id):
         from foundations_contrib.global_state import current_foundations_context
-        current_foundations_context().pipeline_context().file_name = job_id
+        current_foundations_context().job_id = job_id

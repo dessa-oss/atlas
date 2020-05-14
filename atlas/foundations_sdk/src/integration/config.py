@@ -12,7 +12,7 @@ def _config():
     from foundations_contrib.local_file_system_pipeline_listing import LocalFileSystemPipelineListing
 
     # ensure a job uuid is set
-    current_foundations_context().pipeline_context().file_name = "integration-test-job"
+    current_foundations_context().job_id = "integration-test-job"
 
     # separates test runs
     test_uuid = uuid4()

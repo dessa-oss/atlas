@@ -48,7 +48,7 @@ class TestCLIInit(Spec, RunLocalJob):
         with open('test-cli-init/main.py', 'a') as file:
             file.write(
                 '\nfrom foundations_contrib.global_state import redis_connection, current_foundations_context\n'
-                'redis_connection.set("foundations_testing_job_id", current_foundations_context().pipeline_context().job_id)\n'
+                'redis_connection.set("foundations_testing_job_id", current_foundations_context().job_id)\n'
             )
         
     def _assert_job_file_exists(self, job_id, relative_path):
