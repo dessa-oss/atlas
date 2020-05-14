@@ -55,7 +55,7 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         import foundations_contrib.global_state as global_state
 
         context = global_state.foundations_context
-        context.set_job_id(job_id)
+        context.job_id = job_id
 
     @classmethod
     def _artifact_fixture_path(klass, artifact_name):

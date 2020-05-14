@@ -20,7 +20,7 @@ class TestConsumers(unittest.TestCase):
         self._context.provenance.project_name = self._project_name
 
         self._job_id = self._str_random_uuid()
-        self._context.set_job_id(self._job_id)
+        self._context.job_id = self._job_id
 
         self._user = self._random_name()
         self._context.provenance.user_name = self._user
