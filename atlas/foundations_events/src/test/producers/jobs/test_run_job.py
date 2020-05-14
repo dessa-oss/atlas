@@ -13,27 +13,27 @@ class TestProducerRunJob(unittest.TestCase):
         self.route_name = None
         self.message = None
 
-        self._foundations_context = FoundationsJob()
-        self._foundations_context.job_id = 'some_project'
+        self._foundations_job = FoundationsJob()
+        self._foundations_job.job_id = 'some_project'
         self._router = Mock()
         self._router.push_message.side_effect = self._push_message
-        self._producer = RunJob(self._router, self._foundations_context)
+        self._producer = RunJob(self._router, self._foundations_job)
 
     def test_push_message_sends_run_job_message_to_correct_channel(self):
         self._producer.push_message()
         self.assertEqual('run_job', self.route_name)
 
     def test_push_message_sends_run_job_message_with_job_id(self):
-        self._foundations_context.job_id = 'my fantastic job'
-        self._foundations_context.project_name = 'this project'
+        self._foundations_job.job_id = 'my fantastic job'
+        self._foundations_job.project_name = 'this project'
         self._producer.push_message()
         self.assertEqual({'job_id': 'my fantastic job',
                           'project_name': 'this project',
                           'monitor_name': 'None'}, self.message)
 
     def test_push_message_sends_run_job_message_with_job_id_different_job_different_project(self):
-        self._foundations_context.job_id = 'neural nets in space!'
-        self._foundations_context.project_name = 'that project'
+        self._foundations_job.job_id = 'neural nets in space!'
+        self._foundations_job.project_name = 'that project'
         self._producer.push_message()
         self.assertEqual({'job_id': 'neural nets in space!',
                           'project_name': 'that project',

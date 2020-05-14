@@ -13,33 +13,33 @@ class TestProducerCompleteJob(unittest.TestCase):
         self.route_name = None
         self.message = None
 
-        self._foundations_context = FoundationsJob()
-        self._foundations_context.job_id = 'some_project'
+        self._foundations_job = FoundationsJob()
+        self._foundations_job.job_id = 'some_project'
         self._router = Mock()
         self._router.push_message.side_effect = self._push_message
-        self._producer = CompleteJob(self._router, self._foundations_context)
+        self._producer = CompleteJob(self._router, self._foundations_job)
 
     def test_push_message_sends_complete_job_message_to_correct_channel(self):
         self._producer.push_message()
         self.assertEqual('complete_job', self.route_name)
 
     def test_push_message_sends_complete_job_message_with_job_id(self):
-        self._foundations_context.job_id = 'my fantastic job'
+        self._foundations_job.job_id = 'my fantastic job'
         self._producer.push_message()
         self.assertDictContainsSubset({'job_id': 'my fantastic job'}, self.message)
 
     def test_push_message_sends_complete_job_message_with_job_id_different_job(self):
-        self._foundations_context.job_id = 'neural nets in space!'
+        self._foundations_job.job_id = 'neural nets in space!'
         self._producer.push_message()
         self.assertDictContainsSubset({'job_id': 'neural nets in space!'}, self.message)
 
     def test_push_message_sends_complete_job_message_with_project_name(self):
-        self._foundations_context.project_name = 'my fantastic job'
+        self._foundations_job.project_name = 'my fantastic job'
         self._producer.push_message()
         self.assertDictContainsSubset({'project_name': 'my fantastic job'}, self.message)
 
     def test_push_message_sends_complete_job_message_with_project_name_different_job(self):
-        self._foundations_context.project_name = 'neural nets in space!'
+        self._foundations_job.project_name = 'neural nets in space!'
         self._producer.push_message()
         self.assertDictContainsSubset({'project_name': 'neural nets in space!'}, self.message)
 

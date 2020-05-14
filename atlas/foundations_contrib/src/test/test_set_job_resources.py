@@ -39,7 +39,7 @@ class TestSetJobResources(Spec):
     def tear_down(self):
         current_foundations_job().reset_job_resources()
 
-    def test_set_job_resources_sets_job_resources_object_in_current_foundations_context(self):
+    def test_set_job_resources_sets_job_resources_object_in_current_foundations_job(self):
         set_job_resources(self.num_gpus, self.ram)
         job_resources = current_foundations_job().job_resources
         self.assertEqual(self.job_resources, job_resources)

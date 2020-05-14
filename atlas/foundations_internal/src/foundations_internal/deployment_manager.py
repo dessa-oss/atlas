@@ -30,11 +30,11 @@ class DeploymentManager(object):
 
         return deployment
 
-    def _record_project(self, foundations_context):
+    def _record_project(self, foundations_job):
         constructor, constructor_args, constructor_kwargs = self.project_listing_constructor_and_args_and_kwargs()
         listing = constructor(*constructor_args, **constructor_kwargs)
         listing.track_pipeline(
-            foundations_context.project_name)
+            foundations_job.project_name)
 
     def _create_deployment(self, job_name, job):
         from foundations_contrib.job_source_bundle import JobSourceBundle
