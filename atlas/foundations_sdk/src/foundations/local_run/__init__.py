@@ -56,12 +56,12 @@ def set_up_job_environment():
         f"{yaml.dump(config_manager.config(), default_flow_style=False)}"
     )
 
-    foundations_context = current_foundations_job()
+    foundations_job = current_foundations_job()
     
-    _set_job_state(foundations_context)
+    _set_job_state(foundations_job)
 
-    QueueJob(message_router, foundations_context).push_message()
-    RunJob(message_router, foundations_context).push_message()
+    QueueJob(message_router, foundations_job).push_message()
+    RunJob(message_router, foundations_job).push_message()
 
     atexit.register(_at_exit_callback)
     _set_up_exception_handling()
@@ -106,6 +106,7 @@ def _at_exit_callback():
 
     global _exception_happened
 
+    upload_artifacts(current_foundations_job().job_id)
     # This try-except block should be refactored at a later date
 
     if _exception_happened:
@@ -118,12 +119,12 @@ def _at_exit_callback():
         CompleteJob(message_router, current_foundations_job()).push_message()
 
 
-def _set_job_state(foundations_context):
+def _set_job_state(foundations_job):
     from uuid import uuid4
     import os
 
-    foundations_context.job_id = os.environ.get("FOUNDATIONS_JOB_ID", str(uuid4()))
-    foundations_context.project_name = os.environ.get("FOUNDATIONS_PROJECT_NAME",
+    foundations_job.job_id = os.environ.get("FOUNDATIONS_JOB_ID", str(uuid4()))
+    foundations_job.project_name = os.environ.get("FOUNDATIONS_PROJECT_NAME",
                                                       os.environ.get("PROJECT_NAME", _default_project_name()))
 
 
