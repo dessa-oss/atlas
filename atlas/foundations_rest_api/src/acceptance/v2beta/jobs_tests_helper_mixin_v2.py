@@ -17,7 +17,7 @@ class JobsTestsHelperMixinV2(object):
     @classmethod
     def _set_project_name(klass, project_name):
         klass._project_name = project_name
-        klass._foundations_context.project_name = klass._project_name
+        klass._foundations_context.set_project_name(klass._project_name)
 
     @staticmethod
     def _str_random_uuid():
@@ -41,7 +41,7 @@ class JobsTestsHelperMixinV2(object):
 
     @classmethod
     def _make_completed_job(klass, job_name, user, tags=None, start_timestamp=None, end_timestamp=None, **kwargs):
-        klass._foundations_context.job_id = job_name
+        klass._foundations_context.set_job_id(job_name)
         klass._foundations_context.user_name = user
         klass._foundations_context.provenance.job_run_data = kwargs
         QueueJob(klass._message_router, klass._foundations_context).push_message()
@@ -54,7 +54,7 @@ class JobsTestsHelperMixinV2(object):
 
     @classmethod
     def _make_running_job(klass, job_name, user, tags=None, start_timestamp=None):
-        klass._foundations_context.job_id = job_name
+        klass._foundations_context.set_job_id(job_name)
         klass._foundations_context.user_name = user
         QueueJob(klass._message_router, klass._foundations_context).push_message()
         klass._fake_start_time(start_timestamp)
@@ -64,7 +64,7 @@ class JobsTestsHelperMixinV2(object):
 
     @classmethod
     def _make_queued_job(klass, job_name, user):
-        klass._foundations_context.job_id = job_name
+        klass._foundations_context.set_job_id(job_name)
         klass._foundations_context.provenance.user_name = user
         QueueJob(klass._message_router, klass._foundations_context).push_message()
 
@@ -73,11 +73,11 @@ class JobsTestsHelperMixinV2(object):
         from foundations_contrib.global_state import current_foundations_context
         from foundations import set_tag
 
-        foudnations_context = current_foundations_context()
-        foudnations_context.job_id = job_name
+        foundations_context = current_foundations_context()
+        foundations_context.set_job_id(job_name)
 
         if tags is not None:
             for key, value in tags.items():
                 set_tag(key, value)
 
-        foudnations_context.job_id = None
+        foundations_context.set_job_id(None)
