@@ -17,7 +17,7 @@ class JobsTestsHelperMixinV2(object):
     @classmethod
     def _set_project_name(klass, project_name):
         klass._project_name = project_name
-        klass._foundations_context.set_project_name(klass._project_name)
+        klass._foundations_context.project_name = klass._project_name
 
     @staticmethod
     def _str_random_uuid():
