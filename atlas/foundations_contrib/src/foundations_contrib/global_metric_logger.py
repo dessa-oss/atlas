@@ -17,18 +17,18 @@ class GlobalMetricLogger(object):
             log_manager.set_foundations_not_running_warning_printed()
 
     def _is_job_running(self):
-        return self._foundations_context.is_in_running_job()
+        return self._foundations_job.is_in_running_job()
 
     def _project_name(self):
-        return self._foundations_context.project_name()
+        return self._foundations_job.project_name
 
     def _job_id(self):
-        return self._foundations_context.job_id()
+        return self._foundations_job.job_id
 
     @property
-    def _foundations_context(self):
-        from foundations_contrib.global_state import current_foundations_context
-        return current_foundations_context()
+    def _foundations_job(self):
+        from foundations_contrib.global_state import current_foundations_job
+        return current_foundations_job()
 
 def global_metric_logger_for_job():
     from foundations_contrib.global_state import message_router

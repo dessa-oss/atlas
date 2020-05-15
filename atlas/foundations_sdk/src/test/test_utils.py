@@ -14,14 +14,14 @@ class TestUtils(Spec):
 
     @set_up
     def set_up(self):
-        self.foundations_context_function = self.patch('foundations_contrib.global_state.current_foundations_context')
+        self.foundations_job_function = self.patch('foundations_contrib.global_state.current_foundations_job')
 
-        self.foundations_context = Mock()
-        self.foundations_context.job_id.side_effect = ValueError()
-        self.foundations_context.is_in_running_job.return_value = False
-        self.foundations_context.project_name.return_value = 'some_name'
+        self.foundations_job = Mock()
+        self.foundations_job.job_id.side_effect = ValueError()
+        self.foundations_job.is_in_running_job.return_value = False
+        self.foundations_job.project_name.return_value = 'some_name'
 
-        self.foundations_context_function.return_value = self.foundations_context
+        self.foundations_job_function.return_value = self.foundations_job
 
     @tear_down
     def tear_down(self):
@@ -127,14 +127,14 @@ class TestUtils(Spec):
     def test_log_warning_if_not_running_in_job_does_not_show_warning_if_in_running_job(self):
         from foundations.utils import log_warning_if_not_running_in_job
 
-        self.foundations_context.is_in_running_job.return_value = True
+        self.foundations_job.is_in_running_job.return_value = True
         log_warning_if_not_running_in_job(_some_function, {'result': False})
         self.mock_logger.warning.assert_not_called()
 
     def test_log_warning_if_not_running_in_job_runs_function_if_in_running_job(self):
         from foundations.utils import log_warning_if_not_running_in_job
 
-        self.foundations_context.is_in_running_job.return_value = True
+        self.foundations_job.is_in_running_job.return_value = True
         some_dict = {'result': False}
         log_warning_if_not_running_in_job(_some_function, some_dict)
         self.assertTrue(some_dict['result'])
@@ -142,7 +142,7 @@ class TestUtils(Spec):
     def test_log_warning_if_not_running_in_job_does_not_run_function_if_not_in_job(self):
         from foundations.utils import log_warning_if_not_running_in_job
 
-        self.foundations_context.is_in_running_job.return_value = False
+        self.foundations_job.is_in_running_job.return_value = False
         some_dict = {'result': False}
         log_warning_if_not_running_in_job(_some_function, some_dict)
         self.assertFalse(some_dict['result'])
