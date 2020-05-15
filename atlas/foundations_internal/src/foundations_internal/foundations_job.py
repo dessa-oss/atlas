@@ -1,7 +1,7 @@
 from foundations_internal.provenance import Provenance
 
 
-class FoundationsContext(object):
+class FoundationsJob(object):
 
     def __init__(self):
         self._job_resources = self._default_job_resources()

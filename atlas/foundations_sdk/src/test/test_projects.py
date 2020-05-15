@@ -13,8 +13,8 @@ from foundations import set_tag
 
 
 class TestProjects(Spec):
-    foundations_context = let_patch_instance(
-        "foundations_contrib.global_state.current_foundations_context"
+    foundations_job = let_patch_instance(
+        "foundations_contrib.global_state.current_foundations_job"
     )
     message_router = let_patch_mock("foundations_contrib.global_state.message_router")
 
@@ -111,10 +111,10 @@ class TestProjects(Spec):
 
     @set_up
     def set_up(self):
-        self.foundations_context.job_id = None
-        self.foundations_context.project_name = self.project_name
+        self.foundations_job.job_id = None
+        self.foundations_job.project_name = self.project_name
 
-        self.foundations_context.provenance.annotations = (
+        self.foundations_job.provenance.annotations = (
             self.provenance_annotations
         )
         self.redis.flushall()
@@ -123,14 +123,14 @@ class TestProjects(Spec):
         set_project_name(self.project_name)
         self.assertEqual(
             self.project_name,
-            self.foundations_context.project_name,
+            self.foundations_job.project_name,
         )
 
     def test_set_project_name_sets_project_name_different_name(self):
         set_project_name(self.project_name)
         self.assertEqual(
             self.project_name,
-            self.foundations_context.project_name,
+            self.foundations_job.project_name,
         )
 
     def test_set_project_name_is_global(self):
@@ -139,7 +139,7 @@ class TestProjects(Spec):
         foundations.set_project_name(self.project_name)
         self.assertEqual(
             self.project_name,
-            self.foundations_context.project_name,
+            self.foundations_job.project_name,
         )
 
     def test_set_project_name_is_global(self):
@@ -148,7 +148,7 @@ class TestProjects(Spec):
         foundations.set_project_name(self.project_name)
         self.assertEqual(
             self.project_name,
-            self.foundations_context.project_name,
+            self.foundations_job.project_name,
         )
 
     @patch("foundations_contrib.models.project_listing.ProjectListing.find_project")
@@ -405,7 +405,7 @@ class TestProjects(Spec):
         assert_frame_equal(expected_data_frame, job_annotations)
 
     def test_set_tag_when_in_job_sets_tag(self):
-        self.foundations_context.job_id = self.job_id
+        self.foundations_job.job_id = self.job_id
         set_tag(self.random_tag, self.random_tag_value)
         self.message_router.push_message.assert_called_with(
             "job_tag",

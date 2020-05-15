@@ -54,9 +54,9 @@ def submit(arguments):
             job_resource_args['ram'] = arguments.ram
         set_job_resources(**job_resource_args)
 
-        from foundations.global_state import current_foundations_context
+        from foundations.global_state import current_foundations_job
         try:
-            cur_job_id = current_foundations_context().job_id
+            cur_job_id = current_foundations_job().job_id
         except ValueError:
             cur_job_id = None
 
@@ -73,6 +73,6 @@ def submit(arguments):
                 pass
 
         if cur_job_id is not None:
-            current_foundations_context().job_id = cur_job_id
+            current_foundations_job().job_id = cur_job_id
 
         return deployment
