@@ -7,9 +7,9 @@ class CompleteJob(object):
         pipeline_context {PipelineContext} -- The pipeline context associated with the job
     """
     
-    def __init__(self, message_router, foundations_context):
+    def __init__(self, message_router, foundations_job):
         self._message_router = message_router
-        self._foundations_context = foundations_context
+        self._foundations_job = foundations_job
 
     def push_message(self):
         """See above
@@ -18,7 +18,7 @@ class CompleteJob(object):
         self._message_router.push_message(
             'complete_job',
             {
-                'job_id': self._foundations_context.job_id(),
-                'project_name': self._foundations_context.project_name()
+                'job_id': self._foundations_job.job_id,
+                'project_name': self._foundations_job.project_name
             }
         )

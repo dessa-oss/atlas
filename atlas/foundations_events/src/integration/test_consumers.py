@@ -7,20 +7,20 @@ class TestConsumers(unittest.TestCase):
     def setUp(self):
         from foundations_contrib.global_state import redis_connection
         from foundations_contrib.global_state import message_router
-        from foundations_internal.foundations_context import FoundationsContext
+        from foundations_internal.foundations_job import FoundationsJob
         import faker
 
         self._redis = redis_connection
         self._redis.flushall()
         self._faker = faker.Faker()
 
-        self._context = FoundationsContext()
+        self._context = FoundationsJob()
 
         self._project_name = self._str_random_uuid()
         self._context.provenance.project_name = self._project_name
 
         self._job_id = self._str_random_uuid()
-        self._context.set_job_id(self._job_id)
+        self._context.job_id = self._job_id
 
         self._user = self._random_name()
         self._context.provenance.user_name = self._user
