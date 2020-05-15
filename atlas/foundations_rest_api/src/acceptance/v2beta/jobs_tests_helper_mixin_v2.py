@@ -9,17 +9,15 @@ class JobsTestsHelperMixinV2(object):
     @classmethod
     def setUpClass(klass):
         from foundations_contrib.global_state import message_router
-        from foundations_internal.pipeline import Pipeline
-        from foundations_internal.pipeline_context import PipelineContext
+        from foundations_internal.foundations_job import FoundationsJob
 
         klass._message_router = message_router
-        klass._pipeline_context = PipelineContext()
-        klass._pipeline = Pipeline(klass._pipeline_context)
+        klass._foundations_job = FoundationsJob()
 
     @classmethod
     def _set_project_name(klass, project_name):
         klass._project_name = project_name
-        klass._pipeline_context.provenance.project_name = klass._project_name
+        klass._foundations_job.project_name = klass._project_name
 
     @staticmethod
     def _str_random_uuid():
@@ -43,43 +41,43 @@ class JobsTestsHelperMixinV2(object):
 
     @classmethod
     def _make_completed_job(klass, job_name, user, tags=None, start_timestamp=None, end_timestamp=None, **kwargs):
-        klass._pipeline_context.file_name = job_name
-        klass._pipeline_context.provenance.user_name = user
-        klass._pipeline_context.provenance.job_run_data = kwargs
-        QueueJob(klass._message_router, klass._pipeline_context).push_message()
+        klass._foundations_job.job_id = job_name
+        klass._foundations_job.user_name = user
+        klass._foundations_job.provenance.job_run_data = kwargs
+        QueueJob(klass._message_router, klass._foundations_job).push_message()
         klass._fake_start_time(start_timestamp)
-        RunJob(klass._message_router, klass._pipeline_context).push_message()
+        RunJob(klass._message_router, klass._foundations_job).push_message()
         klass._set_tags(job_name, tags)
         klass._fake_end_time(end_timestamp)
-        CompleteJob(klass._message_router, klass._pipeline_context).push_message()
+        CompleteJob(klass._message_router, klass._foundations_job).push_message()
         klass._restore_time(start_timestamp, end_timestamp)
 
     @classmethod
     def _make_running_job(klass, job_name, user, tags=None, start_timestamp=None):
-        klass._pipeline_context.file_name = job_name
-        klass._pipeline_context.provenance.user_name = user
-        QueueJob(klass._message_router, klass._pipeline_context).push_message()
+        klass._foundations_job.job_id = job_name
+        klass._foundations_job.user_name = user
+        QueueJob(klass._message_router, klass._foundations_job).push_message()
         klass._fake_start_time(start_timestamp)
-        RunJob(klass._message_router, klass._pipeline_context).push_message()
+        RunJob(klass._message_router, klass._foundations_job).push_message()
         klass._set_tags(job_name, tags)
         klass._restore_time(start_timestamp, None)
 
     @classmethod
     def _make_queued_job(klass, job_name, user):
-        klass._pipeline_context.file_name = job_name
-        klass._pipeline_context.provenance.user_name = user
-        QueueJob(klass._message_router, klass._pipeline_context).push_message()
+        klass._foundations_job.job_id = job_name
+        klass._foundations_job.provenance.user_name = user
+        QueueJob(klass._message_router, klass._foundations_job).push_message()
 
     @classmethod
     def _set_tags(klass, job_name, tags):
-        from foundations_contrib.global_state import current_foundations_context
+        from foundations_contrib.global_state import current_foundations_job
         from foundations import set_tag
 
-        pipeline_context = current_foundations_context().pipeline_context()
-        pipeline_context.file_name = job_name
+        foundations_job = current_foundations_job()
+        foundations_job.job_id = job_name
 
         if tags is not None:
             for key, value in tags.items():
                 set_tag(key, value)
 
-        pipeline_context.file_name = None
+        foundations_job.job_id = None
