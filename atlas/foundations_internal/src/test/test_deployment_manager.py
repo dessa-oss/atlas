@@ -30,9 +30,7 @@ class TestDeploymentManager(unittest.TestCase):
     def setUp(self):
         from foundations_contrib.config_manager import ConfigManager
         from foundations_internal.deployment_manager import DeploymentManager
-        from foundations_internal.pipeline import Pipeline
-        from foundations_internal.pipeline_context import PipelineContext
-        from foundations_internal.foundations_context import FoundationsContext
+        from foundations_internal.foundations_job import FoundationsJob
 
         self._listing = self.MockListing()
 
@@ -47,19 +45,17 @@ class TestDeploymentManager(unittest.TestCase):
 
         self._deployment_manager = DeploymentManager(self._config)
 
-        self._pipeline_context = PipelineContext()
-        self._pipeline = Pipeline(self._pipeline_context)
-        self._foundations_context = FoundationsContext(self._pipeline)
+        self._foundations_job = FoundationsJob()
 
     def test_deploy_persisted_project_name(self):
-        self._foundations_context.set_project_name("my project")
-        self._deployment_manager.simple_deploy(self._pipeline, "", {})
+        self._foundations_job.project_name = "my project"
+        self._deployment_manager.simple_deploy(self._foundations_job, "", {})
 
         self.assertEqual("my project", self._listing.value)
 
     def test_deploy_persisted_project_name_different_name(self):
-        self._foundations_context.set_project_name("project potato launcher")
-        self._deployment_manager.simple_deploy(self._pipeline, "", {})
+        self._foundations_job.project_name = "project potato launcher"
+        self._deployment_manager.simple_deploy(self._foundations_job, "", {})
 
         self.assertEqual("project potato launcher", self._listing.value)
 
@@ -73,8 +69,8 @@ class TestDeploymentManager(unittest.TestCase):
 
         del self._config.config()["project_listing_implementation"]
 
-        self._foundations_context.set_project_name("my project")
-        self._deployment_manager.simple_deploy(self._pipeline, "", {})
+        self._foundations_job.project_name = "my project"
+        self._deployment_manager.simple_deploy(self._foundations_job, "", {})
 
         self.assertEqual("my project", self._listing.value)
 
