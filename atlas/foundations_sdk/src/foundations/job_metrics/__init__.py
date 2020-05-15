@@ -24,11 +24,11 @@ def _log_metric(key, value):
 
 
 def _log_metric_in_running_job(key, value):
-    from foundations_contrib.global_state import message_router, current_foundations_context
+    from foundations_contrib.global_state import message_router, current_foundations_job
     from foundations_events.producers.metric_logged import MetricLogged
 
-    project_name = current_foundations_context().project_name
-    job_id = current_foundations_context().job_id
+    project_name = current_foundations_job().project_name
+    job_id = current_foundations_job().job_id
 
     metric_logged_producer = MetricLogged(message_router, project_name, job_id, key, value)
     metric_logged_producer.push_message()

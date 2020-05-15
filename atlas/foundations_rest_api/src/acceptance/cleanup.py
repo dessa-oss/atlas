@@ -5,7 +5,7 @@ def cleanup():
     from glob import glob
     from foundations_rest_api.global_state import redis_connection
     import foundations_contrib.global_state
-    from foundations_internal.foundations_context import FoundationsContext
+    from foundations_internal.foundations_job import FoundationsJob
 
     tmp_dir = getcwd() + '/tmp'
     if isdir(tmp_dir):
@@ -16,4 +16,4 @@ def cleanup():
 
     redis_connection.flushall()
 
-    foundations_contrib.global_state.foundations_context = FoundationsContext()
+    foundations_contrib.global_state.foundations_job = FoundationsJob()

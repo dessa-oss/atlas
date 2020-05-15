@@ -13,8 +13,8 @@ def set_project_name(project_name="default"):
     Raises:
         - This method doesn't raise any exceptions.
     """
-    from foundations.global_state import current_foundations_context
-    current_foundations_context().project_name = project_name
+    from foundations.global_state import current_foundations_job
+    current_foundations_job().project_name = project_name
 
 
 def _get_metrics_for_all_jobs(project_name):
@@ -99,10 +99,10 @@ def set_tag(key, value=''):
 
 
 def _set_tag_in_running_jobs(key, value):
-    from foundations_contrib.global_state import message_router, current_foundations_context
+    from foundations_contrib.global_state import message_router, current_foundations_job
     from foundations_events.producers.tag_set import TagSet
 
-    job_id = current_foundations_context().job_id
+    job_id = current_foundations_job().job_id
 
     tag_set_producer = TagSet(message_router, job_id, key, value)
     tag_set_producer.push_message()

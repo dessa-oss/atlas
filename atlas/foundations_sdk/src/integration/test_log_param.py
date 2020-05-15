@@ -76,5 +76,5 @@ class TestLogParam(Spec):
         self.assertEqual(flattened_parameters_data, loads(logged_parameters))
 
     def _set_job_id(self, job_id):
-        from foundations_contrib.global_state import current_foundations_context
-        current_foundations_context().pipeline_context().file_name = job_id
+        from foundations_contrib.global_state import current_foundations_job
+        current_foundations_job().job_id = job_id

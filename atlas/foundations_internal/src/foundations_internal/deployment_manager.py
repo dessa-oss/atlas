@@ -5,39 +5,36 @@ class DeploymentManager(object):
     def __init__(self, config_manager):
         self._config_manager = config_manager
 
-    def simple_deploy(self, foundations_context, job_name, job_params):
+    def simple_deploy(self, job, job_name, job_params):
         import uuid
-
-        from foundations.job import Job
 
         if not job_name:
             job_name = str(uuid.uuid4())
-        job = Job(foundations_context, **job_params)
 
         deployment = self.deploy({}, job_name, job)
-        self._record_project(foundations_context)
+        self._record_project(job)
         return deployment
 
     def deploy(self, deployment_config, job_name, job):
         from foundations import log_manager
-        from foundations.global_state import current_foundations_context
+        from foundations.global_state import current_foundations_job
 
         logger = log_manager.get_logger(__name__)
 
         deployment = self._create_deployment(job_name, job)
         deployment.config().update(deployment_config)
-        project_name = current_foundations_context().project_name
+        project_name = current_foundations_job().project_name
 
         deployment.deploy()
         logger.info("Job submitted with ID '{}' in project '{}'.".format(job_name, project_name))
 
         return deployment
 
-    def _record_project(self, foundations_context):
+    def _record_project(self, foundations_job):
         constructor, constructor_args, constructor_kwargs = self.project_listing_constructor_and_args_and_kwargs()
         listing = constructor(*constructor_args, **constructor_kwargs)
         listing.track_pipeline(
-            foundations_context.project_name)
+            foundations_job.project_name)
 
     def _create_deployment(self, job_name, job):
         from foundations_contrib.job_source_bundle import JobSourceBundle

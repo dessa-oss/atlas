@@ -1,5 +1,5 @@
 
-from foundations_contrib.global_state import current_foundations_context
+from foundations_contrib.global_state import current_foundations_job
 from foundations_internal.job_resources import JobResources
 
 def set_job_resources(num_gpus=0, ram=None):
@@ -27,4 +27,4 @@ def set_job_resources(num_gpus=0, ram=None):
         raise ValueError('Invalid GPU quantity. Please provide a non-negative integer GPU quantity.')
 
     job_resources = JobResources(num_gpus, ram)
-    current_foundations_context().job_resources = job_resources
+    current_foundations_job().job_resources = job_resources
