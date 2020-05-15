@@ -29,10 +29,10 @@ def log_param(key, value):
     log_warning_if_not_running_in_job(_log_param_in_running_job, key, value)
 
 def _log_param_in_running_job(key, value):
-    from foundations_contrib.global_state import current_foundations_context, redis_connection
+    from foundations_contrib.global_state import current_foundations_job, redis_connection
 
-    project_name = current_foundations_context().project_name
-    job_id = current_foundations_context().job_id
+    project_name = current_foundations_job().project_name
+    job_id = current_foundations_job().job_id
 
     _insert_parameter_name_into_projects_params_set(redis_connection, project_name, key)
     _insert_input_parameter_name_into_projects_input_params_set(redis_connection, project_name, key)

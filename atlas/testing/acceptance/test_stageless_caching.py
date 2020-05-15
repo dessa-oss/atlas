@@ -1,7 +1,7 @@
 
 from foundations_spec import *
 import foundations
-from foundations_contrib.global_state import current_foundations_context
+from foundations_contrib.global_state import current_foundations_job
 
 class TestStagelessCaching(Spec):
 
@@ -10,11 +10,11 @@ class TestStagelessCaching(Spec):
         from acceptance.cleanup import cleanup
 
         cleanup()
-        current_foundations_context().job_id = self.faker.uuid4()
+        current_foundations_job().job_id = self.faker.uuid4()
 
     @tear_down
     def tear_down(self):
-        current_foundations_context().job_id = None
+        current_foundations_job().job_id = None
 
     def test_function_value_is_cached_with_caching_enabled(self):
         @foundations.cache

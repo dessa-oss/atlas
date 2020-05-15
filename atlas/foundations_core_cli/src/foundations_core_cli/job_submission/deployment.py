@@ -7,7 +7,7 @@ def deploy(project_name, entrypoint, params):
 
     from foundations_contrib.job_deployer import deploy_job
     from foundations_contrib.global_state import (
-        current_foundations_context,
+        current_foundations_job,
         redis_connection,
         config_manager,
     )
@@ -15,7 +15,7 @@ def deploy(project_name, entrypoint, params):
     if project_name is None:
         project_name = path.basename(os.getcwd())
 
-    job = current_foundations_context()
+    job = current_foundations_job()
 
     job.project_name = project_name
     config_manager["run_script_environment"] = {
