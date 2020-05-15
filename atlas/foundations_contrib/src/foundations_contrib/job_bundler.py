@@ -22,7 +22,6 @@ class JobBundler(object):
 
     def bundle(self):
         self._job_source_bundle.bundle()
-        self._save_job()
         self._save_config()
         self._bundle_job()
         self._job_source_bundle.cleanup()
@@ -36,7 +35,6 @@ class JobBundler(object):
     def cleanup(self):
         import os
         os.remove(self.job_archive())
-        os.remove(self._job_binary())
         os.remove(self._job_config_yaml())
 
     def job_archive_name(self):
@@ -46,19 +44,12 @@ class JobBundler(object):
         import os
         return self._path + os.path.sep + self.job_archive_name()
 
-    def _job_binary(self):
-        return self._job_name + ".bin"
-
     def _job_results_archive(self):
         return self._job_name + ".results.tgz"
 
     def _job_config_yaml(self):
         import os
         return self._path + os.path.sep + self._job_name + ".config.yaml"
-
-    def _save_job(self):
-        with open(self._job_binary(), "w+b") as file:
-            file.write(self._job.serialize())
 
     def _save_config(self):
         import yaml
