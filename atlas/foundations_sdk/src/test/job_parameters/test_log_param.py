@@ -51,18 +51,18 @@ class TestLogParam(Spec):
     def set_up(self):
         import fakeredis
 
-        foundations_context_function = self.patch('foundations_contrib.global_state.current_foundations_context')
+        foundations_job_function = self.patch('foundations_contrib.global_state.current_foundations_job')
 
-        self.foundations_context = Mock()
-        self.foundations_context.job_id = ValueError()
-        self.foundations_context.is_in_running_job.return_value = False
-        self.foundations_context.project_name.return_value = 'default'
-        foundations_context_function.return_value = self.foundations_context
+        self.foundations_job = Mock()
+        self.foundations_job.job_id = ValueError()
+        self.foundations_job.is_in_running_job.return_value = False
+        self.foundations_job.project_name.return_value = 'default'
+        foundations_job_function.return_value = self.foundations_job
 
         self.redis_connection = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
 
     def test_log_param_inserts_parameter_key_into_input_params_keys_set(self):
-        self.foundations_context.project_name = self.project_name
+        self.foundations_job.project_name = self.project_name
         self._set_job_running()
         
         log_param(self.fake_key, self.fake_value)
@@ -71,7 +71,7 @@ class TestLogParam(Spec):
     def test_log_param_sets_input_parameter_data(self):
         from foundations_internal.foundations_serializer import loads
 
-        self.foundations_context.project_name = self.project_name
+        self.foundations_job.project_name = self.project_name
         self._set_job_running()
         
         log_param(self.fake_key, self.fake_value)
@@ -82,7 +82,7 @@ class TestLogParam(Spec):
     def test_log_param_sets_input_parameter_data_with_multiple_params(self):
         from foundations_internal.foundations_serializer import loads
 
-        self.foundations_context.project_name = self.project_name
+        self.foundations_job.project_name = self.project_name
         self._set_job_running()
         
         log_param(self.fake_key, self.fake_value)
@@ -96,7 +96,7 @@ class TestLogParam(Spec):
         self.assertEqual(expected_params, actual_params)
 
     def test_log_param_inserts_parameter_key_into_projects_params_keys_set(self):
-        self.foundations_context.project_name = self.project_name
+        self.foundations_job.project_name = self.project_name
         self._set_job_running()
         
         log_param(self.fake_key, self.fake_value)
@@ -105,7 +105,7 @@ class TestLogParam(Spec):
     def test_log_param_sets_job_run_data(self):
         import json
 
-        self.foundations_context.project_name = self.project_name
+        self.foundations_job.project_name = self.project_name
         self._set_job_running()
         
         log_param(self.fake_key, self.fake_value)
@@ -116,7 +116,7 @@ class TestLogParam(Spec):
     def test_log_param_sets_job_run_data_with_multiple_params(self):
         import json
 
-        self.foundations_context.project_name = self.project_name
+        self.foundations_job.project_name = self.project_name
         self._set_job_running()
         
         log_param(self.fake_key, self.fake_value)
@@ -130,5 +130,5 @@ class TestLogParam(Spec):
         self.assertEqual(expected_params, actual_params)
 
     def _set_job_running(self):
-        self.foundations_context.job_id = self.job_id
-        self.foundations_context.is_in_running_job.return_value = True
+        self.foundations_job.job_id = self.job_id
+        self.foundations_job.is_in_running_job.return_value = True
