@@ -44,7 +44,7 @@ def set_up_job_environment():
     from foundations_events.producers.jobs import QueueJob
     from foundations_events.producers.jobs import RunJob
     from foundations_contrib.global_state import (
-        current_foundations_context,
+        current_foundations_job,
         message_router,
         config_manager,
     )
@@ -55,11 +55,13 @@ def set_up_job_environment():
         f"Foundations has been run with the following configuration:\n"
         f"{yaml.dump(config_manager.config(), default_flow_style=False)}"
     )
-    pipeline_context = current_foundations_context().pipeline_context()
-    _set_job_state(pipeline_context)
 
-    QueueJob(message_router, pipeline_context).push_message()
-    RunJob(message_router, pipeline_context).push_message()
+    foundations_job = current_foundations_job()
+    
+    _set_job_state(foundations_job)
+
+    QueueJob(message_router, foundations_job).push_message()
+    RunJob(message_router, foundations_job).push_message()
 
     atexit.register(_at_exit_callback)
     _set_up_exception_handling()
@@ -95,7 +97,7 @@ def _handle_exception(exception_type, value, traceback):
 
 def _at_exit_callback():
     from foundations_contrib.global_state import (
-        current_foundations_context,
+        current_foundations_job,
         message_router,
     )
     from foundations_contrib.archiving.upload_artifacts import upload_artifacts
@@ -104,29 +106,26 @@ def _at_exit_callback():
 
     global _exception_happened
 
-    upload_artifacts(current_foundations_context().job_id())
+    upload_artifacts(current_foundations_job().job_id)
     # This try-except block should be refactored at a later date
 
-    pipeline_context = current_foundations_context().pipeline_context()
     if _exception_happened:
         FailedJob(
             message_router,
-            pipeline_context,
+            current_foundations_job(),
             {"type": Exception, "exception": "", "traceback": []},
         ).push_message()
     else:
-        CompleteJob(message_router, pipeline_context).push_message()
+        CompleteJob(message_router, current_foundations_job()).push_message()
 
 
-def _set_job_state(pipeline_context):
+def _set_job_state(foundations_job):
     from uuid import uuid4
     import os
 
-    pipeline_context.file_name = os.environ.get("FOUNDATIONS_JOB_ID", str(uuid4()))
-    pipeline_context.provenance.project_name = os.environ.get(
-        "FOUNDATIONS_PROJECT_NAME",
-        os.environ.get("PROJECT_NAME", _default_project_name()),
-    )
+    foundations_job.job_id = os.environ.get("FOUNDATIONS_JOB_ID", str(uuid4()))
+    foundations_job.project_name = os.environ.get("FOUNDATIONS_PROJECT_NAME",
+                                                      os.environ.get("PROJECT_NAME", _default_project_name()))
 
 
 def _default_project_name():

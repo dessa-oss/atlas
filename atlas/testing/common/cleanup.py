@@ -5,9 +5,8 @@ def cleanup():
     from os import getcwd, remove
     from os.path import isdir
     from glob import glob
-    from foundations_contrib.global_state import redis_connection, foundations_context
-    from foundations_internal.pipeline_context import PipelineContext
-    from foundations_internal.pipeline import Pipeline
+    import foundations_contrib.global_state
+    from foundations_internal.foundations_job import FoundationsJob
 
     tmp_dir = getcwd() + '/foundations_home/job_data'
     if isdir(tmp_dir):
@@ -16,7 +15,4 @@ def cleanup():
     for file in glob('*.tgz'):
         remove(file)
 
-    pipeline_context = PipelineContext()
-    pipeline = Pipeline(pipeline_context)
-    foundations_context._pipeline = pipeline
-
+    foundations_contrib.global_state.foundations_job = FoundationsJob()
