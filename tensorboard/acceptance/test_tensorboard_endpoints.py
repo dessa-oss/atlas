@@ -63,7 +63,7 @@ def cleanup():
     from os import getcwd, remove
     from os.path import isdir
     from glob import glob
-    from foundations_contrib.global_state import redis_connection, foundations_context
+    from foundations_contrib.global_state import redis_connection, foundations_job
     from foundations_internal.pipeline_context import PipelineContext
     from foundations_internal.pipeline import Pipeline
 
@@ -76,4 +76,4 @@ def cleanup():
 
     pipeline_context = PipelineContext()
     pipeline = Pipeline(pipeline_context)
-    foundations_context._pipeline = pipeline
+    foundations_job._pipeline = pipeline

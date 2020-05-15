@@ -93,9 +93,8 @@ class TestJobBundler(Spec):
         job_bundler = JobBundler('fake_name', {}, None, None)
         job_bundler.cleanup()
         remove_archive = call(self.temp_directory + '/fake_name.tgz')
-        remove_bin = call('fake_name.bin')
         remove_config = call(self.temp_directory + '/fake_name.config.yaml')
-        self.mock_os_remove.assert_has_calls([remove_archive, remove_bin, remove_config])
+        self.mock_os_remove.assert_has_calls([remove_archive, remove_config])
 
     def test_unbundle_opens_correct_file(self):
         job_bundler = JobBundler('fake_name', {}, None, None)
@@ -108,20 +107,6 @@ class TestJobBundler(Spec):
         job_bundler = JobBundler('fake_name', {}, None, None)
         job_bundler.unbundle()
         return_object.extractall.assert_called()
-
-    def test_save_job_opens_file(self):
-        mock_job = self._create_mock_job()
-        job_bundler = JobBundler('fake_name', {}, mock_job, None)
-        job_bundler._save_job()
-        self.mock_builtins_open.assert_called_with('fake_name.bin', 'w+b')
-
-    def test_save_job_writes_to_file(self):
-        mock_job = self._create_mock_job()
-        return_object = self.MockContextManager()
-        self.mock_builtins_open.return_value = return_object
-        job_bundler = JobBundler('fake_name', {}, mock_job, None)
-        job_bundler._save_job()
-        return_object.write.assert_called_with('something')
 
     def test_save_config_opens_file(self):
         mock_job = self._create_mock_job()

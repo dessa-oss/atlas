@@ -7,26 +7,23 @@ class TestConsumers(unittest.TestCase):
     def setUp(self):
         from foundations_contrib.global_state import redis_connection
         from foundations_contrib.global_state import message_router
-        from foundations_internal.pipeline_context import PipelineContext
-        from foundations_internal.pipeline import Pipeline
+        from foundations_internal.foundations_job import FoundationsJob
         import faker
 
         self._redis = redis_connection
         self._redis.flushall()
         self._faker = faker.Faker()
 
-        self._pipeline_context = PipelineContext()
+        self._context = FoundationsJob()
 
         self._project_name = self._str_random_uuid()
-        self._pipeline_context.provenance.project_name = self._project_name
+        self._context.provenance.project_name = self._project_name
 
         self._job_id = self._str_random_uuid()
-        self._pipeline_context.file_name = self._job_id
+        self._context.job_id = self._job_id
 
         self._user = self._random_name()
-        self._pipeline_context.provenance.user_name = self._user
-
-        self._pipeline = Pipeline(self._pipeline_context)
+        self._context.provenance.user_name = self._user
 
         self._message_router = message_router
 
@@ -42,11 +39,11 @@ class TestConsumers(unittest.TestCase):
         from time import time
 
         expected_job_parameters = {'random_job_data': self._str_random_uuid()}
-        self._pipeline_context.provenance.job_run_data = expected_job_parameters
+        self._context.provenance.job_run_data = expected_job_parameters
 
         self._redis.sadd('simple', 'value')
 
-        QueueJob(self._message_router, self._pipeline_context).push_message()
+        QueueJob(self._message_router, self._context).push_message()
         current_time = time()
 
         parameter_key = "projects:{}:job_parameter_names".format(self._project_name)
@@ -110,7 +107,7 @@ class TestConsumers(unittest.TestCase):
         self._redis.sadd(global_queued_job_key, self._job_id)
 
         current_time = time()
-        RunJob(self._message_router, self._pipeline_context).push_message()
+        RunJob(self._message_router, self._context).push_message()
 
         queued_jobs = self._redis.smembers(queued_job_key)
         self.assertEqual(set(), queued_jobs)
