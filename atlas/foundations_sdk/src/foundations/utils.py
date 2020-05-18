@@ -223,9 +223,9 @@ def datetime_string(time):
 
 
 def log_warning_if_not_running_in_job(function_if_running_in_job, *args):
-    from foundations_contrib.global_state import log_manager, current_foundations_context
+    from foundations_contrib.global_state import log_manager, current_foundations_job
 
-    if current_foundations_context().is_in_running_job():
+    if current_foundations_job().is_in_running_job():
         function_if_running_in_job(*args)
     elif not log_manager.foundations_not_running_warning_printed():
         logger = log_manager.get_logger(__name__)

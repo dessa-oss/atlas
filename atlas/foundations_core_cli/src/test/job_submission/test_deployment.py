@@ -18,20 +18,10 @@ class TestJobSubmissionDeployment(Spec):
     def current_directory(self):
         return f'{self.faker.uri_path()}/{self.project_name}'
 
-    @let
-    def pipeline_context(self):
-        from foundations_internal.pipeline_context import PipelineContext
-        return PipelineContext()
-
-    @let
-    def pipeline(self):
-        from foundations_internal.pipeline import Pipeline
-        return Pipeline(self.pipeline_context)
-    
     @let_now
-    def foundations_context(self):
-        from foundations_internal.foundations_context import FoundationsContext
-        return self.patch('foundations_contrib.global_state.foundations_context', FoundationsContext(self.pipeline))
+    def foundations_job(self):
+        from foundations_internal.foundations_job import FoundationsJob
+        return self.patch('foundations_contrib.global_state.foundations_job', FoundationsJob())
 
     @let_now
     def config_manager(self):
@@ -55,24 +45,22 @@ class TestJobSubmissionDeployment(Spec):
         mock.__exit__ = lambda *args: None
         return mock
 
-    mock_context_wrapper_klass = let_patch_mock_with_conditional_return('foundations_internal.pipeline_context_wrapper.PipelineContextWrapper')
     mock_context_wrapper = let_mock()
     mock_get_user_name_from_token = let_patch_mock('foundations_core_cli.job_submission.deployment._get_user_name_from_token')
 
     @set_up
     def set_up(self):
         self.mock_os_getcwd.return_value = self.current_directory
-        self.mock_context_wrapper_klass.return_when(self.mock_context_wrapper, self.pipeline_context)
         self.mock_open.return_when(self.mock_file, 'foundations_job_parameters.json', 'w+')
-        self.mock_deploy_job.return_when(self.mock_deployment, self.mock_context_wrapper, None, {})
+        self.mock_deploy_job.return_when(self.mock_deployment, self.foundations_job, None, {})
 
     def test_sets_project_name_from_parameter(self):
         deploy(self.project_name, self.entrypoint, self.params)
-        self.assertEqual(self.project_name, self.pipeline_context.provenance.project_name)
+        self.assertEqual(self.project_name, self.foundations_job.project_name)
 
     def test_sets_project_name_from_current_directory_when_not_specified(self):
         deploy(None, self.entrypoint, self.params)
-        self.assertEqual(self.project_name, self.pipeline_context.provenance.project_name)
+        self.assertEqual(self.project_name, self.foundations_job.project_name)
 
     def test_sets_run_script_environment_to_include_entrypoint(self):
         deploy(self.project_name, self.entrypoint, self.params)
