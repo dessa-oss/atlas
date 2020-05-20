@@ -285,7 +285,7 @@ def dump_all_config_files(advanced, use_specified_version):
     DATABASE_CONFIG_PATH = FOUNDATIONS_HOME / 'config' / 'local_docker_scheduler' / 'database.config.yaml'
     SERVICE_CONFIG_PATH = FOUNDATIONS_HOME / 'config' / 'atlas.config.yaml'
     AUTH_PROXY_CONFIG_PATH = FOUNDATIONS_CONFIG_PATH / 'auth_proxy' / 'atlas'
-    AUTH_SERVER_CONFIG_PATH = FOUNDATIONS_CONFIG_PATH / 'auth_server'
+    AUTH_SERVER_DB_PATH = FOUNDATIONS_HOME / 'database' / 'h2'
 
     # === Standard Configuration dictionaries
 
@@ -439,18 +439,17 @@ def dump_all_config_files(advanced, use_specified_version):
     dump_dict_to_yaml_file(SERVICE_CONFIG, SERVICE_CONFIG_PATH)
 
     copy_auth_proxy_yaml_to_f9s_home(AUTH_PROXY_CONFIG_PATH)
-    copy_auth_server_json_to_f9s_home(AUTH_SERVER_CONFIG_PATH)
+    copy_auth_server_db_to_f9s_home(AUTH_SERVER_DB_PATH)
 
 # # SHA1 sum of downloaded package for verification
 # SHA1SUM = "REPLACE_WITH_SHA1_SUM_OF_INTENDED_INSTALLATION_FILE"
 
-def copy_auth_server_json_to_f9s_home(AUTH_SERVER_CONFIG_PATH):
+def copy_auth_server_db_to_f9s_home(config_path):
     import shutil
-    import os
-    delete_folder(AUTH_SERVER_CONFIG_PATH)
+    delete_folder(config_path)
 
-    os.makedirs(AUTH_SERVER_CONFIG_PATH)
-    shutil.copyfile('auth_server_json/atlas.json', AUTH_SERVER_CONFIG_PATH / 'atlas.json')
+    shutil.copytree('h2/h2', config_path)
+    delete_folder('h2')
 
 def copy_auth_proxy_yaml_to_f9s_home(AUTH_PROXY_CONFIG_PATH):
     import shutil
