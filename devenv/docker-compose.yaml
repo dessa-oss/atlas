@@ -46,17 +46,14 @@ services:
           limits:
             memory: 300m
   foundations-authentication-server:
-    image: jboss/keycloak:8.0.1
+    image: jboss/keycloak:10.0.1
     ports:
       - "8080:8080"
     volumes:
       - type: bind
-        source: ../atlas/foundations_authentication/src/foundations_authentication/keycloak
-        target: /keycloak
+        source: ../atlas/foundations_authentication/src/foundations_authentication/h2/data
+        target: /opt/jboss/keycloak/standalone/data
     environment:
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
-      KEYCLOAK_IMPORT: /keycloak/atlas.json
       KEYCLOAK_LOGLEVEL: INFO
     deploy:
         resources:
