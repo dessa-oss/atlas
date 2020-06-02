@@ -9,6 +9,7 @@ import requests
 from threading import Thread
 from time import sleep
 from urllib.parse import urlparse
+from pkg_resources import parse_version
 
 import docker
 import yaml
@@ -416,7 +417,7 @@ class CLI:
                 'mem_limit': '300m'
             }
 
-        if args.enable_gpu:
+        if args.enable_gpu and parse_version(self._client.version()['Version']) < parse_version('19.03'):
             scheduler_spec['runtime'] = 'nvidia'
 
         specs.append(scheduler_spec)
