@@ -285,7 +285,7 @@ def dump_all_config_files(advanced, use_specified_version):
     DATABASE_CONFIG_PATH = FOUNDATIONS_HOME / 'config' / 'local_docker_scheduler' / 'database.config.yaml'
     SERVICE_CONFIG_PATH = FOUNDATIONS_HOME / 'config' / 'atlas.config.yaml'
     AUTH_PROXY_CONFIG_PATH = FOUNDATIONS_CONFIG_PATH / 'auth_proxy' / 'atlas'
-    AUTH_SERVER_DB_PATH = FOUNDATIONS_HOME / 'database' / 'h2'
+    AUTH_SERVER_DB_PATH = FOUNDATIONS_HOME / 'h2'
 
     # === Standard Configuration dictionaries
 

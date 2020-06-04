@@ -453,9 +453,9 @@ class CLI:
                     'environment': ["KEYCLOAK_LOGLEVEL=DEBUG"],
                     'ports': {8080: args.auth_server_port, 8443: 8443},
                     'volumes': {
-                        convert_win_path_to_posix(Path(self._config['persistent_storage'] + '/h2/data')) 
+                        convert_win_path_to_posix(Path(self._foundations_home / 'h2/data')) 
                         if is_windows() 
-                        else self._config['persistent_storage'] + '/h2/data': {
+                        else self._foundations_home / 'h2/data': {
                             'bind': '/opt/jboss/keycloak/standalone/data', 'mode': 'rw'
                             },
                         },
