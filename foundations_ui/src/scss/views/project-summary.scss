@@ -1,23 +1,35 @@
 .project-summary-container {
-  margin: auto;
   background-color: $color-background;
   border: 1px solid $color-border-bottom;
   padding: 25px;
   width: 210px;
-  display: inline-block;
   margin-right: 30px;
   margin-bottom: 25px;
   border-radius: 7px;
   height: 315px;
   outline: none;
   vertical-align: top;
+  display: flex;
+  flex-direction: column;
 
-  .project-summary-tags-container {
-    float: left;
-    bottom: 0px;
-    right: 5px;
+  p {
+    color: #B1B1B1;
+    margin-bottom: 10px;
     text-align: left;
   }
+
+  .project-summary-tags-container {
+    position: static;
+    text-align: left;
+    width: 100%;
+    flex: 1;
+    overflow-y: scroll;
+  }
+}
+
+.projects-body-container {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .project-summary-tags-container {
@@ -47,10 +59,11 @@
     background: $color-dessa-blue;
     color: white;
     border-radius: 3px;
-    margin-left: 5px;
     padding: 3px 11px;
+    width: calc(100% - 11px * 2);
     display: inline-block;
     margin-top: 10px;
+    overflow-wrap: break-word;
 
     &.view-all-tags {
       background: none;
@@ -70,13 +83,6 @@
     display: inline-block;
     margin-top: 10px;
     cursor: pointer;
-  }
-
-  p {
-    color: #B1B1B1;
-    margin-bottom: 0px;
-    text-align: left;
-    margin-left: 5px;
   }
 }
 
