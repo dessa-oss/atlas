@@ -13,7 +13,7 @@ RUN mkdir -p /var/foundations ~/.ssh
 WORKDIR /var/foundations
 
 RUN apk add --update --no-cache alpine-sdk python-dev libressl-dev libffi-dev linux-headers
-RUN pip install -U pip setuptools wheel
+RUN pip install -U pip setuptools==46.4.0 wheel
 COPY ./tmp/pip_wheels /var/foundations/
 
 RUN find -iname "foundations_internal-*.whl" | xargs pip install \
