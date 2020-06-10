@@ -29,6 +29,14 @@ class InputMetric extends Component {
       selectedJobs: this.props.selectedJobs,
       allJobsSelected: this.props.allJobsSelected,
     };
+    this.headerRef = React.createRef();
+    this.bodyRef = React.createRef();
+  }
+
+  componentDidUpdate() {
+    if (this.headerRef.current && this.bodyRef.current) {
+      this.headerRef.current.style.width = `${this.bodyRef.current.clientWidth}px`;
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -98,11 +106,11 @@ class InputMetric extends Component {
       <div className="job-static-columns-container">
         <h2>{header}</h2>
         <div className="input-metric-header-row-container">
-          <div className="input-metric-column-container column-header">
+          <div className="input-metric-column-container column-header" ref={this.headerRef}>
             {inputParams}
           </div>
           <ScrollSyncPane group="vertical">
-            <div className="input-metric-column-container">
+            <div className="input-metric-column-container" ref={this.bodyRef}>
               {rows}
             </div>
           </ScrollSyncPane>
