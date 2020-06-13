@@ -84,7 +84,7 @@ Follow this guide:
   * Want to work on it?
     * Open up a Pull Request! 
 * First-time contributor to OSS?
-  * Look for issues with the `first-timers-only` label and get help from the community Slack if you need it. 
+  * Look for issues with the `good first issue` label and get help from the community Slack if you need it. 
 
 ## Development Setup
 When you are ready, just follow the steps below in order to set up a development environment.
