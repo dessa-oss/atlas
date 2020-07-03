@@ -25,9 +25,9 @@ describe('Test Artifact Saving', () => {
     describe(state.testName, () => {
       before(() => {
         cy.exec(`redis-cli -h ${schedulerIP} -p ${schedulerRedisPort} flushall`);
-        cy.exec(state.command).then((result) => {
-          console.log(result.stdout)
-        })
+        cy.exec(state.command).then(result => {
+          console.log(result.stdout);
+        });
       });
 
       beforeEach(() => {
