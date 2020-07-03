@@ -63,7 +63,7 @@ check_status_of_process "Atlas REST API" $? $SCRIPT_PID
 if [ ! -d "../../foundations-auth-proxy" ]; 
 then 
   cd ../..
-  git clone git@github.com:dessa-oss/foundations-auth-proxy.git 
+  git clone https://github.com/dessa-oss/foundations-auth-proxy.git 
   cd foundations-auth-proxy
 else
   cd ../../foundations-auth-proxy
