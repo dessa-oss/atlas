@@ -10,14 +10,14 @@ describe('Test Invalid Image', () => {
       projectName: 'invalid_image_project',
       jobStatus: 'failed',
       logs: '404 Client Error',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/invalid_image && foundations login http://${schedulerIP}:5558 -u test -p test && foundations submit scheduler invalid_image_project main.py`,
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/invalid_image && python -m foundations login http://${schedulerIP}:5558 -u test -p test && python -m foundations submit scheduler invalid_image_project main.py`,
     },
     {
       testName: 'Test Invalid Image through the SDK',
       projectName: 'invalid_image_project',
       jobStatus: 'completed',
       logs: '',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/invalid_image/invalid_image_project && foundations login http://${schedulerIP}:5558 -u test -p test && python main.py`,
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/invalid_image/invalid_image_project && python -m foundations login http://${schedulerIP}:5558 -u test -p test && python main.py`,
     },
   ];
 

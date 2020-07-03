@@ -8,12 +8,12 @@ describe('Test Artifact Saving', () => {
     {
       testName: 'Test Artifact Saving through the CLI',
       projectName: 'artifact_saving_project',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && foundations login http://${schedulerIP}:5558 -u test -p test && cd cypress/fixtures/atlas_scheduler/artifact_saving && foundations submit scheduler artifact_saving_project main.py`,
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && python -m foundations login http://${schedulerIP}:5558 -u test -p test && cd cypress/fixtures/atlas_scheduler/artifact_saving && python -m foundations submit scheduler artifact_saving_project main.py`,
     },
     {
       testName: 'Test Artifact Saving through the SDK',
       projectName: 'artifact_saving_project',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && foundations login http://${schedulerIP}:5558 -u test -p test && cd cypress/fixtures/atlas_scheduler/artifact_saving/artifact_saving_project && python main.py`,
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && python -m foundations login http://${schedulerIP}:5558 -u test -p test && cd cypress/fixtures/atlas_scheduler/artifact_saving/artifact_saving_project && python main.py`,
     },
   ];
 
@@ -25,7 +25,9 @@ describe('Test Artifact Saving', () => {
     describe(state.testName, () => {
       before(() => {
         cy.exec(`redis-cli -h ${schedulerIP} -p ${schedulerRedisPort} flushall`);
-        cy.exec(state.command);
+        cy.exec(state.command).then((result) => {
+          console.log(result.stdout)
+        })
       });
 
       beforeEach(() => {

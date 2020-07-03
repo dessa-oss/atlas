@@ -21,3 +21,7 @@ integration-tests:
 .PHONY: acceptance-tests
 acceptance-tests:
 	./run_acceptance_tests.sh
+
+.PHONY: cypress-tests
+cypress-tests: devenv-start
+	cd foundations_ui && yarn cy:run

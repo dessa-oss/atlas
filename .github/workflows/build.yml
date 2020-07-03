@@ -12,13 +12,15 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    strategy:
+      matrix:
+        os:
+        - ubuntu-latest
+
+    runs-on: ${{ matrix.os }}
+
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
@@ -32,7 +34,22 @@ jobs:
       run: |
         . ./activate_dev_env.sh
         make unit-tests
+
+    - uses: actions/checkout@master
+      with:
+        name: dessa-oss/foundations-auth-proxy
+
     - name: Start devenv
       run: |
         . ./activate_dev_env.sh
         make devenv-start
+
+    # - name: Cypress setup
+    #   uses: cypress-io/github-action@v2
+    #   with:
+    #     browser: chrome
+    #     headless: true
+
+    - name: Run Cypress tests
+      run: |
+        make cypress-tests
