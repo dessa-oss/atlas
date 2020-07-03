@@ -30,5 +30,6 @@ jobs:
         make unit-tests
     - name: Run Cypress tests
       run: |
+        . ./activate_dev_env.sh
         make cypress-tests
 
