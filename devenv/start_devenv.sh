@@ -3,6 +3,7 @@
 SCRIPT_PID=$$
 ATLAS_PORT=37722
 GUI_PORT=3000
+AUTH_PROXY_PORT=5558
 
 export REACT_APP_API_URL="http://127.0.0.1:${ATLAS_PORT}/api/v1/"
 export REACT_APP_API_STAGING_URL="http://localhost:${ATLAS_PORT}/api/v2beta/"
@@ -16,6 +17,24 @@ function check_status_of_process() {
         echo "Failed to connect to ${process_name}"
         kill -s TERM $script_pid
     fi
+}
+function wait_for_url() {
+    attempt_counter=0
+    SERVICE=$1
+    max_attempts=$2
+
+    until $(curl --output /dev/null --silent --head --fail $SERVICE); do
+        if [ ${attempt_counter} -eq ${max_attempts} ];then
+          echo "Max attempts reached"
+          exit 1
+        fi
+
+        printf '.'
+        attempt_counter=$(($attempt_counter+1))
+        sleep 1
+    done
+
+    echo "Connection $SERVICE found"
 }
 
 # ***************************************************************************************************************
@@ -35,9 +54,21 @@ echo "Running Atlas REST API on port ${ATLAS_PORT}"
 python startup_atlas_api.py ${ATLAS_PORT} > .foundations/logs/atlas_rest_api.log 2>&1 &
 
 echo "Waiting for Atlas REST API to start at http://localhost:${ATLAS_PORT}"
-./wait_for_url.sh "http://localhost:${ATLAS_PORT}/api/v2beta/projects" 10
+wait_for_url "http://localhost:${ATLAS_PORT}/api/v2beta/projects" 10
 
 check_status_of_process "Atlas REST API" $? $SCRIPT_PID
+
+# ***************************************************************************************************************
+# Launch Auth Proxy
+cd ../../foundations-auth-proxy
+
+python -m auth_proxy -H localhost -p 5558 > ../atlas/devenv/.foundations/logs/auth_proxy.log 2>&1 &
+cd ../atlas/devenv
+
+echo "Waiting for Auth Proxy to start at http://localhost:${AUTH_PROXY_PORT}"
+wait_for_url "http://localhost:${AUTH_PROXY_PORT}/" 10
+
+check_status_of_process "Auth Proxy" $? $SCRIPT_PID
 
 # ***************************************************************************************************************
 # Launch UI
@@ -50,7 +81,7 @@ cd ../foundations_ui && \
 
 cd ../devenv
 echo "Waiting for Atlas GUI to start at http://localhost:${GUI_PORT}"
-./wait_for_url.sh "http://localhost:${GUI_PORT}" 80
+wait_for_url "http://localhost:${GUI_PORT}" 80
 
 check_status_of_process "Atlas GUI" $? $SCRIPT_PID
 
