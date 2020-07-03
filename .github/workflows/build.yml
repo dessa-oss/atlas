@@ -30,6 +30,7 @@ jobs:
         make unit-tests
     - name: Run Cypress tests
       run: |
+        sudo apt-get install redis-tools
         . ./activate_dev_env.sh
         make cypress-tests
 
