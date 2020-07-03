@@ -72,9 +72,6 @@ class TestCanLoadParameters(Spec, RunLocalJob, RunWithDefaultFoundationsHome):
     def test_can_load_parameters_as_empty_dict_within_python_empty_params(self):
         self._test_can_load_parameters_within_python(self.script_directory_empty_params, {})
 
-    def test_can_load_parameters_as_empty_dict_within_foundations_submit_empty_params(self):
-        self._test_can_load_parameters_within_foundations_submit(self.deployable_script_directory_empty_params, {})
-
     def test_can_load_default_parameters_within_foundations_submit_when_parameters_json_not_found(self):
         self._test_can_load_parameters_within_foundations_submit(self.deployable_script_directory_no_parameters, {})
 

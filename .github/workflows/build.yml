@@ -13,13 +13,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
-    strategy:
-      matrix:
-        os:
-        - ubuntu-latest
-
-    runs-on: ${{ matrix.os }}
-
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.7
@@ -39,12 +33,6 @@ jobs:
       run: |
         . ./activate_dev_env.sh
         make devenv-start
-
-    # - name: Cypress setup
-    #   uses: cypress-io/github-action@v2
-    #   with:
-    #     browser: chrome
-    #     headless: true
 
     - name: Run Cypress tests
       run: |
