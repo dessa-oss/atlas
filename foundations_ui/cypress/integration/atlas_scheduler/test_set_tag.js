@@ -8,12 +8,12 @@ describe('Test Set Tag', () => {
     {
       testName: 'Test Set Tag Local',
       projectName: 'set_tag_project',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/set_tag/set_tag_project && foundations login http://${schedulerIP}:5558 -u test -p test && python main.py`,
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/set_tag/set_tag_project && python -m foundations login http://${schedulerIP}:5558 -u test -p test && python main.py`,
     },
     {
       testName: 'Test Set Tag with Scheduler',
       projectName: 'set_tag_with_scheduler_project',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/set_tag_with_scheduler && foundations login http://${schedulerIP}:5558 -u test -p test && foundations submit scheduler set_tag_with_scheduler_project main.py`,
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/set_tag_with_scheduler && python -m foundations login http://${schedulerIP}:5558 -u test -p test && python -m foundations submit scheduler set_tag_with_scheduler_project main.py`,
     },
   ];
 
