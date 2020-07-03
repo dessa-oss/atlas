@@ -35,10 +35,6 @@ jobs:
         . ./activate_dev_env.sh
         make unit-tests
 
-    - uses: actions/checkout@master
-      with:
-        name: dessa-oss/foundations-auth-proxy
-
     - name: Start devenv
       run: |
         . ./activate_dev_env.sh
