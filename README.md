@@ -1,4 +1,13 @@
-[![Build Status](https://jenkins.shehanigans.net/buildStatus/icon?job=atlas%2Fmaster&subject=build%20${buildId}%20took%20${duration})](https://jenkins.shehanigans.net/job/atlas/job/master/)
+**Build Statuses:**
+
+[![Master Build](https://jenkins.shehanigans.net/buildStatus/icon?job=atlas%2Fmaster&subject=atlas\/Master%20build%20ID%20${buildId}%20took%20${duration})](https://jenkins.shehanigans.net/job/atlas/job/master/)
+
+[![User Acceptance Tests Pipeline](https://jenkins.shehanigans.net/buildStatus/icon?job=foundations-uat&subject=User%20Acceptance%20Tests%20Pipeline&build=20)](https://jenkins.shehanigans.net/job/foundations-uat/20/)
+
+[![Build Artifacts Pipeline](https://jenkins.shehanigans.net/buildStatus/icon?job=build-artifacts-atlas&subject=Build%20Artifacts%20Pipeline)](https://jenkins.shehanigans.net/job/build-artifacts-atlas/)
+
+[![Create Installer Pipeline](https://jenkins.shehanigans.net/buildStatus/icon?job=build-installer-atlas&subject=Create%20Installer%20Pipeline)](https://jenkins.shehanigans.net/job/build-installer-atlas/)
+
 ![Platform Support](https://img.shields.io/badge/Platforms-osx%20%7C%20linux%20%7C%20windows-lightgrey "platform")
 ![Python Support](https://img.shields.io/badge/Python-%3E3.6-blue "python")
 ![Downloads](https://img.shields.io/badge/Downloads-2000+-blue "downloads")
