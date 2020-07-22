@@ -9,12 +9,12 @@ describe('Test Local Job Submission that Fails', () => {
     {
       testName: 'Test Local Job Submission that Fails with CLI from outside job directory',
       projectName: 'local_job_submission',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/local_job_submission/ && foundations login http://${schedulerIP}:5558 -u test -p test && python local_job_submission_project/main.py 0 "Complete_Fail_Task_3"`,
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/local_job_submission/ && python -m foundations login http://${schedulerIP}:5558 -u test -p test && python local_job_submission_project/main.py 0 "Complete_Fail_Task_3"`,
     },
     {
       testName: 'Test Local Job Submission that Fails with CLI from inside job directory',
       projectName: 'local_job_submission_project',
-      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/local_job_submission/local_job_submission_project && foundations login http://${schedulerIP}:5558 -u test -p test && python main.py 0 "Complete_Fail_Task_4"`,
+      command: `export FOUNDATIONS_HOME=\`pwd\`/cypress/fixtures/atlas_scheduler/.foundations && cd cypress/fixtures/atlas_scheduler/local_job_submission/local_job_submission_project && python -m foundations login http://${schedulerIP}:5558 -u test -p test && python main.py 0 "Complete_Fail_Task_4"`,
     },
   ];
 
