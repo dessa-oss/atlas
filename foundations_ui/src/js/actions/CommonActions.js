@@ -139,7 +139,8 @@ class CommonActions {
         const cellType = this.getInputMetricCellType(input);
         const isHoverable = this.getInputMetricIsHoverable(input);
         if (cellType.match(/array*/)) {
-          inputValue = this.transformArraysToString(inputValue);
+          // Per: https://github.com/dessa-oss/atlas/issues/163
+          inputValue = inputValue.slice(-1);
         }
 
         const openModalJobDetails = jobID => {
