@@ -52,6 +52,24 @@ class TestProjectMetricsController(Spec):
 
         self.assertEqual(expected_output, self.controller.index().as_json())
 
+    def test_index_returns_timestamp_ordered_metrics_with_numpy_values(self):
+        import numpy as np
+        
+        numpy_value = np.float64(42)
+
+        self.controller.params = {'project_name': self.project_name}
+        self._log_metric(33, 'job13', 'numpy_metric', numpy_value)
+
+        expected_output = {
+            'all_metric_names': ['numpy_metric'],
+            'metric_query': [{
+                'metric_name': 'numpy_metric',
+                'values': [['job13', numpy_value]]
+            }]
+        }
+
+        self.assertEqual(expected_output, self.controller.index().as_json())
+
     def test_index_returns_timestamp_ordered_metrics_when_metric_name_has_colons(self):
         self.controller.params = {'project_name': self.project_name}
         self._log_metric(33, 'job13', 'metric77:007', 123.4)
