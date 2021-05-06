@@ -25,7 +25,7 @@ setup(
         'foundations-contrib=={}'.format(build_version),
         'foundations_core_rest_api_components=={}'.format(build_version),
         'flask-restful==0.3.7',
-        'Flask-Cors==3.0.8',
+        'Flask-Cors==3.0.9',
         'Flask==1.1.1',
         'Werkzeug==0.16.0',
     ],
