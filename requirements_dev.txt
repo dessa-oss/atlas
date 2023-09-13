@@ -15,3 +15,4 @@ twine==1.13.0
 awscli==1.16.310
 setuptools_scm==3.3.3
 docker-compose==1.25.5
+itsdangerous==2.0.1

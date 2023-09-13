@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-docker-compose down --remove-orphans
+docker-compose --compatibility  down --remove-orphans
 
 echo "Attempting to kill proccess for Atlas REST API"
 kill -9 $(lsof -i:37722 -t) > /dev/null 2>&1 || true

@@ -7,6 +7,8 @@ AUTH_PROXY_PORT=5558
 
 export REACT_APP_API_URL="http://127.0.0.1:${ATLAS_PORT}/api/v1/"
 export REACT_APP_API_STAGING_URL="http://localhost:${ATLAS_PORT}/api/v2beta/"
+export REDIS_URL="redis://127.0.0.1:6379"
+export FOUNDATIONS_SCHEDULER_URL="http://127.0.0.1:5000"
  
 function check_status_of_process() {
     process_name=$1
@@ -40,7 +42,7 @@ function wait_for_url() {
 # ***************************************************************************************************************
 # Launch Docker Containers
 
-if docker-compose up -d ; then
+if docker-compose --compatibility up -d ; then
   echo "Containers up."
 else
   echo "Containers failed to start"

@@ -13,7 +13,7 @@ services:
         source: .foundations/database
         target: /data
   foundations-scheduler:
-    image: us.gcr.io/atlas-ce/scheduler:latest
+    image: us.gcr.io/dessa-atlas/foundations/scheduler:latest
     ports:
       - "5000:5000"
     volumes:
@@ -60,7 +60,7 @@ services:
           limits:
             memory: 300m
   tb_server:
-    image: us.gcr.io/atlas-ce/tensorboard-server:latest
+    image: us.gcr.io/atlas/tensorboard-server:latest
     entrypoint: tensorboard --logdir /logs
     ports:
       - "5959:6006"
@@ -72,7 +72,7 @@ services:
         source: .foundations/tensorboard/work_dir
         target: /logs
   tb_api:
-    image: us.gcr.io/atlas-ce/tensorboard-rest-api:latest
+    image: us.gcr.io/atlas/tensorboard-rest-api:latest
     volumes:
       - type: bind
         source: .foundations/job_data

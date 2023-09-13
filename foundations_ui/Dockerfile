@@ -23,11 +23,18 @@ ENV NODE_OPTIONS=--max_old_space_size=8192
 
 COPY ./ /var/foundations_ui/
 
-RUN npm install -g -s --no-progress yarn && \
-    yarn && \
-    yarn run build && \
-    yarn run prune && \
-    yarn cache clean
+RUN apk --no-cache add build-base
+ENV PYTHONUNBUFFERED=1
+RUN apk add --no-cache python3 py3-pip python py-pip && \
+    pip install --no-cache --upgrade setuptools && \
+    pip3 install --no-cache --upgrade setuptools
+
+RUN npm config set unsafe-perm true 
+RUN npm install -g -s --no-progress yarn 
+RUN yarn 
+RUN yarn run build 
+RUN yarn run prune 
+RUN yarn cache clean
 
 EXPOSE 8011
 COPY deploy/nginx.conf /etc/nginx/nginx.conf.template

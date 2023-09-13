@@ -13,12 +13,13 @@ image_tag=${docker_registry}/${docker_image}:${docker_build_version}
 image_tag_latest=${docker_registry}/${docker_image}:latest
 
 docker build \
-    -t ${image_tag} \
+    --platform=linux/amd64 \
+    -t ${image_tag}-mac \
     --network=host \
     ${image_dir} &&
 
 docker tag \
-    ${image_tag} \
-    ${image_tag_latest} &&
+    ${image_tag}-mac \
+    ${image_tag_latest}-mac &&
 
 echo "Successfully built image tagged to ${docker_build_version} and latest"
